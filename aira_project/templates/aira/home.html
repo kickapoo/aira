@@ -17,7 +17,6 @@
 					<sup> <span class="text-success">Green Points:</span> Your Fields Locations
 				</div>
 				<div class="panel-footer">
-					<h5>Personal Information</h5>
 						<strong>First name:</strong> {{ farmer.first_name }} <br>
 						<strong>Last name :</strong> {{ farmer.last_name }} <br>
 						<strong>Address:</strong> {{ farmer.address }}<br>
@@ -43,21 +42,18 @@
 								</tr>
 							</thead>
 							<tbody>
-						{% for field in farmer_fields %}
+						{% for agrifield in farmer_agrifields %}
 								<tr>
 									<td></td>
-									<td> <a href="{% url 'fieldsandcrops.views.edit_field' field.id %}">[{{ field.field_name }}] </a> </td>
+									<td> <a href="{% url 'aira.views.update_fields'%}">{{ agrifield}} </a> </td>
 						 			<td>
-							 			{% for crop in field.crop_set.all  %}
-							 				<a href="{% url 'fieldsandcrops.views.update_crop' field.id %}"> {{ crop.croptype }} | {{ crop.area }} km<sup>2</sup>  </a> 
+							 			{% for crop in agrifield.crop_set.all  %}
+							 				<a href="{% url 'aira.views.update_crop' agrifield.id %}"> {{ crop }} | {{ crop.area }} km<sup>2</sup>  </a> 
 											<br>
 										{% endfor %}
 						 			</td>
 								    <td>
-								    	{% for crop in field.crop_set.all %}
-								    	<a href="{% url 'irrigationlog.views.irma_calendar' field.id crop.id %}"> Irrigation Log</a> 
-								    	<br>
-								    	{% endfor %}
+			
 								    </td>
 								    <td> Next Irrigation</td>
 								</tr>
@@ -67,6 +63,50 @@
 					</div>
 				</div>
 			</div>
+		</div>
+		<div class="container">
+		<div class="row">
+			<div class="col-md-2">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<td><i class="glyphicon glyphicon-picture"></i> Field Name</td>
+					</div>
+					<div class="panel-body">
+						Here
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+					    <td><i class="glyphicon glyphicon-leaf"></i> Crops</td>
+					</div>
+					<div class="panel-body">
+						Here
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<td><i class="glyphicon glyphicon-tint"></i>Time Logs</td>
+					</div>
+					<div class="panel-body">
+						Here
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Here
+					</div>
+					<div class="panel-body">
+						Here
+					</div>
+				</div>
+			</div>
+		</div>
 		</div>
 	</div>
 </div>

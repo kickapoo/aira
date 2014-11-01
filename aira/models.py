@@ -69,8 +69,7 @@ class Crop(models.Model):
         verbose_name_plural = 'crops'
 
     def __unicode__(self):
-        return "{}-{}-{}".format(self.agrifield, self.crop_type,
-                                 self.irrigation_type)
+        return "{}".format(self.crop_type)
 
 
 class IrrigationLog(models.Model):

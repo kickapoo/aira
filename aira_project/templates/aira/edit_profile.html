@@ -7,18 +7,24 @@
 
 
 <div class="container">
-	<h3>Edit Personal Information</h3>
-	<form 
-		action="{% url 'aira.views.edit_profile'%}"
-		method  = "POST"
-		role = "form"
-		class = "form">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+				<h4>Personal Information</h4>
+		</div>
+		<div class="panel-body">
+		<form 
+				action="{% url 'aira.views.edit_profile'%}"
+				method  = "POST"
+				role = "form"
+				class = "form">
 		{% csrf_token %}
 		{% bootstrap_form form %}
     	{% buttons %}
         <button type="submit" class="btn btn-success">Update</button>
     	{% endbuttons %}
-	</form>
+	</form>	
+		</div>
+	</div>
 </div>
 
 
