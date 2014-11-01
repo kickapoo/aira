@@ -1,4 +1,4 @@
 AIRA: web Agriculture Irrigation Advisor.
 
-Deploy Enviroment: 
+Deploy Environment: 
 [openmeteo/debian-bitia-bundle](https://github.com/openmeteo/debian-bitia-bundle)
