@@ -1,0 +1,35 @@
+commit c85ecb2c11664ff5c4a5ed1438d5fdf82ab9b7ac
+Author: Stavros Anastasiadis <anastasiadis.st00@gmail.com>
+Date:   Sat Nov 1 09:34:14 2014 +0200
+
+    remoning files from version control
+
+commit 7dbd126f7dfdc8b365d028217a97c9fe211b019c
+Author: Stavros Anastasiadis <anastasiadis.st00@gmail.com>
+Date:   Sat Nov 1 09:32:35 2014 +0200
+
+    Fix .gitingore
+
+commit 281a0ff01be4d972d27e3cb770c428b764102eb0
+Author: Anastasiadis Stavros <anastasiadis.st00@gmail.com>
+Date:   Sat Nov 1 09:29:19 2014 +0200
+
+    Update .gitingore
+
+commit efa22ab10d53f1caf78f211b49679fe99f636645
+Author: Stavros Anastasiadis <anastasiadis.st00@gmail.com>
+Date:   Sat Nov 1 09:26:08 2014 +0200
+
+    removing files from version control
+
+commit 63e923b317d8235e93c58fc263d7c3bfd19fa080
+Author: Stavros Anastasiadis <anastasiadis.st00@gmail.com>
+Date:   Sat Nov 1 09:21:36 2014 +0200
+
+    .gitignore is now working
+
+commit 1680d677c555cbb3bdf9070580e28c01c5c7235c
+Author: Stavros Anastasiadis <anastasiadis.st00@gmail.com>
+Date:   Sat Nov 1 00:30:32 2014 +0200
+
+    Initial Commit

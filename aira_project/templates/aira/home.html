@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %} Home - {{user}} {% endblock %}
+
+{% block content %}
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-4">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4>Your AIRA map</h4>
+				</div>
+				<div class="panel-body">
+					<div class="video-container">
+						<iframe src="{% url 'aira.views.user_map' %}"></iframe>
+					</div>
+					<sup> <span class="text-success">Green Points:</span> Your Fields Locations
+				</div>
+				<div class="panel-footer">
+					<h5>Personal Information</h5>
+						<strong>First name:</strong> {{ farmer.first_name }} <br>
+						<strong>Last name :</strong> {{ farmer.last_name }} <br>
+						<strong>Address:</strong> {{ farmer.address }}<br>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-8">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4>Fields &  Crops Info Panel</h4>
+					<a class="btn btn-success 	btn-xs" href="{% url 'aira.views.update_fields' %}"> Update Fields</a></button><br>
+				</div>
+				<div class="panel-body">
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<td></th>
+									<td><i class="glyphicon glyphicon-picture"></i> Field Name</td>
+									<td><i class="glyphicon glyphicon-leaf"></i> Field's Crops</td>
+									<td><i class="glyphicon glyphicon-tint"></i>Field's Irrigation Log</td>
+									<td> Water Balance Model</td>
+								</tr>
+							</thead>
+							<tbody>
+						{% for field in farmer_fields %}
+								<tr>
+									<td></td>
+									<td> <a href="{% url 'fieldsandcrops.views.edit_field' field.id %}">[{{ field.field_name }}] </a> </td>
+						 			<td>
+							 			{% for crop in field.crop_set.all  %}
+							 				<a href="{% url 'fieldsandcrops.views.update_crop' field.id %}"> {{ crop.croptype }} | {{ crop.area }} km<sup>2</sup>  </a> 
+											<br>
+										{% endfor %}
+						 			</td>
+								    <td>
+								    	{% for crop in field.crop_set.all %}
+								    	<a href="{% url 'irrigationlog.views.irma_calendar' field.id crop.id %}"> Irrigation Log</a> 
+								    	<br>
+								    	{% endfor %}
+								    </td>
+								    <td> Next Irrigation</td>
+								</tr>
+						{% endfor%}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

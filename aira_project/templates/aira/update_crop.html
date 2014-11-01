@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %} {{ user }} {% endblock %}
+
+{% block content %}
+<div class="container">
+	<h4> Add/Update Crop </h4>
+	<sup><a class="btn btn-default btn-xs" href="{% url 'aira.views.home' %}"> Back to Home</a></sup>
+	<sup><a class="btn btn-default btn-xs" href="{% url 'aira.views.update_fields' %}"> Back to Fields</a></sup>
+				
+<hr>
+	<div>
+		<form action="{% url 'aira.views.update_crop' field_id %}"
+			  method  = "POST">
+			{% csrf_token %}
+			{{ formset.management_form }}
+			{% for form in formset %}	
+				{{ form }} <br>	
+			{% endfor %}
+			<br><br>
+			<button type="submit" class="btn btn-success btn-xs">Update Crop</button>
+		</form>
+	</div>
+</div>
+
+{% endblock %}
