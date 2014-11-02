@@ -23,7 +23,10 @@
               
               <a class="navbar-brand" href="{% url 'aira.views.index' %}">
                 <img src="http://www.pd4pic.com/images/leaves-green-plant-nature.png" width="35" height="30">
-                <span style="color:green;font-size:15px">AIRA</span></a>
+                {% if user.is_authenticated %}
+                (<span class="text-success">aira</span>)
+                {% endif %}
+                <span style="color:green;font-size:15px"></span></a>
             </div>
   {% if user.is_authenticated %}
             <div class="navbar-collapse collapse">   
@@ -44,17 +47,18 @@
   {% endif %}
     </div><!--/.container-fluid -->
 </div>
-</div>
     <div>
       	{% block content %}
       	{% endblock %}
     </div>
-    <br><br>
-    <div class="container">
-        <div class="well well-sm">
-          Copyright &#169; 2014 - <a href="http://tegeo.teiep.gr/en/">teiep.gr</a>
-        </div>
-  </div>
+</div>
+    <div class="footer navbar-fixed-bottom">
+      <div class="container">
+        <br>
+        <p class="text-success">          Copyright &#169; 2014 - <a href="http://tegeo.teiep.gr/en/">teiep.gr</a></p>
+      </div>
+    </div>
+
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
