@@ -26,87 +26,26 @@
 		<div class="col-md-7">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h4>Fields &  Crops Info Panel</h4>
-					<a class="btn btn-success 	btn-xs" href="{% url 'aira.views.update_fields' %}"> Update Fields</a></button><br>
-				</div>
-				<div class="panel-body">
-					<div class="table-responsive">
-						<table class="table">
-							<thead>
-								<tr>
-									<td></th>
-									<td><i class="glyphicon glyphicon-picture"></i> Field Name</td>
-									<td><i class="glyphicon glyphicon-leaf"></i> Field's Crops</td>
-									<td><i class="glyphicon glyphicon-tint"></i>Field's Irrigation Log</td>
-									<td> Water Balance Model</td>
-								</tr>
-							</thead>
-							<tbody>
-						{% for agrifield in farmer_agrifields %}
-								<tr>
-									<td></td>
-									<td> <a href="{% url 'aira.views.update_fields'%}">{{ agrifield}} </a> </td>
-						 			<td>
-							 			{% for crop in agrifield.crop_set.all  %}
-							 				<a href="{% url 'aira.views.update_crop' agrifield.id %}"> {{ crop }} | {{ crop.area }} km<sup>2</sup>  </a> 
-											<br>
-										{% endfor %}
-						 			</td>
-								    <td>
-			
-								    </td>
-								    <td> Next Irrigation</td>
-								</tr>
-						{% endfor%}
-							</tbody>
-						</table>
-					</div>
+					<h4>Fields & Crops</h4>	
 				</div>
 			</div>
-		</div>
-		<div class="container">
-		<div class="row">
-			<div class="col-md-2">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<td><i class="glyphicon glyphicon-picture"></i> Field Name</td>
+					{% for agrifield in farmer_agrifields  %}
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<i class="glyphicon glyphicon-picture"></i><a href="{% url 'aira.views.update_fields'%}"> {{ agrifield}} </a> 
+						</div>
+						<div class="panel-body">
+					{% for crop in agrifield.crop_set.all  %}
+							<i class="glyphicon glyphicon-leaf"></i><a href="{% url 'aira.views.update_crop' agrifield.id %}">  {{ crop }}  ({{ crop.area }} m<sup>2</sup> )</a> 				
+						    <i class="glyphicon glyphicon-eye-open"></i><a href="{% url 'aira.views.update_irrigationlog' crop.id %}"> Irrigation Log</a> 
+							<i class="glyphicon glyphicon-tint"></i> Next Irrigation
+							<br>
+					{% endfor %}
+							</div>
 					</div>
-					<div class="panel-body">
-						Here
-					</div>
+					{% endfor %} 				
 				</div>
 			</div>
-			<div class="col-md-2">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-					    <td><i class="glyphicon glyphicon-leaf"></i> Crops</td>
-					</div>
-					<div class="panel-body">
-						Here
-					</div>
-				</div>
-			</div>
-			<div class="col-md-2">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<td><i class="glyphicon glyphicon-tint"></i>Time Logs</td>
-					</div>
-					<div class="panel-body">
-						Here
-					</div>
-				</div>
-			</div>
-			<div class="col-md-2">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						Here
-					</div>
-					<div class="panel-body">
-						Here
-					</div>
-				</div>
-			</div>
-		</div>
 		</div>
 	</div>
 </div>

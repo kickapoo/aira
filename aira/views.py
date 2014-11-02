@@ -3,8 +3,9 @@ import folium
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
-from .models import Profile, Agrifield, Crop
-from .forms import ProfileForm, AgriFieldFormset, CropFormset
+from .models import Profile, Agrifield, Crop, IrrigationLog
+from .forms import ProfileForm, AgriFieldFormset, CropFormset,\
+    IrrigationLogFormset
 
 map_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -107,3 +108,23 @@ def update_crop(request, field_id):
     content_dict = {'formset': crop_form, 'field_id': field_id}
     return render_to_response('aira/update_crop.html',
                               content_dict, content)
+
+
+@login_required()
+def update_irrigationlog(request, crop_id):
+    content = RequestContext(request)
+    if request.method == "POST":
+        formset = IrrigationLogFormset(request.POST or None,
+                                instance=get_object_or_404(Crop, pk=crop_id))
+        if formset.is_valid():
+            for form in formset.forms:
+                form.save(commit=False)
+            return redirect('update_irrigationlog',
+                            crop_id=crop_id)
+    else:
+        qs = IrrigationLog.objects.filter(agrifield_crop=crop_id)
+        formset = IrrigationLogFormset(instance=get_object_or_404(Crop, pk=crop_id), queryset=qs)
+    contect_dict = {'formset': formset,
+                    'crop_id': crop_id}
+    return render_to_response('aira/update_irrigationlog.html',
+                              contect_dict, content)

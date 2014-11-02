@@ -31,8 +31,8 @@
   {% if user.is_authenticated %}
             <div class="navbar-collapse collapse">   
             <ul class="nav navbar-nav navbar-right"> 
-                <li><a href="{% url 'aira.views.edit_profile' %}"> <span class="glyphicon glyphicon-user"></span> <span> {{ user.get_username }}</span> </a></li>
                 <li><a href="{% url 'aira.views.home' %}"  rel="nofollow"><i class="glyphicon glyphicon-home"></i> Home</a></li>
+                <li><a href="{% url 'aira.views.edit_profile' %}"> <span class="glyphicon glyphicon-user"></span> <span> {{ user.get_username }}</span> </a></li>
                <li><a href="{% url 'django.contrib.auth.views.logout' %}"> <i class="glyphicon glyphicon-log-out"></i> Log out</a></li>
             </ul>
           </div>

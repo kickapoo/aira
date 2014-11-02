@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %} Irrigation Log {% endblock %}
+
+{% block content %}
+<div class="container">
+	<h4> Irrigation Log</h4>
+	<sup><a class="btn btn-default btn-xs" href="{% url 'aira.views.home' %}"> Back to Home</a></sup>
+<hr>
+	<div>
+		<form action="{% url 'aira.views.update_irrigationlog' crop_id %}"
+			  method  = "POST"
+			  role = "form"
+			  class="form-inline">
+			{% csrf_token %}
+			{{ formset.management_form }}
+			{% for form in formset %}	
+				{{ form }} <br>
+			{% endfor %}
+			<button type="submit" class="btn btn-success btn-xs">Update</button>
+		</form>
+	</div>
+	<hr>
+</div>
+{% endblock %}
