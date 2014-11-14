@@ -1,0 +1,19 @@
+GDAL==1.9.0
+SOAPpy==0.12.0
+argparse==1.2.1
+chardet==2.0.1
+## FIXME: could not find svn URL in dependency_links for this package:
+distribute==0.6.24dev-r0
+fpconst==0.7.2
+numpy==1.6.2
+pbr==0.10.0
+python-apt==0.8.8.2
+python-debian==0.1.21
+python-debianbts==1.11
+reportbug==6.4.4
+six==1.8.0
+stevedore==1.1.0
+virtualenv==1.7.1.2
+virtualenv-clone==0.2.5
+virtualenvwrapper==4.3.1
+wsgiref==0.1.2

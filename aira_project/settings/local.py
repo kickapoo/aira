@@ -1,8 +1,9 @@
-import os
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+from .base import *
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+SECRET_KEY = "Dont_use_local.py_in_production"
 
 DATABASES = {
     'default': {
