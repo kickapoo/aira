@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
 from aira.views import edit_profile, home, index, user_map, \
-    update_fields, update_crop, update_irrigationlog
+    update_fields, update_crop, update_irrigationlog, next_irrigation
 
 urlpatterns = patterns(
     '',
@@ -31,4 +31,6 @@ urlpatterns = patterns(
         name="update_crop"),
     url(r'^update_irrigationlog/(?P<crop_id>\d+)$', update_irrigationlog,
         name="update_irrigationlog"),
+    url(r'^update_irrigationlog/(?P<field_id>\d+)/(?P<crop_id>\d+)$',
+        next_irrigation, name="next_irrigation"),
 )
