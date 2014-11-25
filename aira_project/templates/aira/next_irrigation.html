@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %} Home - {{user}} {% endblock %}
+
+{% block content %}
+
+<div class="container">
+	<div class="row">
+			{{f.name}} <br>
+			{{f.lat}} , {{ f.lon }} <br>
+				
+			{{c.crop_type}} <br>
+			Next: 
+			{{ next_irr }} <br>
+	</div>
+</div>
+{% endblock %}

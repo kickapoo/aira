@@ -36,10 +36,10 @@
 						</div>
 						<div class="panel-body">
 					{% for crop in agrifield.crop_set.all  %}
-							<i class="glyphicon glyphicon-leaf"></i><a href="{% url 'aira.views.update_crop' agrifield.id %}">  {{ crop }}  ({{ crop.area }} m<sup>2</sup> )</a> 				
+							<i class="glyphicon glyphicon-leaf"></i><a href="{% url 'aira.views.update_crop' agrifield.id %}">  {{ crop }}  ({{ crop.area }} m<sup>2</sup> )</a> <br>				
 						    <i class="glyphicon glyphicon-eye-open"></i><a href="{% url 'aira.views.update_irrigationlog' crop.id %}"> Irrigation Log</a> 
-							<i class="glyphicon glyphicon-tint"></i> Next Irrigation
-							<br>
+							<i class="glyphicon glyphicon-tint"></i> <a href="{% url 'aira.views.next_irrigation' agrifield.id crop.id %}"> Calculate Next Irrigation</a>  
+							<hr>
 					{% endfor %}
 							</div>
 					</div>

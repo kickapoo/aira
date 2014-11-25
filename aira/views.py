@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Profile, Agrifield, Crop, IrrigationLog
 from .forms import ProfileForm, AgriFieldFormset, CropFormset,\
     IrrigationLogFormset
+from .irma_model import run_swb_model
 
 map_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -53,6 +54,27 @@ def home(request):
                     'farmer_agrifields': farmer_agrifields,
                     'count_agrifields': count_agrifields}
     return render_to_response('aira/home.html', content_dict, content)
+
+
+@login_required()
+def next_irrigation(request, field_id, crop_id):
+    content = RequestContext(request)
+    f = Agrifield.objects.get(pk=field_id)
+    c = Crop.objects.get(pk=crop_id)
+    next_irr = run_swb_model(f.lat, f.lon,
+                             fc=0.5,
+                             wp=1,
+                             rd=c.crop_type.root_depth,
+                             kc=float(c.crop_type.crop_coefficient),
+                             p=1,
+                             irrigation_efficiency=float(c.irrigation_type.efficiency),
+                             rd_factor=1)
+
+    content_dict = {'f': f,
+                    'c': c,
+                    'next_irr': next_irr}
+    return render_to_response('aira/next_irrigation.html',
+                              content_dict, content)
 
 
 @login_required()
@@ -115,10 +137,11 @@ def update_irrigationlog(request, crop_id):
     content = RequestContext(request)
     if request.method == "POST":
         formset = IrrigationLogFormset(request.POST or None,
-                                instance=get_object_or_404(Crop, pk=crop_id))
+                                       instance=get_object_or_404(Crop,
+                                                                  pk=crop_id))
         if formset.is_valid():
             for form in formset.forms:
-                form.save(commit=False)
+                form.save()
             return redirect('update_irrigationlog',
                             crop_id=crop_id)
     else:
