@@ -1,14 +1,6 @@
-import os
-import glob
 from osgeo import ogr, osr
 from pthelma.spatial import extract_point_timeseries_from_rasters
 from pthelma.swb import SoilWaterBalance
-
-# Meteorological Raster files
-raster_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                   "../../meteo_data"))
-precip_files = glob.glob(raster_file_path + '/daily_rain*.tif')
-evap_files = glob.glob(raster_file_path + '/daily_evaporation*.tif')
 
 
 def raster2pointTS(lat, log, files):
@@ -19,25 +11,19 @@ def raster2pointTS(lat, log, files):
     point.AddPoint(lat, log)
     return extract_point_timeseries_from_rasters(files, point)
 
-# Find last irrigation log is start day in our model
-# Initial Soil conditions
+
+def swb_finish_date(precipitation, evapotranspiration):
+    plast = precipitation.bounding_dates()[1]
+    elast = evapotranspiration.bounding_dates()[1]
+    return min(plast, elast)
 
 
-def run_swb_model(lat, log, start_date, fc=0.5, wp=1, rd=0.5, kc=0.75, p=1,
-                  irrigation_efficiency=1.2, rd_factor=1,
-                  initial_soil_moisture=1):
-    precipitation = raster2pointTS(lat, log, precip_files)
-    evapotranspiration = raster2pointTS(lat, log, precip_files)
-    # No logic to check dates ...
-    dates = precipitation.bounding_dates()
-    finish_date = dates[1]
+def run_swb_model(precipitation, evapotranspiration,
+                  fc, wp, rd, kc, p, irrigation_efficiency, rd_factor,
+                  start_date, initial_soil_moisture, finish_date):
     swb_model = SoilWaterBalance(fc, wp, rd, kc, p,
                                  precipitation, evapotranspiration,
-                                 irrigation_efficiency,
-                                 rd_factor=1)
-    initial_soil_moisture = fc
-    iwa = swb_model.irrigation_water_amount(start_date,
-                                            initial_soil_moisture,
-                                            finish_date
-                                            )
+                                 irrigation_efficiency, rd_factor)
+    iwa = swb_model.irrigation_water_amount(start_date, initial_soil_moisture,
+                                            finish_date)
     return iwa

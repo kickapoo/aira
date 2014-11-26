@@ -1,3 +1,4 @@
+import os
 from unipath import Path
 import dj_database_url
 
@@ -51,7 +52,7 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Europe/Athens'
 USE_I18N = True
 USE_L10N = True
-USE_TZ = True
+USE_TZ = False
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (BASE_DIR.child("static"),)
@@ -59,3 +60,6 @@ TEMPLATE_DIRS = (BASE_DIR.child("templates"),)
 
 ACCOUNT_ACTIVATION_DAYS = 3
 LOGIN_REDIRECT = "/home"
+
+AIRA_DATA_FILE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                     "../../../meteo_data"))

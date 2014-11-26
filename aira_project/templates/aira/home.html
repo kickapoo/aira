@@ -27,12 +27,15 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h4>Fields & Crops</h4>	
+					<a class="btn btn-default btn-xs" href="{% url 'aira.views.update_fields'%}"> Add Field </a>
 				</div>
 			</div>
 					{% for agrifield in farmer_agrifields  %}
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<i class="glyphicon glyphicon-picture"></i><a href="{% url 'aira.views.update_fields'%}"> {{ agrifield}} </a> 
+							<i class="glyphicon glyphicon-picture"></i><a href="{% url 'aira.views.update_fields'%}"> {{ agrifield}} </a> <br><br>
+							<a class="btn btn-default btn-xs" href="{% url 'aira.views.update_crop' agrifield.id %}"> Add Crop </a>
+
 						</div>
 						<div class="panel-body">
 					{% for crop in agrifield.crop_set.all  %}

@@ -19,7 +19,7 @@ class Profile(models.Model):
 class CropType(models.Model):
     name = models.CharField(max_length=100)
     crop_coefficient = models.DecimalField(max_digits=6, decimal_places=2)
-    root_depth = models.IntegerField(blank=True, null=True)
+    root_depth = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 
     class Meta:
         ordering = ('-name',)
@@ -74,8 +74,8 @@ class Crop(models.Model):
 
 class IrrigationLog(models.Model):
     agrifield_crop = models.ForeignKey(Crop)
-    time = models.DateTimeField(blank=True, null=True)
-    water_amount = models.IntegerField(blank=True, null=True)
+    time = models.DateTimeField()
+    water_amount = models.IntegerField()
 
     class Meta:
         get_latest_by = 'time'

@@ -1,12 +1,18 @@
 import os
+import glob
+
 import folium
+from django.conf import settings
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
+
 from .models import Profile, Agrifield, Crop, IrrigationLog
 from .forms import ProfileForm, AgriFieldFormset, CropFormset,\
     IrrigationLogFormset
-from .irma_model import run_swb_model
+
+from .irma_model import raster2pointTS, swb_finish_date, \
+    run_swb_model
 
 map_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -59,25 +65,41 @@ def home(request):
 @login_required()
 def next_irrigation(request, field_id, crop_id):
     content = RequestContext(request)
+    precip_files = glob.glob(os.path.join(settings.AIRA_DATA_FILE_DIR,
+                             'daily_rain*.tif'))
+    evap_files = glob.glob(os.path.join(settings.AIRA_DATA_FILE_DIR,
+                           'daily_evaporation*.tif'))
     f = Agrifield.objects.get(pk=field_id)
     c = Crop.objects.get(pk=crop_id)
-    # According to Aptiko initial_soil_moisture
-    # is equal to fc
+    # Location Parameters
+    lat = f.lat
+    lon = f.lon
+    # Meteo Parameters
+    precip = raster2pointTS(lat, lon, precip_files)
+    evap = raster2pointTS(lat, lon, evap_files)
+    print precip
+    print evap
     # fc later will be provided from a raster map
-    # wp : wilting point
-    next_irr = run_swb_model(f.lat, f.lon,
-                             fc=0.5,
-                             wp=1,
-                             rd=c.crop_type.root_depth,
-                             kc=float(c.crop_type.crop_coefficient),
-                             p=1,
-                             irrigation_efficiency=float(c.irrigation_type.efficiency),
-                             initial_soil_moisture=0.5,
-                             rd_factor=1)
-
+    # wp later will be provided from a raster map
+    fc = 0.5
+    wp = 1
+    # Parameters provided from aira.models
+    rd = float(c.crop_type.root_depth)
+    kc = float(c.crop_type.crop_coefficient)
+    irrigation_efficiency = float(c.irrigation_type.efficiency)
+    initial_soil_moisture = fc
+    p = 1
+    rd_factor = 1
+    next_irr = "No irrigation log to calculate model"
+    if c.irrigationlog_set.exists():
+        start_date = c.irrigationlog_set.latest().time.replace(tzinfo=None)
+        finish_date = swb_finish_date(precip, evap)
+        next_irr = run_swb_model(precip, evap, fc, wp, rd, kc, p,
+                                 irrigation_efficiency, rd_factor,
+                                 start_date, initial_soil_moisture, finish_date)
     content_dict = {'f': f,
                     'c': c,
-                    'next_irr': next_irr}
+                    'next_irr': round(next_irr, 2)}
     return render_to_response('aira/next_irrigation.html',
                               content_dict, content)
 
@@ -146,7 +168,9 @@ def update_irrigationlog(request, crop_id):
                                                                   pk=crop_id))
         if formset.is_valid():
             for form in formset.forms:
-                form.save()
+                for field in form:
+                    print field
+                    form.save()
             return redirect('update_irrigationlog',
                             crop_id=crop_id)
     else:
