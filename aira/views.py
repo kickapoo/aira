@@ -61,26 +61,18 @@ def next_irrigation(request, field_id, crop_id):
     content = RequestContext(request)
     f = Agrifield.objects.get(pk=field_id)
     c = Crop.objects.get(pk=crop_id)
-<<<<<<< HEAD
     # According to Aptiko initial_soil_moisture
     # is equal to fc
     # fc later will be provided from a raster map
     # wp : wilting point
     next_irr = run_swb_model(f.lat, f.lon,
-                             fc=0.5, wp=1,
-=======
-    next_irr = run_swb_model(f.lat, f.lon,
                              fc=0.5,
                              wp=1,
->>>>>>> 62b6cd02ff33a4de45c5ed5110afd11bd9b679ee
                              rd=c.crop_type.root_depth,
                              kc=float(c.crop_type.crop_coefficient),
                              p=1,
                              irrigation_efficiency=float(c.irrigation_type.efficiency),
-<<<<<<< HEAD
                              initial_soil_moisture=0.5,
-=======
->>>>>>> 62b6cd02ff33a4de45c5ed5110afd11bd9b679ee
                              rd_factor=1)
 
     content_dict = {'f': f,
