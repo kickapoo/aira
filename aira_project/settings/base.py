@@ -1,8 +1,10 @@
 import os
-from unipath import Path
 import dj_database_url
 
-BASE_DIR = Path(__file__).ancestor(2)
+
+SETTINGS_DIR = os.path.dirname(__file__)
+PROJECT_PATH = os.path.join(SETTINGS_DIR, os.pardir)
+PROJECT_ROOT = os.path.abspath(PROJECT_PATH)
 SECRET_KEY = os.urandom(24)
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -52,12 +54,16 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Europe/Athens'
 USE_I18N = True
 USE_L10N = True
-USE_TZ = False
+USE_TZ = False  # Changed then implementation of the model was needed
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (BASE_DIR.child("static"),)
-TEMPLATE_DIRS = (BASE_DIR.child("templates"),)
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT, 'static'),
+)
 
+TEMPLATE_DIRS = (
+    os.path.join(PROJECT_ROOT, 'templates'),
+)
 ACCOUNT_ACTIVATION_DAYS = 3
 LOGIN_REDIRECT = "/home"
 
