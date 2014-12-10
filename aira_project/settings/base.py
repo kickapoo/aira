@@ -3,7 +3,7 @@ from unipath import Path
 import dj_database_url
 
 BASE_DIR = Path(__file__).ancestor(2)
-SECRET_KEY = "SOME_SECRET_KEY_IN_PRODUCTION"
+SECRET_KEY = os.urandom(24)
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
