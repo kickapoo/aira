@@ -1,7 +1,6 @@
 import os
 import glob
 
-import folium
 from django.conf import settings
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
@@ -13,9 +12,6 @@ from .forms import ProfileForm, AgriFieldFormset, CropFormset,\
 
 from .irma_model import raster2pointTS, swb_finish_date, \
     run_swb_model
-
-map_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-
 
 def index(request):
     content = RequestContext(request)
@@ -32,8 +28,6 @@ def user_map(request):
 @login_required()
 def home(request):
     content = RequestContext(request)
-    map_osm = folium.Map(location=[38, 23],
-                         zoom_start=7)
     farmer = Profile()
     if Profile.objects.filter(farmer=request.user).exists():
         farmer = Profile.objects.get(farmer=request.user)
@@ -43,19 +37,6 @@ def home(request):
         farmer_agrifields = Agrifield.objects.filter(owner=request.user)
         # Change count to a django query .count()
         count_agrifields = len(farmer_agrifields)
-        # Map farmer fields
-        lats = [agrifield.lat for agrifield in farmer_agrifields]
-        lons = [agrifield.lon for agrifield in farmer_agrifields]
-        agrifield_coords = zip(lons, lats)
-        for coord in agrifield_coords:
-            map_osm.circle_marker(list(coord),
-                                  popup='{}-{}'.format('Owner',
-                                                       str(request.user)),
-                                  radius=1000,
-                                  line_color='#FF0000', fill_color='#FF0000')
-
-    map_osm.create_map(path=os.path.join(map_path,
-                       'aira_project/templates/map/user_map.html'))
     content_dict = {'farmer': farmer,
                     'farmer_agrifields': farmer_agrifields,
                     'count_agrifields': count_agrifields}
