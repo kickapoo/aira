@@ -4,52 +4,36 @@
 {% block content %}
 
 <div class="container">
-	<div class="row">
-		<div class="col-md-5">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4>Your AIRA map</h4>
-				</div>
-				<div class="panel-body">
-					<div class="video-container">
-						<iframe src="#"></iframe>
-					</div>
-					<sup> <span class="text-success">Green Points:</span> Your Fields Locations
-				</div>
-				<div class="panel-footer">
-						<strong>First name:</strong> {{ farmer.first_name }} <br>
-						<strong>Last name :</strong> {{ farmer.last_name }} <br>
-						<strong>Address:</strong> {{ farmer.address }}<br>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-7">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4>Fields & Crops</h4>	
-					<a class="btn btn-default btn-xs" href="#"> Add Field </a>
-				</div>
-			</div>
-					{% for agrifield in farmer_agrifields  %}
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<i class="glyphicon glyphicon-picture"></i><a href="{% url 'aira.views.update_fields'%}"> {{ agrifield}} </a> <br><br>
-							<a class="btn btn-default btn-xs" href="{% url 'aira.views.update_crop' agrifield.id %}"> Add Crop </a>
-
-						</div>
-						<div class="panel-body">
-					{% for crop in agrifield.crop_set.all  %}
-							<i class="glyphicon glyphicon-leaf"></i><a href="{% url 'aira.views.update_crop' agrifield.id %}">  {{ crop }}  ({{ crop.area }} m<sup>2</sup> )</a> <br>				
-						    <i class="glyphicon glyphicon-eye-open"></i><a href="{% url 'aira.views.update_irrigationlog' crop.id %}"> Irrigation Log</a> 
-							<i class="glyphicon glyphicon-tint"></i> <a href="{% url 'aira.views.next_irrigation' agrifield.id crop.id %}"> Calculate Next Irrigation</a>  
-							<hr>
-					{% endfor %}
-							</div>
-					</div>
-					{% endfor %} 				
-				</div>
-			</div>
-		</div>
+	<div class="well">
+		Welcome <b>{{ user }} </b> to Aira - Home Page <br>
+		Here you can Create/Update your aira profile <br>
+		and Create/Update  your Fields/Crops/IrrigationLog
 	</div>
+	
+	<div>Map</div>
+	<br>
+	<div>
+		<b>Profile:</b> <br>
+		<p>{% if profile %}
+			<a href="{% url 'update_profile' profile.id %}">Update</a> <br>
+			{{ profile.last_name }} {{ profile.first_name }}, <br>
+			{{ profile.address }} 
+		{% else %}
+			Please  
+			<a href="{% url 'create_profile' %}"> Add </a>
+			your personal information.
+		{% endif %}
+		</p>
+	</div>
+	<br>
+	<div>Fields</div>
+	<br>
+	<div>Crops</div>
+	<br>
+	<div>Irrigation Log</div>
+	<br>
+	<div>Next Irrigation Amount based on your Crop & our data</div>
+	<br>
+	<div>Next estimated Irrigation date on based your Crop & our data & NOA forecast </div>
 </div>
 {% endblock %}

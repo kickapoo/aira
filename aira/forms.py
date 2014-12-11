@@ -2,7 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
 
-from .models import Agrifield, Crop, Profile, IrrigationLog
+from .models import (Agrifield, Crop,
+                     Profile, IrrigationLog)
 
 
 class ProfileForm(forms.ModelForm):
