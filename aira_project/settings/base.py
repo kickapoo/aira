@@ -2,9 +2,10 @@ import os
 import dj_database_url
 
 
-SETTINGS_DIR = os.path.dirname(__file__)
-PROJECT_PATH = os.path.join(SETTINGS_DIR, os.pardir)
+BASE_DIR = os.path.dirname(__file__)
+PROJECT_PATH = os.path.join(BASE_DIR, os.pardir)
 PROJECT_ROOT = os.path.abspath(PROJECT_PATH)
+
 SECRET_KEY = os.urandom(24)
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -54,7 +55,7 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Europe/Athens'
 USE_I18N = True
 USE_L10N = True
-USE_TZ = False  # Changed then implementation of the model was needed
+USE_TZ = False  # Changed during soilbalancemodel
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
@@ -63,7 +64,9 @@ STATICFILES_DIRS = (
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates'),
+    os.path.join(PROJECT_ROOT, '../aira/templates/aira'),
 )
+
 ACCOUNT_ACTIVATION_DAYS = 3
 LOGIN_REDIRECT = "/home"
 

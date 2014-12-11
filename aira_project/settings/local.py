@@ -9,7 +9,7 @@ SECRET_KEY = os.urandom(24)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-	'NAME': 'aira.db',
+        'NAME': os.path.join(BASE_DIR, 'aira.db'),
         'USER': 'aira',
         'PASSWORD': '',
         'HOST': '',  # Set to empty string for localhost.

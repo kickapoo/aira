@@ -22,6 +22,7 @@ urlpatterns = patterns(
         name='password_reset_complete'),
     url(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$',
         auth_views.password_reset_confirm, name='password_reset_confirm'),
+    url(r'', include('aira.urls')),
     # url(r'^$', index, name="welcome"),
     # url(r'^home/$', home, name="home"),
     # url(r'^user_map/', user_map, name="user_map"),
