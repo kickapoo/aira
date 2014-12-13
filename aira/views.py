@@ -1,8 +1,8 @@
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from .models import Profile
+from .models import Profile, Agrifield, Crop, IrrigationLog
 from .forms import ProfileForm
 
 
@@ -21,6 +21,20 @@ class HomePageView(TemplateView):
         context = super(HomePageView, self).get_context_data(**kwargs)
         if Profile.objects.filter(farmer=self.request.user).exists():
             context['profile'] = Profile.objects.get(farmer=self.request.user)
+
+        context['data'] = []
+        if Agrifield.objects.filter(owner=self.request.user).exists():
+            fields = Agrifield.objects.filter(owner=self.request.user).all()
+            for f in fields:
+                if Crop.objects.filter(agrifield=f.id).exists():
+                    crops = Crop.objects.filter(agrifield=f.id).all()
+                    for c in crops:
+                        llog = None
+                        lwater = None
+                        if IrrigationLog.objects.filter(agrifield_crop=c.id).exists():
+                            llog = IrrigationLog.objects.filter(agrifield_crop=c.id).latest()
+                            lwater = llog.water_amount
+                        context['data'].append((f.id, f.name, c.id, c.crop_type, llog, lwater))
         return context
 
 
@@ -33,3 +47,54 @@ class UpdateProfile(UpdateView):
     model = Profile
     form_class = ProfileForm
     success_url = "/home"
+
+
+class CreateAgrifield(CreateView):
+    model = Agrifield
+    success_url = "/home"
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateAgrifield, self).get_context_data(**kwargs)
+        if Agrifield.objects.filter(owner=self.request.user).exists():
+            context['agrifields'] = Agrifield.objects.filter(owner=self.request.user).all()
+        return context
+
+
+class UpdateAgrifield(UpdateView):
+    model = Agrifield
+    success_url = '/home'
+
+
+class AgrifieldDelete(DeleteView):
+    model = Agrifield
+    success_url = '/home'
+
+
+class CreateCrop(CreateView):
+    model = Crop
+    success_url = "/home"
+
+
+class UpdateCrop(UpdateView):
+    model = Crop
+    success_url = "/home"
+
+
+class DeleteCrop(DeleteView):
+    model = Crop
+    success_url = "/home"
+
+
+class CreateLog(CreateView):
+    model = IrrigationLog
+    success_url = '/home'
+
+
+class UpdateLog(UpdateView):
+    model = IrrigationLog
+    success_url = '/home'
+
+
+class DeleteLog(DeleteView):
+    model = IrrigationLog
+    success_url = '/home'

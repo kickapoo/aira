@@ -2,38 +2,92 @@
 {% block title %} Home - {{user}} {% endblock %}
 
 {% block content %}
-
-<div class="container">
-	<div class="well">
-		Welcome <b>{{ user }} </b> to Aira - Home Page <br>
-		Here you can Create/Update your aira profile <br>
-		and Create/Update  your Fields/Crops/IrrigationLog
-	</div>
-	
-	<div>Map</div>
-	<br>
-	<div>
-		<b>Profile:</b> <br>
-		<p>{% if profile %}
-			<a href="{% url 'update_profile' profile.id %}">Update</a> <br>
-			{{ profile.last_name }} {{ profile.first_name }}, <br>
-			{{ profile.address }} 
+<div class="alert alert-warning">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <strong>Warning!</strong> You need to add at least one Agrifield and one CropType <br>
+	<a href="#">Add Field</a> , 
+	<a href="#">Add Crop</a>
+</div>
+<div>
+	<b>Profile:</b> <br>
+	<p>{% if profile %}
+				<a href="{% url 'update_profile' profile.id %}">Update</a> <br>
+				{{ profile.last_name }} {{ profile.first_name }}, <br>
+				{{ profile.address }} 
 		{% else %}
-			Please  
-			<a href="{% url 'create_profile' %}"> Add </a>
-			your personal information.
+				<div class="alert alert-warning">
+    				<a href="#" class="close" data-dismiss="alert">&times;</a>
+   				Please  <a href="{% url 'create_profile' %}"> Add </a>
+				your personal information.
+				</div>
+				
 		{% endif %}
-		</p>
+			</p>
+</div>
+<hr>
+		<a href="{% url 'add_agrifield' %}">Add Field</a>,
+		<a href="{% url 'add_crop' %}"> Add Crop </a>,
+		<a href="{% url 'add_log' %}">Add Irrigation</a>,
+		<hr>
+	<div>
+		<div class="table-responsive">
+	  			<table class="table">
+				<thead>
+			        <tr>
+			        	<th colspan="1"> Agri-field</th>
+			            <th colspan="1"> CropType</th>
+			            <th colspan="2"> Last Irrigation</th>
+			            <th colspan="2"> Next Irrigation Advice</th>
+			        </tr>
+			        <tr>
+						<th colspan="1" scope='colgroup'></th>
+						<th colspan="1" scope='colgroup'></th>	
+			            <th scope='col'>DateTime</th>
+			            <th scope='col'>Water Amount (m<sup>2</sup>)</th>
+			           	<th scope='col'>DateTime</th>
+			            <th scope='col'>Water Amount (m<sup>2</sup>)</th>
+			            <th></th>
+			        </tr>
+	    		</thead>			
+	    		{% for fid, fname, cid, ctname, llog, lwater in data %}
+			    <tbody>
+			        <tr>
+			            <td>
+			            	<a href="{% url 'update_agrifield' fid %}">{{ fname }}</a>
+			            </td>
+			            <td>
+			            	<a href="{% url 'update_crop' cid %}"> {{ ctname }} </a>
+			            </td>
+			            <td>
+			          		{{ llog }}
+			            </td>
+			            <td> {{ lwater }} </td>
+			            <td> ### </td>
+			            <td> ### </td>
+			            <td>[<a href="{% url 'delete_crop' cid %}"> Delete </a>]
+			            </td>
+			        </tr>
+			    </tbody>
+			    {% empty %}
+			    	<tbody>
+			        <tr>
+			            <td>
+			            	Add Field
+			            </td>
+			            <td>
+			            	Add Crop <br>
+			            </td>
+			            <td>
+			            	Add Log<br>
+			            </td>
+			            <td> - </td>
+			            <td> - </td>
+			            <td> - </td>
+			        </tr>
+			    </tbody>
+			    {% endfor %}
+
+
 	</div>
-	<br>
-	<div>Fields</div>
-	<br>
-	<div>Crops</div>
-	<br>
-	<div>Irrigation Log</div>
-	<br>
-	<div>Next Irrigation Amount based on your Crop & our data</div>
-	<br>
-	<div>Next estimated Irrigation date on based your Crop & our data & NOA forecast </div>
 </div>
 {% endblock %}
