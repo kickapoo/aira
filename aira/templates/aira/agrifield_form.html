@@ -14,20 +14,6 @@
 		</form>
 	</div>
 	<hr>
-	<div>
-		<p>
-		{% for agrifield in agrifields %}
-			{{ agrifield.id }},
-			{{ agrifield.name }},
-			<a href="{% url 'update_agrifield' agrifield.id %}">Update</a>,
-			<a href="{% url 'delete_agrifield' agrifield.id %}">Delete</a>
-			<br>
-		{% empty %}
-			You dont have a Agrifield
-		{% endfor%}
-		</p>
-	</div>
-	<hr>
 </div>
 
 {% endblock %}

@@ -1,9 +1,11 @@
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic import CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from .models import Profile, Agrifield, Crop, IrrigationLog
-from .forms import ProfileForm
+from .models import (Profile, Agrifield, Crop,
+                     IrrigationLog)
+from .forms import (ProfileForm, AgrifieldForm,
+                    CropForm)
 
 
 class IndexPageView(TemplateView):
@@ -24,8 +26,8 @@ class HomePageView(TemplateView):
 
         context['data'] = []
         if Agrifield.objects.filter(owner=self.request.user).exists():
-            fields = Agrifield.objects.filter(owner=self.request.user).all()
-            for f in fields:
+            agrifields = Agrifield.objects.filter(owner=self.request.user).all()
+            for f in agrifields:
                 if Crop.objects.filter(agrifield=f.id).exists():
                     crops = Crop.objects.filter(agrifield=f.id).all()
                     for c in crops:
@@ -51,33 +53,44 @@ class UpdateProfile(UpdateView):
 
 class CreateAgrifield(CreateView):
     model = Agrifield
+    form_class = AgrifieldForm
     success_url = "/home"
 
-    def get_context_data(self, **kwargs):
-        context = super(CreateAgrifield, self).get_context_data(**kwargs)
-        if Agrifield.objects.filter(owner=self.request.user).exists():
-            context['agrifields'] = Agrifield.objects.filter(owner=self.request.user).all()
-        return context
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(CreateAgrifield, self).dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super(CreateAgrifield, self).form_valid(form)
 
 
 class UpdateAgrifield(UpdateView):
     model = Agrifield
+    form_class = AgrifieldForm
     success_url = '/home'
 
 
 class AgrifieldDelete(DeleteView):
     model = Agrifield
+    form_class = AgrifieldForm
     success_url = '/home'
 
 
 class CreateCrop(CreateView):
     model = Crop
+    # form_class = CropForm
     success_url = "/home"
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(CreateCrop, self).dispatch(*args, **kwargs)
 
 
 class UpdateCrop(UpdateView):
     model = Crop
     success_url = "/home"
+    form_class = CropForm
 
 
 class DeleteCrop(DeleteView):

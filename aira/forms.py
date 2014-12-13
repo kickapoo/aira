@@ -21,7 +21,7 @@ class AgrifieldForm(forms.ModelForm):
 class CropForm(forms.ModelForm):
     class Meta:
         model = Crop
-        exclude = ('field',)
+        exclude = ('agrifield',)
 
 
 class IrrigationlogForm(forms.ModelForm):

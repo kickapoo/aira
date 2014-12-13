@@ -4,7 +4,7 @@
 {% block content %}
 <div class="alert alert-warning">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <strong>Warning!</strong> You need to add at least one Agrifield and one CropType <br>
+    <strong>Warning!</strong> You need to add at least one Agrifield with one Crop <br>
 	<a href="#">Add Field</a> , 
 	<a href="#">Add Crop</a>
 </div>
@@ -26,8 +26,8 @@
 </div>
 <hr>
 		<a href="{% url 'add_agrifield' %}">Add Field</a>,
-		<a href="{% url 'add_crop' %}"> Add Crop </a>,
 		<a href="{% url 'add_log' %}">Add Irrigation</a>,
+		<a href="{% url 'add_crop' %}"> Add Crop </a>
 		<hr>
 	<div>
 		<div class="table-responsive">
@@ -35,13 +35,14 @@
 				<thead>
 			        <tr>
 			        	<th colspan="1"> Agri-field</th>
-			            <th colspan="1"> CropType</th>
+			            <th colspan="2"> CropType</th>
 			            <th colspan="2"> Last Irrigation</th>
 			            <th colspan="2"> Next Irrigation Advice</th>
 			        </tr>
 			        <tr>
 						<th colspan="1" scope='colgroup'></th>
-						<th colspan="1" scope='colgroup'></th>	
+						<th colspan="1" scope='colgroup'></th>
+						<th colspan="1">  </th>	
 			            <th scope='col'>DateTime</th>
 			            <th scope='col'>Water Amount (m<sup>2</sup>)</th>
 			           	<th scope='col'>DateTime</th>
@@ -59,6 +60,9 @@
 			            	<a href="{% url 'update_crop' cid %}"> {{ ctname }} </a>
 			            </td>
 			            <td>
+			            	<a href="{% url 'add_crop' %}"> Add New Crop </a>
+			            </td>
+			            <td>
 			          		{{ llog }}
 			            </td>
 			            <td> {{ lwater }} </td>
@@ -71,15 +75,10 @@
 			    {% empty %}
 			    	<tbody>
 			        <tr>
-			            <td>
-			            	Add Field
-			            </td>
-			            <td>
-			            	Add Crop <br>
-			            </td>
-			            <td>
-			            	Add Log<br>
-			            </td>
+			            <td> - </td>
+			            <td> - </td>
+			            <td> - </td>
+			            <td> - </td>
 			            <td> - </td>
 			            <td> - </td>
 			            <td> - </td>
