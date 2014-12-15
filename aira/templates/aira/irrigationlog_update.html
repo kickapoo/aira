@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% block title %} Irrigation Log {% endblock %}
+
+{% block content %}
+<div class="container">
+	<h4> Irrigation Log</h4>
+	<sup><a class="btn btn-default btn-xs" href="{% url 'home' %}"> Back to Home</a></sup>
+<hr>
+	<div>
+	<form
+		method  = "POST">
+			{% csrf_token %}
+			{{ form.as_p }}
+			<br><br>
+			<button type="submit" class="btn btn-success btn-xs">Add Log</button>
+	</form>
+	</div>
+	<hr>
+{% endblock %}

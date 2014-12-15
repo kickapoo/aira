@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %} {{ user }} {% endblock %}
+
+{% block content %}
+<div class="container">
+	<h4> Add/Update Crop </h4>
+	<sup><a class="btn btn-default btn-xs" href="{% url 'home' %}"> Back to Home</a></sup>
+				
+<hr>
+	<div>
+		<form
+			  method  = "POST">
+			{% csrf_token %}
+			{{ form.as_p }}
+			<button type="submit" class="btn btn-success btn-xs">Add Crop</button>
+		</form>
+	</div>
+</div>
+<br>
+<hr>
+
+{% endblock %}

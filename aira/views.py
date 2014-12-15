@@ -86,6 +86,7 @@ class CreateAgrifield(CreateView):
 class UpdateAgrifield(UpdateView):
     model = Agrifield
     form_class = AgrifieldForm
+    template_name = "agrifield_update.html"
     success_url = '/home'
 
 
@@ -123,6 +124,7 @@ class UpdateCrop(UpdateView):
     model = Crop
     success_url = "/home"
     form_class = CropForm
+    template_name = "crop_update.html"
 
 
 class DeleteCrop(DeleteView):
@@ -157,6 +159,7 @@ class CreateLog(CreateView):
 class UpdateLog(UpdateView):
     model = IrrigationLog
     success_url = '/home'
+    template_name = "irrigationlog_update.html"
 
 
 class DeleteLog(DeleteView):

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% block title %} {{ user }} {% endblock %}
+
+{% block content %}
+<div class="container">
+	<h4> Add/Update Fields </h4>
+	<sup><a class="btn btn-default btn-xs" href="{% url 'home' %}"> Back to Home</a></sup>
+<hr>
+	<div>
+		<form method="post">{% csrf_token %}
+    		{{ form.as_p }}
+    		<input type="submit" value="Submit" />
+		</form>
+	</div>
+	<hr>
+</div>
+
+</div>
+
+
+
+{% endblock %}
