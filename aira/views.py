@@ -28,7 +28,6 @@ class HomePageView(TemplateView):
         context['data'] = []
         if Agrifield.objects.filter(owner=self.request.user).exists():
             agrifields = Agrifield.objects.filter(owner=self.request.user).all()
-            context['agrifields'] = agrifields
             for f in agrifields:
                 crops = None
                 if Crop.objects.filter(agrifield=f.id).exists():
