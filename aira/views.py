@@ -1,7 +1,8 @@
 from django.views.generic.base import TemplateView
-from django.views.generic import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+
 from .models import (Profile, Agrifield, Crop,
                      IrrigationLog)
 from .forms import (ProfileForm, AgrifieldForm,
@@ -28,6 +29,7 @@ class HomePageView(TemplateView):
         if Agrifield.objects.filter(owner=self.request.user).exists():
             agrifields = Agrifield.objects.filter(owner=self.request.user).all()
             for f in agrifields:
+                crops = None
                 if Crop.objects.filter(agrifield=f.id).exists():
                     crops = Crop.objects.filter(agrifield=f.id).all()
                     for c in crops:
@@ -42,7 +44,16 @@ class HomePageView(TemplateView):
 
 class CreateProfile(CreateView):
     model = Profile
+    form_class = ProfileForm
     success_url = "/home"
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(CreateProfile, self).dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.farmer = self.request.user
+        return super(CreateProfile, self).form_valid(form)
 
 
 class UpdateProfile(UpdateView):
@@ -79,12 +90,26 @@ class AgrifieldDelete(DeleteView):
 
 class CreateCrop(CreateView):
     model = Crop
-    # form_class = CropForm
+    form_class = CropForm
     success_url = "/home"
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(CreateCrop, self).dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.agrifield = Agrifield(pk=self.kwargs['pk'])
+        return super(CreateCrop, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateCrop, self).get_context_data(**kwargs)
+        field = Agrifield(pk=self.kwargs['pk'])
+        crops = []
+        if Crop.objects.filter(agrifield=self.kwargs['pk']).exists():
+                    crops = Crop.objects.filter(agrifield=self.kwargs['pk']).all()
+        context['crops'] = crops
+        context['field'] = field
+        return context
 
 
 class UpdateCrop(UpdateView):

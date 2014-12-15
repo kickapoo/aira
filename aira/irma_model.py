@@ -27,3 +27,7 @@ def run_swb_model(precipitation, evapotranspiration,
     iwa = swb_model.irrigation_water_amount(start_date, initial_soil_moisture,
                                             finish_date)
     return iwa
+
+
+def irrigation_amount_view(fid, cid):
+    pass

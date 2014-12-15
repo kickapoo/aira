@@ -6,7 +6,7 @@
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <strong>Warning!</strong> You need to add at least one Agrifield with one Crop <br>
 	<a href="#">Add Field</a> , 
-	<a href="#">Add Crop</a>
+	and after <a href="#">Add Crop</a>
 </div>
 <div>
 	<b>Profile:</b> <br>
@@ -22,13 +22,9 @@
 				</div>
 				
 		{% endif %}
-			</p>
+	</p>
 </div>
 <hr>
-		<a href="{% url 'add_agrifield' %}">Add Field</a>,
-		<a href="{% url 'add_log' %}">Add Irrigation</a>,
-		<a href="{% url 'add_crop' %}"> Add Crop </a>
-		<hr>
 	<div>
 		<div class="table-responsive">
 	  			<table class="table">
@@ -40,14 +36,17 @@
 			            <th colspan="2"> Next Irrigation Advice</th>
 			        </tr>
 			        <tr>
-						<th colspan="1" scope='colgroup'></th>
-						<th colspan="1" scope='colgroup'></th>
-						<th colspan="1">  </th>	
+						<th></th>
+						<th></th>
 			            <th scope='col'>DateTime</th>
 			            <th scope='col'>Water Amount (m<sup>2</sup>)</th>
 			           	<th scope='col'>DateTime</th>
 			            <th scope='col'>Water Amount (m<sup>2</sup>)</th>
 			            <th></th>
+			        </tr>
+			        <tr>
+			        	<th colspan="1"><a class="btn btn-success btn-xs" href="{% url 'add_agrifield' %}"> Add Field </a>  </th>
+						<th colspan="1">  </th>	
 			        </tr>
 	    		</thead>			
 	    		{% for fid, fname, cid, ctname, llog, lwater in data %}
@@ -57,10 +56,9 @@
 			            	<a href="{% url 'update_agrifield' fid %}">{{ fname }}</a>
 			            </td>
 			            <td>
-			            	<a href="{% url 'update_crop' cid %}"> {{ ctname }} </a>
 			            </td>
 			            <td>
-			            	<a href="{% url 'add_crop' %}"> Add New Crop </a>
+			            	<a href="{% url 'update_crop' cid %}"> {{ ctname }} </a>
 			            </td>
 			            <td>
 			          		{{ llog }}
@@ -68,7 +66,10 @@
 			            <td> {{ lwater }} </td>
 			            <td> ### </td>
 			            <td> ### </td>
-			            <td>[<a href="{% url 'delete_crop' cid %}"> Delete </a>]
+			            <td>
+			            	[<a href="{% url 'add_crop' fid %}">Add New Crop</a>]
+			            	[<a href="{% url 'add_log' %}"> Add Log </a>]
+			            	[<a href="{% url 'delete_crop' cid %}"> Delete Crop </a>]
 			            </td>
 			        </tr>
 			    </tbody>

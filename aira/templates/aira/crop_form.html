@@ -12,10 +12,18 @@
 			  method  = "POST">
 			{% csrf_token %}
 			{{ form.as_p }}
-			<br><br>
 			<button type="submit" class="btn btn-success btn-xs">Add Crop</button>
 		</form>
 	</div>
+</div>
+<br>
+<div>
+	{{ field.name }} list:
+	{% for c in crops%}
+		<li><a href="{% url 'update_crop' c.id %}"> {{ c.crop_type }}</a></li>
+	{% empty %}
+		You have added any crops to  {{ field.name }}
+	{% endfor%}
 </div>
 
 {% endblock %}
