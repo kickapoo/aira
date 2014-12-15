@@ -8,10 +8,10 @@
 	<sup><a class="btn btn-default btn-xs" href="{% url 'home' %}"> Back to Home</a></sup>
 <hr>
 	<div>
-	<form
-		method  = "POST">
+	<form class="form-inline" role="form"
+			method  = "POST">
 			{% csrf_token %}
-			{{ form.as_p }}
+			{{ form }}
 			<br><br>
 			<button type="submit" class="btn btn-success btn-xs">Add Log</button>
 	</form>
@@ -32,7 +32,7 @@
         <tr>
             <td><a href="{% url 'update_log' l.id %}"> {{ l.time }}</a></td>
             <td>{{ l.water_amount }}</td>
-            <td><a href="{% url 'delete_log' l.id %}"> Delete </a></td>
+            <td>[<a href="{% url 'delete_log' l.id %}"> Delete </a>]</td>
         </tr>
 
    	{% endfor%}

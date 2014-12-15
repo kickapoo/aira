@@ -2,18 +2,19 @@
 {% block title %} Home - {{user}} {% endblock %}
 
 {% block content %}
+{% if agrifields %}
 <div class="alert alert-warning">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <strong>Welcome! {{ user }} </strong> <br>
     Your first steps is to <a href="{% url 'add_agrifield' %}">Add Field</a> 
 </div>
+{% endif %}
 <div>
-	<hr>
-	<b>Profile:</b> <br>
 	<p>{% if profile %}
-				<a href="{% url 'update_profile' profile.id %}">Update</a> <br>
-				{{ profile.last_name }} {{ profile.first_name }}, <br>
-				{{ profile.address }} 
+		<div class="alert alert-warning">
+			<a href="#" class="close" data-dismiss="alert">&times;</a>
+				Hello <a href="{% url 'update_profile' profile.id %}">{{ profile.last_name }} {{ profile.first_name }}</a>,  did you add your last irrigation event ? <br>
+		</div>
 		{% else %}
 				<div class="alert alert-warning">
     				<a href="#" class="close" data-dismiss="alert">&times;</a>
@@ -24,7 +25,6 @@
 		{% endif %}
 	</p>
 </div>
-<hr>
 	<div>
 		<div class="table-responsive">
 	  			<table class="table">
@@ -44,7 +44,7 @@
 			            <th scope='col'>Water Amount (m<sup>3</sup>)</th>
 			           	<th scope='col'>DateTime</th>
 			            <th scope='col'>Water Amount (m<sup>3</sup>)</th>
-			            <th>[<a href="{% url 'add_agrifield' %}"> Add Field </a>]</th>
+			            <th>[<a href="{% url 'add_agrifield' %}"> Add/View Fields </a>]</th>
 			        </tr>
 	    		</thead>
 	    		{% for fid, fname, cid, ctname, llog, lwater in data %}
@@ -65,8 +65,8 @@
 			            <td> ###</td>
 			            <td> 0.006 </td>
 			            <td>
-			            	[<a href="{% url 'add_crop' fid %}">Add Crop</a>]
-			            	[<a href="{% url 'add_log' cid %}"> Add Log </a>]
+			            	[<a href="{% url 'add_crop' fid %}">Add/View Crops</a>]
+			            	[<a href="{% url 'add_log' cid %}"> Add/View Logs</a>]
 			            </td>
 			        </tr>
 			    </tbody>
