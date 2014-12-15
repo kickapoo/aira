@@ -13,9 +13,31 @@
 			{% csrf_token %}
 			{{ form.as_p }}
 			<br><br>
-			<button type="submit" class="btn btn-success btn-xs">Add Crop</button>
+			<button type="submit" class="btn btn-success btn-xs">Add Log</button>
 	</form>
 	</div>
 	<hr>
+
+	<div>
+	<b> Your {{ crop }}  irrigation log:</b> 
+	<table class="table">
+    <thead>
+        <tr>
+            <th>Time</th>
+            <th> Water Amount </th>
+        </tr>
+    </thead>
+    <tbody>
+{% for l in logs%}
+        <tr>
+            <td><a href="{% url 'update_log' l.id %}"> {{ l.time }}</a></td>
+            <td>{{ l.water_amount }}</td>
+            <td><a href="{% url 'delete_log' l.id %}"> Delete </a></td>
+        </tr>
+
+   	{% endfor%}
+	    </tbody>
+</table>
+</div>
 </div>
 {% endblock %}

@@ -27,7 +27,7 @@ urlpatterns = patterns(
         name="update_crop"),
     url(r'^/delete_crop/(?P<pk>\d+)$', DeleteCrop.as_view(),
         name="delete_crop"),
-    url(r'^/add_log/$', CreateLog.as_view(), name="add_log"),
+    url(r'^/add_log/(?P<pk>\d+)$', CreateLog.as_view(), name="add_log"),
     url(r'^/update_log/(?P<pk>\d+)$', UpdateLog.as_view(),
         name="update_log"),
     url(r'^/delete_lop/(?P<pk>\d+)$', DeleteLog.as_view(),

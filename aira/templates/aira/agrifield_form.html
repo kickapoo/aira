@@ -16,4 +16,34 @@
 	<hr>
 </div>
 
+<div>
+	<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>cadastre</th>
+            <th>Lat</th>
+            <th>Log <th>
+           	<th colspan="2"> </th>
+        </tr>
+    </thead>
+    <tbody>
+{% for f in agrifields %}
+        <tr>
+            <td><a href="{% url 'update_agrifield' f.id %}"> {{ f.name}}</a></td>
+            <td>{{ f.cadastre }}</td>
+            <td>{{ f.lat }}</td>
+            <td>{{ f.lon }}</td>
+        	<td colspan="2">
+        		[<a href="{% url 'delete_agrifield' f.id %}">Delete</a>]
+				[<a href="{% url 'add_crop' f.id %}">Add Crop</a>]
+        	</td>
+        </tr>
+   	{% endfor%}
+	    </tbody>
+</table>
+</div>
+
+
+
 {% endblock %}

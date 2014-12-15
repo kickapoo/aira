@@ -4,11 +4,11 @@
 {% block content %}
 <div class="alert alert-warning">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <strong>Warning!</strong> You need to add at least one Agrifield with one Crop <br>
-	<a href="#">Add Field</a> , 
-	and after <a href="#">Add Crop</a>
+    <strong>Welcome! {{ user }} </strong> <br>
+    Your first steps is to <a href="{% url 'add_agrifield' %}">Add Field</a> 
 </div>
 <div>
+	<hr>
 	<b>Profile:</b> <br>
 	<p>{% if profile %}
 				<a href="{% url 'update_profile' profile.id %}">Update</a> <br>
@@ -34,8 +34,10 @@
 			            <th colspan="2"> CropType</th>
 			            <th colspan="2"> Last Irrigation</th>
 			            <th colspan="2"> Next Irrigation Advice</th>
+			            <th colspan="2"> Actions</th>
 			        </tr>
 			        <tr>
+						<th><a class="btn btn-default btn-xs" href="{% url 'add_agrifield' %}"> Add Field </a></th>
 						<th></th>
 						<th></th>
 			            <th scope='col'>DateTime</th>
@@ -44,11 +46,7 @@
 			            <th scope='col'>Water Amount (m<sup>2</sup>)</th>
 			            <th></th>
 			        </tr>
-			        <tr>
-			        	<th colspan="1"><a class="btn btn-success btn-xs" href="{% url 'add_agrifield' %}"> Add Field </a>  </th>
-						<th colspan="1">  </th>	
-			        </tr>
-	    		</thead>			
+	    		</thead>
 	    		{% for fid, fname, cid, ctname, llog, lwater in data %}
 			    <tbody>
 			        <tr>
@@ -64,11 +62,11 @@
 			          		{{ llog }}
 			            </td>
 			            <td> {{ lwater }} </td>
-			            <td> ### </td>
-			            <td> ### </td>
+			            <td> ###</td>
+			            <td> 0.006 </td>
 			            <td>
-			            	[<a href="{% url 'add_crop' fid %}">Add New Crop</a>]
-			            	[<a href="{% url 'add_log' %}"> Add Log </a>]
+			            	[<a href="{% url 'add_crop' fid %}">Add Crop</a>]
+			            	[<a href="{% url 'add_log' cid %}"> Add Log </a>]
 			            	[<a href="{% url 'delete_crop' cid %}"> Delete Crop </a>]
 			            </td>
 			        </tr>

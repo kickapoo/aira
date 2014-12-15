@@ -17,13 +17,27 @@
 	</div>
 </div>
 <br>
+<hr>
 <div>
-	{{ field.name }} list:
-	{% for c in crops%}
-		<li><a href="{% url 'update_crop' c.id %}"> {{ c.crop_type }}</a></li>
-	{% empty %}
-		You have added any crops to  {{ field.name }}
-	{% endfor%}
+	<b>{{ field }} </b> 
+	<table class="table">
+    <thead>
+        <tr>
+            <th>CropType</th>
+            <th>Area (m<sup>3</sup>)</th>
+            <th>Irrigation Type <th>
+        </tr>
+    </thead>
+    <tbody>
+{% for c in crops%}
+        <tr>
+            <td><a href="{% url 'update_crop' c.id %}"> {{ c.crop_type }}</a></td>
+            <td>{{ c.area }}</td>
+            <td>{{ c.irrigation_type }}</td>
+        </tr>
+   	{% endfor%}
+	    </tbody>
+</table>
 </div>
 
 {% endblock %}

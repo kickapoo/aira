@@ -27,7 +27,7 @@ class CropForm(forms.ModelForm):
 class IrrigationlogForm(forms.ModelForm):
     class Meta:
         model = IrrigationLog
-        exclude = ['farmer', 'farmer_field', 'field_crop']
+        exclude = ('agrifield_crop',)
 
 IrrigationLogFormset = inlineformset_factory(Crop, IrrigationLog,
                                              can_delete=True, extra=1,
