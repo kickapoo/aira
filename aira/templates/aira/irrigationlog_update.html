@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load bootstrap3 %}
 {% block title %} Irrigation Log {% endblock %}
 
 {% block content %}
@@ -12,8 +11,7 @@
 		method  = "POST">
 			{% csrf_token %}
 			{{ form.as_p }}
-			<br><br>
-			<button type="submit" class="btn btn-success btn-xs">Add Log</button>
+			<button type="submit" class="btn btn-success btn-xs">Update</button>
 	</form>
 	</div>
 	<hr>

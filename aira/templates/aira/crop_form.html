@@ -8,10 +8,11 @@
 				
 <hr>
 	<div>
-		<form
+		<form class="form-inline" role="form"
 			  method  = "POST">
 			{% csrf_token %}
-			{{ form.as_p }}
+			{{ form }}
+			<br><br>
 			<button type="submit" class="btn btn-success btn-xs">Add Crop</button>
 		</form>
 	</div>
@@ -34,6 +35,7 @@
             <td><a href="{% url 'update_crop' c.id %}"> {{ c.crop_type }}</a></td>
             <td>{{ c.area }}</td>
             <td>{{ c.irrigation_type }}</td>
+            <td>[<a href="{% url 'delete_crop' c.id%}">Delete</a>]</td>
         </tr>
    	{% endfor%}
 	    </tbody>

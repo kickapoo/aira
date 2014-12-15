@@ -8,9 +8,11 @@
 	<sup><a class="btn btn-default btn-xs" href="{% url 'home' %}"> Back to Home</a></sup>
 <hr>
 	<div>
-		<form method="post">{% csrf_token %}
-    		{{ form.as_p }}
-            <button type="submit" class="btn btn-success btn-xs">Add AgriField</button>
+		<form class="form-inline" role="form"
+            method="post">{% csrf_token %}
+    		{{ form }}
+            <br><br>
+            <button type="submit" class="btn btn-success btn-xs">Add</button>
 		</form>
 	</div>
 	<hr>
