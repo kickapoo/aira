@@ -6,8 +6,8 @@
      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
      <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
-      <link rel="shortcut icon" type="image/png" href="http://www.pd4pic.com/images/leaves-green-plant-nature.png"/>
-	   <title>AIRA |{% block title %} Welcome{% endblock %}</title>
+     <link rel="shortcut icon" type="image/png" href="http://www.pd4pic.com/images/leaves-green-plant-nature.png"/>
+	   <title>{% block title %} Welcome {% endblock %}</title>
 </head>
 <body>
 <div class="container">
@@ -26,25 +26,24 @@
                 (<span class="text-success">aira</span>)
                 {% endif %}
                 <span style="color:green;font-size:15px"></span></a>
-            </div>
-  {% if user.is_authenticated %}
+          </div>
+    {% if user.is_authenticated %}
+              <div class="navbar-collapse collapse">   
+                <ul class="nav navbar-nav navbar-right"> 
+                    <li><a href="{% url 'home' %}"  rel="nofollow"><i class="glyphicon glyphicon-home"></i> Home</a></li>
+                    <li><a href="{% url 'django.contrib.auth.views.logout' %}"> <i class="glyphicon glyphicon-log-out"></i> Log out</a></li>
+                </ul>
+             </div>
+    {% else %}
             <div class="navbar-collapse collapse">   
-            <ul class="nav navbar-nav navbar-right"> 
-                <li><a href="{% url 'home' %}"  rel="nofollow"><i class="glyphicon glyphicon-home"></i> Home</a></li>
-                <li><a href="#"> <span class="glyphicon glyphicon-user"></span> <span> {{ user.get_username }}</span> </a></li>
-               <li><a href="{% url 'django.contrib.auth.views.logout' %}"> <i class="glyphicon glyphicon-log-out"></i> Log out</a></li>
-            </ul>
-          </div>
-  {% else %}
-          <div class="navbar-collapse collapse">   
-            <ul class="nav navbar-nav navbar-right"> 
-                <li><a href="{% url 'django.contrib.auth.views.login' %}" rel="nofollow"><i class="glyphicon glyphicon-off"></i> Login</a></li> 
-                <li><a href="{% url 'registration_register' %}" rel="nofollow"><i class="glyphicon glyphicon-user"></i> Register</a></li>
-               <li><a href="{% url 'password_reset' %}" rel="nofollow"><i class="glyphicon glyphicon-lock"></i> Lost password?</a></li>
-            </ul>
-          </div>
-  {% endif %}
-    </div><!--/.container-fluid -->
+              <ul class="nav navbar-nav navbar-right"> 
+                   <li><a href="{% url 'django.contrib.auth.views.login' %}" rel="nofollow"><i class="glyphicon glyphicon-off"></i> Login</a></li> 
+                   <li><a href="{% url 'registration_register' %}" rel="nofollow"><i class="glyphicon glyphicon-user"></i> Register</a></li>
+                   <li><a href="{% url 'password_reset' %}" rel="nofollow"><i class="glyphicon glyphicon-lock"></i> Lost password?</a></li>
+              </ul>
+            </div>
+    {% endif %}
+  </div>
 </div>
     <div>
       	{% block content %}
@@ -54,7 +53,9 @@
     <div class="footer navbar-fixed-bottom">
       <div class="container">
         <br>
-        <p class="text-success">          Copyright &#169; 2014 - <a href="http://tegeo.teiep.gr/en/">teiep.gr</a></p>
+            <p class="text-success">Copyright &#169; 2014 - 
+                <a href="http://tegeo.teiep.gr/en/">teiep.gr</a>
+            </p>
       </div>
     </div>
 

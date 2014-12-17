@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load bootstrap3 %}
 {% block title %} Home - {{user}} {% endblock %}
 
 {% block content %}
@@ -65,8 +66,11 @@
 			            <td> ###</td>
 			            <td> 0.006 </td>
 			            <td>
-			            	[<a href="{% url 'add_crop' fid %}">Add/View Crops</a>]
-			            	[<a href="{% url 'add_log' cid %}"> Add/View Logs</a>]
+			            	<a href="{% url 'add_log' cid %}">
+			            		<sup>
+			            		<i class="glyphicon glyphicon-plus"></i> 
+			            		<i class="glyphicon glyphicon-minus"></i>
+			            		</sup> Logs </a>
 			            </td>
 			        </tr>
 			    </tbody>

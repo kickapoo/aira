@@ -3,9 +3,18 @@
 
 {% block content %}
 
-<form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Submit" />
+	<div class="col-sm-offset-2 col-sm-10">
+    	<h3>Update Profile</h3>
+    </div>
+
+<form method="post" role="form" class="form-horizontal">
+	{% csrf_token %}
+	{% bootstrap_form form layout='horizontal' %}
+    {% buttons %}
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary">Update</button>
+    </div>
+    {% endbuttons %}
 </form>
 
 {% endblock%}
