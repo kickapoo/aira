@@ -1,11 +1,10 @@
 from django.contrib import admin
-from .models import Agrifield, Profile, CropType, \
-    IrrigationLog, IrrigationType
+from .models import (Agrifield, Profile, IrrigationLog,
+                     CropType, IrrigationType)
 
 
 class ProfileAdmin(admin.ModelAdmin):
     exclude = ('farmer',)
-    list_display = ['last_name']
 
     def save_model(self, request, obj, form, change):
         if not change:
@@ -14,24 +13,19 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 class AgrifieldAdmin(admin.ModelAdmin):
-    exclude = ('owner',)
-
-    # def save_model(self, request, obj, form, change):
-    #     if not change:
-    #         obj.owner = self.field_profile
-    #     obj.save()
+    pass
 
 
 class IrrigationLogAdmin(admin.ModelAdmin):
-    list_display = ['time']
+    pass
 
 
 class CropTypeAdmin(admin.ModelAdmin):
-    list_display = ['name']
+    pass
 
 
 class IrrigationTypeAdmin(admin.ModelAdmin):
-    list_display = ['name']
+    pass
 
 
 admin.site.register(Profile, ProfileAdmin)

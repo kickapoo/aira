@@ -22,7 +22,7 @@ class Profile(models.Model):
         verbose_name_plural = "Profiles"
 
     def __unicode__(self):
-        return "UserProfile:{}".format(self.farmer)
+        return "UserProfile: {}".format(self.farmer)
 
 
 class CropType(models.Model):
@@ -35,7 +35,7 @@ class CropType(models.Model):
         verbose_name_plural = 'Crop Types'
 
     def __unicode__(self):
-        return "CropType:{}".format(self.ct_name)
+        return "CropType: {}".format(self.ct_name)
 
 
 class IrrigationType(models.Model):
@@ -47,13 +47,13 @@ class IrrigationType(models.Model):
         verbose_name_plural = 'Irrigation Types'
 
     def __unicode__(self):
-        return "IrrigationType:{}".format(self.irrt_name)
+        return "IrrigationType: {}".format(self.irrt_name)
 
 
 class Agrifield(models.Model):
     owner = models.ForeignKey(User)
     name = models.CharField(max_length=255,
-                            default='i.e. MyField')
+                            default='i.e. MyField1')
     lon = models.FloatField()
     lat = models.FloatField()
     ct = models.ForeignKey(CropType)
@@ -65,7 +65,8 @@ class Agrifield(models.Model):
         verbose_name_plural = 'Agrifields'
 
     def __unicode__(self):
-        return "User:{}|Agrifield:{}".format(self.owner, self.name)
+        return "User: {} | Agrifield: {}".format(self.owner.username,
+                                                 self.name)
 
 
 class IrrigationLog(models.Model):
@@ -79,4 +80,5 @@ class IrrigationLog(models.Model):
         verbose_name_plural = 'Irrigation Logs'
 
     def __unicode__(self):
-        return "Argifield:{}|TimeLog:{}".format(self.agrifield, str(self.time))
+        return "Argifield: {} | TimeLog: {}".format(self.agrifield.name,
+                                                    str(self.time))
