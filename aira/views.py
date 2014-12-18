@@ -3,7 +3,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-from .models import Profile
+from .models import Profile, Agrifield
 
 from .forms import ProfileForm
 
@@ -26,8 +26,12 @@ class HomePageView(TemplateView):
             context['profile'] = Profile.objects.get(farmer=self.request.user)
         except Profile.DoesNotExist:
             context['profile'] = None
-
         # Fetch models.Agrifield(User)
+        try:
+            context['agrifields'] = Agrifield.objects.filter(owner=self.request.user).all()
+        except Agrifield.DoesNotExist:
+            context['agrifields'] = None
+
         return context
 
 

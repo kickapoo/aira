@@ -3,12 +3,67 @@
 {% block title %} Home - {{user}} {% endblock %}
 {% block content %}
 
+
+<!-- IF  NOT PROFILE -->
+{% if not profile %}
+			<div class="alert alert-warning">
+			    <a href="#" class="close" data-dismiss="alert">&times;</a>
+				<i class="fa fa-hand-o-right"></i> &nbsp; please update your pernonal information 
+				<a href="{% url 'create_profile' %}"> here </a> 
+			</div>
+{% endif %}
+<!-- END IF NOT PROFILE -->
+
 <!-- context['map'] -->
+ <div class="panel panel-default">
+		<div class="panel-heading"></div>
+		<div class="panel-body">
+			<div class="video-container"><iframe src="" frameborder="0"></iframe></div>
+			<sup> <span class="text-success">Green Mark:</span>Agrifields</sup></div>
+		<!-- IF  PROFILE -->
+		{% if profile %}		
+		<div class="panel-footer">
+			<strong>First name:</strong> 
+					<a href="{% url 'update_profile' profile.id %}">{{ profile.first_name }}</a><br>
+			<strong>Last name :</strong> 
+					<a href="{% url 'update_profile' profile.id %}">{{ profile.last_name }}</a><br>
+			<strong>Address:</strong> 
+					<a href="{% url 'update_profile' profile.id %}">{{ profile.address }}</a><br></div>
+		{% endif %}
+		<!-- END IF PROFILE-->
+</div>
 
 
-<!-- context['profile'] -->
 
+<!-- IF NOT AGRIFIELDS-->
+{% if not agrifields %}
+			<div class="alert alert-warning">
+			    <a href="#" class="close" data-dismiss="alert">&times;</a>
+				<i class="fa fa-exclamation-triangle"></i> &nbsp; Hmmm, it seems you have't any fields, 
+				Add at least one <a href="#"> here </a> 
+			</div>
+{% endif %}
+<!-- END IF NOT AGRIFIELDS-->
 
-<!-- context['agrifields'] -->
+<!-- IF AGRIFIELDS -->
+{% if agrifields %}
+ <div class="panel panel-default">
+		<div class="panel-heading"></div>
+		<div class="panel-body">
+		<strong>Agrifield:</strong> {{ agrifields }}</div>
+		{% for f in agrifields %}
+			({{f.id}}) <br>
+			<a href="#">{{ f.name }}</a>  
+			[<a href="#">{{ f.ct }}</a>] | 
+			[ <a href="#">{{ f.irrt }}</a>] 
+			<br><br>
+				{% for log in f.irrigationlog_set.all %}
+					<p>{{ log.id }} - {{ log }} </p>
+				{% endfor %}
+		{% endfor %}
+		<div class="panel-footer"></div>
+		{% endif %}
+	<!-- END IF  AGRIFIELDS-->
+</div>
 
 {% endblock %}
