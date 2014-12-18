@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% block title %} Home - {{user}} {% endblock %}
+{% block content %}
+		<!-- content['profile'] -->
+	    <div class="row">
+	        <div class="col-xs-6">
+				<div class="panel panel-default">
+		    		<div class="panel-heading"><h1 class="panel-title"> Map </h1></div>
+		    		<div class="panel-body">content… <br> <br> <br> <br></div>
+			<!-- content['profile'] -->
+		  	{% if profile %}
+		    		<div class="panel-footer"> <a href="{% url 'update_profile' profile.id %}">
+		        	{{ profile.last_name }} {{ profile.first_name }}</a></div>
+					</div>
+			{% else %}
+						</div> <!-- Close Map Panel divs -->
+					</div>
+			<div class="col-xs-6">
+					<!--First Time  Profile Messages-->
+					<div class="alert alert-warning">
+    					<a href="#" class="close" data-dismiss="alert">&times;</a>
+    					<i class="fa fa-hand-o-right fa-1x"></i>&nbsp;
+   						Please <a href="{% url 'create_profile' %}"> Add </a> your personal information.
+					</div>
+			</div>
+			{% endif %}
+	    </div>
+	</div> <!--DONT DELETE closed base.html div -->
+<hr>	
+<!--This is a comment. Comments are not displayed in the browser-->
+
+	<div>
+		<div class="table-responsive">
+	  			<table class="table">
+				<thead>
+			        <tr>
+			        	<th colspan="1"> Agri-field</th>
+			            <th colspan="2"> CropType</th>
+			            <th colspan="2"> Last Irrigation</th>
+			            <th colspan="2"> Next Irrigation Advice</th>
+			            <th colspan="2"> Actions</th>
+			        </tr>
+			        <tr>
+						<th></th>
+						<th></th>
+						<th></th>
+			            <th scope='col'>DateTime</th>
+			            <th scope='col'>Water Amount (m<sup>3</sup>)</th>
+			           	<th scope='col'>DateTime</th>
+			            <th scope='col'>Water Amount (m<sup>3</sup>)</th>
+			            <th>[<a href="#"> Add/View Fields </a>]</th>
+			        </tr>
+	    		</thead>
+	    		{% for fid, fname, cid, ctname, llog, lwater in data %}
+			    <tbody>
+			        <tr>
+			            <td>
+			            	<a href="{% url 'update_agrifield' fid %}">{{ fname }}</a>
+			            </td>
+			            <td>
+			            </td>
+			            <td>
+			            	<a href="{% url 'update_crop' cid %}"> {{ ctname }} </a>
+			            </td>
+			            <td>
+			          		{{ llog }}
+			            </td>
+			            <td> {{ lwater }} </td>
+			            <td> ###</td>
+			            <td> 0.006 </td>
+			            <td>
+			            	<a href="{% url 'add_log' cid %}">
+			            		<sup>
+			            		<i class="glyphicon glyphicon-plus"></i> 
+			            		<i class="glyphicon glyphicon-minus"></i>
+			            		</sup> Logs </a>
+			            </td>
+			        </tr>
+			    </tbody>
+			    {% empty %}
+			    	<tbody>
+			        <tr>
+			            <td> - </td>
+			            <td> - </td>
+			            <td> - </td>
+			            <td> - </td>
+			            <td> - </td>
+			            <td> - </td>
+			            <td> - </td>
+			        </tr>
+			    </tbody>
+			    {% endfor %}
+		</div>
+</div>
+{% endblock %}
