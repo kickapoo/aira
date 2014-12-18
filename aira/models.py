@@ -1,6 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+# Notes:
+#   Essential db.fields.#shortname conversions
+#       ct: crop type
+#       coeff: coefficient
+#       ct_rd: crop type root depth
+#       irrt: irrigation type
+#       irrt_eff: irrigation type efficiency
+#       agrifield: agriculture field
+
 
 class Profile(models.Model):
     farmer = models.ForeignKey(User)
@@ -13,74 +22,61 @@ class Profile(models.Model):
         verbose_name_plural = "Profiles"
 
     def __unicode__(self):
-        return self.last_name
+        return "UserProfile:{}".format(self.farmer)
 
 
 class CropType(models.Model):
-    name = models.CharField(max_length=100)
-    crop_coefficient = models.DecimalField(max_digits=6, decimal_places=2)
-    root_depth = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    ct_name = models.CharField(max_length=100)
+    ct_coeff = models.DecimalField(max_digits=6, decimal_places=2)
+    ct_rd = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 
     class Meta:
-        ordering = ('-name',)
-        verbose_name_plural = 'crop Types'
+        ordering = ('-ct_name',)
+        verbose_name_plural = 'Crop Types'
 
     def __unicode__(self):
-        return self.name
+        return "CropType:{}".format(self.ct_name)
 
 
 class IrrigationType(models.Model):
-    name = models.CharField(max_length=100)
-    efficiency = models.DecimalField(max_digits=2, decimal_places=2)
+    irrt_name = models.CharField(max_length=100)
+    irrt_eff = models.DecimalField(max_digits=2, decimal_places=2)
 
     class Meta:
-        ordering = ('-name',)
-        verbose_name_plural = 'irrigation Types'
+        ordering = ('-irrt_name',)
+        verbose_name_plural = 'Irrigation Types'
 
     def __unicode__(self):
-        return self.name
+        return "IrrigationType:{}".format(self.irrt_name)
 
 
 class Agrifield(models.Model):
     owner = models.ForeignKey(User)
     name = models.CharField(max_length=255,
-                            default='i.e. Home Garden')
-    cadastre = models.IntegerField(blank=True, null=True)
+                            default='i.e. MyField')
     lon = models.FloatField()
     lat = models.FloatField()
-
-    class Meta:
-        ordering = ('-name',)
-        verbose_name_plural = 'agrifields'
-
-    def __unicode__(self):
-        return self.name
-
-
-class Crop(models.Model):
-    agrifield = models.ForeignKey(Agrifield)
-    crop_type = models.ForeignKey(CropType)
-    irrigation_type = models.ForeignKey(IrrigationType)
-    # Area in square meters
+    ct = models.ForeignKey(CropType)
+    irrt = models.ForeignKey(IrrigationType)
     area = models.FloatField()
 
     class Meta:
-        ordering = ('-area',)
-        verbose_name_plural = 'crops'
+        ordering = ('-name',)
+        verbose_name_plural = 'Agrifields'
 
     def __unicode__(self):
-        return "{}".format(self.crop_type)
+        return "User:{}|Agrifield:{}".format(self.owner, self.name)
 
 
 class IrrigationLog(models.Model):
-    agrifield_crop = models.ForeignKey(Crop)
+    agrifield = models.ForeignKey(Agrifield)
     time = models.DateTimeField()
     water_amount = models.IntegerField()
 
     class Meta:
         get_latest_by = 'time'
         ordering = ('-time',)
-        verbose_name_plural = 'irrigation Logs'
+        verbose_name_plural = 'Irrigation Logs'
 
     def __unicode__(self):
-        return str(self.time)
+        return "Argifield:{}|TimeLog:{}".format(self.agrifield, str(self.time))

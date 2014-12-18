@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Agrifield, Profile, Crop, CropType, \
+from .models import Agrifield, Profile, CropType, \
     IrrigationLog, IrrigationType
 
 
@@ -13,14 +13,8 @@ class ProfileAdmin(admin.ModelAdmin):
         obj.save()
 
 
-class CropInline(admin.TabularInline):
-    model = Crop
-    extra = 1
-
-
 class AgrifieldAdmin(admin.ModelAdmin):
-    # exclude = ('owner',)
-    inlines = [CropInline]
+    exclude = ('owner',)
 
     # def save_model(self, request, obj, form, change):
     #     if not change:
