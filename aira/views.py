@@ -5,7 +5,8 @@ from django.utils.decorators import method_decorator
 
 from .models import Profile, Agrifield
 
-from .forms import ProfileForm
+from .forms import ProfileForm, AgrifieldForm
+from fmap import generate_map
 
 
 class IndexPageView(TemplateView):
@@ -21,6 +22,7 @@ class HomePageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomePageView, self).get_context_data(**kwargs)
+        generate_map([], [], [])
         # Fetch models.Profile(User)
         try:
             context['profile'] = Profile.objects.get(farmer=self.request.user)
@@ -29,6 +31,11 @@ class HomePageView(TemplateView):
         # Fetch models.Agrifield(User)
         try:
             context['agrifields'] = Agrifield.objects.filter(owner=self.request.user).all()
+            lats = [f.lat for f in context['agrifields']]
+            lons = [f.lon for f in context['agrifields']]
+            descprition = [f.name for f in context['agrifields']]
+            print lats, lons, descprition
+            generate_map(lats, lons, descprition)
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
 
@@ -58,7 +65,25 @@ class UpdateProfile(UpdateView):
 
 # Agrifield Create/Update/Delete
 class CreateAgrifield(CreateView):
-    pass
+    model = Agrifield
+    form_class = AgrifieldForm
+    success_url = "/home"
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(CreateAgrifield, self).dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super(CreateAgrifield, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateAgrifield, self).get_context_data(**kwargs)
+        try:
+            context['agrifields'] = Agrifield.objects.filter(owner=self.request.user).all()
+        except Agrifield.DoesNotExist:
+            context['agrifields'] = None
+        return context
 
 
 class UpdateAgrifield(UpdateView):

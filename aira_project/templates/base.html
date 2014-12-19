@@ -32,8 +32,9 @@
     {% if user.is_authenticated %}
               <div class="navbar-collapse collapse">   
                 <ul class="nav navbar-nav navbar-right"> 
-                    <li><a href="{% url 'home' %}"  rel="nofollow"><i class="glyphicon glyphicon-home"></i> Home</a></li>
-                    <li><a href="{% url 'django.contrib.auth.views.logout' %}"> <i class="glyphicon glyphicon-log-out"></i> Log out</a></li>
+                    <li>
+                      <a href="{% url 'home' %}"  rel="nofollow"><i class="glyphicon glyphicon-home"></i> </a> </li>
+                    <li><a href="{% url 'django.contrib.auth.views.logout' %}"> <i class="glyphicon glyphicon-log-out"></i> </a></li>
                 </ul>
              </div>
     {% else %}
@@ -55,11 +56,12 @@
       	{% endblock %}
     </div>
 </div>
-    <div class="footer navbar-fixed-bottom">
+    <div class="footer">
       <div class="container">
-        <br>
-            <p class="text-success">Copyright &#169; 2014 - 
-                <a href="http://tegeo.teiep.gr/en/">teiep.gr</a>
+        <br><br>
+        <hr>
+              <p class="text-success">Copyright &#169; 2014  
+              
             </p>
       </div>
     </div>

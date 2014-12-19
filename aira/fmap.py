@@ -11,5 +11,5 @@ def generate_map(lats, lons, descprition):
                               radius=1000,
                               line_color='#FF0000', fill_color='#FF0000')
     save_map = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                            'templates/user_map'))
+                                            'templates/user_map.html'))
     gen_map.create_map(path=save_map)

@@ -3,7 +3,6 @@
 {% block title %} Home - {{user}} {% endblock %}
 {% block content %}
 
-
 <!-- IF  NOT PROFILE -->
 {% if not profile %}
 			<div class="alert alert-warning">
@@ -18,7 +17,7 @@
  <div class="panel panel-default">
 		<div class="panel-heading"></div>
 		<div class="panel-body">
-			<div class="video-container"><iframe src="" frameborder="0"></iframe></div>
+			<div class="video-container"><iframe src="{% url 'user_map' %}" frameborder="0"></iframe></div>
 			<sup> <span class="text-success">Green Mark:</span>Agrifields</sup></div>
 		<!-- IF  PROFILE -->
 		{% if profile %}		
@@ -40,7 +39,7 @@
 			<div class="alert alert-warning">
 			    <a href="#" class="close" data-dismiss="alert">&times;</a>
 				<i class="fa fa-exclamation-triangle"></i> &nbsp; Hmmm, it seems you have't any fields, 
-				Add at least one <a href="#"> here </a> 
+				Add at least one <a href="{% url 'create_agrifield' %}"> here </a> 
 			</div>
 {% endif %}
 <!-- END IF NOT AGRIFIELDS-->
