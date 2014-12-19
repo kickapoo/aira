@@ -11,7 +11,7 @@ urlpatterns = patterns(
     '',
     url(r'^$', IndexPageView.as_view(), name='welcome'),
     url(r'^home/$',
-        HomePageView.as_view(),
+        login_required(HomePageView.as_view()),
         name='home'),
     # Map per user_login
     url(r'^user_map/$',
@@ -19,20 +19,20 @@ urlpatterns = patterns(
         name='user_map'),
     # Profile
     url(r'^create_profile/$',
-        CreateProfile.as_view(),
+        login_required(CreateProfile.as_view()),
         name="create_profile"),
     url(r'^update_profile/(?P<pk>\d+)/$',
-        UpdateProfile.as_view(),
+        login_required(UpdateProfile.as_view()),
         name="update_profile"),
     # Agrifield
     url(r'^create_agrifield$',
-        CreateAgrifield.as_view(),
+        login_required(CreateAgrifield.as_view()),
         name="create_agrifield"),
     url(r'^update_agrifield/(?P<pk>\d+)/$',
-        UpdateAgrifield.as_view(),
+        login_required(UpdateAgrifield.as_view()),
         name="update_agrifield"),
     url(r'^delete_agrifield/(?P<pk>\d+)/$',
-        DeleteAgrifield.as_view(),
+        login_required(DeleteAgrifield.as_view()),
         name="delete_agrifield"),
     # Irrigation Log
 )
