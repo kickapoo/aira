@@ -5,7 +5,9 @@ from django.contrib.auth.decorators import login_required
 
 from aira.views import (IndexPageView, HomePageView,
                         CreateProfile, UpdateProfile,
-                        CreateAgrifield, UpdateAgrifield, DeleteAgrifield)
+                        CreateAgrifield, UpdateAgrifield, DeleteAgrifield,
+                        CreateIrrigationLog, UpdateIrrigationLog,
+                        DeleteIrrigationLog)
 
 urlpatterns = patterns(
     '',
@@ -35,4 +37,13 @@ urlpatterns = patterns(
         login_required(DeleteAgrifield.as_view()),
         name="delete_agrifield"),
     # Irrigation Log
+    url(r'^create_timelog$',
+        login_required(CreateIrrigationLog.as_view()),
+        name="create_timelog"),
+    url(r'^update_timelog/(?P<pk>\d+)/$',
+        login_required(UpdateIrrigationLog.as_view()),
+        name="update_timelog"),
+    url(r'^delete_timelog/(?P<pk>\d+)/$',
+        login_required(DeleteIrrigationLog.as_view()),
+        name="delete_timelog"),
 )

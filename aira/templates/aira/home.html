@@ -65,7 +65,7 @@
 						<i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i></a>
 					<br>
 					{% if f.irrigationlog_set.latest %}
-						<i class="fa fa-angle-double-right"></i>{{ f.irrigationlog_set.latest.time }} with 
+						<i class="fa fa-angle-double-right"></i>&nbsp;{{ f.irrigationlog_set.latest.time }} with 
 						{{ f.irrigationlog_set.latest.water_amount }}&nbsp;m <sup>3</sup> 
 						<br>
 					{% else %}
