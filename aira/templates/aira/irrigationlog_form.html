@@ -3,41 +3,51 @@
 {% block title %} Irrigation Log {% endblock %}
 
 {% block content %}
+
+<div class="alert alert-warning">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <i class="fa fa-hand-o-right fa-1x"></i>&nbsp;  You have <b><span class="text text-success">{{logs_count}}</span></b> Timelogs(s) in your database for {{ agrifield.name }}.
+</div>
 <div class="container">
-	<h4> Irrigation Log</h4>
-	<sup><a class="btn btn-default btn-xs" href="{% url 'home' %}"> Back to Home</a></sup>
-<hr>
-	<div>
-	<form class="form-inline" role="form"
-			method  = "POST">
-			{% csrf_token %}
-			{{ form }}
-			<br><br>
-			<button type="submit" class="btn btn-success btn-xs">Add Log</button>
-	</form>
-	</div>
-	<hr>
-
-	<div>
-	<b> Your {{ crop }}  irrigation log:</b> 
-	<table class="table">
-    <thead>
-        <tr>
-            <th>Time</th>
-            <th> Water Amount </th>
-        </tr>
-    </thead>
-    <tbody>
-{% for l in logs%}
-        <tr>
-            <td><a href="{% url 'update_log' l.id %}"> {{ l.time }}</a></td>
-            <td>{{ l.water_amount }}</td>
-            <td>[<a href="{% url 'delete_log' l.id %}"> Delete </a>]</td>
-        </tr>
-
-   	{% endfor%}
-	    </tbody>
-</table>
-</div>
-</div>
+    <div class="row">
+    	<hr>
+    	 <h3>Add TimeLog</h3>
+        <div class="col-lg-12">
+            <form method="post" role="form" class="form-horizontal">
+                    {% csrf_token %}
+                    {% bootstrap_form form layout='horizontal' %}
+                    {% buttons %}
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-success btn-xs">Submit</button>
+                    </div>
+            {% endbuttons %}
+            </form>
+        </div>
+        <hr>
+        <div class="table-responsive">
+        {% if logs %}
+            <table class="table">
+            	 <h3> List of <a href="{% url 'update_agrifield' agrifield.id %}">{{ agrifield.name }}</a> TimeLogs</h3>  
+                  <thead>
+                    <tr>
+                      <th>#id</th>
+                      <th>Datetime</th>
+                      <th>Water Amount (m<sup>3</sup>)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for l in logs  %}   
+                        <tr>
+                          <td>{{ l.id }}</td>
+                          <td><a href="{% url 'update_irrlog' l.id%}">{{l.time}}</a></td>
+                          <td>{{l.water_amount}}</td>
+                          <td><a href="{% url 'delete_irrlog' l.id %}">Delete </a></td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+        {% endif %}
+        </div>
+        <hr><br>
+             
 {% endblock %}

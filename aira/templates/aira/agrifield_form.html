@@ -10,22 +10,11 @@
 <hr>
 <div class="container">
     <div class="row">
-      <h3>Add Agrifield</h3>
-        <div class="col-lg-12">
-            <form method="post" role="form" class="form-horizontal">
-                    {% csrf_token %}
-                    {% bootstrap_form form layout='horizontal' %}
-                    {% buttons %}
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success btn-xs">Submit</button>
-                    </div>
-            {% endbuttons %}
-            </form>
-        </div>
-        <hr>
+      <hr>
         <div class="table-responsive">
         {% if agrifields %}
             <table class="table">
+              <h3> List of Agrifields</h3>  
                   <thead>
                     <tr>
                       <th>#id</th>
@@ -42,7 +31,7 @@
                           <td><a href="{% url 'update_agrifield' f.id%}">{{f.name}}</a></td>
                           <td><a href="{% url 'update_agrifield' f.id%}">{{f.ct.ct_name}}</td>
                           <td><a href="{% url 'update_agrifield' f.id%}">{{f.irrt.irrt_name}}</a></td>
-                          <td><a href="#"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i></a></td>
+                          <td><a href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i></a></td>
                           <td><a href="{% url 'delete_agrifield' f.id %}">Delete </a></td>
                         </tr>
                     {% endfor %}
@@ -50,5 +39,19 @@
                 </table>
         {% endif %}
         </div>
+        <hr><br><br>
+        <h3>Add Agrifield</h3>
+        <div class="col-lg-12">
+            <form method="post" role="form" class="form-horizontal">
+                    {% csrf_token %}
+                    {% bootstrap_form form layout='horizontal' %}
+                    {% buttons %}
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-success btn-xs">Submit</button>
+                    </div>
+            {% endbuttons %}
+            </form>
+        </div>
+        <hr>
 </div>
 {% endblock %}

@@ -1,8 +1,8 @@
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
-from .models import Profile, Agrifield
-from .forms import ProfileForm, AgrifieldForm
+from .models import Profile, Agrifield, IrrigationLog
+from .forms import ProfileForm, AgrifieldForm, IrrigationlogForm
 
 from fmap import generate_map
 
@@ -89,12 +89,33 @@ class DeleteAgrifield(DeleteView):
 
 
 class CreateIrrigationLog(CreateView):
-    pass
+    model = IrrigationLog
+    form_class = IrrigationlogForm
+    success_url = "/home"
+
+    def form_valid(self, form):
+        form.instance.agrifield = Agrifield.objects.get(pk=self.kwargs['pk'])
+        return super(CreateIrrigationLog, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateIrrigationLog, self).get_context_data(**kwargs)
+        try:
+            context['agrifield'] = Agrifield.objects.get(pk=self.kwargs['pk'])
+            context['logs'] = IrrigationLog.objects.filter(agrifield=self.kwargs['pk']).all()
+            context['logs_count'] = context['logs'].count()
+        except Agrifield.DoesNotExist:
+            context['logs'] = None
+        return context
 
 
 class UpdateIrrigationLog(UpdateView):
-    pass
+    model = IrrigationLog
+    form_class = IrrigationlogForm
+    template_name = "irrigationlog_update.html"
+    success_url = '/home'
 
 
 class DeleteIrrigationLog(DeleteView):
-    pass
+    model = IrrigationLog
+    form_class = IrrigationlogForm
+    success_url = '/home'

@@ -27,6 +27,10 @@ class IrrigationlogForm(forms.ModelForm):
     class Meta:
         model = IrrigationLog
         exclude = ('agrifield',)
+        labels = {
+            'time': _('Datatime(Y/M/D h:m:s) '),
+            'water_amount': _('Water (cubic meters)'),
+        }
         # widgets = {
         #     'name': forms.Textarea(attrs={'cols': 80, 'rows': 20}),
         # }
