@@ -15,14 +15,18 @@ class AgrifieldForm(forms.ModelForm):
         exclude = ('owner',)
         labels = {
             'name': _('Agriculture Field '),
-            'lat': _('Latitude (WRS89)'),
+            'lat': _('Latitude (WGS84)'),
+            'lon': _('Longitude (WGS84)'),
+            'ct': _('Crop Type'),
+            'irrt': _('Irrigation Type'),
+            'area': _('Field Area (square meters)')
         }
-        # widgets = {
-        #     'name': forms.Textarea(attrs={'cols': 80, 'rows': 20}),
-        # }
 
 
 class IrrigationlogForm(forms.ModelForm):
     class Meta:
         model = IrrigationLog
         exclude = ('agrifield',)
+        # widgets = {
+        #     'name': forms.Textarea(attrs={'cols': 80, 'rows': 20}),
+        # }

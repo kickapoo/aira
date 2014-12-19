@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 from .models import Profile, Agrifield
-
 from .forms import ProfileForm, AgrifieldForm
+
 from fmap import generate_map
 
 
@@ -30,7 +30,9 @@ class HomePageView(TemplateView):
             context['profile'] = None
         # Fetch models.Agrifield(User)
         try:
-            context['agrifields'] = Agrifield.objects.filter(owner=self.request.user).all()
+            agrifields = Agrifield.objects.filter(owner=self.request.user).all()
+            context['agrifields'] = agrifields
+            context['fields_count'] = agrifields.count()
             lats = [f.lat for f in context['agrifields']]
             lons = [f.lon for f in context['agrifields']]
             descprition = [f.name for f in context['agrifields']]
@@ -62,6 +64,10 @@ class UpdateProfile(UpdateView):
     form_class = ProfileForm
     success_url = "/home"
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(UpdateProfile, self).dispatch(*args, **kwargs)
+
 
 # Agrifield Create/Update/Delete
 class CreateAgrifield(CreateView):
@@ -81,14 +87,28 @@ class CreateAgrifield(CreateView):
         context = super(CreateAgrifield, self).get_context_data(**kwargs)
         try:
             context['agrifields'] = Agrifield.objects.filter(owner=self.request.user).all()
+            context['fields_count'] = context['agrifields'].count()
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
         return context
 
 
 class UpdateAgrifield(UpdateView):
-    pass
+    model = Agrifield
+    form_class = AgrifieldForm
+    template_name = "agrifield_update.html"
+    success_url = '/home'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(UpdateAgrifield, self).dispatch(*args, **kwargs)
 
 
 class DeleteAgrifield(DeleteView):
-    pass
+    model = Agrifield
+    form_class = AgrifieldForm
+    success_url = '/home'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(DeleteAgrifield, self).dispatch(*args, **kwargs)

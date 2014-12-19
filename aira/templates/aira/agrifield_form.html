@@ -3,48 +3,51 @@
 {% block title %} {{ user }} {% endblock %}
 
 {% block content %}
-<div class="container">
-	
+<div class="alert alert-warning">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <i class="fa fa-hand-o-right fa-1x"></i>&nbsp;  You have <b><span class="text text-success">{{fields_count}}</span></b> Agrifield(s) in your database.
+</div>
 <hr>
-	<div>
-		<form class="form" role="form"
-            method="post">{% csrf_token %}
-    		{{ form.as_p }}
-            <br><br>
-            <button type="submit" class="btn btn-success btn-xs">Add</button>
-		</form>
-	</div>
-	<hr>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <form method="post" role="form" class="form-horizontal">
+                    {% csrf_token %}
+                    {% bootstrap_form form layout='horizontal' %}
+                    {% buttons %}
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+            {% endbuttons %}
+            </form>
+        </div>
+        <hr>
+        <div class="table-responsive">
+        {% if agrifields %}
+            <table class="table">
+                  <thead>
+                    <tr>
+                      <th>#id</th>
+                      <th>Name</th>
+                      <th>Crop Type</th>
+                      <th>Irrigation Type</th>
+                      <th>TimeLogs</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for f in agrifields  %}   
+                        <tr>
+                          <td>{{ f.id }}</td>
+                          <td><a href="{% url 'update_agrifield' f.id%}">{{f.name}}</a></td>
+                          <td><a href="{% url 'update_agrifield' f.id%}">{{f.ct.ct_name}}</td>
+                          <td><a href="{% url 'update_agrifield' f.id%}">{{f.irrt.irrt_name}}</a></td>
+                          <td><a href="#"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i></a></td>
+                          <td><a href="{% url 'delete_agrifield' f.id %}">Delete </a></td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+        {% endif %}
+        </div>
 </div>
-
-<div>
-	<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>cadastre</th>
-            <th>Lat</th>
-            <th>Log <th>
-           	<th colspan="2"> </th>
-        </tr>
-    </thead>
-    <tbody>
-{% for f in agrifields %}
-        <tr>
-            <td><a href="{% url 'update_agrifield' f.id %}"> {{ f.name}}</a></td>
-            <td>{{ f.cadastre }}</td>
-            <td>{{ f.lat }}</td>
-            <td>{{ f.lon }}</td>
-        	<td colspan="2">
-        		[<a href="{% url 'delete_agrifield' f.id %}">Delete</a>]
-				[<a href="{% url 'add_crop' f.id %}">Add Crop</a>]
-        	</td>
-        </tr>
-   	{% endfor%}
-	    </tbody>
-</table>
-</div>
-
-
-
 {% endblock %}

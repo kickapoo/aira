@@ -4,11 +4,20 @@
 
 {% block content %}
 
-
-<form method="post">{% csrf_token %}
-    Are you sure you want to delete "{{ object }}" ?
-    <br><br>
-    <input type="submit" class="btn btn-danger" value="delete" />
-</form>
-
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-xs-offset-2">
+        	 <h3>Are you sure you want to delete "{{ object.name }}" Agrifield?</h3>
+        	 <br>
+            <form method="post" role="form" class="form-horizontal">
+                    {% csrf_token %}
+                    {% buttons %}
+                    <div class="col-sm-offset-3 col-sm-8">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <br>
+                    </div>
+            {% endbuttons %}
+            </form>
+	        </div>
+</div>
 {% endblock %}
