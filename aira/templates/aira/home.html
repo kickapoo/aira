@@ -54,37 +54,26 @@
 		</div>
 		{% for f in agrifields %}
 		<div class="panel-body">
-			<div class="col-xs-6">
-					<p> <i class="fa fa-angle-right"></i> 
-					<a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> with 
-					<a href="{% url 'update_agrifield' f.id %}">{{ f.ct.ct_name }}</a> and  
-					<a href="{% url 'update_agrifield' f.id %}">{{ f.irrt.irrt_name }}</a> system. </p>
-					
-					<span class="text text-success"> Latest TimeLog</span> 
-					<a href="#">
-						<i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i></a>
-					<br>
-					{% if f.irrigationlog_set.latest %}
-						<i class="fa fa-angle-double-right"></i>&nbsp;{{ f.irrigationlog_set.latest.time }} with 
-						{{ f.irrigationlog_set.latest.water_amount }}&nbsp;m <sup>3</sup> 
-						<br>
-					{% else %}
-					<br>
+			<div class="col-xs-12">
+					<p> <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> is growing <a href="{% url 'update_agrifield' f.id %}">{{ f.ct.ct_name }}</a> using <a href="{% url 'update_agrifield' f.id %}">{{ f.irrt.irrt_name }}</a> irrigation system. </p>
+				{% if f.irrigationlog_set.latest %}	
+					<p>Last irrigation event was, <a href="{% url 'update_irrlog' f.irrigationlog_set.latest.id %}"> {{ f.irrigationlog_set.latest.water_amount }}&nbsp;m <sup>3</sup></a> of water irrigated at&nbsp;	<a href="{% url 'update_irrlog' f.irrigationlog_set.latest.id %}"><i class="fa fa-clock-o"></i>&nbsp;{{ f.irrigationlog_set.latest.time }}</a> 
+					</p>
+					<p><span class="text text-success">Aira</span> latest advice is to irrigate<span class="text text-success">&nbsp;<i class="fa fa-tint"></i>&nbsp; 0.006 m<sup>3</sup></span> of water during <span class="text text-success"><i class="fa fa-clock-0"></i>99/12/2124</span>&nbsp;daylight.</p>
+					<sub><a class="btn btn-default btn-xs" href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; TimeLogs</a></sub></p> 
+				<hr>
+			</div>
+</div>			
+				{% else %}
 						<div class="alert alert-warning">
-			   				 <a href="#" class="close" data-dismiss="alert">&times;</a>
-							<i class="fa fa-exclamation-triangle"></i> &nbsp; Hmmm, it seems you have't any TimeLogs, 
-							 for {{ f.name }} Agrifield,
-							 Please add at least one <a href="{% url 'create_agrifield' %}"> here </a> 
+			   				<a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-exclamation-triangle "></i> &nbsp; Hmmm, it seems you have't any IrrigationLogs for <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> Agrifield, Please add at least one <a href="{% url 'create_irrlog' f.id %}"> here </a> 
 						</div>
-					{% endif %}	
-
-			</div>	
-			<div class="col-xs-6">
-				(<span class="text text-success">aira</span>) advice
-			</div>	
-		</div>		
-		<hr>			
-		{% endfor %}
+				{% endif %}		
+				{% endfor %}
+				</div>
+			</div>
+		</div>
+</div>		
 		{% endif %}
 	<!-- END IF  AGRIFIELDS-->
 </div>
