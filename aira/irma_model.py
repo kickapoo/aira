@@ -64,5 +64,5 @@ def irrigation_amount_view(agrifield_id):
                                  irrigation_efficiency, rd_factor,
                                  start_date, initial_soil_moisture, finish_date)
     except:
-        next_irr = "Hmmm, something went wrong, contact support"
+        next_irr = None
     return next_irr

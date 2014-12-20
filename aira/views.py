@@ -35,7 +35,7 @@ class HomePageView(TemplateView):
             generate_map(lats, lons, descprition)
             #Irma Model
             for f in agrifields:
-                f.irws = irrigation_amount_view(f.id)
+                f.irw = irrigation_amount_view(f.id)
 
         except Agrifield.DoesNotExist:
             context['agrifields'] = None

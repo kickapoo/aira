@@ -60,10 +60,15 @@
 					<p>Last irrigation event was, <a href="{% url 'update_irrlog' f.irrigationlog_set.latest.id %}"> {{ f.irrigationlog_set.latest.water_amount }}&nbsp;m <sup>3</sup></a> of water irrigated at&nbsp;	<a href="{% url 'update_irrlog' f.irrigationlog_set.latest.id %}"><i class="fa fa-clock-o"></i>&nbsp;{{ f.irrigationlog_set.latest.time }}</a> 
 					</p>
 					<hr>
-					{{ f.irws }} 
-					<hr>
-					<p><span class="text text-success">Aira</span> latest advice is to irrigate<span class="text text-success">&nbsp;<i class="fa fa-tint"></i>&nbsp; 0.006 m<sup>3</sup></span> of water during <span class="text text-success"><i class="fa fa-clock-0"></i>99/12/2124</span>&nbsp;daytime.</p>
-					<sub><a class="btn btn-default btn-xs" href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; TimeLogs</a></sub></p> 
+					{% if not f.irw %}
+						<div class="alert alert-danger">
+			    		<a href="#" class="close" data-dismiss="alert">&times;</a>
+						<i class="fa fa-exclamation-triangle"></i> &nbsp; Hmmm, it seems that your <strong>{{ f.name }} location </strong> or  <strong>{{f.name}} TimeLog </strong> is <strong>out of aira's range</strong>. <br> We are currently working on that !!! <br>
+						</div>		
+					{% else %}
+					<p><span class="text text-success">Aira</span> latest advice is to irrigate<span class="text text-success">&nbsp;<i class="fa fa-tint"></i>&nbsp; 0.006 m<sup>3</sup></span> of water during <span class="text text-success"><i class="fa fa-clock-0"></i>99/12/2124</span>&nbsp;daytime.</p> 
+					{% endif %}
+					<sub><a class="btn btn-default btn-xs" href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; TimeLogs</a></sub></p>
 				<hr>
 			</div>
 </div>			

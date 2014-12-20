@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('ct_name', models.CharField(max_length=100)),
                 ('ct_coeff', models.DecimalField(max_digits=6, decimal_places=2)),
-                ('ct_rd', models.DecimalField(default=0, max_digits=6, decimal_places=2)),
+                ('ct_rd', models.FloatField()),
             ],
             options={
                 'ordering': ('-ct_name',),
@@ -61,7 +61,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('irrt_name', models.CharField(max_length=100)),
-                ('irrt_eff', models.DecimalField(max_digits=2, decimal_places=2)),
+                ('irrt_eff', models.FloatField()),
             ],
             options={
                 'ordering': ('-irrt_name',),
