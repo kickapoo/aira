@@ -3,8 +3,9 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from .models import Profile, Agrifield, IrrigationLog
 from .forms import ProfileForm, AgrifieldForm, IrrigationlogForm
+from .fmap import generate_map
 
-from fmap import generate_map
+from .irma_model import irrigation_amount_view
 
 
 class IndexPageView(TemplateView):
@@ -27,13 +28,18 @@ class HomePageView(TemplateView):
             agrifields = Agrifield.objects.filter(owner=self.request.user).all()
             context['agrifields'] = agrifields
             context['fields_count'] = agrifields.count()
+            #Map
             lats = [f.lat for f in context['agrifields']]
             lons = [f.lon for f in context['agrifields']]
-            descprition = [f.name for f in context['agrifields']]
-            print lats, lons, descprition
+            descprition = [str(f.name) for f in context['agrifields']]
             generate_map(lats, lons, descprition)
+            #Irma Model
+            for f in agrifields:
+                f.irws = irrigation_amount_view(f.id)
+
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
+            context['irws'] = None
 
         return context
 

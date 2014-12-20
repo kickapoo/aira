@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='Agrifield',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(default=b'i.e. MyField', max_length=255)),
+                ('name', models.CharField(default=b'i.e. MyField1', max_length=255)),
                 ('lon', models.FloatField()),
                 ('lat', models.FloatField()),
                 ('area', models.FloatField()),
