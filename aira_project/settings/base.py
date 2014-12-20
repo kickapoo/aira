@@ -71,7 +71,7 @@ TEMPLATE_DIRS = (
 ACCOUNT_ACTIVATION_DAYS = 3
 LOGIN_REDIRECT = "/home"
 
-AIRA_PARAMETERS_FILE_DIR = os.path.join(PROJECT_ROOT, 'airadb_coeff_csv')
+AIRA_PARAMETERS_FILE_DIR = os.path.join(PROJECT_ROOT, 'airadb_coeffs')
 
 AIRA_DATA_FILE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                      "../../../meteo_data"))

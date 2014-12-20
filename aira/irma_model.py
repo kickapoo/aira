@@ -10,7 +10,7 @@ from aira.models import Agrifield
 
 # GEO_DATA_CONFIG
 PRECIP_FILES = glob.glob(os.path.join(settings.AIRA_DATA_FILE_DIR,
-                                      'daily_rain*.tif'))
+                                          'daily_rain*.tif'))
 EVAP_FILES = glob.glob(os.path.join(settings.AIRA_DATA_FILE_DIR,
                                     'daily_evaporation*.tif'))
 

@@ -28,7 +28,7 @@ class Profile(models.Model):
 class CropType(models.Model):
     ct_name = models.CharField(max_length=100)
     ct_coeff = models.DecimalField(max_digits=6, decimal_places=2)
-    ct_rd = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    ct_rd = models.FloatField()
 
     class Meta:
         ordering = ('-ct_name',)
@@ -40,7 +40,7 @@ class CropType(models.Model):
 
 class IrrigationType(models.Model):
     irrt_name = models.CharField(max_length=100)
-    irrt_eff = models.DecimalField(max_digits=2, decimal_places=2)
+    irrt_eff = models.FloatField()
 
     class Meta:
         ordering = ('-irrt_name',)
