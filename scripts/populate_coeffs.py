@@ -1,21 +1,29 @@
 import os
 import csv
 from django.conf import settings
-from aira.models import IrrigationType
+from aira.models import IrrigationType, CropType
 
 
 def run():
     print "Starting Irrigation Efficiency Table additions ... "
-    croptype_csv = os.path.join(settings.AIRA_PARAMETERS_FILE_DIR,
-                                'irr_eff.csv')
-    print croptype_csv
-    with open(croptype_csv) as f:
+    irrt_csv = os.path.join(settings.AIRA_PARAMETERS_FILE_DIR,
+                            'irr_eff.csv')
+    with open(irrt_csv) as f:
         reader = csv.reader(f)
         for row in reader:
-            print row[0], row[1]
             _, created = IrrigationType.objects.get_or_create(
                 irrt_name=row[0],
                 irrt_eff=float(row[1])
             )
     print "Nice work!!! Let populate CropType parameters now"
+    croptype_csv = os.path.join(settings.AIRA_PARAMETERS_FILE_DIR,
+                                'croptype.csv')
+    with open(croptype_csv) as f:
+        reader = csv.reader(f)
+        for row in reader:
+            _, created = CropType.objects.get_or_create(
+                ct_name=row[0],
+                ct_coeff=float(row[1]),
+                ct_rd=float(row[2])
+            )
     print "Finished ... enjoy... "
