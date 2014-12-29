@@ -28,6 +28,9 @@
 			<strong>Last name :</strong> 
 					<a href="{% url 'update_profile' profile.id %}">{{ profile.last_name }}</a><br>
 			<strong>Address:</strong> 
+			{% if not profile.address %}
+					<a href="{% url 'update_profile' profile.id %}"> [edit] </a><br></div>
+			{% endif %}
 					<a href="{% url 'update_profile' profile.id %}">{{ profile.address }}</a><br></div>
 		{% endif %}
 		<!-- END IF PROFILE-->

@@ -13,10 +13,9 @@ from django.contrib.auth.models import User
 
 class Profile(models.Model):
     farmer = models.ForeignKey(User)
-    first_name = models.CharField(max_length=255, default="First Name")
-    last_name = models.CharField(max_length=255, default="Last Name")
-    address = models.CharField(max_length=255,
-                               default="Street/ZipCode/State", blank=True)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, blank=True)
 
     class Meta:
         verbose_name_plural = "Profiles"
