@@ -8,7 +8,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-/aira_project/settings/local.py
 venv/
 build/
 develop-eggs/
