@@ -1,6 +1,4 @@
 import os
-import dj_database_url
-
 
 BASE_DIR = os.path.dirname(__file__)
 PROJECT_PATH = os.path.join(BASE_DIR, os.pardir)
@@ -22,8 +20,7 @@ DJANGO_APPS = ('django.contrib.admin',
 
 # THIRD_PARTY_APPS
 THIRD_PARTY_APPS = ('bootstrap3',
-                    'registration',
-                    'django_extensions')
+                    'registration',)
 # LOCAL APPS
 LOCAL_APPS = ('aira',)
 
@@ -51,7 +48,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'aira_project.urls'
 WSGI_APPLICATION = 'aira_project.wsgi.application'
 
-DATABASES = {'default': dj_database_url.config()}
+DATABASES = {}
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Europe/Athens'
 USE_I18N = True
@@ -61,6 +58,7 @@ USE_TZ = False  # Changed during soilbalancemodel
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'static'),
+    os.path.join(PROJECT_ROOT, '../aira/static'),
 )
 
 TEMPLATE_DIRS = (
