@@ -8,7 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-watercrop/watercrop/settings/local/
+/aira_project/settings/local.py
 venv/
 build/
 develop-eggs/
