@@ -57,11 +57,6 @@ USE_TZ = False  # Changed during soilbalancemodel
 
 STATIC_URL = '/static/'
 
-TEMPLATE_DIRS = (
-    os.path.join(PROJECT_ROOT, 'templates'),
-    os.path.join(PROJECT_ROOT, '../aira/templates/aira'),
-)
-
 ACCOUNT_ACTIVATION_DAYS = 3
 LOGIN_REDIRECT = "/home"
 
