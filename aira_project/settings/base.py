@@ -56,10 +56,6 @@ USE_L10N = True
 USE_TZ = False  # Changed during soilbalancemodel
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'static'),
-    os.path.join(PROJECT_ROOT, '../aira/static'),
-)
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates'),
