@@ -23,11 +23,8 @@
                 <span class="icon-bar"></span>
               </button>
               <a class="navbar-brand" href="{% url 'welcome' %}">
-                <img src="http://www.pd4pic.com/images/leaves-green-plant-nature.png" width="35" height="30">
-                {% if user.is_authenticated %}
-                (<span class="text-success">aira</span>)
-                {% endif %}
-                <span style="color:green;font-size:15px"></span></a>
+                <img src="{% static 'img/aira-logo.png' %}" width="35" height="30">
+                </a>
           </div>
     {% if user.is_authenticated %}
               <div class="navbar-collapse collapse">   
