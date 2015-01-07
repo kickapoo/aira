@@ -9,11 +9,11 @@ from .irma_model import irrigation_amount_view
 
 
 class IndexPageView(TemplateView):
-    template_name = 'index.html'
+    template_name = 'aira/index.html'
 
 
 class HomePageView(TemplateView):
-    template_name = 'home.html'
+    template_name = 'aira/home.html'
 
     def get_context_data(self, **kwargs):
         context = super(HomePageView, self).get_context_data(**kwargs)
