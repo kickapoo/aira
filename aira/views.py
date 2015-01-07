@@ -84,7 +84,6 @@ class CreateAgrifield(CreateView):
 class UpdateAgrifield(UpdateView):
     model = Agrifield
     form_class = AgrifieldForm
-    template_name = "agrifield_update.html"
     success_url = '/home'
 
 
@@ -117,7 +116,6 @@ class CreateIrrigationLog(CreateView):
 class UpdateIrrigationLog(UpdateView):
     model = IrrigationLog
     form_class = IrrigationlogForm
-    template_name = "irrigationlog_update.html"
     success_url = '/home'
 
 
