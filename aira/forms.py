@@ -28,6 +28,6 @@ class IrrigationlogForm(forms.ModelForm):
         model = IrrigationLog
         exclude = ('agrifield',)
         labels = {
-            'time': _('Datatime(Y/M/D h:m:s) '),
+            'time': _('Datetime(Y-M-D h:m:s) '),
             'water_amount': _('Water (cubic meters)'),
         }
