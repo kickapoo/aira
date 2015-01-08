@@ -3,16 +3,11 @@
 {% block title %} {{ user }} {% endblock %}
 
 {% block content %}
-<div class="alert alert-warning">
-    <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <i class="fa fa-hand-o-right fa-1x"></i>&nbsp; You are currently updating
-     {{ object.name}}
-</div>
-<hr>
 <div class="container">
 <div class="row">
     <div class="col-lg-12">
         <h3>Update Agrifield</h3>
+        <hr>
         <form method="post" role="form" class="form-horizontal">
                 {% csrf_token %}
                 {% bootstrap_form form layout='horizontal' %}
