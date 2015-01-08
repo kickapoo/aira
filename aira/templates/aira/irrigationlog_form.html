@@ -12,7 +12,7 @@
     <div class="row">
     	<hr>
     	 <h3>Add TimeLog</h3>
-        <div class="col-lg-12">
+        <div class="col-md-12">
             <form method="post" role="form" class="form-horizontal">
                     {% csrf_token %}
                     {% bootstrap_form form layout='horizontal' %}
@@ -24,8 +24,9 @@
             </form>
         </div>
         <hr>
-        <div class="table-responsive">
+        that is 
         {% if logs %}
+        <div class="table-responsive">
             <table class="table">
             	 <h3> List of <a href="{% url 'update_agrifield' agrifield.id %}">{{ agrifield.name }}</a> TimeLogs</h3>  
                   <thead>
@@ -45,7 +46,9 @@
                         </tr>
                     {% endfor %}
                   </tbody>
-                </table>
+            </table>
         {% endif %}
-        </div>             
+        </div>
+    </div> 
+</div>         
 {% endblock %}

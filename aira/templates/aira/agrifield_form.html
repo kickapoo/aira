@@ -3,10 +3,12 @@
 {% block title %} {{ user }} {% endblock %}
 
 {% block content %}
+{% if fields_count %}
 <div class="alert alert-warning">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <i class="fa fa-hand-o-right fa-1x"></i>&nbsp;  You have <b><span class="text text-success">{{fields_count}}</span></b> Agrifield(s) in your database.
 </div>
+{% endif %}
 <div class="container">
     <div class="row">
         <div class="table-responsive">
