@@ -4,19 +4,19 @@
 
 {% block content %}
 <div class="container">
-<div class="row">
+  <div class="row">
     <div class="col-lg-12">
-        <h3>Update TimeLog </h3>
-        <hr>
-        <form method="post" role="form" class="form-horizontal">
-                {% csrf_token %}
-                {% bootstrap_form form layout='horizontal' %}
-                {% buttons %}
-                <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-success btn-xs">Update</button>
-                </div>
+      <h3>Update TimeLog </h3>
+      <hr>
+      <form method="post" role="form" class="form-horizontal">
+        {% csrf_token %}
+        {% bootstrap_form form layout='horizontal' %}
+        {% buttons %}
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-success btn-xs">Update</button>
+        </div>
         {% endbuttons %}
-        </form>
+      </form>
     </div>
 </div>
 {% endblock %}

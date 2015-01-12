@@ -1,92 +1,67 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
+
 {% block title %} Home - {{user}} {% endblock %}
+
 {% block content %}
-
-<!-- IF  NOT PROFILE -->
 {% if not profile %}
-			<div class="alert alert-warning">
-			    <a href="#" class="close" data-dismiss="alert">&times;</a>
-				<i class="fa fa-hand-o-right"></i> &nbsp; Please update your pernonal information 
-				<a href="{% url 'create_profile' %}"> here </a> 
-			</div>
+  <div class="alert alert-warning">
+    <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-hand-o-right"></i> &nbsp; Please update your pernonal information<a href="{% url 'create_profile' %}"> here </a> 
+  </div>
 {% endif %}
-<!-- END IF NOT PROFILE -->
-
 <!-- context['map'] -->
- <div class="panel panel-default">
-		<div class="panel-heading"></div>
-		<div class="panel-body">
-			<div class="video-container"><iframe src="{% url 'user_map' %}" frameborder="1" width="500" height="500"></iframe></div>
-			<br>
-			<sup> Legend:&nbsp; <span class="text-danger">Red Mark </span> is your Agrifields</sup></div>
-		<!-- IF  PROFILE -->
-		{% if profile %}		
-		<div class="panel-footer">
-			<strong>First name:</strong> 
-					<a href="{% url 'update_profile' profile.id %}">{{ profile.first_name }}</a><br>
-			<strong>Last name :</strong> 
-					<a href="{% url 'update_profile' profile.id %}">{{ profile.last_name }}</a><br>
-			<strong>Address:</strong> 
-			{% if not profile.address %}
-					<a href="{% url 'update_profile' profile.id %}"> [edit] </a><br></div>
-			{% endif %}
-					<a href="{% url 'update_profile' profile.id %}">{{ profile.address }}</a><br></div>
-		{% endif %}
-		<!-- END IF PROFILE-->
+<div class="panel panel-default">
+  <div class="panel-heading"></div>
+    <div class="panel-body">
+      <div class="video-container"><iframe src="{% url 'user_map' %}" frameborder="1" width="500" height="500"></iframe></div>
+      <br>
+      <sup> Legend:&nbsp; <span class="text-danger">Red Mark </span> is your Agrifields</sup></div>
+      {% if profile %}    
+        <div class="panel-footer">
+          <strong>First name:</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.first_name }}</a><br>
+          <strong>Last name :</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.last_name }}</a><br>
+          <strong>Address:</strong> 
+          {% if profile.address %}
+            <a href="{% url 'update_profile' profile.id %}">{{ profile.address }}</a><br></div>
+          {% else %}
+            <a href="{% url 'update_profile' profile.id %}"> [edit] </a><br></div>
+          {% endif %}
+      {% endif %}
 </div>
-
-
-
-<!-- IF NOT AGRIFIELDS-->
 {% if not agrifields %}
-			<div class="alert alert-warning">
-			    <a href="#" class="close" data-dismiss="alert">&times;</a>
-				<i class="fa fa-exclamation-triangle"></i> &nbsp; Hmmm, it seems you have't any fields, 
-				Add at least one <a href="{% url 'create_agrifield' %}"> here </a> 
-			</div>
+  <div class="alert alert-warning">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <i class="fa fa-exclamation-triangle"></i> &nbsp; Hmmm, it seems you have't any fields, Add at least one <a href="{% url 'create_agrifield' %}"> here </a> 
+  </div>
+{% else %}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <a class="btn btn-success btn-xs" href="{% url 'create_agrifield' %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; Agrifields</a>
+    </div>
+    {% for f in agrifields %}
+      <div class="panel-body">
+        <div class="col-xs-12">
+          <p> <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> is growing <a href="{% url 'update_agrifield' f.id %}">{{ f.ct.ct_name }}</a> using <a href="{% url 'update_agrifield' f.id %}">{{ f.irrt.irrt_name }}</a> irrigation system. </p>
+          {% if f.irrigationlog_set.latest %} 
+            <p>Last irrigation event was <a href="{% url 'update_irrlog' f.irrigationlog_set.latest.id %}"> {{ f.irrigationlog_set.latest.water_amount }}&nbsp;m <sup>3</sup></a> of water, irrigated at&nbsp;  <a href="{% url 'update_irrlog' f.irrigationlog_set.latest.id %}"><i class="fa fa-clock-o"></i>&nbsp;{{ f.irrigationlog_set.latest.time }}</a> </p>
+            <hr>
+            <!-- dev: Here Needes if f.irw when pthelma.raster2timeseries is ready -->
+            {% if not f.irw %}
+              <p><span class="text text-success">Aira</span> latest advice is to irrigate<span class="text text-success">&nbsp;<i class="fa fa-tint"></i>&nbsp; 0.006 m<sup>3</sup></span> of water during <span class="text text-success"><i class="fa fa-clock-0"></i>99/12/2124</span>&nbsp;daytime (<a href="{% url 'advice' f.id %}">Calculation Report</a>).</p>     
+            {% else %}
+              <div class="alert alert-danger">
+                <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-exclamation-triangle"></i> &nbsp; Hmmm, it seems that your <strong>{{ f.name }} location </strong> or  <strong>{{f.name}} TimeLog </strong> is <strong>out of aira's range</strong>. <br> Please sent us <a href="#">ticket</a> <br>
+              </div>
+            {% endif %}
+            <sub><a class="btn btn-default btn-xs" href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; TimeLogs</a></sub></p>
+            <hr style="height:1px;border:none;color:#333;background-color:#333;">
+          {% else %}
+            <div class="alert alert-warning">
+              <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-exclamation-triangle "></i> &nbsp; Hmmm, it seems you have't any IrrigationLogs for <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> Agrifield, Please add at least one <a href="{% url 'create_irrlog' f.id %}"> here </a> 
+            </div>
+          {% endif %}
+        </div>
+      </div>         
+    {% endfor %}
 {% endif %}
-<!-- END IF NOT AGRIFIELDS-->
-
-<!-- IF AGRIFIELDS -->
-{% if agrifields %}
- <div class="panel panel-default">
-		<div class="panel-heading">
-			<a class="btn btn-success btn-xs" href="{% url 'create_agrifield' %}">
-			<i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; Agrifields</a>
-		</div>
-		{% for f in agrifields %}
-		<div class="panel-body">
-			<div class="col-xs-12">
-					<p> <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> is growing <a href="{% url 'update_agrifield' f.id %}">{{ f.ct.ct_name }}</a> using <a href="{% url 'update_agrifield' f.id %}">{{ f.irrt.irrt_name }}</a> irrigation system. </p>
-				{% if f.irrigationlog_set.latest %}	
-					<p>Last irrigation event was, <a href="{% url 'update_irrlog' f.irrigationlog_set.latest.id %}"> {{ f.irrigationlog_set.latest.water_amount }}&nbsp;m <sup>3</sup></a> of water irrigated at&nbsp;	<a href="{% url 'update_irrlog' f.irrigationlog_set.latest.id %}"><i class="fa fa-clock-o"></i>&nbsp;{{ f.irrigationlog_set.latest.time }}</a> 
-					</p>
-					<hr>
-					{% if not f.irw %}
-						<div class="alert alert-danger">
-			    		<a href="#" class="close" data-dismiss="alert">&times;</a>
-						<i class="fa fa-exclamation-triangle"></i> &nbsp; Hmmm, it seems that your <strong>{{ f.name }} location </strong> or  <strong>{{f.name}} TimeLog </strong> is <strong>out of aira's range</strong>. <br> We are currently working on that !!! <br>
-						</div>		
-					{% else %}
-					<p><span class="text text-success">Aira</span> latest advice is to irrigate<span class="text text-success">&nbsp;<i class="fa fa-tint"></i>&nbsp; 0.006 m<sup>3</sup></span> of water during <span class="text text-success"><i class="fa fa-clock-0"></i>99/12/2124</span>&nbsp;daytime.</p> 
-					{% endif %}
-					<sub><a class="btn btn-default btn-xs" href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; TimeLogs</a></sub></p>
-				<hr>
-			</div>
-</div>			
-				{% else %}
-						<div class="alert alert-warning">
-			   				<a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-exclamation-triangle "></i> &nbsp; Hmmm, it seems you have't any IrrigationLogs for <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> Agrifield, Please add at least one <a href="{% url 'create_irrlog' f.id %}"> here </a> 
-						</div>
-				{% endif %}		
-				{% endfor %}
-				</div>
-			</div>
-		</div>
-</div>		
-		{% endif %}
-	<!-- END IF  AGRIFIELDS-->
-</div>
-
 {% endblock %}

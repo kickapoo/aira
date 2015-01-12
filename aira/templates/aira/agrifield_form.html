@@ -1,57 +1,59 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
+
 {% block title %} {{ user }} {% endblock %}
 
 {% block content %}
 {% if fields_count %}
-<div class="alert alert-warning">
+  <div class="alert alert-warning">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <i class="fa fa-hand-o-right fa-1x"></i>&nbsp;  You have <b><span class="text text-success">{{fields_count}}</span></b> Agrifield(s) in your database.
-</div>
+  </div>
 {% endif %}
+
 <div class="container">
-    <div class="row">
-        <div class="table-responsive">
-        {% if agrifields %}
-            <table class="table">
-              <h3> List of Agrifields</h3>  
-                  <thead>
-                    <tr>
-                      <th>#id</th>
-                      <th>Name</th>
-                      <th>Crop Type</th>
-                      <th>Irrigation Type</th>
-                      <th>TimeLogs</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for f in agrifields  %}   
-                        <tr>
-                          <td>{{ f.id }}</td>
-                          <td><a href="{% url 'update_agrifield' f.id%}">{{f.name}}</a></td>
-                          <td><a href="{% url 'update_agrifield' f.id%}">{{f.ct.ct_name}}</td>
-                          <td><a href="{% url 'update_agrifield' f.id%}">{{f.irrt.irrt_name}}</a></td>
-                          <td><a href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i></a></td>
-                          <td><a href="{% url 'delete_agrifield' f.id %}">Delete </a></td>
-                        </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-        {% endif %}
-        </div>
-        <hr><br><br>
-        <h3>Add Agrifield</h3>
-        <div class="col-lg-12">
-            <form method="post" role="form" class="form-horizontal">
-                    {% csrf_token %}
-                    {% bootstrap_form form layout='horizontal' %}
-                    {% buttons %}
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success btn-xs">Submit</button>
-                    </div>
-            {% endbuttons %}
-            </form>
-        </div>
-        <hr>
-</div>
+  <div class="row">
+    <h3>Add Agrifield</h3>
+    <div class="col-md-4">
+      <form method="post" role="form">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons %}
+          <button type="submit" class="btn btn-success btn-xs">Submit</button>
+        {% endbuttons %}
+      </form>
+    </div>
+    <div class="col-md-1">
+    </div>
+    {% if agrifields %}
+    <div class="col-md-7">
+    <div class="table-responsive">
+      <table class="table">
+        <h4> List of Agrifields</h4>  
+          <thead>
+            <tr>
+              <th>#id</th>
+              <th>Name</th>
+              <th>Crop Type</th>
+              <th>Irrigation Type</th>
+              <th>TimeLogs</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for f in agrifields  %}   
+            <tr>
+              <td>{{ f.id }}</td>
+              <td><a href="{% url 'update_agrifield' f.id%}">{{f.name}}</a></td>
+              <td><a href="{% url 'update_agrifield' f.id%}">{{f.ct.ct_name}}</td>
+              <td><a href="{% url 'update_agrifield' f.id%}">{{f.irrt.irrt_name}}</a></td>
+              <td><a href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i></a></td>
+              <td><a href="{% url 'delete_agrifield' f.id %}">Delete </a></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+      </div>
+    {% endif %}
+  </div> <!-- row -->
+</div> <!-- container -->
 {% endblock %}

@@ -1,16 +1,21 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
+
 {% block title %} Welcome {% endblock %}
 
-{% block content %}	
-    <div class="jumbotron">
-      <div class="container">
-        <h3><span class="text-success">A</span>gricultural  <span class="text-success">IR</span>rigation <span class="text-success">A</span>dvisor</h3>
-          <p>using 
-          <a target = "_blank"href="http://openmeteo.org/">OpenMeteo.org</a> measurements, 
-          <a target = "_blank" href="http://pthelma.readthedocs.org/en/latest/">Pthelma</a> Models,
-          <a target = "_blank"href="http://cirrus.meteo.noa.gr/forecast/bolam/index.htm">NOA</a> forecast.           </p>
-      </div>
-    </div>	
+{% block content %} 
+<div class="jumbotron">
+  <div class="container">
+    <h3>
+    <span class="text-success">A</span>gricultural  
+    <span class="text-success">IR</span>rigation 
+    <span class="text-success">A</span>dvisor</h3>
+    <p>using 
+      <a target = "_blank"href="http://openmeteo.org/">OpenMeteo.org</a> measurements, 
+      <a target = "_blank" href="http://pthelma.readthedocs.org/en/latest/">Pthelma</a> Models,
+      <a target = "_blank"href="http://cirrus.meteo.noa.gr/forecast/bolam/index.htm">NOA</a> forecast.           
+    </p>
+  </div>
+</div>  
 {% endblock %}
 
