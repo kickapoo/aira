@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+
+{% block title %} {{ user }} {% endblock %}
+
+{% block content %}
+<div class="container">
+  <div>
+  Agrifield Name : {{ agrifield.name }} <br>
+  Parameters: <br>
+  Crop Type Name:  {{ agrifield.ct.ct_name }} <br>
+  Crop Type Coeff: {{ agrifield.ct.ct_coeff }} <br>
+  Crop Type root depth: {{ agrifield.ct.ct_rd }} <br>
+  Irrigation Type Effiency:  {{ agrifield.irrt.irrt_eff}}
+  &nbsp;
+  <div>
+  <hr>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Available Soil moisture start of day</th>
+          <th>ETc and Rain Source</th>
+          <th>Ks</th>
+          <th>ETc</th>
+          <th>ETcadj</th>
+          <th>Rain</th>
+          <th>Effective Rainfall</th>
+          <th>Water Added/removed from soil</th>
+          <th>Available Soil moisture end of day</th>
+          <th>Percent p*TAW consumption</th>
+          <th>Percent TAW consumption</th>
+          <th>Irrigate ?</th>
+          <th>Next irrigation Date</th>
+          <th>Advice</th>
+          <th>Duration og next irrigation (h)</th>
+          <th>Missing Data flag</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Date</td>
+          <td>Available Soil moisture start of day</td>
+          <td>ETc and Rain Source</td>
+          <td>Ks</td>
+          <td>ETc</td>
+          <td>ETcadj</td>
+          <td>Rain</td>
+          <td>Effective Rainfall</td>
+          <td>Water Added/removed from soil</td>
+          <td>Available Soil moisture end of day</td>
+          <td>Percent p*TAW consumption</td>
+          <td>Percent TAW consumption</td>
+          <td>Irrigate ?</td>
+          <td>Next irrigation Date</td>
+          <td>Advice</td>
+          <td>Duration og next irrigation (h)</td>
+          <td>Missing Data flag</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div> <!-- container -->
+{% endblock %}

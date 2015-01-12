@@ -10,17 +10,17 @@ from aira.models import Agrifield
 
 # GEO_DATA_CONFIG
 PRECIP_FILES = glob.glob(os.path.join(settings.AIRA_DATA_FILE_DIR,
-                                          'daily_rain*.tif'))
+                                      'daily_rain*.tif'))
 EVAP_FILES = glob.glob(os.path.join(settings.AIRA_DATA_FILE_DIR,
                                     'daily_evaporation*.tif'))
 
 
-def raster2pointTS(lat, log, files):
+def raster2pointTS(lat, long, files):
     point = ogr.Geometry(ogr.wkbPoint)
     sr = osr.SpatialReference()
     sr.ImportFromEPSG(4326)
     point.AssignSpatialReference(sr)
-    point.AddPoint(lat, log)
+    point.AddPoint(lat, long)
     return extract_point_timeseries_from_rasters(files, point)
 
 
@@ -43,6 +43,7 @@ def run_swb_model(precipitation, evapotranspiration,
 
 def irrigation_amount_view(agrifield_id):
     try:
+        # Select Agrifield
         f = Agrifield.objects.get(pk=agrifield_id)
         # Meteo Parameters
         precip = raster2pointTS(f.lat, f.lon, PRECIP_FILES)
@@ -59,7 +60,9 @@ def irrigation_amount_view(agrifield_id):
         p = 1
         rd_factor = 1
         start_date = f.irrigationlog_set.latest().time.replace(tzinfo=None)
+        print start_date
         finish_date = swb_finish_date(precip, evap)
+        print finish_date
         next_irr = run_swb_model(precip, evap, fc, wp, rd, kc, p,
                                  irrigation_efficiency, rd_factor,
                                  start_date, initial_soil_moisture, finish_date)
