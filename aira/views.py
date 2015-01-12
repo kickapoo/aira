@@ -12,6 +12,16 @@ class IndexPageView(TemplateView):
     template_name = 'aira/index.html'
 
 
+class AdvicePageView(TemplateView):
+    template_name = 'aira/advice.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(AdvicePageView, self).get_context_data(**kwargs)
+
+        context['agrifield'] = Agrifield.objects.get(pk=self.kwargs['pk'])
+        return context
+
+
 class HomePageView(TemplateView):
     template_name = 'aira/home.html'
 
@@ -28,12 +38,12 @@ class HomePageView(TemplateView):
             agrifields = Agrifield.objects.filter(owner=self.request.user).all()
             context['agrifields'] = agrifields
             context['fields_count'] = agrifields.count()
-            #Map
+            # Map
             lats = [f.lat for f in context['agrifields']]
             lons = [f.lon for f in context['agrifields']]
             descprition = [str(f.name) for f in context['agrifields']]
             generate_map(lats, lons, descprition)
-            #Irma Model
+            # Irma Model
             for f in agrifields:
                 f.irw = irrigation_amount_view(f.id)
 

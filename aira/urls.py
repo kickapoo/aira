@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 
 
-from aira.views import (IndexPageView, HomePageView,
+from aira.views import (IndexPageView, HomePageView, AdvicePageView,
                         CreateProfile, UpdateProfile,
                         CreateAgrifield, UpdateAgrifield, DeleteAgrifield,
                         CreateIrrigationLog, UpdateIrrigationLog,
@@ -12,9 +12,14 @@ from aira.views import (IndexPageView, HomePageView,
 urlpatterns = patterns(
     '',
     url(r'^$', IndexPageView.as_view(), name='welcome'),
+    # Home
     url(r'^home/$',
         login_required(HomePageView.as_view()),
         name='home'),
+    # Advice
+    url(r'^advice/(?P<pk>\d+)/$',
+        login_required(AdvicePageView.as_view()),
+        name='advice'),
     # Map per user_login
     url(r'^user_map/$',
         login_required(TemplateView.as_view(template_name='user_map.html')),
