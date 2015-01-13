@@ -22,7 +22,8 @@ urlpatterns = patterns(
         name='advice'),
     # Map per user_login
     url(r'^user_map/$',
-        login_required(TemplateView.as_view(template_name='user_map.html')),
+        login_required(TemplateView.as_view(
+                       template_name='maps/user_map.html')),
         name='user_map'),
     # Profile
     url(r'^create_profile/$',
