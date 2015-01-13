@@ -57,4 +57,4 @@ target/
 # Local stuff
 aira_project/settings/local.py
 aira_project/aira.db
-aira/templates/user_map.html
+aira/templates/maps/user_map.html

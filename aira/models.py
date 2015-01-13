@@ -53,8 +53,10 @@ class Agrifield(models.Model):
     owner = models.ForeignKey(User)
     name = models.CharField(max_length=255,
                             default='i.e. MyField1')
-    lon = models.FloatField()
-    lat = models.FloatField()
+    # Latitude / Longitude are crucial locations parameters
+    # Keeping their long names is more clear for developers/users
+    latitude = models.FloatField()
+    longitude = models.FloatField()
     ct = models.ForeignKey(CropType)
     irrt = models.ForeignKey(IrrigationType)
     area = models.FloatField()
