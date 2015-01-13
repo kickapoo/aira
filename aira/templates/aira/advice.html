@@ -2,21 +2,43 @@
 {% load bootstrap3 %}
 
 {% block title %} {{ user }} {% endblock %}
-
 {% block content %}
 <div class="container">
-  <div>
-  Agrifield Name : {{ agrifield.name }} <br>
-  Parameters: <br>
-  Crop Type Name:  {{ agrifield.ct.ct_name }} <br>
-  Crop Type Coeff: {{ agrifield.ct.ct_coeff }} <br>
-  Crop Type root depth: {{ agrifield.ct.ct_rd }} <br>
-  Irrigation Type Effiency:  {{ agrifield.irrt.irrt_eff}}
-  &nbsp;
-  <div>
-  <hr>
   <div class="table-responsive">
     <table class="table">
+      <caption>Aira Database Information</caption>
+      <thead>
+        <tr>
+          <tr>
+            <th colspan="1">Agrifield</th>
+            <th colspan="3">Field Crop</th>
+            <th colspan="2">Irrigation Type</th>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <th>Name</th>
+            <th>Coeffiecient</th>
+            <th>Root Dept</th>
+            <th>Name</th>
+            <th>Effiency</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ agrifield.name }}</td>
+          <td>{{ agrifield.ct.ct_name }} </td>
+          <td>{{ agrifield.ct.ct_coeff }}</td>
+          <td>{{ agrifield.ct.ct_rd }}</td>
+          <td>{{ agrifield.irrt }}</td>
+          <td>{{ agrifield.irrt.irrt_eff}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <hr style="height:1px;border:none;color:#333;background-color:#333;">
+  <div class="table-responsive">
+    <table class="table">
+      <caption>Advice Results </caption>
       <thead>
         <tr>
           <th>Date</th>
@@ -34,30 +56,32 @@
           <th>Irrigate ?</th>
           <th>Next irrigation Date</th>
           <th>Advice</th>
-          <th>Duration og next irrigation (h)</th>
+          <th>Duration of next irrigation (h)</th>
           <th>Missing Data flag</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Date</td>
-          <td>Available Soil moisture start of day</td>
-          <td>ETc and Rain Source</td>
-          <td>Ks</td>
-          <td>ETc</td>
-          <td>ETcadj</td>
-          <td>Rain</td>
-          <td>Effective Rainfall</td>
-          <td>Water Added/removed from soil</td>
-          <td>Available Soil moisture end of day</td>
-          <td>Percent p*TAW consumption</td>
-          <td>Percent TAW consumption</td>
-          <td>Irrigate ?</td>
-          <td>Next irrigation Date</td>
-          <td>Advice</td>
-          <td>Duration og next irrigation (h)</td>
-          <td>Missing Data flag</td>
-        </tr>
+        {% for result in d_report  %}
+          <tr>
+            <td>{{ result.date |date:"d/m/Y" }}</td>
+            <td>{{ result.ism }} </td>
+            <td>--</td>
+            <td>--</td>
+            <td>{{ result.evap|floatformat:"2" }} </td>
+            <td>--</td>
+            <td>{{ result.precip|floatformat:"2" }}</td>
+            <td>--</td>
+            <td>{{ result.depletion|floatformat:"2" }}</td>
+            <td>--</td>
+            <td>{{ swb.raw }}</td>
+            <td>{{ swb.taw }}</td>
+            <td>--</td>
+            <td>--</td>
+            <td>--</td>
+            <td>--</td>
+            <td>--</td>
+          </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>

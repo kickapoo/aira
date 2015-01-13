@@ -17,8 +17,10 @@ class AdvicePageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AdvicePageView, self).get_context_data(**kwargs)
-
-        context['agrifield'] = Agrifield.objects.get(pk=self.kwargs['pk'])
+        f = Agrifield.objects.get(pk=self.kwargs['pk'])
+        context['agrifield'] = f
+        context['swb'] = irrigation_amount_view(f.id)['s']
+        context['d_report'] = context['swb'].depletion_report
         return context
 
 
@@ -39,18 +41,16 @@ class HomePageView(TemplateView):
             context['agrifields'] = agrifields
             context['fields_count'] = agrifields.count()
             # Map
-            lats = [f.lat for f in context['agrifields']]
-            lons = [f.lon for f in context['agrifields']]
+            lats = [f.latitude for f in context['agrifields']]
+            lons = [f.longitude for f in context['agrifields']]
             descprition = [str(f.name) for f in context['agrifields']]
             generate_map(lats, lons, descprition)
             # Irma Model
             for f in agrifields:
-                f.irw = irrigation_amount_view(f.id)
+                f.irw = str(irrigation_amount_view(f.id)['next_irr'])
 
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
-            context['irws'] = None
-
         return context
 
 

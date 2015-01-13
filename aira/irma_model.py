@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 import glob
 from django.conf import settings
 
@@ -20,8 +21,13 @@ def raster2pointTS(lat, long, files):
     sr = osr.SpatialReference()
     sr.ImportFromEPSG(4326)
     point.AssignSpatialReference(sr)
-    point.AddPoint(lat, long)
+    point.AddPoint(long, lat)
     return extract_point_timeseries_from_rasters(files, point)
+
+
+def make_datetime(date):
+    # Convert datetime.date object to datetime
+    return datetime(date.year, date.month, date.day)
 
 
 def swb_finish_date(precipitation, evapotranspiration):
@@ -30,42 +36,35 @@ def swb_finish_date(precipitation, evapotranspiration):
     return min(plast, elast)
 
 
-def run_swb_model(precipitation, evapotranspiration,
-                  fc, wp, rd, kc, p, irrigation_efficiency, rd_factor,
-                  start_date, initial_soil_moisture, finish_date):
-    swb_model = SoilWaterBalance(fc, wp, rd, kc, p,
-                                 precipitation, evapotranspiration,
-                                 irrigation_efficiency, rd_factor)
-    iwa = swb_model.irrigation_water_amount(start_date, initial_soil_moisture,
-                                            finish_date)
-    return iwa
-
-
 def irrigation_amount_view(agrifield_id):
     try:
         # Select Agrifield
         f = Agrifield.objects.get(pk=agrifield_id)
-        # Meteo Parameters
-        precip = raster2pointTS(f.lat, f.lon, PRECIP_FILES)
-        evap = raster2pointTS(f.lat, f.lon, EVAP_FILES)
+        # Create Point Meteo Timeseries
+        precip = raster2pointTS(f.latitude, f.longitude, PRECIP_FILES)
+        evap = raster2pointTS(f.latitude, f.longitude, EVAP_FILES)
         # fc later will be provided from a raster map
         # wp later will be provided from a raster map
         fc = 0.5
         wp = 1
-        # Parameters provided from aira.models
+        # Parameters provided management comand - populate_coeffs
         rd = float(f.ct.ct_rd)
         kc = float(f.ct.ct_coeff)
-        irrigation_efficiency = float(f.irrt.eff)
-        initial_soil_moisture = fc
+        irr_eff = float(f.irrt.irrt_eff)
+        # Initial Soil moisture is constant
+        initial_sm = fc
         p = 1
         rd_factor = 1
+        # TZinfo is important for the web, check also settings.base
         start_date = f.irrigationlog_set.latest().time.replace(tzinfo=None)
-        print start_date
-        finish_date = swb_finish_date(precip, evap)
-        print finish_date
-        next_irr = run_swb_model(precip, evap, fc, wp, rd, kc, p,
-                                 irrigation_efficiency, rd_factor,
-                                 start_date, initial_soil_moisture, finish_date)
+        start_date = make_datetime(start_date)
+        # Depends on the latest AIRA_DATA_FILE
+        finish_date = make_datetime(swb_finish_date(precip, evap))
+        s = SoilWaterBalance(fc, wp, rd, kc, p,
+                             precip, evap,
+                             irr_eff, rd_factor)
+        next_irr = s.irrigation_water_amount(start_date, initial_sm, finish_date)
+        next = {'s': s, 'next_irr': str(round(next_irr,2))}
     except:
-        next_irr = None
-    return next_irr
+        next = {'s': None, 'next_irr': None}
+    return next

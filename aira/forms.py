@@ -15,8 +15,8 @@ class AgrifieldForm(forms.ModelForm):
         exclude = ('owner',)
         labels = {
             'name': _('Agriculture Field '),
-            'lat': _('Latitude (WGS84)'),
-            'lon': _('Longitude (WGS84)'),
+            'latitude': _('Latitude (WGS84)'),
+            'longitude': _('Longitude (WGS84)'),
             'ct': _('Crop Type'),
             'irrt': _('Irrigation Type'),
             'area': _('Field Area (square meters)')
