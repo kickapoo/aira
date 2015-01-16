@@ -12,18 +12,6 @@ class IndexPageView(TemplateView):
     template_name = 'aira/index.html'
 
 
-class AdvicePageView(TemplateView):
-    template_name = 'aira/advice.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(AdvicePageView, self).get_context_data(**kwargs)
-        f = Agrifield.objects.get(pk=self.kwargs['pk'])
-        context['agrifield'] = f
-        context['swb'] = irrigation_amount_view(f.id)['s']
-        context['d_report'] = context['swb'].depletion_report
-        return context
-
-
 class HomePageView(TemplateView):
     template_name = 'aira/home.html'
 
@@ -51,6 +39,18 @@ class HomePageView(TemplateView):
 
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
+        return context
+
+
+class AdvicePageView(TemplateView):
+    template_name = 'aira/advice.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(AdvicePageView, self).get_context_data(**kwargs)
+        f = Agrifield.objects.get(pk=self.kwargs['pk'])
+        context['agrifield'] = f
+        context['swb'] = irrigation_amount_view(f.id)['s']
+        context['d_report'] = context['swb'].depletion_report
         return context
 
 
@@ -91,6 +91,7 @@ class CreateAgrifield(CreateView):
         return context
 
 
+# IrrigationLog Create/Update/Delete
 class UpdateAgrifield(UpdateView):
     model = Agrifield
     form_class = AgrifieldForm

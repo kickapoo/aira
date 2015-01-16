@@ -64,7 +64,7 @@ def irrigation_amount_view(agrifield_id):
                              precip, evap,
                              irr_eff, rd_factor)
         next_irr = s.irrigation_water_amount(start_date, initial_sm, finish_date)
-        next = {'s': s, 'next_irr': str(round(next_irr,2))}
+        next = {'s': s, 'next_irr': str(round(next_irr, 2))}
     except:
         next = {'s': None, 'next_irr': None}
     return next
