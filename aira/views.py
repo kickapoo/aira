@@ -36,6 +36,8 @@ class HomePageView(TemplateView):
             # Irma Model
             for f in agrifields:
                 f.irw = str(irrigation_amount_view(f.id)['next_irr'])
+                if f.irw in 'None':
+                    f.irw = False
 
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
