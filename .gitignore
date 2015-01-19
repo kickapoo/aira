@@ -58,3 +58,4 @@ target/
 aira_project/settings/local.py
 aira_project/aira.db
 aira/templates/maps/user_map.html
+aira/migrations
