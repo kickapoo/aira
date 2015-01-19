@@ -3,7 +3,7 @@ Aira: An Irrigation Advisor
 Aira is a web application that calculates soil water balance in order
 to provide the users with irrigation advice. Its input should be
 prepared with [pthelma](http://pthelma.readthedocs.org/). It is under
-heavy development; in fact, it barely works.
+heavy development.
 
 How to run a development instance:
 
@@ -11,8 +11,12 @@ How to run a development instance:
      `aira_project/settings/local.py`.
 
   2. Execute `python manage.py syncdb`.
-
-  3. Execute `python manage.py runserver`.
+  
+  3. Execute `python manage.py populate_coeffs`.
+  
+  4. Execute `python manage.py demo_user`.
+  
+  5. Execute `python manage.py runserver`.
 
 Copyright (C) 2014-2015 TEI of Epirus
 
