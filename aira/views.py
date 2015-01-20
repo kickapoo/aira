@@ -3,7 +3,6 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from .models import Profile, Agrifield, IrrigationLog
 from .forms import ProfileForm, AgrifieldForm, IrrigationlogForm
-from .fmap import generate_map
 
 from .irma_model import irrigation_amount_view
 
@@ -17,7 +16,6 @@ class HomePageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomePageView, self).get_context_data(**kwargs)
-        generate_map([], [], [])
         # Fetch models.Profile(User)
         try:
             context['profile'] = Profile.objects.get(farmer=self.request.user)
@@ -29,16 +27,15 @@ class HomePageView(TemplateView):
             context['agrifields'] = agrifields
             context['fields_count'] = agrifields.count()
             # Map
-            lats = [f.latitude for f in context['agrifields']]
-            lons = [f.longitude for f in context['agrifields']]
-            descprition = [str(f.name) for f in context['agrifields']]
-            generate_map(lats, lons, descprition)
+            lats = [f.latitude for f in context['agrifields']] or [39.15]
+            lons = [f.longitude for f in context['agrifields']] or [20.98]
+            # descprition = [str(f.name) for f in context['agrifields']]
+            context['coords'] = zip(lats, lons)
             # Irma Model
             for f in agrifields:
                 f.irw = str(irrigation_amount_view(f.id)['next_irr'])
                 if f.irw in 'None':
                     f.irw = False
-
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
         return context

@@ -13,9 +13,23 @@
 <div class="panel panel-default">
   <div class="panel-heading"></div>
     <div class="panel-body">
-      <div class="video-container"><iframe src="{% url 'user_map' %}" frameborder="1" width="500" height="500"></iframe></div>
-      <br>
-      <sup> Legend:&nbsp; <span class="text-danger">Red Mark </span> is your Agrifields</sup></div>
+      <div id="open_map" class="map"></div>
+       <script type="text/javascript">
+          map = new OpenLayers.Map("open_map");
+          map.addLayer(new OpenLayers.Layer.OSM());
+          {% for lat,lon in coords %}
+          var lonLat = new OpenLayers.LonLat({{lon}}, {{lat}})
+                .transform(
+                  new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+                  map.getProjectionObject() // to Spherical Mercator Projection
+                );
+          var zoom=9;
+          var markers = new OpenLayers.Layer.Markers( "Markers" );
+          map.addLayer(markers);
+          markers.addMarker(new OpenLayers.Marker(lonLat));
+          map.setCenter (lonLat, zoom);
+          {% endfor %}
+       </script>
       {% if profile %}    
         <div class="panel-footer">
           <strong>First name:</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.first_name }}</a><br>
