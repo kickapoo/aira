@@ -17,7 +17,7 @@
         <tr>
             <th>Name</th>
             <th>Name</th>
-            <th>Coeffiecient</th>
+            <th>Depletion Coeffiecient</th>
             <th>Root Dept</th>
             <th>Name</th>
             <th>Effiency</th>
@@ -64,7 +64,7 @@
         {% for result in d_report  %}
           <tr>
             <td>{{ result.date |date:"d/m/Y" }}</td>
-            <td>{{ result.ism }} </td>
+            <td>{{ result.ism |floatformat:"2"}} </td>
             <td>--</td>
             <td>--</td>
             <td>{{ result.evap|floatformat:"2" }} </td>
@@ -73,8 +73,8 @@
             <td>--</td>
             <td>{{ result.depletion|floatformat:"2" }}</td>
             <td>--</td>
-            <td>{{ swb.raw }}</td>
-            <td>{{ swb.taw }}</td>
+            <td>{{ swb.raw |floatformat:"2" }}</td>
+            <td>{{ swb.taw |floatformat:"2" }}</td>
             <td>--</td>
             <td>--</td>
             <td>--</td>

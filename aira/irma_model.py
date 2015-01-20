@@ -3,8 +3,9 @@ from datetime import datetime
 import glob
 from django.conf import settings
 
-from osgeo import ogr, osr
-from pthelma.spatial import extract_point_timeseries_from_rasters
+from osgeo import gdal, ogr, osr
+from pthelma.spatial import (extract_point_from_raster,
+                             extract_point_timeseries_from_rasters)
 from pthelma.swb import SoilWaterBalance
 
 from aira.models import Agrifield
@@ -14,15 +15,29 @@ PRECIP_FILES = glob.glob(os.path.join(settings.AIRA_DATA_FILE_DIR,
                                       'daily_rain*.tif'))
 EVAP_FILES = glob.glob(os.path.join(settings.AIRA_DATA_FILE_DIR,
                                     'daily_evaporation*.tif'))
+FC_FILE = os.path.join(settings.AIRA_COEFFS_FILE_DIR,
+                       'fc.tif')
+PWP_FILE = os.path.join(settings.AIRA_COEFFS_FILE_DIR,
+                        'pwp.tif')
 
 
-def raster2pointTS(lat, long, files):
+def rasters2point(lat, long, files):
     point = ogr.Geometry(ogr.wkbPoint)
     sr = osr.SpatialReference()
     sr.ImportFromEPSG(4326)
     point.AssignSpatialReference(sr)
     point.AddPoint(long, lat)
     return extract_point_timeseries_from_rasters(files, point)
+
+
+def raster2point(lat, long, file):
+    point = ogr.Geometry(ogr.wkbPoint)
+    sr = osr.SpatialReference()
+    sr.ImportFromEPSG(4326)
+    point.AssignSpatialReference(sr)
+    point.AddPoint(long, lat)
+    f = gdal.Open(file)
+    return extract_point_from_raster(point, f)
 
 
 def make_datetime(date):
@@ -41,12 +56,10 @@ def irrigation_amount_view(agrifield_id):
         # Select Agrifield
         f = Agrifield.objects.get(pk=agrifield_id)
         # Create Point Meteo Timeseries
-        precip = raster2pointTS(f.latitude, f.longitude, PRECIP_FILES)
-        evap = raster2pointTS(f.latitude, f.longitude, EVAP_FILES)
-        # fc later will be provided from a raster map
-        # wp later will be provided from a raster map
-        fc = 0.5
-        wp = 1
+        precip = rasters2point(f.latitude, f.longitude, PRECIP_FILES)
+        evap = rasters2point(f.latitude, f.longitude, EVAP_FILES)
+        fc = raster2point(f.latitude, f.longitude, FC_FILE)
+        wp = raster2point(f.latitude, f.longitude, PWP_FILE)
         # Parameters provided management comand - populate_coeffs
         rd = float(f.ct.ct_rd)
         kc = float(f.ct.ct_coeff)
