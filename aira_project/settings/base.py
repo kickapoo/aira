@@ -64,3 +64,6 @@ AIRA_PARAMETERS_FILE_DIR = os.path.join(PROJECT_ROOT, 'airadb_coeffs')
 
 AIRA_DATA_FILE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                      "../../../meteo_data"))
+
+AIRA_COEFFS_FILE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                       "../../../coeffs_data"))
