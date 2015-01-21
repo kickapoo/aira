@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 import glob
 from django.conf import settings
 
@@ -60,24 +60,34 @@ def irrigation_amount_view(agrifield_id):
         evap = rasters2point(f.latitude, f.longitude, EVAP_FILES)
         fc = raster2point(f.latitude, f.longitude, FC_FILE)
         wp = raster2point(f.latitude, f.longitude, PWP_FILE)
-        # Parameters provided management comand - populate_coeffs
         rd = float(f.ct.ct_rd)
-        kc = float(f.ct.ct_coeff)
+        kc = 1
         irr_eff = float(f.irrt.irrt_eff)
         # Initial Soil moisture is constant
         initial_sm = fc
-        p = 1
+        p = float(f.ct.ct_coeff)
         rd_factor = 1
         # TZinfo is important for the web, check also settings.base
         start_date = f.irrigationlog_set.latest().time.replace(tzinfo=None)
         start_date = make_datetime(start_date)
+        # Warning user that last irrigation log is more than 5 days old
+        # datetime.now() depend from server config
+        now = datetime.now()
+        warning = False
+        warning_days = None
+        if now - start_date >= timedelta(days=5):
+            warning = True
+            warning_days = (now - start_date).days
         # Depends on the latest AIRA_DATA_FILE
         finish_date = make_datetime(swb_finish_date(precip, evap))
+        # pthelma.swb
         s = SoilWaterBalance(fc, wp, rd, kc, p,
                              precip, evap,
                              irr_eff, rd_factor)
         next_irr = s.irrigation_water_amount(start_date, initial_sm, finish_date)
-        next = {'s': s, 'next_irr': str(round(next_irr, 2))}
+        next = {'s': s, 'next_irr': str(round(next_irr, 2)),
+                'warning': warning, 'warning_days': warning_days}
     except:
-        next = {'s': None, 'next_irr': None}
+        next = {'s': None, 'next_irr': None, 'warning': warning,
+                'warning_days': warning_days}
     return next

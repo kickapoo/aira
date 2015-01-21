@@ -36,6 +36,11 @@ class HomePageView(TemplateView):
                 f.irw = str(irrigation_amount_view(f.id)['next_irr'])
                 if f.irw in 'None':
                     f.irw = False
+                f.warning = str(irrigation_amount_view(f.id)['warning'])
+                f.warning_days = str(irrigation_amount_view(f.id)['warning_days'])
+                if f.warning in 'None':
+                    f.warning = False
+
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
         return context
