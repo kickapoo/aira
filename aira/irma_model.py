@@ -61,7 +61,7 @@ def irrigation_amount_view(agrifield_id):
         fc = raster2point(f.latitude, f.longitude, FC_FILE)
         wp = raster2point(f.latitude, f.longitude, PWP_FILE)
         rd = float(f.ct.ct_rd)
-        kc = 1
+        kc = float(f.ct.ct_kc)
         irr_eff = float(f.irrt.irrt_eff)
         # Initial Soil moisture is constant
         initial_sm = fc

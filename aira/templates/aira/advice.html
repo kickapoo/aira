@@ -11,13 +11,14 @@
         <tr>
           <tr>
             <th colspan="1">Agrifield</th>
-            <th colspan="3">Field Crop</th>
+            <th colspan="4">Field Crop</th>
             <th colspan="2">Irrigation Type</th>
         </tr>
         <tr>
             <th>Name</th>
             <th>Name</th>
             <th>Depletion Coeffiecient</th>
+            <th>Kc</th>
             <th>Root Dept</th>
             <th>Name</th>
             <th>Effiency</th>
@@ -29,13 +30,14 @@
           <td>{{ agrifield.ct.ct_name }} </td>
           <td>{{ agrifield.ct.ct_coeff }}</td>
           <td>{{ agrifield.ct.ct_rd }}</td>
+          <td>{{ agrifield.ct.ct_kc }}</td>
           <td>{{ agrifield.irrt }}</td>
           <td>{{ agrifield.irrt.irrt_eff}}</td>
         </tr>
       </tbody>
     </table>
   </div>
-  <hr style="height:1px;border:none;color:#333;background-color:#333;">
+  <hr class="bhr">
   <div class="table-responsive">
     <table class="table">
       <caption>Advice Results </caption>

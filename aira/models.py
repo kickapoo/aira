@@ -28,6 +28,7 @@ class CropType(models.Model):
     ct_name = models.CharField(max_length=100)
     ct_coeff = models.DecimalField(max_digits=6, decimal_places=2)
     ct_rd = models.FloatField()
+    ct_kc = models.FloatField()
 
     class Meta:
         ordering = ('-ct_name',)
