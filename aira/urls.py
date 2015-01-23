@@ -1,5 +1,4 @@
 from django.conf.urls import patterns, url
-from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 
 
@@ -20,11 +19,6 @@ urlpatterns = patterns(
     url(r'^advice/(?P<pk>\d+)/$',
         login_required(AdvicePageView.as_view()),
         name='advice'),
-    # Map per user_login
-    url(r'^user_map/$',
-        login_required(TemplateView.as_view(
-                       template_name='maps/user_map.html')),
-        name='user_map'),
     # Profile
     url(r'^create_profile/$',
         login_required(CreateProfile.as_view()),

@@ -4,8 +4,9 @@ from django.contrib.auth.models import User
 # Notes:
 #   Essential db.fields.#shortname conversions
 #       ct: crop type
-#       coeff: coefficient
 #       ct_rd: crop type root depth
+#       ct_coeff: depletion coefficient
+#       ct_kc: crop type capasity
 #       irrt: irrigation type
 #       irrt_eff: irrigation type efficiency
 #       agrifield: agriculture field

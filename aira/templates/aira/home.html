@@ -30,16 +30,18 @@
           map.setCenter (lonLat, zoom);
           {% endfor %}
        </script>
+      </div>
       {% if profile %}    
         <div class="panel-footer">
           <strong>First name:</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.first_name }}</a><br>
           <strong>Last name :</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.last_name }}</a><br>
           <strong>Address:</strong> 
           {% if profile.address %}
-            <a href="{% url 'update_profile' profile.id %}">{{ profile.address }}</a><br></div>
+            <a href="{% url 'update_profile' profile.id %}">{{ profile.address }}</a><br>
           {% else %}
-            <a href="{% url 'update_profile' profile.id %}"> [edit] </a><br></div>
+            <a href="{% url 'update_profile' profile.id %}"> [edit] </a><br>
           {% endif %}
+        </div>
       {% endif %}
 </div>
 {% if not agrifields %}
@@ -63,7 +65,7 @@
               <p><span class="text text-success">Aira</span> latest advice is to irrigate<span class="text text-success">&nbsp;<i class="fa fa-tint"></i>&nbsp; {{ f.irw }} m<sup>3</sup></span> of water during <span class="text text-success"><i class="fa fa-clock-0"></i>99/12/2124</span>&nbsp;daytime (<a href="{% url 'advice' f.id %}">Calculation Report</a>).</p>   
                 {% if f.warning %}
                   <div class="alert alert-warning">
-                    <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-exclamation-triangle "></i> &nbsp; Hmmm, it seems that your latest Irrigation log for <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> is more than 5 days for aira advice to be accurate ( actually is {{ f.warning_days }} days passed ).<br> Please update your Irrigation logs <a href="{% url 'create_irrlog' f.id %}"> here </a>.
+                    <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-exclamation-triangle "></i> &nbsp; Hmmm, it seems that your latest Irrigation log for <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> is more than 5 days for aira advice to be accurate ( actually {{ f.warning_days }} days passed ).<br> Please update your Irrigation logs <a href="{% url 'create_irrlog' f.id %}"> here </a>.
                   </div>
                 {% endif %}
             {% else %}

@@ -27,20 +27,21 @@ class HomePageView(TemplateView):
             context['agrifields'] = agrifields
             context['fields_count'] = agrifields.count()
             # Map
+            # Defaults are city of Arta location
             lats = [f.latitude for f in context['agrifields']] or [39.15]
             lons = [f.longitude for f in context['agrifields']] or [20.98]
             # descprition = [str(f.name) for f in context['agrifields']]
             context['coords'] = zip(lats, lons)
             # Irma Model
             for f in agrifields:
-                f.irw = str(irrigation_amount_view(f.id)['next_irr'])
+                swb_view = irrigation_amount_view(f.id)
+                f.irw = str(swb_view['next_irr'])
                 if f.irw in 'None':
                     f.irw = False
-                f.warning = str(irrigation_amount_view(f.id)['warning'])
-                f.warning_days = str(irrigation_amount_view(f.id)['warning_days'])
+                f.warning = str(swb_view['warning'])
+                f.warning_days = str(swb_view['warning_days'])
                 if f.warning in 'None':
                     f.warning = False
-
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
         return context
