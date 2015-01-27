@@ -28,6 +28,7 @@ class Command(BaseCommand):
                                                                 ct_coeff=float(row[1]),
                                                                 ct_rd=float(row[2]),
                                                                 ct_kc=float(row[3]),
+                                                                ct_fek=int(row[4]),
                                                                 )
         except:
             raise CommandError("Use 'makemigrations aira' to create aira tables")
