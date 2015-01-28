@@ -103,6 +103,6 @@ def irrigation_amount_view(agrifield_id):
         next = {'s': s, 'next_irr': str(round(next_irr, 2)),
                 'warning': warning, 'warning_days': warning_days}
     except:
-        next = {'s': None, 'next_irr': None, 'warning': warning,
-                'warning_days': warning_days}
+        next = {'s': None, 'next_irr': None, 'warning': None,
+                'warning_days': None}
     return next
