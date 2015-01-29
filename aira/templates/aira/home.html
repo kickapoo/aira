@@ -58,18 +58,26 @@
       <div class="panel-body">
         <div class="col-xs-12">
           <p><a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> is growing <a href="{% url 'update_agrifield' f.id %}">{{ f.ct.ct_name }}</a> using <a href="{% url 'update_agrifield' f.id %}">{{ f.irrt.irrt_name }}</a> irrigation system. </p>       
-          {% if f.warning_dates %}
-                <div class="alert alert-warning">
-                  <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-exclamation-triangle "></i> &nbsp; 
-                  You either haven't enter any irrigation log or you latest irrigation date isn't included in our meteorological dataset. <br>
-                  Your irrigation advice is calculated using starting date <span class="text-success">{{ f.warning_dates.0 }}  </span>
-                </div>
+          {% if f.warning_loc %}
+            <div class="alert alert-danger">
+              <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-exclamation-triangle"></i> &nbsp; 
+               Your agrifield location is outside Arta's plain field. <br>
+               Update you field location <a href="{% url 'update_agrifield' f.id %}">here</a>.
+            </div>            
+          {% else %}
+            {% if f.warning_dates %}
+              <div class="alert alert-warning">
+                <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-exclamation-triangle "></i> &nbsp; 
+                You either haven't enter any irrigation log or your latest irrigation date isn't included in our meteorological dataset. <br>
+                Your irrigation advice is calculated using starting date <span class="text-success">{{ f.warning_dates.0 }}  </span>
+              </div>
+            {% endif %}
+            {% if f.irw %}
+              <p><span class="text text-success">Aira</span> latest advice is to irrigate<span class="text text-success">&nbsp;<i class="fa fa-tint"></i>&nbsp; {{ f.irw }} m<sup>3</sup></span> of water during <span class="text text-success"><i class="fa fa-clock-0"></i>99/12/2124</span>&nbsp;daytime (<a href="{% url 'advice' f.id %}">Calculation Report</a>).</p>
+            {% endif %}
+            <sub><a class="btn btn-success btn-xs" href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; TimeLogs</a></sub></p>
+            <hr class="bhr">
           {% endif %}
-          {% if f.irw %}
-            <p><span class="text text-success">Aira</span> latest advice is to irrigate<span class="text text-success">&nbsp;<i class="fa fa-tint"></i>&nbsp; {{ f.irw }} m<sup>3</sup></span> of water during <span class="text text-success"><i class="fa fa-clock-0"></i>99/12/2124</span>&nbsp;daytime (<a href="{% url 'advice' f.id %}">Calculation Report</a>).</p>
-          {% endif %}
-          <sub><a class="btn btn-success btn-xs" href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; TimeLogs</a></sub></p>
-          <hr class="bhr">
         </div>
       </div>         
     {% endfor %}
