@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
+{% load mathfilters %}
 
 {% block title %} {{ user }} {% endblock %}
 {% block content %}
@@ -19,7 +20,7 @@
             <th>Name</th>
             <th>Depletion Coeffiecient</th>
             <th>Kc</th>
-            <th>Root Dept</th>
+            <th>Root Dept (cm)</th>
             <th>Name</th>
             <th>Effiency</th>
         </tr>
@@ -43,45 +44,33 @@
       <caption>Advice Results </caption>
       <thead>
         <tr>
-          <th>Date</th>
-          <th>Available Soil moisture start of day</th>
-          <th>ETc and Rain Source</th>
-          <th>Ks</th>
-          <th>ETc</th>
-          <th>ETcadj</th>
-          <th>Rain</th>
-          <th>Effective Rainfall</th>
-          <th>Water Added/removed from soil</th>
-          <th>Available Soil moisture end of day</th>
-          <th>Percent p*TAW consumption</th>
-          <th>Percent TAW consumption</th>
-          <th>Irrigate ?</th>
-          <th>Next irrigation Date</th>
-          <th>Advice</th>
-          <th>Duration of next irrigation (h)</th>
-          <th>Missing Data flag</th>
+          <th>Date <br> (d-M-Y)</th>
+          <th>Available soil moisture <br>at start of day <br> (mm)</th>
+          <th>ETc <br> (mm)</th>
+          <th>Rain <br> (mm)</th>
+          <th>Water Added/Removed from soil <br>(mm)</th>
+          <th>Available Soil moisture end of day <br> (mm)</th>
+          <th>Percent p*TAW consumption <br>(%)</th>
+          <th>Percent TAW consumption <br> (%)</th>
+          <th>Irrigate</th>
         </tr>
       </thead>
       <tbody>
         {% for result in d_report  %}
           <tr>
-            <td>{{ result.date |date:"d/m/Y" }}</td>
-            <td>{{ result.ism |floatformat:"2"}} </td>
-            <td>--</td>
-            <td>--</td>
-            <td>{{ result.evap|floatformat:"2" }} </td>
-            <td>--</td>
-            <td>{{ result.precip|floatformat:"2" }}</td>
-            <td>--</td>
-            <td>{{ result.depletion|floatformat:"2" }}</td>
-            <td>--</td>
-            <td>{{ swb.raw |floatformat:"2" }}</td>
-            <td>{{ swb.taw |floatformat:"2" }}</td>
-            <td>--</td>
-            <td>--</td>
-            <td>--</td>
-            <td>--</td>
-            <td>--</td>
+            <td align="center">{{ result.date |date:"d/m/Y" }}</td>
+            <td align="center"> {{ result.ism|floatformat:"1" }} (?)</td>
+            {% if result.evap < 0  %}
+              <td align="center"> 0.0 </td>
+            {% else %}
+              <td align="center">{{ result.evap|mul:agrifield.ct.ct_kc|floatformat:"1"  }}</td>
+            {% endif %}
+            <td align="center"> {{ result.precip|floatformat:"1" }} </td>
+            <td align="center">{{ result.depletion|floatformat:"1" }} (?)</td>
+            <td> moisture</td>
+            <td align="center">{{ swb.raw |floatformat:"1" }} %</td>
+            <td align="center">{{ swb.taw |floatformat:"1" }} % </td>
+            <td align="center"> -</td>
           </tr>
         {% endfor %}
       </tbody>
