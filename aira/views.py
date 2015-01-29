@@ -35,6 +35,7 @@ class HomePageView(TemplateView):
             # Irma Model
             for f in agrifields:
                 swb_view = irrigation_amount_view(f.id)
+                f.start_date = swb_view['start_date']
                 if swb_view['warning_loc'] is None:
                     f.warning_loc = True
                 f.warning_dates = swb_view['warning_dates']

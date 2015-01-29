@@ -140,8 +140,9 @@ def irrigation_amount_view(agrifield_id):
         # From aira_warings start and finish date
         next_irr = s.irrigation_water_amount(start_date, initial_sm, finish_date)
         next = dict(s=s, next_irr=str(round(next_irr,2)),
-                    warning_loc=warning_loc, warning_dates=warning_dates)
+                    warning_loc=warning_loc, warning_dates=warning_dates,
+                    start_date=start_date)
     except:
         next = dict(s=None, next_irr=None, warning_loc=None,
-                    warning_dates=None)
+                    warning_dates=None, start_date=None)
     return next
