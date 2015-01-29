@@ -3,5 +3,6 @@ pthelma>=0.10,<2
 Jinja2>=2.6,<3
 django-bootstrap3>=5,<6
 django-registration-redux>=1.1,<2
+django-mathfilters==0.3.0,<2
 folium>=0.1,<0.2
 six>=1.1,<2

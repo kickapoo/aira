@@ -20,7 +20,8 @@ DJANGO_APPS = ('django.contrib.admin',
 
 # THIRD_PARTY_APPS
 THIRD_PARTY_APPS = ('bootstrap3',
-                    'registration',)
+                    'registration',
+                    'mathfilters',)
 # LOCAL APPS
 LOCAL_APPS = ('aira',)
 
