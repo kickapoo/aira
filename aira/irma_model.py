@@ -73,8 +73,10 @@ def data_start_date(precipitation, evapotranspiration):
 
 
 def location_warning(agrifield_id, precip_files, evap_files):
-    # Simplified validation if agrifield is inside dataset rasters
+    # Simplified check if agrifield location is inside dataset rasters
     # Need to add some more sophisticated using dgal
+    # In order not to break model calculations
+    # we user Arta city location as defaults
     f = Agrifield.objects.get(pk=agrifield_id)
     try:
         location_warning = False
@@ -88,7 +90,7 @@ def location_warning(agrifield_id, precip_files, evap_files):
         return precip, evap, location_warning
 
 
-def date_period_warning(agrifield_id):
+def timeperiod_warning(agrifield_id, precip, evap):
     # Warning about 2 cases
     # 1. User haven't added irrigation log
     # 2. User latest irrigation log isnt in dataset raster timeperiod
@@ -97,7 +99,6 @@ def date_period_warning(agrifield_id):
     # to easy use in views.HomePageview
     warning = None
     f = Agrifield.objects.get(pk=agrifield_id)
-    precip, evap, warning_loc = location_warning(agrifield_id, PRECIP_FILES, EVAP_FILES)
     data_sd = make_tz_datetime(data_start_date(precip, evap))
     if not f.irrigationlog_set.exists():
         warning = True
@@ -115,19 +116,17 @@ def irrigation_amount_view(agrifield_id):
         # Select Agrifield
         f = Agrifield.objects.get(pk=agrifield_id)
         # Create Timeseries given Agrifield location
-        precip, evap, warning_loc = location_warning(agrifield_id, PRECIP_FILES, EVAP_FILES)
+        precip, evap, warning_loc = location_warning(agrifield_id,
+                                                     PRECIP_FILES, EVAP_FILES)
         # Extract pthelma.swb parameter information
-        # from aira pre-installed database
         fc = raster2point(f.latitude, f.longitude, FC_FILE)
         wp = raster2point(f.latitude, f.longitude, PWP_FILE)
         rd = float(f.ct.ct_rd)
         kc = float(f.ct.ct_kc)
         irr_eff = float(f.irrt.irrt_eff)
-        start_date, warning_dates = date_period_warning(agrifield_id)
+        start_date, warning_dates = timeperiod_warning(agrifield_id,
+                                                       precip, evap)
         # Validation about initial conditions
-        # if warnind_dates are True means user
-        # either have enter irrigation log or
-        # latest irrigation log is outside dataset timeperiod
         initial_sm = fc
         if warning_dates is True:
             initial_sm = 0
@@ -140,8 +139,9 @@ def irrigation_amount_view(agrifield_id):
                              irr_eff, rd_factor)
         # From aira_warings start and finish date
         next_irr = s.irrigation_water_amount(start_date, initial_sm, finish_date)
-        next = {'s': s, 'next_irr': str(round(next_irr, 2)),
-                'warning_loc': warning_loc}
+        next = dict(s=s, next_irr=str(round(next_irr,2)),
+                    warning_loc=warning_loc, warning_dates=warning_dates)
     except:
-        next = {'s': None, 'next_irr': None, 'warning_loc': None}
+        next = dict(s=None, next_irr=None, warning_loc=None,
+                    warning_dates=None)
     return next

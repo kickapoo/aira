@@ -4,7 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import Profile, Agrifield, IrrigationLog
 from .forms import ProfileForm, AgrifieldForm, IrrigationlogForm
 
-from .irma_model import irrigation_amount_view, date_period_warning
+from .irma_model import irrigation_amount_view
 
 
 class IndexPageView(TemplateView):
@@ -35,11 +35,10 @@ class HomePageView(TemplateView):
             # Irma Model
             for f in agrifields:
                 swb_view = irrigation_amount_view(f.id)
-                f.warning_dates = date_period_warning(f.id)
                 if swb_view['warning_loc'] is None:
                     f.warning_loc = True
-
-                if f.warning_dates[1] is None:
+                f.warning_dates = swb_view['warning_dates']
+                if f.warning_dates is None:
                     f.warning_dates = False
                 f.irw = swb_view['next_irr']
                 if f.irw is None:
