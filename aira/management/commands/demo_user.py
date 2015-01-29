@@ -25,8 +25,10 @@ class Command(BaseCommand):
             tomato = CropType.objects.filter(ct_name="Tomato").first()
             drip = IrrigationType.objects.filter(irrt_name="Drip irrigation").first()
 
+            # Agrifield with at least on irrigation log within datasample period
+            # Datasample: full December of 2014
             f, created = Agrifield.objects.get_or_create(owner=demo,
-                                                         name="Close to Arta",
+                                                         name="Close to Arta with irrigation log",
                                                          latitude=39.15,
                                                          longitude=20.98,
                                                          ct=tomato,
@@ -35,6 +37,31 @@ class Command(BaseCommand):
             f.save()
             l, created = IrrigationLog.objects.get_or_create(agrifield=f,
                                                              time="2014-12-02 00:00",
+                                                             water_amount=23.00)
+            l.save()
+
+            # Agrifield with no irrigation log
+            f, created = Agrifield.objects.get_or_create(owner=demo,
+                                                         name="Close to Arta with no irrigation log",
+                                                         latitude=39.10,
+                                                         longitude=20.92,
+                                                         ct=tomato,
+                                                         irrt=drip,
+                                                         area=2000.00)
+            f.save()
+
+            # Agrifield with irrigation log outside datasample period
+            # Datasample: full December of 2014
+            f, created = Agrifield.objects.get_or_create(owner=demo,
+                                                         name="Close to Arta with irrigation log outside data period",
+                                                         latitude=39.12,
+                                                         longitude=20.94,
+                                                         ct=tomato,
+                                                         irrt=drip,
+                                                         area=2350.00)
+            f.save()
+            l, created = IrrigationLog.objects.get_or_create(agrifield=f,
+                                                             time="2014-11-15 00:00",
                                                              water_amount=23.00)
             l.save()
         except:
