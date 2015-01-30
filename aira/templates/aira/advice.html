@@ -45,11 +45,11 @@
       <thead>
         <tr>
           <th>Date <br> (d-M-Y)</th>
-          <th>Available soil moisture <br>at start of day <br> (mm)</th>
+          <th>Available soil moisture <br>at start of day <br> </th>
           <th>ETc <br> (mm)</th>
           <th>Rain <br> (mm)</th>
           <th>Water Added/Removed from soil <br>(mm)</th>
-          <th>Available Soil moisture end of day <br> (mm)</th>
+          <th>Available Soil moisture end of day <br></th>
           <th>Percent p*TAW consumption <br>(%)</th>
           <th>Percent TAW consumption <br> (%)</th>
           <th>Irrigate</th>
@@ -59,15 +59,15 @@
         {% for result in d_report  %}
           <tr>
             <td align="center">{{ result.date |date:"d/m/Y" }}</td>
-            <td align="center"> {{ result.ism|floatformat:"1" }} (?)</td>
+            <td align="center"> {{ result.moisture_start|c }} </td>
             {% if result.evap < 0  %}
               <td align="center"> 0.0 </td>
             {% else %}
-              <td align="center">{{ result.evap|mul:agrifield.ct.ct_kc|floatformat:"1"  }}</td>
+              <td align="center">{{ result.evap|mul:agrifield.ct.ct_kc|floatformat:"1" }}</td>
             {% endif %}
             <td align="center"> {{ result.precip|floatformat:"1" }} </td>
-            <td align="center">{{ result.depletion|floatformat:"1" }} (?)</td>
-            <td> moisture</td>
+            <td align="center"> {{ result.depletion|floatformat:"1"  }} </td>
+            <td align="center"> {{ result.moisture_finish|floatformat:"1" }} </td>
             <td align="center">{{ swb.raw |floatformat:"1" }} %</td>
             <td align="center">{{ swb.taw |floatformat:"1" }} % </td>
             <td align="center"> -</td>
