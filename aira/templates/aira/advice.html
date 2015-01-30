@@ -48,6 +48,7 @@
           <th>Available soil moisture <br>at start of day <br> </th>
           <th>ETc <br> (mm)</th>
           <th>Rain <br> (mm)</th>
+          <th>Effective Rainfall <br> (mm)</th>
           <th>Water Added/Removed from soil </th>
           <th>Available Soil moisture end of day <br></th>
           <th>Percent p*TAW consumption <br>(%)</th>
@@ -66,6 +67,7 @@
               <td align="center">{{ result.evap|mul:agrifield.ct.ct_kc|floatformat:"1" }}</td>
             {% endif %}
             <td align="center"> {{ result.precip|floatformat:"1" }} </td>
+            <td align="center"> {{ result.precip|mul:0.8|floatformat:"1"}}</td>
             <td align="center"> {{ result.depletion|floatformat:"1"  }} </td>
             <td align="center"> {{ result.moisture_finish|floatformat:"1" }} </td>
             <td align="center">{{ swb.raw |floatformat:"1" }} %</td>
