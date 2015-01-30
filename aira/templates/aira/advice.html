@@ -67,7 +67,11 @@
               <td align="center">{{ result.evap|mul:agrifield.ct.ct_kc|floatformat:"1" }}</td>
             {% endif %}
             <td align="center"> {{ result.precip|floatformat:"1" }} </td>
-            <td align="center"> {{ result.precip|mul:0.8|floatformat:"1"}}</td>
+            {% if result.precip > 0.4  %}
+              <td align="center"> {{ result.precip|mul:0.8|floatformat:"1"}}</td>
+            {% else %}
+              <td align="center"> 0.0 </td>
+            {% endif %}
             <td align="center"> {{ result.depletion|floatformat:"1"  }} </td>
             <td align="center"> {{ result.moisture_finish|floatformat:"1" }} </td>
             <td align="center">{{ swb.raw |floatformat:"1" }} %</td>
