@@ -48,7 +48,7 @@
           <th>Available soil moisture <br>at start of day <br> </th>
           <th>ETc <br> (mm)</th>
           <th>Rain <br> (mm)</th>
-          <th>Water Added/Removed from soil <br>(mm)</th>
+          <th>Water Added/Removed from soil </th>
           <th>Available Soil moisture end of day <br></th>
           <th>Percent p*TAW consumption <br>(%)</th>
           <th>Percent TAW consumption <br> (%)</th>
@@ -59,7 +59,7 @@
         {% for result in d_report  %}
           <tr>
             <td align="center">{{ result.date |date:"d/m/Y" }}</td>
-            <td align="center"> {{ result.moisture_start|c }} </td>
+            <td align="center"> {{ result.moisture_start|floatformat:"1"  }} </td>
             {% if result.evap < 0  %}
               <td align="center"> 0.0 </td>
             {% else %}
