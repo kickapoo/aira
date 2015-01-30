@@ -36,7 +36,7 @@ def rasters2point(lat, long, files):
 
 def raster2point(lat, long, file):
     # Extract single point information
-    # from given raster
+    # from a given raster
     point = ogr.Geometry(ogr.wkbPoint)
     sr = osr.SpatialReference()
     sr.ImportFromEPSG(4326)
@@ -57,8 +57,8 @@ def make_tz_datetime(date):
 def swb_finish_date(precipitation, evapotranspiration):
     # Searching for AIRA_DATA_FILE_DIR to find
     # the common time period with the latest record
-    # in precipitation and evaporation rasters
-    # uses  pthelma.timeseries.bounding_dates method
+    # in precipitation and evaporation rasters.
+    # Uses  pthelma.timeseries.bounding_dates method
     plast = precipitation.bounding_dates()[1]
     elast = evapotranspiration.bounding_dates()[1]
     return min(plast, elast)
@@ -74,9 +74,9 @@ def data_start_date(precipitation, evapotranspiration):
 
 def location_warning(agrifield_id, precip_files, evap_files):
     # Simplified check if agrifield location is inside dataset rasters
-    # Need to add some more sophisticated using dgal
+    # Need to add some more sophisticated using dgal.
     # In order not to break model calculations
-    # we user Arta city location as defaults
+    # we use Arta city location as default.
     f = Agrifield.objects.get(pk=agrifield_id)
     try:
         location_warning = False
@@ -95,8 +95,6 @@ def timeperiod_warning(agrifield_id, precip, evap):
     # 1. User haven't added irrigation log
     # 2. User latest irrigation log isnt in dataset raster timeperiod
     # In both cases advice is estimated based of available timeperiod datasets
-    # PRECIP_FILES, EVAP_FILES are not used as argurements for
-    # to easy use in views.HomePageview
     warning = None
     f = Agrifield.objects.get(pk=agrifield_id)
     data_sd = make_tz_datetime(data_start_date(precip, evap))
@@ -108,7 +106,7 @@ def timeperiod_warning(agrifield_id, precip, evap):
     if irr_date < data_sd:
         warning = True
         return data_sd, warning
-    return data_sd, warning
+    return irr_date, warning
 
 
 def irrigation_amount_view(agrifield_id):
@@ -141,8 +139,8 @@ def irrigation_amount_view(agrifield_id):
         next_irr = s.irrigation_water_amount(start_date, initial_sm, finish_date)
         next = dict(s=s, next_irr=str(round(next_irr,2)),
                     warning_loc=warning_loc, warning_dates=warning_dates,
-                    start_date=start_date)
+                    start_date=start_date, fc=fc)
     except:
         next = dict(s=None, next_irr=None, warning_loc=None,
-                    warning_dates=None, start_date=None)
+                    warning_dates=None, start_date=None, fc=None)
     return next

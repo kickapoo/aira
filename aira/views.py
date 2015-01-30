@@ -35,6 +35,12 @@ class HomePageView(TemplateView):
             # Irma Model
             for f in agrifields:
                 swb_view = irrigation_amount_view(f.id)
+                if swb_view['fc'] is not None:
+                    d_report = swb_view['s'].depletion_report
+                    f.fc = swb_view['fc']
+                    if any(d['depletion'] >= f.fc for d in d_report):
+                        f.warning_fc = True
+                        f.warning_fc_date = [d['date'] for d in d_report if d['depletion'] >= f.fc][0].date
                 f.start_date = swb_view['start_date']
                 if swb_view['warning_loc'] is None:
                     f.warning_loc = True

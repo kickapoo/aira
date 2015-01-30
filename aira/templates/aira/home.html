@@ -68,8 +68,14 @@
             {% if f.warning_dates %}
               <div class="alert alert-warning">
                 <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-exclamation-triangle "></i> &nbsp; 
-                You either haven't enter any irrigation log or your latest irrigation date isn't included in our meteorological dataset. <br>
+                You either haven't enter any irrigation log or your latest irrigation date isn't included in our meteorological dataset. Add or Update your irrigation log <a href="{% url 'create_irrlog' f.id %}">here</a>.<br>
                 Your irrigation advice is calculated using our dataset starting date: <span class="text-success">{{ f.start_date }}  </span>
+              </div>
+            {% endif %}
+            {% if f.warning_fc %}
+              <div class="alert alert-warning">
+                <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-exclamation-triangle "></i> &nbsp; 
+                You have reached field capacity ({{ f.fc|floatformat:"1" }}) at <span class="text-success">{{f.warning_fc_date}}</span>
               </div>
             {% endif %}
             {% if f.irw %}
