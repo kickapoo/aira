@@ -23,12 +23,14 @@ class Command(BaseCommand):
                                                                       irrt_eff=float(row[1]))
             with open(croptype_csv) as f:
                 reader = csv.reader(f)
+                reader.next()
                 for row in reader:
-                    _, created = CropType.objects.get_or_create(ct_name=row[0],
-                                                                ct_coeff=float(row[1]),
-                                                                ct_rd=float(row[2]),
-                                                                ct_kc=float(row[3]),
-                                                                ct_fek=int(row[4]),
+                    _, created = CropType.objects.get_or_create(ct_name=str(row[0]),
+                                                                ct_rd_min=float(row[1]),
+                                                                ct_rd_max=float(row[2]),
+                                                                ct_coeff=float(row[3]),
+                                                                ct_kc=float(row[4]),
+                                                                ct_fek=int(row[5]),
                                                                 )
         except:
             raise CommandError("Use 'makemigrations aira' to create aira tables")

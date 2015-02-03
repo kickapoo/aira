@@ -27,8 +27,9 @@ class Profile(models.Model):
 
 class CropType(models.Model):
     ct_name = models.CharField(max_length=100)
+    ct_rd_max = models.FloatField()
+    ct_rd_min = models.FloatField()
     ct_coeff = models.DecimalField(max_digits=6, decimal_places=2)
-    ct_rd = models.FloatField()
     ct_kc = models.FloatField()
     ct_fek = models.IntegerField()
 
