@@ -23,7 +23,8 @@ class Command(BaseCommand):
             p.save()
 
             tomato = CropType.objects.filter(ct_name="Tomato").first()
-            drip = IrrigationType.objects.filter(irrt_name="Drip irrigation").first()
+            drip = IrrigationType.objects.filter(
+                irrt_name="Drip irrigation").first()
 
             # Agrifield with at least on irrigation log within datasample period
             # Datasample: full December of 2014
@@ -33,7 +34,7 @@ class Command(BaseCommand):
                                                          longitude=20.98,
                                                          ct=tomato,
                                                          irrt=drip,
-                                                         area=2800.00)
+                                                         area=23000.00)
             f.save()
             l, created = IrrigationLog.objects.get_or_create(agrifield=f,
                                                              time="2014-12-02 00:00",
@@ -47,7 +48,7 @@ class Command(BaseCommand):
                                                          longitude=20.92,
                                                          ct=tomato,
                                                          irrt=drip,
-                                                         area=2000.00)
+                                                         area=24000.00)
             f.save()
 
             # Agrifield with irrigation log outside datasample period
@@ -58,7 +59,7 @@ class Command(BaseCommand):
                                                          longitude=20.94,
                                                          ct=tomato,
                                                          irrt=drip,
-                                                         area=2350.00)
+                                                         area=23500.00)
             f.save()
             l, created = IrrigationLog.objects.get_or_create(agrifield=f,
                                                              time="2014-11-15 00:00",
