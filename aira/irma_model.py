@@ -58,7 +58,6 @@ def swb_finish_date(precipitation, evapotranspiration):
     # Searching for AIRA_DATA_FILE_DIR to find
     # the common time period with the latest record
     # in precipitation and evaporation rasters.
-    # Uses  pthelma.timeseries.bounding_dates method
     plast = precipitation.bounding_dates()[1]
     elast = evapotranspiration.bounding_dates()[1]
     return min(plast, elast)
@@ -76,7 +75,7 @@ def location_warning(agrifield_id, precip_files, evap_files):
     # Simplified check if agrifield location is inside dataset rasters
     # Need to add some more sophisticated using dgal.
     # In order not to break model calculations
-    # we use Arta city location as default.
+    # and home view we use Arta city location as default.
     f = Agrifield.objects.get(pk=agrifield_id)
     try:
         location_warning = False
@@ -119,15 +118,15 @@ def irrigation_amount_view(agrifield_id):
         # Extract pthelma.swb parameter information
         fc = raster2point(f.latitude, f.longitude, FC_FILE)
         wp = raster2point(f.latitude, f.longitude, PWP_FILE)
-        rd = float(f.ct.ct_rd)
+        rd = (float(f.ct.ct_rd_min) + float(f.ct.ct_rd_max))/2
         kc = float(f.ct.ct_kc)
         irr_eff = float(f.irrt.irrt_eff)
         start_date, warning_dates = timeperiod_warning(agrifield_id,
                                                        precip, evap)
         # Validation about initial conditions
-        initial_sm = fc
+        init_sm = fc
         if warning_dates is True:
-            initial_sm = 0
+            init_sm = 0
         p = float(f.ct.ct_coeff)
         rd_factor = 1
         finish_date = make_tz_datetime(swb_finish_date(precip, evap))
@@ -136,8 +135,8 @@ def irrigation_amount_view(agrifield_id):
                              precip, evap,
                              irr_eff, rd_factor)
         # From aira_warings start and finish date
-        next_irr = s.irrigation_water_amount(start_date, initial_sm, finish_date)
-        next = dict(s=s, next_irr=str(round(next_irr,2)),
+        next_irr = s.irrigation_water_amount(start_date, init_sm, finish_date)
+        next = dict(s=s, next_irr=str(round(next_irr, 2)),
                     warning_loc=warning_loc, warning_dates=warning_dates,
                     start_date=start_date, fc=fc)
     except:

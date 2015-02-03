@@ -18,9 +18,9 @@
         <tr>
             <th>Name</th>
             <th>Name</th>
-            <th>Depletion Coeffiecient</th>
+            <th>Root depth <sub>(m)</sub></th>
+            <th>p</th>
             <th>Kc</th>
-            <th>Root Dept (cm)</th>
             <th>Name</th>
             <th>Effiency</th>
         </tr>
@@ -29,8 +29,8 @@
         <tr>
           <td>{{ agrifield.name }}</td>
           <td>{{ agrifield.ct.ct_name }} </td>
+          <td>{{ agrifield.ct.ct_rd_min }} - {{ agrifield.ct.ct_rd_max }} </td>
           <td>{{ agrifield.ct.ct_coeff }}</td>
-          <td>{{ agrifield.ct.ct_rd }}</td>
           <td>{{ agrifield.ct.ct_kc }}</td>
           <td>{{ agrifield.irrt }}</td>
           <td>{{ agrifield.irrt.irrt_eff}}</td>
@@ -46,6 +46,7 @@
         <tr>
           <th>Date <br> (d-M-Y)</th>
           <th>Available soil moisture <br>at start of day <br> </th>
+          <th>Ks</th>
           <th>ETc <br> (mm)</th>
           <th>Rain <br> (mm)</th>
           <th>Effective Rainfall <br> (mm)</th>
@@ -61,6 +62,7 @@
           <tr>
             <td align="center">{{ result.date |date:"d/m/Y" }}</td>
             <td align="center"> {{ result.moisture_start|floatformat:"1"  }} </td>
+            <td align="center"> {{ result.ks|floatformat:"1" }}</td>
             {% if result.evap < 0  %}
               <td align="center"> 0.0 </td>
             {% else %}
@@ -74,8 +76,8 @@
             {% endif %}
             <td align="center"> {{ result.depletion|floatformat:"1"  }} </td>
             <td align="center"> {{ result.moisture_finish|floatformat:"1" }} </td>
-            <td align="center">{{ swb.raw |floatformat:"1" }} %</td>
-            <td align="center">{{ swb.taw |floatformat:"1" }} % </td>
+            <td align="center">{{ swb.raw |floatformat:"1" }} </td>
+            <td align="center">{{ swb.taw |floatformat:"1" }} </td>
             <td align="center"> -</td>
           </tr>
         {% endfor %}
