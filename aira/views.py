@@ -100,7 +100,8 @@ class CreateAgrifield(CreateView):
     def get_context_data(self, **kwargs):
         context = super(CreateAgrifield, self).get_context_data(**kwargs)
         try:
-            context['agrifields'] = Agrifield.objects.filter(owner=self.request.user).all()
+            context['agrifields'] = Agrifield.objects.filter(
+                owner=self.request.user).all()
             context['fields_count'] = context['agrifields'].count()
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
@@ -134,7 +135,8 @@ class CreateIrrigationLog(CreateView):
         context = super(CreateIrrigationLog, self).get_context_data(**kwargs)
         try:
             context['agrifield'] = Agrifield.objects.get(pk=self.kwargs['pk'])
-            context['logs'] = IrrigationLog.objects.filter(agrifield=self.kwargs['pk']).all()
+            context['logs'] = IrrigationLog.objects.filter(
+                agrifield=self.kwargs['pk']).all()
             context['logs_count'] = context['logs'].count()
         except Agrifield.DoesNotExist:
             context['logs'] = None
