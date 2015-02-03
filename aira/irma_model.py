@@ -12,14 +12,23 @@ from pthelma.swb import SoilWaterBalance
 
 from aira.models import Agrifield
 
-# GEO_DATA_CONFIG
-PRECIP_FILES = glob.glob(os.path.join(settings.AIRA_DATA_FILE_DIR,
-                                      'daily_rain*.tif'))
-EVAP_FILES = glob.glob(os.path.join(settings.AIRA_DATA_FILE_DIR,
-                                    'daily_evaporation*.tif'))
-FC_FILE = os.path.join(settings.AIRA_COEFFS_FILE_DIR,
+# GEO_DATA_CONFIG_HISTORICAL
+PRECIP_FILES_HISTO = glob.glob(os.path.join(settings.AIRA_DATA_HISTORICAL,
+                                            'daily_rain*.tif'))
+
+EVAP_FILES_HISTO = glob.glob(os.path.join(settings.AIRA_DATA_HISTORICAL,
+                                          'daily_evaporation*.tif'))
+
+# GEO_DATA_CONFIG_FORECAST
+PRECIP_FILES_FORE = glob.glob(os.path.join(settings.AIRA_DATA_FORECAST,
+                                           'rain*.tif'))
+
+EVAP_FILES_FORE = glob.glob(os.path.join(settings.AIRA_DATA_FORECAST,
+                                         'evaporation*.tif'))
+
+FC_FILE = os.path.join(settings.AIRA_COEFFS_RASTERS_DIR,
                        'fc.tif')
-PWP_FILE = os.path.join(settings.AIRA_COEFFS_FILE_DIR,
+PWP_FILE = os.path.join(settings.AIRA_COEFFS_RASTERS_DIR,
                         'pwp.tif')
 
 
@@ -44,6 +53,10 @@ def raster2point(lat, long, file):
     point.AddPoint(long, lat)
     f = gdal.Open(file)
     return extract_point_from_raster(point, f)
+
+
+def join_timeseries(a, b):
+    pass
 
 
 def make_tz_datetime(date):
@@ -84,8 +97,8 @@ def location_warning(agrifield_id, precip_files, evap_files):
         return precip, evap, location_warning
     except:
         location_warning = True
-        precip = rasters2point(39.15, 20.98, PRECIP_FILES)
-        evap = rasters2point(39.15, 20.98, EVAP_FILES)
+        precip = rasters2point(39.15, 20.98, PRECIP_FILES_HISTO)
+        evap = rasters2point(39.15, 20.98, EVAP_FILES_HISTO)
         return precip, evap, location_warning
 
 
@@ -114,11 +127,12 @@ def irrigation_amount_view(agrifield_id):
         f = Agrifield.objects.get(pk=agrifield_id)
         # Create Timeseries given Agrifield location
         precip, evap, warning_loc = location_warning(agrifield_id,
-                                                     PRECIP_FILES, EVAP_FILES)
+                                                     PRECIP_FILES_HISTO,
+                                                     EVAP_FILES_HISTO)
         # Extract pthelma.swb parameter information
         fc = raster2point(f.latitude, f.longitude, FC_FILE)
         wp = raster2point(f.latitude, f.longitude, PWP_FILE)
-        rd = (float(f.ct.ct_rd_min) + float(f.ct.ct_rd_max))/2
+        rd = (float(f.ct.ct_rd_min) + float(f.ct.ct_rd_max)) / 2
         kc = float(f.ct.ct_kc)
         irr_eff = float(f.irrt.irrt_eff)
         start_date, warning_dates = timeperiod_warning(agrifield_id,

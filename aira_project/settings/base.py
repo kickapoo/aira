@@ -63,8 +63,11 @@ LOGIN_REDIRECT = "/home"
 
 AIRA_PARAMETERS_FILE_DIR = os.path.join(PROJECT_ROOT, 'airadb_coeffs')
 
-AIRA_DATA_FILE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                     "../../../meteo_data"))
+AIRA_DATA_HISTORICAL = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                    "../../../rasters_historical"))
 
-AIRA_COEFFS_FILE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                       "../../../coeffs_data"))
+AIRA_DATA_FORECAST = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                  "../../../rasters_forecast"))
+
+AIRA_COEFFS_RASTERS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                              "../../../coeffs_data"))
