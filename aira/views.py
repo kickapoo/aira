@@ -4,7 +4,8 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import Profile, Agrifield, IrrigationLog
 from .forms import ProfileForm, AgrifieldForm, IrrigationlogForm
 
-from .irma_model import irrigation_amount_view
+from .irma import utils as irma_utils
+from .irma.main import get_parameters
 
 
 class IndexPageView(TemplateView):
@@ -30,29 +31,25 @@ class HomePageView(TemplateView):
             # Defaults are city of Arta location
             lats = [f.latitude for f in context['agrifields']] or [39.15]
             lons = [f.longitude for f in context['agrifields']] or [20.98]
-            # descprition = [str(f.name) for f in context['agrifields']]
             context['coords'] = zip(lats, lons)
             # Irma Model
+
             for f in agrifields:
-                swb_view = irrigation_amount_view(f.id)
-                # Field capacity warning
-                if swb_view['fc'] is not None:
-                    d_report = swb_view['s'].depletion_report
-                    f.fc = swb_view['fc']
-                    if any(d['depletion'] >= f.fc for d in d_report):
-                        f.warning_fc = True
-                        f.warning_fc_date = [d['date'] for d in d_report if d['depletion'] >= f.fc][0].date
-                f.start_date = swb_view['start_date']
-                # Field location warning
-                if swb_view['warning_loc'] is None:
-                    f.warning_loc = True
-                # Dataset time period  warning
-                f.warning_dates = swb_view['warning_dates']
-                if f.warning_dates is None:
-                    f.warning_dates = False
-                f.irw = swb_view['next_irr']
-                if f.irw is None:
-                    f.irw = False
+                if not irma_utils.agripoint_in_raster(f):
+                    f.outside_arta_raster = True
+                else:
+                    if irma_utils.timelog_exists(f):
+                        f.irr_event = True
+                        if not irma_utils.last_timelog_in_dataperiod(f):
+                            f.last_irr_event_outside_period = True
+                            f.model = "None irrigation event run"
+                        else:
+                            f.last_irr_event_outside_period = False
+                            f.model = "With irrigation event run"
+                    else:
+                        f.irr_event = False
+                        f.model = "None irrigation event run"
+
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
         return context
@@ -64,9 +61,8 @@ class AdvicePageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(AdvicePageView, self).get_context_data(**kwargs)
         f = Agrifield.objects.get(pk=self.kwargs['pk'])
-        context['agrifield'] = f
-        context['swb'] = irrigation_amount_view(f.id)['s']
-        context['d_report'] = context['swb'].depletion_report
+        context['f'] = f
+        context['fpars'] = get_parameters(f)
         return context
 
 

@@ -22,7 +22,7 @@ class Command(BaseCommand):
                                                        address="Arta")
             p.save()
 
-            tomato = CropType.objects.filter(ct_name="Tomato").first()
+            kiwi = CropType.objects.filter(ct_name="Kiwi").first()
             drip = IrrigationType.objects.filter(
                 irrt_name="Drip irrigation").first()
 
@@ -31,44 +31,44 @@ class Command(BaseCommand):
                                                          name="OUTSIDE ARTA RASTER",
                                                          latitude=38,
                                                          longitude=19,
-                                                         ct=tomato,
+                                                         ct=kiwi,
                                                          irrt=drip,
-                                                         area=23000.00)
+                                                         area=10000.00)
             f.save()
 
             # Agrifield with at least on irrigation log within datasample period
             f, created = Agrifield.objects.get_or_create(owner=demo,
-                                                         name="Close to Arta with irrigation log",
+                                                         name="Field with irrigation log",
                                                          latitude=39.15,
                                                          longitude=20.98,
-                                                         ct=tomato,
+                                                         ct=kiwi,
                                                          irrt=drip,
-                                                         area=23000.00)
+                                                         area=10000.00)
             f.save()
             l, created = IrrigationLog.objects.get_or_create(agrifield=f,
-                                                             time="2015-01-02 00:00",
+                                                             time="2015-01-03 00:00",
                                                              water_amount=23.00)
             l.save()
 
             # Agrifield with no irrigation log
             f, created = Agrifield.objects.get_or_create(owner=demo,
-                                                         name="Close to Arta with no irrigation log",
+                                                         name="Field with no irrigation log",
                                                          latitude=39.10,
                                                          longitude=20.92,
-                                                         ct=tomato,
+                                                         ct=kiwi,
                                                          irrt=drip,
-                                                         area=24000.00)
+                                                         area=10000.00)
             f.save()
 
             # Agrifield with irrigation log outside datasample period
             # Datasample: full December of 2014
             f, created = Agrifield.objects.get_or_create(owner=demo,
-                                                         name="Close to Arta with irrigation log outside data period",
+                                                         name="Field with log outside dataset",
                                                          latitude=39.12,
                                                          longitude=20.94,
-                                                         ct=tomato,
+                                                         ct=kiwi,
                                                          irrt=drip,
-                                                         area=23500.00)
+                                                         area=10000.00)
             f.save()
             l, created = IrrigationLog.objects.get_or_create(agrifield=f,
                                                              time="2014-11-15 00:00",
