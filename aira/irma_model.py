@@ -55,10 +55,6 @@ def raster2point(lat, long, file):
     return extract_point_from_raster(point, f)
 
 
-def join_timeseries(a, b):
-    pass
-
-
 def make_tz_datetime(date):
     # Convert datetime.date object to datetime
     # Also make sure datetime object has
@@ -67,7 +63,7 @@ def make_tz_datetime(date):
     return datetime(date.year, date.month, date.day).replace(tzinfo=tz_config)
 
 
-def swb_finish_date(precipitation, evapotranspiration):
+def data_finish_date(precipitation, evapotranspiration):
     # Searching for AIRA_DATA_FILE_DIR to find
     # the common time period with the latest record
     # in precipitation and evaporation rasters.
@@ -109,20 +105,21 @@ def timeperiod_warning(agrifield_id, precip, evap):
     # In both cases advice is estimated based of available timeperiod datasets
     warning = None
     f = Agrifield.objects.get(pk=agrifield_id)
-    data_sd = make_tz_datetime(data_start_date(precip, evap))
+    start_date = make_tz_datetime(data_start_date(precip, evap))
     if not f.irrigationlog_set.exists():
         warning = True
-        return data_sd, warning
-    irr_date = f.irrigationlog_set.latest().time
-    irr_date = make_tz_datetime(irr_date)
-    if irr_date < data_sd:
+        return start_date, warning
+    latest_irrigation = f.irrigationlog_set.latest().time
+    latest_irrigation = make_tz_datetime(latest_irrigation)
+    if latest_irrigation < start_date:
         warning = True
-        return data_sd, warning
-    return irr_date, warning
+        return start_date, warning
+    return latest_irrigation, warning
 
 
 def irrigation_amount_view(agrifield_id):
     try:
+        # Panta exei giati einia f for in
         # Select Agrifield
         f = Agrifield.objects.get(pk=agrifield_id)
         # Create Timeseries given Agrifield location
@@ -138,12 +135,12 @@ def irrigation_amount_view(agrifield_id):
         start_date, warning_dates = timeperiod_warning(agrifield_id,
                                                        precip, evap)
         # Validation about initial conditions
-        init_sm = fc
+        init_sm = FC_FILE
         if warning_dates is True:
             init_sm = 0
         p = float(f.ct.ct_coeff)
         rd_factor = 1
-        finish_date = make_tz_datetime(swb_finish_date(precip, evap))
+        finish_date = make_tz_datetime(data_finish_date(precip, evap))
         # Apply pthelma.swb model
         s = SoilWaterBalance(fc, wp, rd, kc, p,
                              precip, evap,
