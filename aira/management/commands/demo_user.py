@@ -26,8 +26,17 @@ class Command(BaseCommand):
             drip = IrrigationType.objects.filter(
                 irrt_name="Drip irrigation").first()
 
+            # Agrifield with location outside raster
+            f, created = Agrifield.objects.get_or_create(owner=demo,
+                                                         name="OUTSIDE ARTA RASTER",
+                                                         latitude=38,
+                                                         longitude=19,
+                                                         ct=tomato,
+                                                         irrt=drip,
+                                                         area=23000.00)
+            f.save()
+
             # Agrifield with at least on irrigation log within datasample period
-            # Datasample: full December of 2014
             f, created = Agrifield.objects.get_or_create(owner=demo,
                                                          name="Close to Arta with irrigation log",
                                                          latitude=39.15,
@@ -37,7 +46,7 @@ class Command(BaseCommand):
                                                          area=23000.00)
             f.save()
             l, created = IrrigationLog.objects.get_or_create(agrifield=f,
-                                                             time="2014-12-02 00:00",
+                                                             time="2015-01-02 00:00",
                                                              water_amount=23.00)
             l.save()
 
