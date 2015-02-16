@@ -6,6 +6,7 @@ from .forms import ProfileForm, AgrifieldForm, IrrigationlogForm
 
 from .irma import utils as irma_utils
 from .irma.main import get_parameters
+from .irma.main import view_run
 
 
 class IndexPageView(TemplateView):
@@ -40,15 +41,18 @@ class HomePageView(TemplateView):
                 else:
                     if irma_utils.timelog_exists(f):
                         f.irr_event = True
-                        if not irma_utils.last_timelog_in_dataperiod(f):
-                            f.last_irr_event_outside_period = True
-                            f.model = "None irrigation event run"
-                        else:
+                        if irma_utils.last_timelog_in_dataperiod(f):
                             f.last_irr_event_outside_period = False
                             f.model = "With irrigation event run"
+                            swb_view, f.sd, f.ed, f.adv = view_run(f, flag_run="irr_event")
+                        else:
+                            f.last_irr_event_outside_period = True
+                            f.model = "None irrigation event run"
+                            swb_view, f.sd, f.ed, f.adv = view_run(f, flag_run="no_irr_event")
                     else:
                         f.irr_event = False
                         f.model = "None irrigation event run"
+                        swb_view, f.sd, f.ed, f.adv = view_run(f, flag_run="no_irr_event")
 
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
@@ -63,6 +67,23 @@ class AdvicePageView(TemplateView):
         f = Agrifield.objects.get(pk=self.kwargs['pk'])
         context['f'] = f
         context['fpars'] = get_parameters(f)
+        if irma_utils.timelog_exists(f):
+            f.irr_event = True
+            if irma_utils.last_timelog_in_dataperiod(f):
+                f.last_irr_event_outside_period = False
+                f.model = "With irrigation event run"
+                swb_view, f.sd, f.ed, f.adv = view_run(f, flag_run="irr_event")
+                f.swb_report = swb_view.wbm_report
+            else:
+                f.last_irr_event_outside_period = True
+                f.model = "None irrigation event run"
+                swb_view, f.sd, f.ed, f.adv = view_run(f, flag_run="no_irr_event")
+                f.swb_report = swb_view.wbm_report
+        else:
+            f.irr_event = False
+            f.model = "None irrigation event run"
+            swb_view, f.sd, f.ed, f.adv = view_run(f, flag_run="no_irr_event")
+            f.swb_report = swb_view.wbm_report
         return context
 
 

@@ -58,6 +58,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+TEMPLATE_DIRS = (
+    os.path.join(PROJECT_ROOT, '../aira/templates/'),
+)
+
 ACCOUNT_ACTIVATION_DAYS = 3
 LOGIN_REDIRECT = "/home"
 

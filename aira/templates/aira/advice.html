@@ -2,13 +2,13 @@
 {% load bootstrap3 %}
 {% load mathfilters %}
 
-{% block title %} {{ user }} {% endblock %}
+{% block title %} {{ f.name }} | Report {% endblock %}
 {% block content %}
 <div class="row">
   <div class="col-lg-6">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a>
+        <b>Field Name:</b> <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a>
       </div>
       <div class="panel-body">
         <div id="open_map" class="map"></div>
@@ -34,26 +34,26 @@
       <div class="col-md-12">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <a href="{% url 'update_agrifield' f.id %}">{{ f.ct.ct_name }}</a>
+            <b>Crop Type:</b> <a href="{% url 'update_agrifield' f.id %}">{{ f.ct.ct_name }}</a>
           </div>
           <div class="panel-body">
-            Root Depth(max): {{ fpars.rd }} <br>
-            kc: {{ fpars.kc }} <br>
-            Crop Coeff: {{ fpars.p }} <br>
-            Rd_factor: {{ fpars.rd_factor }} <br>
-            Field Capacity: {{ fpars.fc }} <br>
-            Theta_s: {{ fpars.theta_s }} <br>
-            Wp: {{ fpars.wp }}
+            <b>Root Depth(max):</b>{{ fpars.rd }} <br>
+            <b>kc:</b> {{ fpars.kc }} <br>
+            <b>Crop Coeff:</b> {{ fpars.p }} <br>
+            <b>Rd_factor:</b> {{ fpars.rd_factor }} <br>
+            <b>Field Capacity:</b> {{ fpars.fc|floatformat:"1"  }} <br>
+            <b>Theta_s:</b> {{ fpars.theta_s |floatformat:"1" }} <br>
+            <b>WP:</b> {{ fpars.wp|floatformat:"1"  }}
           </div>
         </div>
       </div>
       <div class="col-md-12">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <a href="{% url 'update_agrifield' f.id %}">{{ f.irrt.irrt_name }}</a>
+            <b>Irrigation System Type: </b><a href="{% url 'update_agrifield' f.id %}">{{ f.irrt.irrt_name }}</a>
           </div>
           <div class="panel-body">
-            Irrigation efficiency: {{ fpars.irr_eff }}
+            <b>Irrigation efficiency factor:</b> {{ fpars.irr_eff }}
           </div>
         </div>
       </div>
@@ -65,10 +65,48 @@
     <div class="col-lg-12">
       <div class="panel panel-default">
         <div class="panel-heading">
-          Aira Advice
+          Detailed Calculations
         </div>
         <div class="panel-body">
-          Table Here
+        <p><b>Irrigation Advice:</b>
+        {% if f.adv %}
+              List advice
+        {% else %}
+              No need to irrigate from <span <class class="text-warning">{{ f.sd }}</span> to  <span <class class="text-warning">{{ f.ed }}</span>.
+        {% endif %}</p>
+        <hr>
+          <div id="results" class="table-responsive">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th>Date <br> </th>
+                    <th>Precipitation <br>(mm)</th>
+                    <th>ETc <br> (mm)</th>
+                    <th>Depletion <br> (mm)</th>
+                    <th>Soil moisture <br>(%)</th>
+                    <th>Irrigate ?</th>
+                    <th>Irrigation Water Amount<br> (mm)</th>
+                  </tr>
+                </thead>
+                 <tbody>
+                    {% for result in f.swb_report  %}
+                      <tr>
+                        <td align="center">{{ result.date |date:"d/m/Y h:m:s" }}</td>
+                        <td align="center">{{ result.P|floatformat:"2" }}</td>
+                        <td align="center"> {{ result.ETc|floatformat:"2" }} </td>
+                        <td align="center">{{ result.Dr_i|floatformat:"2"}}</td>
+                        <td align="center"> {{ result.Theta_p|floatformat:"2" }}</td>
+                        {% if result.irrigate > 0 %}
+                          <td align="center"> YES </td>
+                        {% else %}
+                          <td align="center"> NO </td>
+                        {% endif %}
+                        <td align="center"> {{ result.Ifinal|floatformat:"2" }}</td>
+                      </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
         </div>
       </div>
     </div>

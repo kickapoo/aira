@@ -2,8 +2,8 @@ from datetime import datetime
 from django.utils import timezone
 
 from aira.irma.config_data import FC_FILE as test_raster
-from aira.irma.config_data import PRECIP_FILES_HISTO as hrain_fps
-from aira.irma.config_data import EVAP_FILES_HISTO as hevap_fps
+from aira.irma.config_data import PRECIP_DAILY as d_rain_fps
+from aira.irma.config_data import EVAP_DAILY as d_evap_fps
 
 from osgeo import gdal, ogr, osr
 from pthelma.spatial import (extract_point_from_raster,
@@ -55,7 +55,7 @@ def raster2point(lat, long, file):
     return extract_point_from_raster(point, f)
 
 
-def load_datasets(obj, r_fps, e_fps):
+def load_ts_from_rasters(obj, r_fps, e_fps):
     precipTS = rasters2point(obj.latitude, obj.longitude, r_fps)
     evapTS = rasters2point(obj.latitude, obj.longitude, e_fps)
     return precipTS, evapTS
@@ -63,6 +63,7 @@ def load_datasets(obj, r_fps, e_fps):
 
 def agripoint_in_raster(obj, mask=test_raster):
     # Must be changed to more pythonic way
+    # Can't catch the error
     try:
         raster2point(obj.latitude, obj.longitude, mask)
         return True
@@ -74,9 +75,9 @@ def timelog_exists(Agrifield):
     return Agrifield.irrigationlog_set.exists()
 
 
-def last_timelog_in_dataperiod(obj, r_fps=hrain_fps, e_fps=hevap_fps):
-    # Default search against historical data
-    precip, evap = load_datasets(obj, r_fps, e_fps)
+def last_timelog_in_dataperiod(obj, r_fps=d_rain_fps, e_fps=d_evap_fps):
+    # Default search against historical data (daily data)
+    precip, evap = load_ts_from_rasters(obj, r_fps, e_fps)
     sd, fd = data_start_end_date(precip, evap)
     sd = make_tz_datetime(sd, flag="D")
     fd = make_tz_datetime(fd, flag="D")
