@@ -1,4 +1,5 @@
 import os
+import math
 from glob import glob
 from datetime import datetime
 
@@ -98,7 +99,9 @@ def agripoint_in_raster(obj, mask=FC_FILE):
     # Must be changed to more pythonic way
     # Can't catch the error
     try:
-        raster2point(obj.latitude, obj.longitude, mask)
+        tmp_check = raster2point(obj.latitude, obj.longitude, mask)
+        if math.isnan(tmp_check):
+            return False
         return True
     except:
         return False
