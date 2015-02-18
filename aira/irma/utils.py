@@ -5,8 +5,6 @@ from datetime import datetime
 from django.conf import settings
 from django.utils import timezone
 
-from aira.irma.config_data import FC_FILE as test_raster
-
 from osgeo import gdal, ogr, osr
 from pthelma.spatial import (extract_point_from_raster,
                              extract_point_timeseries_from_rasters)
@@ -96,7 +94,7 @@ def load_ts_from_rasters(obj, r_fps, e_fps):
     return precipTS, evapTS
 
 
-def agripoint_in_raster(obj, mask=test_raster):
+def agripoint_in_raster(obj, mask=FC_FILE):
     # Must be changed to more pythonic way
     # Can't catch the error
     try:
