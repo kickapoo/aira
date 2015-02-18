@@ -91,21 +91,17 @@ def view_run(afield_obj, flag_run,
              daily_r_fps=d_rain_fps, daily_e_fps=d_evap_fps,
              hourly_r_fps=h_rain_fps, hourly_e_fps=h_evap_fps):
     # Notes:  flag : "irr_event" , "no_irr_event"
-
     # Load Historical (daily)
     # pthelma.extract_point_from_raster dont have Timeseries.time_step
-    precip_daily = load_ts_from_rasters(afield_obj, daily_r_fps,
-                                        daily_e_fps)[0]
+    precip_daily, evap_daily = load_ts_from_rasters(afield_obj, daily_r_fps,
+                                                    daily_e_fps)
     precip_daily.time_step.length_minutes = 1440
-    evap_daily = load_ts_from_rasters(afield_obj, daily_r_fps, daily_e_fps)[1]
     evap_daily.time_step.length_minutes = 1440
 
     # Load Hourly (Current day + forecast days0
-    precip_hourly = load_ts_from_rasters(afield_obj,
-                                         hourly_r_fps, hourly_e_fps)[0]
+    precip_hourly, evap_hourly = load_ts_from_rasters(afield_obj, hourly_r_fps,
+                                                      hourly_e_fps)
     precip_hourly.time_step.length_minutes = 60
-    evap_hourly = load_ts_from_rasters(afield_obj,
-                                       hourly_r_fps, hourly_e_fps)[1]
     evap_hourly.time_step.length_minutes = 60
 
     # Create a swb obj daily / hourly
