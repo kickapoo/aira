@@ -1,13 +1,8 @@
 from datetime import timedelta
 # Fetch Data files
-from aira.irma.config_data import PRECIP_DAILY as d_rain_fps
-from aira.irma.config_data import EVAP_DAILY as d_evap_fps
-from aira.irma.config_data import PRECIP_HOURLY as h_rain_fps
-from aira.irma.config_data import EVAP_HOURLY as h_evap_fps
-
-from aira.irma.config_data import FC_FILE as fc_raster
-from aira.irma.config_data import PWP_FILE as pwp_raster
-# from aira.irma.config_data import THETA_S_FILE as thetaS_raster
+from aira.irma.utils import FC_FILE as fc_raster
+from aira.irma.utils import PWP_FILE as pwp_raster
+from aira.irma.utils import THETA_S_FILE as thetaS_raster
 
 from aira.irma.utils import *
 
@@ -27,7 +22,8 @@ def get_parameters(afield_obj):
     p = float(afield_obj.ct.ct_coeff)
     peff = 0.8  # Effective rainfall coeff 0.8 * Precip
     irr_eff = float(afield_obj.irrt.irrt_eff)
-    theta_s = 0.425
+    theta_s = raster2point(afield_obj.latitude, afield_obj.longitude,
+                           thetaS_raster)
     rd_factor = 1000  # Static for mm
     return dict(fc=fc, wp=wp, rd=rd, kc=kc, p=p,
                 peff=peff, irr_eff=irr_eff,
@@ -58,7 +54,7 @@ def run_water_balance(swb_obj, start_date, end_date,
 
 def run_daily(swb_obj, start_date, theta_init, irr_event_days=[]):
     # start_date: latests.irrigation event
-    #             or start_date + 20day for default run
+    #             or start_date     + 20day for default run
     end_date = data_start_end_date(swb_obj.precip, swb_obj.evap)[1]
     start_date = make_tz_datetime(start_date, flag="D")
     end_date = make_tz_datetime(end_date, flag="D")
@@ -88,9 +84,13 @@ def advice_date(swb_report):
 
 
 def view_run(afield_obj, flag_run,
-             daily_r_fps=d_rain_fps, daily_e_fps=d_evap_fps,
-             hourly_r_fps=h_rain_fps, hourly_e_fps=h_evap_fps):
+             daily_r_fps=load_meteodata_file_paths()[0],
+             daily_e_fps=load_meteodata_file_paths()[1],
+             hourly_r_fps=load_meteodata_file_paths()[2],
+             hourly_e_fps=load_meteodata_file_paths()[3]):
     # Notes:  flag : "irr_event" , "no_irr_event"
+    # Load glob here :
+    #
     # Load Historical (daily)
     # pthelma.extract_point_from_raster dont have Timeseries.time_step
     precip_daily, evap_daily = load_ts_from_rasters(afield_obj, daily_r_fps,
