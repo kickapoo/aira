@@ -3,21 +3,67 @@
 {% block title %} {{ user }} {% endblock %}
 
 {% block content %}
-<div class="container">
-  <div class="row">
-    <div class="col-lg-12">
-      <h3>Update Agrifield</h3>
-        <hr>
-        <form method="post" role="form" class="form-horizontal">
-        {% csrf_token %}
-        {% bootstrap_form form layout='horizontal' %}
-        {% buttons %}
-          <div class="col-sm-offset-2 col-sm-10">
-            <button type="submit" class="btn btn-success btn-xs">Update</button>
-          </div>
-          {% endbuttons %}
-       </form>
-    </div>
+<div class="row">
+  <h3>Update Agrifield</h3>
+  <hr>
+  <div class="col-md-6">
+    <div id="onclick_open_map" class="map"></div>
+     <script type="text/javascript">
+            OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
+                defaultHandlerOptions: {
+                    'single': true,
+                    'double': false,
+                    'pixelTolerance': 0,
+                    'stopSingle': false,
+                    'stopDouble': false
+                },
+
+                initialize: function(options) {
+                    this.handlerOptions = OpenLayers.Util.extend(
+                        {}, this.defaultHandlerOptions
+                    );
+                    OpenLayers.Control.prototype.initialize.apply(
+                        this, arguments
+                    );
+                    this.handler = new OpenLayers.Handler.Click(
+                        this, {
+                            'click': this.trigger
+                        }, this.handlerOptions
+                    );
+                },
+
+                trigger: function(e) {
+                    var lonlat = map.getLonLatFromPixel(e.xy).transform(toProjection, fromProjection);
+                     document.getElementById("id_latitude").value = lonlat.lat;
+                     document.getElementById("id_longitude").value = lonlat.lon;
+                }
+
+            });
+            var map;
+            map = new OpenLayers.Map('onclick_open_map');
+            var mapnik = new OpenLayers.Layer.OSM();
+            var fromProjection = new OpenLayers.Projection("EPSG:4326");   // Transform from WGS 1984
+            var toProjection = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Projection
+            var position = new OpenLayers.LonLat(20.98, 39.15).transform(fromProjection, toProjection);
+            var zoom = 9;
+            map.addLayer(mapnik);
+            map.setCenter(position, zoom );
+            var click = new OpenLayers.Control.Click();
+            map.addControl(click);
+            click.activate();
+
+
+     </script>
+    <sub> Click on Map to add your Field coordinates</sub>
   </div>
-<div>
+  <div class="col-md-6">
+    <form method="post" role="form">
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      {% buttons %}
+        <button type="submit" class="btn btn-success btn-xs">Submit</button>
+      {% endbuttons %}
+    </form>
+  </div>
+</div>
 {% endblock %}
