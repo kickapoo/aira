@@ -30,9 +30,9 @@ class HomePageView(TemplateView):
             context['fields_count'] = agrifields.count()
             # Map
             # Defaults are city of Arta location
-            lats = [f.latitude for f in context['agrifields']] or [39.15]
-            lons = [f.longitude for f in context['agrifields']] or [20.98]
-            context['coords'] = zip(lats, lons)
+            # lats = [f.latitude for f in context['agrifields']] or [39.15]
+            # lons = [f.longitude for f in context['agrifields']] or [20.98]
+            # context['coords'] = zip(lats, lons)
             # Irma Model
 
             for f in agrifields:
