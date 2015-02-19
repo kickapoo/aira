@@ -34,7 +34,7 @@ class CropType(models.Model):
     ct_fek = models.IntegerField()
 
     class Meta:
-        ordering = ('-ct_name',)
+        ordering = ('ct_name',)
         verbose_name_plural = 'Crop Types'
 
     def __unicode__(self):
@@ -46,7 +46,7 @@ class IrrigationType(models.Model):
     irrt_eff = models.FloatField()
 
     class Meta:
-        ordering = ('-irrt_name',)
+        ordering = ('irrt_name',)
         verbose_name_plural = 'Irrigation Types'
 
     def __unicode__(self):
@@ -66,7 +66,7 @@ class Agrifield(models.Model):
     area = models.FloatField()
 
     class Meta:
-        ordering = ('-name',)
+        ordering = ('name', 'area')
         verbose_name_plural = 'Agrifields'
 
     def __unicode__(self):
@@ -81,7 +81,7 @@ class IrrigationLog(models.Model):
 
     class Meta:
         get_latest_by = 'time'
-        ordering = ('-time',)
+        ordering = ('time',)
         verbose_name_plural = 'Irrigation Logs'
 
     def __unicode__(self):
