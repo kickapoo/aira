@@ -30,8 +30,8 @@
         {% if user.is_authenticated %}
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="{% url 'home' %}"  rel="nofollow"><i class="glyphicon glyphicon-home"></i> </a> </li>
-            <li><a href="{% url 'django.contrib.auth.views.logout' %}"> <i class="glyphicon glyphicon-log-out"></i> </a></li>
+            <li><a href="{% url 'home' %}"  rel="nofollow"><i class="glyphicon glyphicon-home"></i> Home</a> </li>
+            <li><a href="{% url 'django.contrib.auth.views.logout' %}"> <i class="glyphicon glyphicon-log-out"></i> Logout </a></li>
           </ul>
         </div>
         {% else %}
