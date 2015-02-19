@@ -23,11 +23,14 @@
                   new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
                   map.getProjectionObject() // to Spherical Mercator Projection
                 );
-          var zoom=9;
+          var zoom=10;
           var markers = new OpenLayers.Layer.Markers( "Markers" );
           map.addLayer(markers);
           markers.addMarker(new OpenLayers.Marker(lonLat));
-          map.setCenter (lonLat, zoom);
+          var fromProjection = new OpenLayers.Projection("EPSG:4326");
+          var toProjection   = new OpenLayers.Projection("EPSG:900913");
+          var arta = new OpenLayers.LonLat(20.98, 39.15).transform( fromProjection, toProjection);
+          map.setCenter (arta, zoom);
           {% endfor %}
        </script>
       </div>
