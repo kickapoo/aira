@@ -35,7 +35,7 @@
           </div>
       </div>
     </form>
-      <script type="text/javascript">
+          <script type="text/javascript">
         $('.form_date').datetimepicker({
           language:  'en',
           weekStart: 1,
@@ -47,18 +47,26 @@
           forceParse: 0
           });
       </script>
-    <div id="wms_map" class="map"></div>
-      <script type="text/javascript">
-            map = new OpenLayers.Map("wms_map");
-            myDate = document.getElementById("#dtp_date")
-            layer = new OpenLayers.Layer.WMS(
-                    "OpenLayers WMS",
-                    "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?MAP=/var/cache/pthelma/mapserver-historical.map",
-                    {layers: 'basic'} );
-            map.addLayer(layer);
-            map.zoomToMaxExtent();
-       </script>
-  </div>
-</div>
+    <div>
+    <div class="col-lg-12">
+      <div id="wms_map" class="map"></div>
+
+<script type="text/javascript">
+          map = new OpenLayers.Map("wms_map");
+          var cycle = new OpenLayers.Layer.OSM("OpenCycleMap",
+                         ["http://a.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
+                          "http://b.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
+                          "http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png"]);
+          var wms = new OpenLayers.Layer.WMS( "WMS-openmeteo",
+                    "http://megdobas.irrigation-management.eu/cgi-bin/mapserver",
+                    {
+                      map: '/var/cache/pthelma/mapserver-historical.map',
+                      layers: 'Daily_evaporation_2015-01-18'},
+                      { isBaseLayer: false});
+          map.addLayers([cycle, wms]);
+          map.addControl(new OpenLayers.Control.LayerSwitcher());
+          map.zoomToMaxExtent();
+</script>
+       </div>
 {% endblock %}
 
