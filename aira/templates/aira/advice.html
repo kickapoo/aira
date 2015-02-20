@@ -14,14 +14,20 @@
         <div id="open_map" class="map"></div>
          <script type="text/javascript">
           map = new OpenLayers.Map("open_map");
-          map.addLayer(new OpenLayers.Layer.OSM());
+          var cycle = new OpenLayers.Layer.OSM("OpenCycleMap",
+                         ["http://a.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
+                          "http://b.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
+                          "http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png"]);
+          var osm = new OpenLayers.Layer.OSM();
+          map.addLayers([cycle, osm]);
+          map.addControl(new OpenLayers.Control.LayerSwitcher());
           var lonLat = new OpenLayers.LonLat({{ f.longitude }}, {{ f.latitude }})
                 .transform(
                   new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
                   map.getProjectionObject() // to Spherical Mercator Projection
                 );
-          var zoom=9;
-          var markers = new OpenLayers.Layer.Markers( "Markers" );
+          var zoom = 9;
+          var markers = new OpenLayers.Layer.Markers( "{{ f.name }}" );
           map.addLayer(markers);
           markers.addMarker(new OpenLayers.Marker(lonLat));
           map.setCenter (lonLat, zoom);
