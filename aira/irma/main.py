@@ -25,9 +25,7 @@ def get_parameters(afield_obj):
     theta_s = raster2point(afield_obj.latitude, afield_obj.longitude,
                            thetaS_raster)
     rd_factor = 1000  # Static for mm
-    return dict(fc=fc, wp=wp, rd=rd, kc=kc, p=p,
-                peff=peff, irr_eff=irr_eff,
-                theta_s=theta_s, rd_factor=rd_factor)
+    return locals()
 
 
 def afield2swb(afield_obj, precip, evap):
