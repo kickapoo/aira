@@ -19,54 +19,75 @@
 </div>
 <hr>
 <div class="row">
-  <div class="col-lg-12">
-    <form action="" class="form-horizontal"  role="form">
-      <div class="form-group">
-        <label for="dtp_date" class="col-md-2 control-label">Select</label>
-          <div class="input-group date form_date col-md-5"
-               data-date=""
-               data-date-format="dd MM yyyy"
-               data-link-field="dtp_date"
-               data-link-format="yyyy-mm-dd">
-            <input class="form-control" size="16" type="text" value="" readonly>
-            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-          </div>
-            <input type="hidden" id="dtp_date" value="" /><br/>
-          </div>
+  <div class="col-md-3">
+      <div class="form_datetime"
+       data-date="2013-02-21T15:25:00Z">
+
       </div>
-    </form>
-          <script type="text/javascript">
-        $('.form_date').datetimepicker({
-          language:  'en',
-          weekStart: 1,
-          todayBtn:  1,
-          autoclose: 1,
-          todayHighlight: 1,
-          startView: 2,
-          minView: 2,
-          forceParse: 0
+      <h4>Date Selected</h4>
+      <input type="text" id="mirror_field" value="" readonly />
+
+      <script type="text/javascript">
+          $(".form_datetime").datetimepicker({
+              format: "dd MM yyyy",
+              autoclose: true,
+              todayBtn: true,
+              startDate: "2015-01-01 10:00",
+              linkField: "mirror_field",
+              linkFormat: "yyyy-mm-dd",
+              minView:2,
           });
       </script>
-    <div>
-    <div class="col-lg-12">
+  </div>
+  <div class="col-md-9">
       <div id="wms_map" class="map"></div>
 
-<script type="text/javascript">
-          map = new OpenLayers.Map("wms_map");
-          var cycle = new OpenLayers.Layer.OSM("OpenCycleMap",
-                         ["http://a.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
-                          "http://b.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
-                          "http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png"]);
-          var wms = new OpenLayers.Layer.WMS( "WMS-openmeteo",
-                    "http://megdobas.irrigation-management.eu/cgi-bin/mapserver",
-                    {
-                      map: '/var/cache/pthelma/mapserver-historical.map',
-                      layers: 'Daily_evaporation_2015-01-18'},
-                      { isBaseLayer: false});
-          map.addLayers([cycle, wms]);
+      <script type="text/javascript">
+          var myValue = $( "#mirror_field" ).val();
+          console.log(myValue);
+          map = new OpenLayers.Map("wms_map");;
+          var wms_evap = new OpenLayers.Layer.WMS( "Daily Evaporation",
+                    "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
+                      {layers: 'Daily_evaporation_2015-01-18', format: 'png',
+                       bbox: '20.7543000000000006,38.9926000000000030,21.1385000000000005,39.2668999999999997'},
+                      {projection: new OpenLayers.Projection("EPSG:4326"), units: "m"});
+          var wms_humidity = new OpenLayers.Layer.WMS( "Daily Humidity",
+                    "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
+                      {layers: 'Daily_humidity_2015-01-18', format: 'png',
+                       bbox: '20.7543000000000006,38.9926000000000030,21.1385000000000005,39.2668999999999997'},
+                      {projection: new OpenLayers.Projection("EPSG:4326"), units: "m"});
+          var wms_rain = new OpenLayers.Layer.WMS( "Daily Rainfall",
+                    "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
+                      {layers: 'Daily_rain_2015-01-18', format: 'png',
+                       bbox: '20.7543000000000006,38.9926000000000030,21.1385000000000005,39.2668999999999997'},
+                      {projection: new OpenLayers.Projection("EPSG:4326"), units: "m"});
+          var wms_temperature = new OpenLayers.Layer.WMS( "Daily Temperature",
+                    "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
+                      {layers: 'Daily_temperature_2015-01-18', format: 'png',
+                       bbox: '20.7543000000000006,38.9926000000000030,21.1385000000000005,39.2668999999999997'},
+                      {projection: new OpenLayers.Projection("EPSG:4326"), units: "m"});
+          var wms_solar_radiation = new OpenLayers.Layer.WMS( "Daily Solar Radiation",
+                    "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
+                      {layers: 'Daily_solar_radiation_2015-01-18', format: 'png',
+                       bbox: '20.7543000000000006,38.9926000000000030,21.1385000000000005,39.2668999999999997'},
+                      {projection: new OpenLayers.Projection("EPSG:4326"), units: "m"});
+          var wms_pressure = new OpenLayers.Layer.WMS( "Daily Solar Pressure",
+                    "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
+                      {layers: 'Daily_pressure_2015-01-18', format: 'png',
+                       bbox: '20.7543000000000006,38.9926000000000030,21.1385000000000005,39.2668999999999997'},
+                      {projection: new OpenLayers.Projection("EPSG:4326"), units: "m"});
+          var wms_wind_speed = new OpenLayers.Layer.WMS( "Daily Wind Speed",
+                    "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
+                      {layers: 'Daily_wind_speed_2015-01-18', format: 'png',
+                       bbox: '20.7543000000000006,38.9926000000000030,21.1385000000000005,39.2668999999999997'},
+                      {projection: new OpenLayers.Projection("EPSG:4326"), units: "m"});
+          map.addLayers([wms_evap,wms_humidity,wms_rain, wms_temperature, wms_solar_radiation, wms_pressure, wms_wind_speed]);
           map.addControl(new OpenLayers.Control.LayerSwitcher());
-          map.zoomToMaxExtent();
-</script>
-       </div>
+          var zoom=11;
+          var arta = new OpenLayers.LonLat(20.98, 39.15);
+          map.setCenter (arta, zoom);
+           </script>
+  </div>
+</div>
 {% endblock %}
 
