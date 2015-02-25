@@ -21,30 +21,35 @@
 <div class="row">
   <div class="col-md-12">
     <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title"> Spatial Datasets on <span class="text-success" id='date_map'></span> </h3>
-        </div>
-          <div class="panel-body">
-            <div class="col-md-9">
-              <div id="wms_map" class="map"></div>
-            </div>
-            <div class="col-md-3">
-                  <input type="hidden" class="form-control" id="mirror_field" value="" readonly />
-              <div class="form_datetime"> </div>
-              <br>
-              <div class="row">
-                <div class="col-md-2 col-md-offset-3">
-                  <button id="id_button_date" type="submit" class="btn btn-success btn-xs" onclick="create_map(document.getElementById('mirror_field').value)">View Map</button>
-                </div>
+      <div class="panel-heading">
+        <br>
+        <div class="container">
+          <div class="row">
+            <div class='col-sm-4'>
+              <h4 style="float: left;">Select Date: &nbsp;</h4>
+              <div class="form-group">
+                  <div class='input-group date' id='form_datetime'>
+                    <input type='text' class="form-control" />
+                      <input type="hidden" class="form-control" id="mirror_field" value="" readonly />
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                          <div class="col-md-2 col-md-offset-1">
+                            <button id="id_button_date" type="submit" class="btn btn-success btn" onclick="create_map(document.getElementById('mirror_field').value)">View</button>
+                          </div>
+                  </div>
               </div>
-
             </div>
+          </div>
         </div>
+       </div>
+       <div class="panel-body">
+          <div id="wms_map" class="map"></div>
+          <div><h4 id="date_map"></h4></div>
+       </div>
     </div>
   </div>
 </div>
       <script type="text/javascript">
-          $(".form_datetime").datetimepicker({
+          $("#form_datetime").datetimepicker({
             format: "yyyy-mm-dd",
             startDate: "2015-01-01",
             autoclose: true,
@@ -60,6 +65,11 @@
             {
               //Clear previous map
               document.getElementById('wms_map').innerHTML = ""
+              if (date >= '{% now "Y-m-d" %}'){
+                  document.getElementById('date_map').innerHTML = "You selected a date without data (Current date selection " + date + " ).";
+              } else {
+                  document.getElementById('date_map').innerHTML = "Date: " + date;
+              }
               var date_selected = date;
               map = new OpenLayers.Map("wms_map");
               var wms_evap = new OpenLayers.Layer.WMS( "Daily Evaporation "+ date_selected,
@@ -102,7 +112,7 @@
 
               map.addControl(new OpenLayers.Control.LayerSwitcher());
               map.setCenter (new OpenLayers.LonLat(20.98, 39.15), 11);
-              document.getElementById('date_map').innerHTML = date_selected;
+              //document.getElementById('date_map').innerHTML = date_selected;
            }
            // Initial map in first request
            create_map("2015-01-01");
