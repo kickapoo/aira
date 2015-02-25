@@ -52,6 +52,7 @@
           $("#form_datetime").datetimepicker({
             format: "yyyy-mm-dd",
             startDate: "2015-01-01",
+            endDate:'{% now "Y-m-d" %}',
             autoclose: true,
             todayBtn: true,
             pickerPosition: "bottom-left",
@@ -63,56 +64,31 @@
 
           function create_map(date)
             {
-              //Clear previous map
+              // Clear previous map
               document.getElementById('wms_map').innerHTML = ""
+              // Check Requested date: django now
               if (date >= '{% now "Y-m-d" %}'){
                   document.getElementById('date_map').innerHTML = "You selected a date without data (Current date selection " + date + " ).";
               } else {
                   document.getElementById('date_map').innerHTML = "Date: " + date;
               }
-              var date_selected = date;
               map = new OpenLayers.Map("wms_map");
-              var wms_evap = new OpenLayers.Layer.WMS( "Daily Evaporation "+ date_selected,
+              // Loop to add layers
+              var layers_list = ['Daily_evaporation_','Daily_humidity_', 'Daily_rain_','Daily_temperature_',
+                                 'Daily_pressure_', 'Daily_solar_radiation_'];
+              for (var i in layers_list) {
+                console.log(layers_list[i]);
+                var map_variable = new OpenLayers.Layer.WMS( layers_list[i] + date,
                         "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
-                          {layers: 'Daily_evaporation_'+ date_selected,
+                          {layers: layers_list[i] + date,
                            format: 'png',
                            bbox: '20.7543000000000006,38.9926000000000030,21.1385000000000005,39.2668999999999997'},
                           {projection: new OpenLayers.Projection("EPSG:4326"), units: "m"});
-              var wms_humidity = new OpenLayers.Layer.WMS( "Daily Humidity "+ date_selected,
-                        "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
-                          {layers: 'Daily_humidity_'+ date_selected, format: 'png',
-                           bbox: '20.7543000000000006,38.9926000000000030,21.1385000000000005,39.2668999999999997'},
-                          {projection: new OpenLayers.Projection("EPSG:4326"), units: "m"});
-              var wms_rain = new OpenLayers.Layer.WMS( "Daily Rainfall "+ date_selected,
-                        "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
-                          {layers: 'Daily_rain_'+ date_selected, format: 'png',
-                           bbox: '20.7543000000000006,38.9926000000000030,21.1385000000000005,39.2668999999999997'},
-                          {projection: new OpenLayers.Projection("EPSG:4326"), units: "m"});
-              var wms_temperature = new OpenLayers.Layer.WMS( "Daily Temperature "+ date_selected,
-                        "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
-                          {layers: 'Daily_temperature_'+ date_selected, format: 'png',
-                           bbox: '20.7543000000000006,38.9926000000000030,21.1385000000000005,39.2668999999999997'},
-                          {projection: new OpenLayers.Projection("EPSG:4326"), units: "m"});
-              var wms_solar_radiation = new OpenLayers.Layer.WMS( "Daily Solar Radiation "+ date_selected,
-                        "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
-                          {layers: 'Daily_solar_radiation_'+ date_selected, format: 'png',
-                           bbox: '20.7543000000000006,38.9926000000000030,21.1385000000000005,39.2668999999999997'},
-                          {projection: new OpenLayers.Projection("EPSG:4326"), units: "m"});
-              var wms_pressure = new OpenLayers.Layer.WMS( "Daily Solar Pressure "+ date_selected,
-                        "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
-                          {layers: 'Daily_pressure_'+ date_selected, format: 'png',
-                           bbox: '20.7543000000000006,38.9926000000000030,21.1385000000000005,39.2668999999999997'},
-                          {projection: new OpenLayers.Projection("EPSG:4326"), units: "m"});
-              var wms_wind_speed = new OpenLayers.Layer.WMS( "Daily Wind Speed "+ date_selected,
-                        "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
-                          {layers: 'Daily_wind_speed_'+ date_selected, format: 'png',
-                           bbox: '20.7543000000000006,38.9926000000000030,21.1385000000000005,39.2668999999999997'},
-                          {projection: new OpenLayers.Projection("EPSG:4326"), units: "m"});
-              map.addLayers([wms_evap,wms_humidity,wms_rain, wms_temperature, wms_solar_radiation, wms_pressure, wms_wind_speed]);
-
+                map.addLayer(map_variable);
+              }
+              // Add controll and center
               map.addControl(new OpenLayers.Control.LayerSwitcher());
               map.setCenter (new OpenLayers.LonLat(20.98, 39.15), 11);
-              //document.getElementById('date_map').innerHTML = date_selected;
            }
            // Initial map in first request
            create_map("2015-01-01");
