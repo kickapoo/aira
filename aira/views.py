@@ -1,3 +1,6 @@
+from datetime import timedelta
+from django.utils import timezone
+
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
@@ -11,6 +14,12 @@ from .irma.main import view_run
 
 class IndexPageView(TemplateView):
     template_name = 'aira/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexPageView, self).get_context_data(**kwargs)
+        print timezone.now() - timedelta(days=1)
+        context['yesterday'] = (timezone.now() - timedelta(days=1)).date()
+        return context
 
 
 class HomePageView(TemplateView):

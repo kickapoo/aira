@@ -52,9 +52,8 @@
           $("#form_datetime").datetimepicker({
             format: "yyyy-mm-dd",
             startDate: "2015-01-01",
-            endDate:'{% now "Y-m-d" %}',
+            endDate:'{{ yesterday|date:"Y-m-d" }}',
             autoclose: true,
-            todayBtn: true,
             pickerPosition: "bottom-left",
             minView:2,
             linkField: "mirror_field",
@@ -66,18 +65,11 @@
             {
               // Clear previous map
               document.getElementById('wms_map').innerHTML = ""
-              // Check Requested date: django now
-              if (date >= '{% now "Y-m-d" %}'){
-                  document.getElementById('date_map').innerHTML = "You selected a date without data (Current date selection " + date + " ).";
-              } else {
-                  document.getElementById('date_map').innerHTML = "Date: " + date;
-              }
               map = new OpenLayers.Map("wms_map");
               // Loop to add layers
               var layers_list = ['Daily_evaporation_','Daily_humidity_', 'Daily_rain_','Daily_temperature_',
                                  'Daily_pressure_', 'Daily_solar_radiation_'];
               for (var i in layers_list) {
-                console.log(layers_list[i]);
                 var map_variable = new OpenLayers.Layer.WMS( layers_list[i] + date,
                         "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
                           {layers: layers_list[i] + date,
