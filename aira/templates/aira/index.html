@@ -30,12 +30,14 @@
               <div class="form-group">
                   <div class='input-group date' id='form_datetime'>
                     <input type='text' class="form-control" />
-                      <input type="hidden" class="form-control" id="mirror_field" value="" readonly />
+                      <input type="hidden" class="form-control" id="mirror_field" value="{{ yesterday|date:"Y-m-d" }}" readonly />
                         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                           <div class="col-md-2 col-md-offset-1">
                             <button id="id_button_date" type="submit" class="btn btn-success btn" onclick="create_map(document.getElementById('mirror_field').value)">View</button>
                           </div>
                   </div>
+                  <h5 style="float:left;">Avalaible Datasets: <span class="text-success">2015-01-01</span> : <span class="text-success">{{ yesterday|date:"Y-m-d" }}</span></h5>
+
               </div>
             </div>
           </div>
@@ -52,10 +54,13 @@
           $("#form_datetime").datetimepicker({
             format: "yyyy-mm-dd",
             startDate: "2015-01-01",
+            initialDate: '{{ yesterday|date:"Y-m-d" }}',
             endDate:'{{ yesterday|date:"Y-m-d" }}',
             autoclose: true,
             pickerPosition: "bottom-left",
             minView:2,
+            startView:2,
+            todayHighlight:false,
             linkField: "mirror_field",
             linkFormat: "yyyy-mm-dd",
             pickerPosition: "bottom-left"
@@ -79,11 +84,12 @@
                 map.addLayer(map_variable);
               }
               // Add controll and center
+              document.getElementById('date_map').innerHTML = "Date: " + date;
               map.addControl(new OpenLayers.Control.LayerSwitcher());
               map.setCenter (new OpenLayers.LonLat(20.98, 39.15), 11);
            }
            // Initial map in first request
-           create_map("2015-01-01");
+           create_map('{{ yesterday|date:"Y-m-d" }}');
       </script>
 
 {% endblock %}
