@@ -70,64 +70,66 @@
     </div>
     {% for f in agrifields %}
       <div class="panel-body">
-                <p><b>Field Info:</b> &nbsp;<a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> is growing <a href="{% url 'update_agrifield' f.id %}">{{ f.ct.ct_name }}</a> using <a href="{% url 'update_agrifield' f.id %}">{{ f.irrt.irrt_name }}</a>. </p>
-                {% if f.outside_arta_raster %}
-                  <div class="alert alert-danger">
-                    <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-danger"><i class="fa fa-exclamation-triangle">&nbsp;Warning</i></span> &nbsp;
-                     Your agrifield location is outside Arta's plain field. <br>
-                     Update you field location <a href="{% url 'update_agrifield' f.id %}">here</a>.
-                  </div>
+        <p><b>Field Info:</b> &nbsp;<a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> is growing <a href="{% url 'update_agrifield' f.id %}">{{ f.ct.ct_name }}</a> using <a href="{% url 'update_agrifield' f.id %}">{{ f.irrt.irrt_name }}</a>. </p>
+        {% if f.outside_arta_raster %}
+          <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-danger"><i class="fa fa-exclamation-triangle">&nbsp;Warning</i></span> &nbsp;
+             Your agrifield location is outside Arta's plain field. <br>
+             Update you field location <a href="{% url 'update_agrifield' f.id %}">here</a>.
+          </div>
 
-                {% else %}
-                  {% if not f.irr_event %}
-                    <div class="alert alert-warning">
-                      <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;Warning</i></span>  &nbsp;
-                      You haven't entered any irrigation event. Add  your irrigation log <a href="{% url 'create_irrlog' f.id %}">here</a>.<br>
-                      Irrigation Advice is estimated using aira default datasets.
-                    </div>
-                  {% endif %}
-                  {% if f.last_irr_event_outside_period %}
-                    <div class="alert alert-warning">
-                      <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;Warning</i></span>  &nbsp;
-                      Your latest irrigation event is outside our dataset period. Update your irrigation log <a href="{% url 'create_irrlog' f.id %}">here</a>.<br>
-                      Irrigation Advice is estimated using aira default datasets.
-                    </div>
-                  {% endif %}
-                  {% if f.warning_fc %}
-                    <div class="alert alert-warnings">
-                      <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;Warning</i></span>  &nbsp;
-                      You have reached field capacity ({{ f.fc|floatformat:"1" }}) at <span class="text-success">{{f.warning_fc_date}}</span>
-                    </div>
-                  {% endif %}
-                    <p><b>Irrigation Advice:</b>
-                      {% if f.adv %}
-                        <div class="table-responsive">
-                          <table class="table">
-                              <thead>
-                                <tr>
-                                  <th>Date <br> </th>
-                                  <th>Irrigation Water Amount<br> (mm)</th>
-                                </tr>
-                              </thead>
-                               <tbody>
-                                  {% for irri_event in f.adv %}
-                                    <tr>
-                                      <td align="center">{{ irri_event.date |date:"d/m/Y h:m:s" }}</td>
-                                      <td align="center">{{ irri_event.Ifinal|floatformat:"2" }}</td>
-                                {% endfor %}
-                              </tbody>
-                            </table>
-                          </div>
-                      {% else %}
-                        No need to irrigate from <span <class class="text-warning">{{ f.sd }}</span> to  <span <class class="text-warning">{{ f.ed }}</span>.
-                      {% endif %}
-                    </p>
-                    <sub><a class="btn btn-success btn-xs" href="{% url 'advice' f.id %}" target="_blank"></i>&nbsp;<i class="fa fa-calendar"></i>&nbsp;Detailed Report</a>
-                    <a class="btn btn-success btn-xs" href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; TimeLogs</a>
-                    </sub></p>
-                {% endif %}
-                <hr class="bhr">
-              </div>
+        {% else %}
+          {% if not f.irr_event %}
+            <div class="alert alert-warning">
+              <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;Warning</i></span>  &nbsp;
+              You haven't entered any irrigation event. Add  your irrigation log <a href="{% url 'create_irrlog' f.id %}">here</a>.<br>
+              Irrigation Advice is estimated using aira default datasets.
+            </div>
+          {% endif %}
+          {% if f.last_irr_event_outside_period %}
+            <div class="alert alert-warning">
+              <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;Warning</i></span>  &nbsp;
+              Your latest irrigation event is outside our dataset period. Update your irrigation log <a href="{% url 'create_irrlog' f.id %}">here</a>.<br>
+              Irrigation Advice is estimated using aira default datasets.
+            </div>
+          {% endif %}
+          {% if f.over_fc %}
+            <div class="alert alert-info">
+              <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-exclamation-triangle "></i>
+                You reached field capacity ({{ f.fc_mm|floatformat:"1" }} mm)</a>.
+            </div>
+          {% endif %}
+            <p><b>Irrigation Advice:</b>
+              {% if f.adv %}
+                <div class="table-responsive">
+                  <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Date <br> </th>
+                          <th>Irrigation Water Amount<br> (mm)</th>
+                        </tr>
+                      </thead>
+                       <tbody>
+                          {% for irri_event in f.adv %}
+                            <tr>
+                              <td align="center">{{ irri_event.date |date:"d/m/Y h:m:s" }}</td>
+                              <td align="center">{{ irri_event.Ifinal|floatformat:"2" }}</td>
+                            </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+              {% else %}
+                No need to irrigate from <span <class class="text-warning">{{ f.sd }}</span> to  <span <class class="text-warning">{{ f.ed }}</span>.
+              {% endif %}
+
+            </p>
+            <sub><a class="btn btn-success btn-xs" href="{% url 'advice' f.id %}" target="_blank"></i>&nbsp;<i class="fa fa-calendar"></i>&nbsp;Detailed Report</a>
+            <a class="btn btn-success btn-xs" href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; TimeLogs</a>
+            </sub></p>
+        {% endif %}
+        <hr class="bhr">
+      </div>
     {% endfor %}
 {% endif %}
 {% endblock %}

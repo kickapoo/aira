@@ -81,14 +81,19 @@ def advice_date(swb_report):
     return dict(zip(irr_dates, irr_amount))
 
 
+def over_fc(swb_report, fc_mm):
+    temp_over_search = [True for i in swb_report if i['Dr_i'] >= fc_mm]
+    if len(temp_over_search) >= 1:
+        return True
+    return False
+
+
 def view_run(afield_obj, flag_run,
              daily_r_fps=load_meteodata_file_paths()[0],
              daily_e_fps=load_meteodata_file_paths()[1],
              hourly_r_fps=load_meteodata_file_paths()[2],
              hourly_e_fps=load_meteodata_file_paths()[3]):
     # Notes:  flag : "irr_event" , "no_irr_event"
-    # Load glob here :
-    #
     # Load Historical (daily)
     # pthelma.extract_point_from_raster dont have Timeseries.time_step
     precip_daily, evap_daily = load_ts_from_rasters(afield_obj, daily_r_fps,
@@ -129,8 +134,9 @@ def view_run(afield_obj, flag_run,
         #              and wants to check the scenario
         #              "What is the model performance if field is irrigate
         #              in next (timeseries) days ex. start_date + 2 etc
-        # Above comment is set as remainder.
+        # Above comment is set as a remainder.
         depl_historical = run_daily(swb_daily_obj, start_date,
                                     theta_init, irr_event_days=[])[1]
         swb_view, depl_h, sd, ed = run_hourly(swb_hourly_obj, depl_historical)
-    return swb_view, sd, ed, advice_date(swb_view.wbm_report)
+    ovfc = over_fc(swb_view.wbm_report, swb_view.fc_mm)
+    return swb_view, sd, ed, advice_date(swb_view.wbm_report), ovfc

@@ -53,16 +53,18 @@ class HomePageView(TemplateView):
                         if irma_utils.last_timelog_in_dataperiod(f):
                             f.last_irr_event_outside_period = False
                             f.model = "With irrigation event run"
-                            swb_view, f.sd, f.ed, f.adv = view_run(f, flag_run="irr_event")
+                            swb_view, f.sd, f.ed, f.adv, ovfc= view_run(f, flag_run="irr_event")
                         else:
                             f.last_irr_event_outside_period = True
                             f.model = "None irrigation event run"
-                            swb_view, f.sd, f.ed, f.adv = view_run(f, flag_run="no_irr_event")
+                            swb_view, f.sd, f.ed, f.adv, ovfc = view_run(f, flag_run="no_irr_event")
+                            f.over_fc = ovfc
                     else:
                         f.irr_event = False
                         f.model = "None irrigation event run"
-                        swb_view, f.sd, f.ed, f.adv = view_run(f, flag_run="no_irr_event")
-
+                        swb_view, f.sd, f.ed, f.adv, ovfc = view_run(f, flag_run="no_irr_event")
+                        f.over_fc = ovfc
+                    f.fc_mm = swb_view.fc_mm
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
         return context
@@ -81,17 +83,17 @@ class AdvicePageView(TemplateView):
             if irma_utils.last_timelog_in_dataperiod(f):
                 f.last_irr_event_outside_period = False
                 f.model = "With irrigation event run"
-                swb_view, f.sd, f.ed, f.adv = view_run(f, flag_run="irr_event")
+                swb_view, f.sd, f.ed, f.adv, ovfc = view_run(f, flag_run="irr_event")
                 f.swb_report = swb_view.wbm_report
             else:
                 f.last_irr_event_outside_period = True
                 f.model = "None irrigation event run"
-                swb_view, f.sd, f.ed, f.adv = view_run(f, flag_run="no_irr_event")
+                swb_view, f.sd, f.ed, f.adv, ovfc = view_run(f, flag_run="no_irr_event")
                 f.swb_report = swb_view.wbm_report
         else:
             f.irr_event = False
             f.model = "None irrigation event run"
-            swb_view, f.sd, f.ed, f.adv = view_run(f, flag_run="no_irr_event")
+            swb_view, f.sd, f.ed, f.adv, ovfc = view_run(f, flag_run="no_irr_event")
             f.swb_report = swb_view.wbm_report
         return context
 
