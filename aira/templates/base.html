@@ -4,15 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %} Welcome {% endblock %}</title>
+  <link rel="shortcut icon" type="image/png" href="{% static 'img/aira-logo.png' %}" />
   <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css">
   <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
-  <link rel="shortcut icon" type="image/png" href="{% static 'img/aira-logo.png' %}" />
-  <title>{% block title %} Welcome {% endblock %}</title>
   <link rel="stylesheet" media="screen" href="{% static 'css/bootstrap-datetimepicker.min.css' %}">
   <link rel="stylesheet" media="screen" href="{% static 'css/bootstrap-datetimepicker.css' %}">
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
   <script src="http://openlayers.org/api/OpenLayers.js"></script>
+  <script type="text/javascript" src="http://openstreetmap.org/openlayers/OpenStreetMap.js"></script>
   <script type="text/javascript" src="{% static 'js/bootstrap-datetimepicker.js' %}" charset="UTF-8"></script>
 </head>
 <body>
