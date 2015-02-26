@@ -15,39 +15,32 @@
     <div class="panel-body">
       <div id="open_map" class="map"></div>
        <script type="text/javascript">
-          map = new OpenLayers.Map("open_map");
-          var cycle = new OpenLayers.Layer.OSM("OpenCycleMap",
-                         ["http://a.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
-                          "http://b.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
-                          "http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png"]);
+          // Map object
+          map = new OpenLayers.Map('open_map',
+                    {units: 'm',
+                     displayProjection: 'EPSG:4326',
+                     controls: [new OpenLayers.Control.LayerSwitcher(),
+                                new OpenLayers.Control.Zoom(),
+                                new OpenLayers.Control.MousePosition({prefix:'Coordinates(EPSG:3857): '}),
+                                new OpenLayers.Control.ScaleLine()]
+                     });
+          // Open Cycle
+          var cycle = new OpenLayers.Layer.OSM.CycleMap(
+                        "Open Cycle Map",
+                        {isBaseLayer: true,
+                         projection: 'EPSG:3857'});
+          // OSM to be changed by Ktimatologio
           var osm = new OpenLayers.Layer.OSM();
           map.addLayers([cycle, osm]);
-          map.addControl(new OpenLayers.Control.LayerSwitcher());
           {% for f in agrifields %}
-          var lonLat = new OpenLayers.LonLat({{f.longitude}}, {{f.latitude}})
-                .transform(
-                  new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-                  map.getProjectionObject() // to Spherical Mercator Projection
-                );
-          var zoom=10;
-          var markers = new OpenLayers.Layer.Markers("{{f.name}}" );
-          map.addLayer(markers);
-          markers.addMarker(new OpenLayers.Marker(lonLat));
-          var fromProjection = new OpenLayers.Projection("EPSG:4326");
-          var toProjection   = new OpenLayers.Projection("EPSG:900913");
-          var arta = new OpenLayers.LonLat(20.98, 39.15).transform( fromProjection, toProjection);
-          map.setCenter (arta, zoom);
+            var agrifield_point = new OpenLayers.LonLat({{f.longitude}}, {{f.latitude}}).transform('EPSG:4326', 'EPSG:3857');
+            var markers = new OpenLayers.Layer.Markers("{{f.name}}");
+            markers.addMarker(new OpenLayers.Marker(agrifield_point));
+            map.addLayer(markers);
+            map.setCenter (new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 10);
           {% empty %}
-          var lonLat = new OpenLayers.LonLat(20.98, 39.1)
-                .transform(
-                  new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-                  map.getProjectionObject() // to Spherical Mercator Projection
-                );
-          var zoom=10;
-          var fromProjection = new OpenLayers.Projection("EPSG:4326");
-          var toProjection   = new OpenLayers.Projection("EPSG:900913");
-          var arta = new OpenLayers.LonLat(20.98, 39.15).transform( fromProjection, toProjection);
-          map.setCenter (arta, zoom);
+            var arta = new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857');
+            map.setCenter(new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 10);
           {% endfor %}
        </script>
       </div>

@@ -11,26 +11,30 @@
         <b>Field Name:</b> <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a>
       </div>
       <div class="panel-body">
-        <div id="open_map" class="map"></div>
+        <div id="field_map" class="map"></div>
          <script type="text/javascript">
-          map = new OpenLayers.Map("open_map");
-          var cycle = new OpenLayers.Layer.OSM("OpenCycleMap",
-                         ["http://a.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
-                          "http://b.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
-                          "http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png"]);
-          var osm = new OpenLayers.Layer.OSM();
-          map.addLayers([cycle, osm]);
-          map.addControl(new OpenLayers.Control.LayerSwitcher());
-          var lonLat = new OpenLayers.LonLat({{ f.longitude }}, {{ f.latitude }})
-                .transform(
-                  new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-                  map.getProjectionObject() // to Spherical Mercator Projection
-                );
-          var zoom = 9;
-          var markers = new OpenLayers.Layer.Markers( "{{ f.name }}" );
-          map.addLayer(markers);
-          markers.addMarker(new OpenLayers.Marker(lonLat));
-          map.setCenter (lonLat, zoom);
+             map = new OpenLayers.Map('field_map',
+                   {units: 'm',
+                    displayProjection: 'EPSG:4326',
+                    controls: [new OpenLayers.Control.LayerSwitcher(),
+                               new OpenLayers.Control.Zoom(),
+                               new OpenLayers.Control.MousePosition({prefix:'Coordinates(EPSG:3857): '}),
+                               new OpenLayers.Control.ScaleLine()]
+                    });
+             // Open Cycle
+             var cycle = new OpenLayers.Layer.OSM.CycleMap(
+                       "Open Cycle Map",
+                       {isBaseLayer: true,
+                        projection: 'EPSG:3857'});
+             // OSM to be changed by Ktimatologio layer
+             var osm = new OpenLayers.Layer.OSM();
+             map.addLayers([cycle, osm]);
+             var fieldloc = new OpenLayers.LonLat({{ f.longitude }}, {{ f.latitude }}).transform('EPSG:4326', 'EPSG:3857');
+             var marker = new OpenLayers.Marker(fieldloc)
+             var markers = new OpenLayers.Layer.Markers( "{{ f.name }}" );
+             map.addLayer(markers);
+             markers.addMarker(marker);
+             map.setCenter(fieldloc, 10);
        </script>
       </div>
     </div>
