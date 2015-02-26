@@ -21,6 +21,7 @@
                      displayProjection: 'EPSG:4326',
                      controls: [new OpenLayers.Control.LayerSwitcher(),
                                 new OpenLayers.Control.Zoom(),
+                                new OpenLayers.Control.Navigation(),
                                 new OpenLayers.Control.MousePosition({prefix:'Coordinates(EPSG:3857): '}),
                                 new OpenLayers.Control.ScaleLine()]
                      });
