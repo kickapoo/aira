@@ -111,8 +111,7 @@ def timelog_exists(Agrifield):
     return Agrifield.irrigationlog_set.exists()
 
 
-def last_timelog_in_dataperiod(obj, r_fps=load_meteodata_file_paths()[0],
-                               e_fps=load_meteodata_file_paths()[1]):
+def last_timelog_in_dataperiod(obj, r_fps, e_fps):
     # Default search against historical data (daily data)
     precip, evap = load_ts_from_rasters(obj, r_fps, e_fps)
     sd, fd = data_start_end_date(precip, evap)

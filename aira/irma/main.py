@@ -88,11 +88,7 @@ def over_fc(swb_report, fc_mm):
     return False
 
 
-def view_run(afield_obj, flag_run,
-             daily_r_fps=load_meteodata_file_paths()[0],
-             daily_e_fps=load_meteodata_file_paths()[1],
-             hourly_r_fps=load_meteodata_file_paths()[2],
-             hourly_e_fps=load_meteodata_file_paths()[3]):
+def view_run(afield_obj, flag_run, daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps):
     # Notes:  flag : "irr_event" , "no_irr_event"
     # Load Historical (daily)
     # pthelma.extract_point_from_raster dont have Timeseries.time_step

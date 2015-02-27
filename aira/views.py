@@ -27,6 +27,8 @@ class HomePageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomePageView, self).get_context_data(**kwargs)
+        # Load data paths
+        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = irma_utils.load_meteodata_file_paths()
         # Fetch models.Profile(User)
         try:
             context['profile'] = Profile.objects.get(farmer=self.request.user)
@@ -34,35 +36,36 @@ class HomePageView(TemplateView):
             context['profile'] = None
         # Fetch models.Agrifield(User)
         try:
-            agrifields = Agrifield.objects.filter(owner=self.request.user).all()
+            agrifields = Agrifield.objects.filter(
+                owner=self.request.user).all()
             context['agrifields'] = agrifields
             context['fields_count'] = agrifields.count()
-            # Map
-            # Defaults are city of Arta location
-            # lats = [f.latitude for f in context['agrifields']] or [39.15]
-            # lons = [f.longitude for f in context['agrifields']] or [20.98]
-            # context['coords'] = zip(lats, lons)
-            # Irma Model
-
             for f in agrifields:
                 if not irma_utils.agripoint_in_raster(f):
                     f.outside_arta_raster = True
                 else:
                     if irma_utils.timelog_exists(f):
                         f.irr_event = True
-                        if irma_utils.last_timelog_in_dataperiod(f):
+                        if irma_utils.last_timelog_in_dataperiod(f, daily_r_fps, daily_e_fps):
                             f.last_irr_event_outside_period = False
-                            f.model = "With irrigation event run"
-                            swb_view, f.sd, f.ed, f.adv, ovfc= view_run(f, flag_run="irr_event")
+                            flag_run = "irr_event"
+                            swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
+                                f, flag_run, daily_r_fps, daily_e_fps,
+                                hourly_r_fps, hourly_e_fps)
                         else:
                             f.last_irr_event_outside_period = True
-                            f.model = "None irrigation event run"
-                            swb_view, f.sd, f.ed, f.adv, ovfc = view_run(f, flag_run="no_irr_event")
+                            flag_run = "no_irr_event"
+                            swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
+                                f, flag_run, daily_r_fps, daily_e_fps,
+                                hourly_r_fps, hourly_e_fps)
+
                             f.over_fc = ovfc
                     else:
                         f.irr_event = False
-                        f.model = "None irrigation event run"
-                        swb_view, f.sd, f.ed, f.adv, ovfc = view_run(f, flag_run="no_irr_event")
+                        flag_run = "no_irr_event"
+                        swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
+                            f, flag_run, daily_r_fps, daily_e_fps,
+                            hourly_r_fps, hourly_e_fps)
                         f.over_fc = ovfc
                     f.fc_mm = swb_view.fc_mm
         except Agrifield.DoesNotExist:
@@ -75,25 +78,34 @@ class AdvicePageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AdvicePageView, self).get_context_data(**kwargs)
+        # Load data paths
+        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = irma_utils.load_meteodata_file_paths()
         f = Agrifield.objects.get(pk=self.kwargs['pk'])
         context['f'] = f
         context['fpars'] = get_parameters(f)
         if irma_utils.timelog_exists(f):
             f.irr_event = True
-            if irma_utils.last_timelog_in_dataperiod(f):
+            if irma_utils.last_timelog_in_dataperiod(f, daily_r_fps, daily_e_fps):
                 f.last_irr_event_outside_period = False
-                f.model = "With irrigation event run"
-                swb_view, f.sd, f.ed, f.adv, ovfc = view_run(f, flag_run="irr_event")
+                flag_run = "irr_event"
+                swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
+                    f, flag_run, daily_r_fps, daily_e_fps,
+                    hourly_r_fps, hourly_e_fps)
                 f.swb_report = swb_view.wbm_report
             else:
                 f.last_irr_event_outside_period = True
-                f.model = "None irrigation event run"
-                swb_view, f.sd, f.ed, f.adv, ovfc = view_run(f, flag_run="no_irr_event")
+                flag_run = "no_irr_event"
+                swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
+                    f, flag_run, daily_r_fps, daily_e_fps,
+                    hourly_r_fps, hourly_e_fps)
                 f.swb_report = swb_view.wbm_report
         else:
             f.irr_event = False
             f.model = "None irrigation event run"
-            swb_view, f.sd, f.ed, f.adv, ovfc = view_run(f, flag_run="no_irr_event")
+            flag_run = "no_irr_event"
+            swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
+                f, flag_run, daily_r_fps, daily_e_fps,
+                hourly_r_fps, hourly_e_fps)
             f.swb_report = swb_view.wbm_report
         return context
 
