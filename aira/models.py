@@ -22,7 +22,7 @@ class Profile(models.Model):
         verbose_name_plural = "Profiles"
 
     def __unicode__(self):
-        return "UserProfile: {}".format(self.farmer)
+        return u"UserProfile: {}".format(self.farmer)
 
 
 class CropType(models.Model):
@@ -38,7 +38,7 @@ class CropType(models.Model):
         verbose_name_plural = 'Crop Types'
 
     def __unicode__(self):
-        return "{}".format(self.ct_name)
+        return u"{}".format(self.ct_name)
 
 
 class IrrigationType(models.Model):
@@ -50,7 +50,7 @@ class IrrigationType(models.Model):
         verbose_name_plural = 'Irrigation Types'
 
     def __unicode__(self):
-        return "{}".format(self.irrt_name)
+        return u"{}".format(self.irrt_name)
 
 
 class Agrifield(models.Model):
@@ -70,8 +70,8 @@ class Agrifield(models.Model):
         verbose_name_plural = 'Agrifields'
 
     def __unicode__(self):
-        return "User: {} | Agrifield: {}".format(self.owner.username,
-                                                 self.name)
+        return u"User:  | Agrifield: {}".format(self.owner.username,
+                                                self.name)
 
 
 class IrrigationLog(models.Model):
@@ -85,5 +85,5 @@ class IrrigationLog(models.Model):
         verbose_name_plural = 'Irrigation Logs'
 
     def __unicode__(self):
-        return "Argifield: {} | TimeLog: {}".format(self.agrifield.name,
-                                                    str(self.time))
+        return u"Argifield: {} | TimeLog: {}".format(self.agrifield.name,
+                                                     str(self.time))
