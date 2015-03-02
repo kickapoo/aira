@@ -25,16 +25,26 @@
         <br>
         <div class="container">
           <div class="row">
+            <h4>&nbsp;&nbsp;&nbsp;View historical rasters</h4>
             <div class='col-sm-4'>
-                <h4 style="float: left;">Select Date: &nbsp;</h4>
                   <div class="form-group">
-                    <div class='input-group date' id='form_datetime'>
+                    <select id="meteo_var" class="form-control">
+                        <option value="Daily_rain_">Daily Rainfall</option>
+                        <option value="Daily_evaporation_">Daily Evaporation</option>
+                        <option value="Daily_humidity_">Daily Humidity</option>
+                        <option value="Daily_temperature_">Daily Temperature</option>
+                        <option value="Daily_pressure_">Daily Pressure </option>
+                        <option value="Daily_solar_radiation_">Daily Solar Radiation</option>
+                     </select>
+                    <div style="float: left;" class="form-group">
+                      <div class='input-group date' id='form_datetime'>
                       <input type='text' class="form-control" />
                       <input type="hidden" class="form-control" id="mirror_field" value="{{ yesterday|date:"Y-m-d" }}" readonly />
-                      <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                       <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                         <div class="col-md-2 col-md-offset-1">
-                          <button id="id_button_date" type="submit" class="btn btn-success btn" onclick="create_map(document.getElementById('mirror_field').value)">View</button>
+                          <button id="id_button_date" type="submit" class="btn btn-success btn" onclick="create_map(document.getElementById('mirror_field').value,document.getElementById('meteo_var').value )">View</button>
                         </div>
+                    </div>
                     </div>
                       <h5 style="float:left;">Avalaible Datasets: <span class="text-success">2015-01-01</span> : <span class="text-success">{{ yesterday|date:"Y-m-d" }}</span></h5>
                   </div>
@@ -65,7 +75,7 @@
             pickerPosition: "bottom-left"
             });
 
-          function create_map(date)
+          function create_map(date, meteo_var)
             {
               // Clear previous map
               document.getElementById('wms_map').innerHTML = ""
@@ -90,23 +100,22 @@
                                  'Daily_pressure_', 'Daily_solar_radiation_'];
               var layers_names = ['Daily evaporation ','Daily humidity ', 'Daily rain ','Daily temperature ',
                                  'Daily pressure ', 'Daily solar radiation '];
-              for (var i in layers_list) {
-                var map_variable = new OpenLayers.Layer.WMS(
-                          layers_names[i] + date,
-                          "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
-                          {layers: layers_list[i] + date,
-                           format: 'image/png'},
-                          {isBaseLayer: false,
-                           projection: 'EPSG:3857',
-                           opacity: 0.5});
-                map.addLayer(map_variable);
-              }
+              var map_variable = new OpenLayers.Layer.WMS(
+                        meteo_var + date,
+                        "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
+                        {layers: meteo_var + date,
+                         format: 'image/png'},
+                        {isBaseLayer: false,
+                         projection: 'EPSG:3857',
+                         opacity: 0.5});
+              map.addLayer(map_variable);
+
               // Add controll and center
               document.getElementById('date_map').innerHTML = "Date: " + date;
               map.setCenter (new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 10);
            }
            // Initial map in first request
-           create_map('{{ yesterday|date:"Y-m-d" }}');
+           create_map('{{ yesterday|date:"Y-m-d" }}', 'Daily_rain_');
       </script>
 
 {% endblock %}
