@@ -16,7 +16,7 @@ from pthelma.swb import SoilWaterBalance
 def get_parameters(afield_obj):
     # For url 'advice' templates use
     fc = raster2point(afield_obj.latitude, afield_obj.longitude, fc_raster)
-    wp = raster2point(afield_obj.latestsitude, afield_obj.longitude, pwp_raster)
+    wp = raster2point(afield_obj.latitude, afield_obj.longitude, pwp_raster)
     rd = (float(afield_obj.ct.ct_rd_min) + float(afield_obj.ct.ct_rd_max)) / 2
     kc = float(afield_obj.ct.ct_kc)
     p = float(afield_obj.ct.ct_coeff)
