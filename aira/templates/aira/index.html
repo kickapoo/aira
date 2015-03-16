@@ -40,7 +40,7 @@
                      </select>
                     <div onchange="create_map(document.getElementById('mirror_field').value,document.getElementById('meteo_var').value )" style="float: left;" class="form-group">
                       <div class='input-group date' id='form_datetime'>
-                      <input type='text' class="form-control" />
+                      <input  type='text' class="form-control" />
                       <input type="hidden" class="form-control" id="mirror_field" value="{{ yesterday|date:"Y-m-d" }}" readonly />
                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                     </div>
@@ -79,6 +79,8 @@
 
           function create_map(date, meteo_var)
             {
+              date = (date === undefined) ? '{{ yesterday|date:"Y-m-d" }}' : date;
+              meteo_var = (meteo_var === undefined) ? 'Daily_rain_' : meteo_var;
               // Clear previous map
               document.getElementById('wms_map').innerHTML = ""
               // Map object
@@ -98,10 +100,13 @@
                          projection: 'EPSG:3857'});
               map.addLayer(base_cycle);
               // Loop to add WMS layers
-              var layers_list = ['Daily_evaporation_','Daily_humidity_', 'Daily_rain_','Daily_temperature_',
-                                 'Daily_pressure_', 'Daily_solar_radiation_'];
-              var layers_names = ['Daily evaporation ','Daily humidity ', 'Daily rain ','Daily temperature ',
-                                 'Daily pressure ', 'Daily solar radiation '];
+              var ktimatologio = new OpenLayers.Layer.WMS("Hellinic Cadastre",
+                         "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
+                           {   layers: 'KTBASEMAP', transparent: false},
+                           {   isBaseLayer: true,
+                               projection: new OpenLayers.Projection("EPSG:900913"),
+                               iformat: 'image/png'});
+              map.addLayer(ktimatologio);
               var map_variable = new OpenLayers.Layer.WMS(
                         meteo_var + date,
                         "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
@@ -156,6 +161,6 @@
             create_map(swap_date, meteo_var);
            }
            // Initial map in first request
-           create_map('{{ yesterday|date:"Y-m-d" }}', 'Daily_rain_');
+           create_map();
       </script>
 {% endblock %}

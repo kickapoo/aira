@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
 
-{% block title %} {{ user }} - Create Agrifield {% endblock %}
+{% block title %} {{ user }} - Add Field {% endblock %}
 
 {% block content %}
 {% if fields_count %}
   <div class="alert alert-warning">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <i class="fa fa-hand-o-right fa-1x"></i>&nbsp;  You have <b><span class="text text-success">{{fields_count}}</span></b> Agrifield(s) in your database.
+    <i class="fa fa-hand-o-right fa-1x"></i>&nbsp;  You have <b><span class="text text-success">{{fields_count}}</span></b> Field(s) in your database.
   </div>
 {% endif %}
 <div class="row">
   <div class="col-lg-12">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h4>Create Agrifield</h4>
+        <h4>Add Field</h4>
       </div>
       <div class="panel panel-body">
         <div class="col-md-6">
@@ -34,10 +34,15 @@
                     "Open Cycle Map",
                     {isBaseLayer: true,
                      projection: 'EPSG:3857'});
-          // OSM to be changed by Ktimatologio layer
-          var osm = new OpenLayers.Layer.OSM();
-          map.addLayers([cycle, osm]);
-          map.setCenter(new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 10);
+          // Kthmatologio
+          var ktimatologio = new OpenLayers.Layer.WMS("Hellinic Cadastre",
+                         "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
+                           {   layers: 'KTBASEMAP', transparent: false},
+                           {   isBaseLayer: true,
+                               projection: new OpenLayers.Projection("EPSG:900913"),
+                               iformat: 'image/png'});
+          map.addLayers([cycle, ktimatologio]);
+          map.setCenter(new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 9);
           // Create Marker
           var markers = new OpenLayers.Layer.Markers( "Add new Field" );
           map.addLayer(markers);
@@ -48,8 +53,8 @@
                       markers.clearMarkers();
                       markers.addMarker(marker);
                       var lonlat = map.getLonLatFromPixel(e.xy).transform('EPSG:3857', 'EPSG:4326');
-                      document.getElementById("id_latitude").value = lonlat.lat;
-                      document.getElementById("id_longitude").value = lonlat.lon;
+                      document.getElementById("id_latitude").value = lonlat.lat.toFixed(3);
+                      document.getElementById("id_longitude").value = lonlat.lon.toFixed(3);
           });
       </script>
     <sub> Click on Map to add your Field coordinates</sub>
@@ -59,7 +64,7 @@
             {% csrf_token %}
             {% bootstrap_form form %}
             {% buttons %}
-              <button type="submit" class="btn btn-success btn-xs">Submit</button>
+              <button type="submit" class="btn btn-success btn-xs">Add</button>
             {% endbuttons %}
           </form>
         </div>
@@ -71,7 +76,7 @@
   <div class="col-lg-12">
     <div class="panel panel-default">
       <div class="panel-heading">
-      <h4> List of Agrifields</h4>
+      <h4> List of Fields</h4>
       </div>
       <div class="panel panel-body">
             <div class="table-responsive">

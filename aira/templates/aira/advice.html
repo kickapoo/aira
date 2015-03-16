@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load bootstrap3 %}
 {% load mathfilters %}
 
@@ -27,9 +28,14 @@
                        "Open Cycle Map",
                        {isBaseLayer: true,
                         projection: 'EPSG:3857'});
-             // OSM to be changed by Ktimatologio layer
-             var osm = new OpenLayers.Layer.OSM();
-             map.addLayers([cycle, osm]);
+             // Kthmatologio
+             var ktimatologio = new OpenLayers.Layer.WMS("Hellinic Cadastre",
+                         "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
+                           {   layers: 'KTBASEMAP', transparent: false},
+                           {   isBaseLayer: true,
+                               projection: new OpenLayers.Projection("EPSG:900913"),
+                               iformat: 'image/png'});
+             map.addLayers([cycle, ktimatologio]);
              var fieldloc = new OpenLayers.LonLat({{ f.longitude }}, {{ f.latitude }}).transform('EPSG:4326', 'EPSG:3857');
              var marker = new OpenLayers.Marker(fieldloc)
              var markers = new OpenLayers.Layer.Markers( "{{ f.name }}" );
@@ -48,13 +54,12 @@
             <b>Crop Type:</b> <a href="{% url 'update_agrifield' f.id %}">{{ f.ct.ct_name }}</a>
           </div>
           <div class="panel-body">
-            <b>Root Depth(max):</b>{{ fpars.rd }} <br>
-            <b>kc:</b> {{ fpars.kc }} <br>
-            <b>Crop Coeff:</b> {{ fpars.p }} <br>
-            <b>Rd_factor:</b> {{ fpars.rd_factor }} <br>
-            <b>Field Capacity:</b> {{ fpars.fc|floatformat:"1"  }} <br>
-            <b>Theta_s:</b> {{ fpars.theta_s |floatformat:"1" }} <br>
-            <b>WP:</b> {{ fpars.wp|floatformat:"1"  }}
+            <b>Estimated root depth (max):</b> {{ fpars.rd }} cm <br>
+            <b>Field Capacity (kc):</b> {{ fpars.kc }} <br>
+            <b>Maximum Allowable Depletion :</b> {{ fpars.p }} %<br>
+            <b>Fc:</b> {{ fpars.fc|floatformat:"1"  }} mm<br>
+            <b>Θ<sub>s</sub>:</b> {{ fpars.theta_s |floatformat:"1" }} m<br>
+            <b>Wilting Point:</b> {{ fpars.wp|floatformat:"1"  }} (%) <br>
           </div>
         </div>
       </div>
@@ -79,11 +84,11 @@
           Detailed Calculations
         </div>
         <div class="panel-body">
-        <p><b>Irrigation Advice:</b>
+        <p><b>Irrigation Advice:</b><br><br>
         {% if f.adv %}
               List advice
         {% else %}
-              No need to irrigate from <span <class class="text-warning">{{ f.sd }}</span> to  <span <class class="text-warning">{{ f.ed }}</span>.
+              <img src="{% static 'img/cool.png' %}" width="40" height="40" alt=""> &nbsp; No need to irrigate from <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> to  <span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span>.
         {% endif %}</p>
         <hr>
           <div id="results" class="table-responsive">
@@ -102,7 +107,7 @@
                  <tbody>
                     {% for result in f.swb_report  %}
                       <tr>
-                        <td align="center">{{ result.date |date:"d/m/Y h:m:s" }}</td>
+                        <td align="center">{{ result.date |date:"d/m/Y H:00"}}</td>
                         <td align="center">{{ result.P|floatformat:"2" }}</td>
                         <td align="center"> {{ result.ETc|floatformat:"2" }} </td>
                         <td align="center">{{ result.Dr_i|floatformat:"2"}}</td>

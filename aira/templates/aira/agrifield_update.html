@@ -7,7 +7,7 @@
   <div class="col-lg-12">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h4>Update {{ object.name }} Agrifield</h4>
+        <h4>Update {{ object.name }}</h4>
       </div>
        <div class="panel panel-body">
         <div class="col-md-6">
@@ -22,6 +22,13 @@
                                   new OpenLayers.Control.MousePosition({prefix:'Coordinates(EPSG:3857): '}),
                                   new OpenLayers.Control.ScaleLine()]
                        });
+                var ktimatologio = new OpenLayers.Layer.WMS("Hellinic Cadastre",
+                         "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
+                           {   layers: 'KTBASEMAP', transparent: false},
+                           {   isBaseLayer: true,
+                               projection: new OpenLayers.Projection("EPSG:900913"),
+                               iformat: 'image/png'});
+                map.addLayer(ktimatologio);
                 // Open Cycle
                 var cycle = new OpenLayers.Layer.OSM.CycleMap(
                           "Open Cycle Map",
@@ -42,8 +49,8 @@
                             markers.clearMarkers();
                             markers.addMarker(marker);
                             var lonlat = map.getLonLatFromPixel(e.xy).transform('EPSG:3857', 'EPSG:4326');
-                              document.getElementById("id_latitude").value = lonlat.lat;
-                              document.getElementById("id_longitude").value = lonlat.lon;
+                              document.getElementById("id_latitude").value = lonlat.lat.toFixed(3);
+                              document.getElementById("id_longitude").value = lonlat.lon.toFixed(3);
                 });
               </script>
               <sub> Click on Map to add your Field coordinates</sub>
@@ -54,6 +61,7 @@
             {% bootstrap_form form %}
             {% buttons %}
               <button type="submit" class="btn btn-success btn-xs">Submit</button>
+              <a class="btn btn-success btn-xs" href="{% url 'home' %}"> Back </a>
             {% endbuttons %}
           </form>
         </div>
