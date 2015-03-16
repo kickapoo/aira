@@ -22,3 +22,9 @@ urlpatterns = patterns(
         auth_views.password_reset_confirm, name='password_reset_confirm'),
     url(r'', include('aira.urls')),
 )
+
+urlpatterns += patterns('django.contrib.flatpages.views',
+    url(r'^description/$', 'flatpage', {'url': '/description/'}, name='description'),
+    url(r'^terms-of-use/$', 'flatpage', {'url': '/terms-of-use/'}, name='terms'),
+    url(r'^disclaimer/$', 'flatpage', {'url': '/disclaimer/'}, name='disclaimer'),
+)

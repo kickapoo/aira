@@ -7,6 +7,8 @@ PROJECT_ROOT = os.path.abspath(PROJECT_PATH)
 SECRET_KEY = os.urandom(24)
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
+SITE_ID = 1
+
 
 ALLOWED_HOSTS = []
 
@@ -16,7 +18,9 @@ DJANGO_APPS = ('django.contrib.admin',
                'django.contrib.contenttypes',
                'django.contrib.sessions',
                'django.contrib.messages',
-               'django.contrib.staticfiles',)
+               'django.contrib.staticfiles',
+               'django.contrib.sites',
+               'django.contrib.flatpages')
 
 # THIRD_PARTY_APPS
 THIRD_PARTY_APPS = ('bootstrap3',
