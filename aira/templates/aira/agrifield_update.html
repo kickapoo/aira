@@ -22,6 +22,13 @@
                                   new OpenLayers.Control.MousePosition({prefix:'Coordinates(EPSG:3857): '}),
                                   new OpenLayers.Control.ScaleLine()]
                        });
+                // Open Cycle
+                var cycle = new OpenLayers.Layer.OSM.CycleMap(
+                          "Open Cycle Map",
+                          {isBaseLayer: true,
+                           projection: 'EPSG:3857'});
+
+                map.addLayer(cycle);
                 var ktimatologio = new OpenLayers.Layer.WMS("Hellinic Cadastre",
                          "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
                            {   layers: 'KTBASEMAP', transparent: false},
@@ -29,14 +36,6 @@
                                projection: new OpenLayers.Projection("EPSG:900913"),
                                iformat: 'image/png'});
                 map.addLayer(ktimatologio);
-                // Open Cycle
-                var cycle = new OpenLayers.Layer.OSM.CycleMap(
-                          "Open Cycle Map",
-                          {isBaseLayer: true,
-                           projection: 'EPSG:3857'});
-                // OSM to be changed by Ktimatologio layer
-                var osm = new OpenLayers.Layer.OSM();
-                map.addLayers([cycle, osm]);
                 var fieldloc = new OpenLayers.LonLat({{ object.longitude }}, {{ object.latitude }}).transform('EPSG:4326', 'EPSG:3857');
                 var marker = new OpenLayers.Marker(fieldloc)
                 var markers = new OpenLayers.Layer.Markers( "{{ object.name }}" );
