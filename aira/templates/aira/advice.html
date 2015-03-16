@@ -55,11 +55,11 @@
           </div>
           <div class="panel-body">
             <b>Estimated root depth (max):</b> {{ fpars.rd }} cm <br>
-            <b>Field Capacity (kc):</b> {{ fpars.kc }} <br>
-            <b>Maximum Allowable Depletion :</b> {{ fpars.p }} %<br>
-            <b>Fc:</b> {{ fpars.fc|floatformat:"1"  }} mm<br>
-            <b>Θ<sub>s</sub>:</b> {{ fpars.theta_s |floatformat:"1" }} m<br>
-            <b>Wilting Point:</b> {{ fpars.wp|floatformat:"1"  }} (%) <br>
+            <b>kc:</b> {{ fpars.kc }}<br>
+            <b>Maximum Allowable Depletion :</b> {{ fpars.p }}%<br>
+            <b>Field Capacity:</b> {{ fpars.fc|mul:100|floatformat:"1"  }}%<br>
+            <b>Soil moisture at saturation (Θ<sub>s</sub>):</b> {{ fpars.theta_s |mul:100|floatformat:"1" }}%<br>
+            <b>Wilting Point:</b> {{ fpars.wp|mul:100|floatformat:"1"  }}% <br>
           </div>
         </div>
       </div>
@@ -81,27 +81,27 @@
     <div class="col-lg-12">
       <div class="panel panel-default">
         <div class="panel-heading">
-          Detailed Calculations
-        </div>
+          Detailed Calculations for
+          Forecast Period: <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> to  <span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span>        </div>
         <div class="panel-body">
         <p><b>Irrigation Advice:</b><br><br>
         {% if f.adv %}
               List advice
         {% else %}
-              <img src="{% static 'img/cool.png' %}" width="40" height="40" alt=""> &nbsp; No need to irrigate from <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> to  <span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span>.
+              <img src="{% static 'img/cool.png' %}" width="40" height="40" alt=""> &nbsp; No need to irrigate.
         {% endif %}</p>
         <hr>
           <div id="results" class="table-responsive">
             <table class="table">
                 <thead>
                   <tr>
-                    <th>Date <br> </th>
-                    <th>Precipitation <br>(mm)</th>
-                    <th>ETc <br> (mm)</th>
-                    <th>Depletion <br> (mm)</th>
-                    <th>Soil moisture <br>(%)</th>
-                    <th>Irrigate ?</th>
-                    <th>Irrigation Water Amount<br> (mm)</th>
+                    <th align="center">Date <br> </th>
+                    <th align="center">Precipitation <br>(mm)</th>
+                    <th align="center">ETc <br> (mm)</th>
+                    <th align="center">Depletion <br> (mm)</th>
+                    <th align="center">Soil moisture <br>(%)</th>
+                    <th align="center">Irrigate ?</th>
+                    <th align="center">Irrigation Water Amount<br> (mm)</th>
                   </tr>
                 </thead>
                  <tbody>
