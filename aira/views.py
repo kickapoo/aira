@@ -1,5 +1,7 @@
 from datetime import timedelta
 from django.utils import timezone
+from django.contrib.auth import authenticate, login
+from django.shortcuts import redirect
 
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -10,6 +12,13 @@ from .forms import ProfileForm, AgrifieldForm, IrrigationlogForm
 from .irma import utils as irma_utils
 from .irma.main import get_parameters
 from .irma.main import view_run
+
+
+class TryPageView(TemplateView):
+    def get(self, request):
+        user = authenticate(username="demo", password="demo")
+        login(request, user)
+        return redirect("home")
 
 
 class IndexPageView(TemplateView):

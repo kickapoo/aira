@@ -6,7 +6,8 @@ from aira.views import (IndexPageView, HomePageView, AdvicePageView,
                         CreateProfile, UpdateProfile,
                         CreateAgrifield, UpdateAgrifield, DeleteAgrifield,
                         CreateIrrigationLog, UpdateIrrigationLog,
-                        DeleteIrrigationLog)
+                        DeleteIrrigationLog,
+                        TryPageView)
 
 urlpatterns = patterns(
     '',
@@ -46,4 +47,6 @@ urlpatterns = patterns(
     url(r'^delete_irrigationlog/(?P<pk>\d+)/$',
         login_required(DeleteIrrigationLog.as_view()),
         name="delete_irrlog"),
+    url(r'^try/$', TryPageView.as_view(),
+        name="try")
 )
