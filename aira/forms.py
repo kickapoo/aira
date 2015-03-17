@@ -13,13 +13,14 @@ class AgrifieldForm(forms.ModelForm):
     class Meta:
         model = Agrifield
         exclude = ('owner',)
-        fields = ['name', 'area', 'longitude', 'latitude', 'ct', 'irrt']
+        fields = ['name', 'area', 'longitude', 'latitude',
+                  'crop_type', 'irrigation_type']
         labels = {
             'name': _('Field Name '),
             'latitude': _('Latitude (WGS84)'),
             'longitude': _('Longitude (WGS84)'),
-            'ct': _('Crop Type'),
-            'irrt': _('Irrigation Type'),
+            'crop_type': _('Crop Type'),
+            'irrigation_type': _('Irrigation Type'),
             'area': _('Irrigated Field Area (m<sup>2</sup>)')
         }
 
@@ -30,5 +31,5 @@ class IrrigationlogForm(forms.ModelForm):
         exclude = ('agrifield',)
         labels = {
             'time': _('Datetime(Y-M-D h:m:s) '),
-            'water_amount': _('Water (cubic meters)'),
+            'applied_water': _('Water (cubic meters)'),
         }

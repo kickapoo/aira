@@ -1,16 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Notes:
-#   Essential db.fields.#shortname conversions
-#       ct: crop type
-#       ct_rd: crop type root depth
-#       ct_coeff: depletion coefficient
-#       ct_kc: crop type capasity
-#       irrt: irrigation type
-#       irrt_eff: irrigation type efficiency
-#       agrifield: agriculture field
-
 
 class Profile(models.Model):
     farmer = models.ForeignKey(User)
@@ -26,31 +16,31 @@ class Profile(models.Model):
 
 
 class CropType(models.Model):
-    ct_name = models.CharField(max_length=100)
-    ct_rd_max = models.FloatField()
-    ct_rd_min = models.FloatField()
-    ct_coeff = models.DecimalField(max_digits=6, decimal_places=2)
-    ct_kc = models.FloatField()
-    ct_fek = models.IntegerField()
+    name = models.CharField(max_length=100)
+    root_depth_max = models.FloatField()
+    root_depth_min = models.FloatField()
+    max_allow_depletion = models.DecimalField(max_digits=6, decimal_places=2)
+    kc = models.FloatField()
+    fek_category = models.IntegerField()
 
     class Meta:
-        ordering = ('ct_name',)
+        ordering = ('name',)
         verbose_name_plural = 'Crop Types'
 
     def __unicode__(self):
-        return u"{}".format(str(self.ct_name))
+        return u"{}".format(str(self.name))
 
 
 class IrrigationType(models.Model):
-    irrt_name = models.CharField(max_length=100)
-    irrt_eff = models.FloatField()
+    name = models.CharField(max_length=100)
+    efficiency = models.FloatField()
 
     class Meta:
-        ordering = ('irrt_name',)
+        ordering = ('name',)
         verbose_name_plural = 'Irrigation Types'
 
     def __unicode__(self):
-        return u"{}".format(str(self.irrt_name))
+        return u"{}".format(str(self.name))
 
 
 class Agrifield(models.Model):
@@ -61,8 +51,8 @@ class Agrifield(models.Model):
     # Keeping their long names is more clear for developers/users
     latitude = models.FloatField()
     longitude = models.FloatField()
-    ct = models.ForeignKey(CropType)
-    irrt = models.ForeignKey(IrrigationType)
+    crop_type = models.ForeignKey(CropType)
+    irrigation_type = models.ForeignKey(IrrigationType)
     area = models.FloatField()
 
     class Meta:
@@ -77,7 +67,7 @@ class Agrifield(models.Model):
 class IrrigationLog(models.Model):
     agrifield = models.ForeignKey(Agrifield)
     time = models.DateTimeField()
-    water_amount = models.IntegerField()
+    applied_water = models.IntegerField()
 
     class Meta:
         get_latest_by = 'time'

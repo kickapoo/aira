@@ -22,17 +22,16 @@ class Command(BaseCommand):
                                                        address="Arta")
             p.save()
 
-            kiwi = CropType.objects.filter(ct_name="Kiwi").first()
-            drip = IrrigationType.objects.filter(
-                irrt_name="Drip irrigation").first()
+            kiwi = CropType.objects.filter(name="Kiwi").first()
+            drip = IrrigationType.objects.filter(name="Drip irrigation").first()
 
             # Agrifield with location outside raster
             f, created = Agrifield.objects.get_or_create(owner=demo,
                                                          name="OUTSIDE ARTA RASTER",
                                                          latitude=38,
                                                          longitude=19,
-                                                         ct=kiwi,
-                                                         irrt=drip,
+                                                         crop_type=kiwi,
+                                                         irrigation_type=drip,
                                                          area=10000.00)
             f.save()
 
@@ -41,13 +40,13 @@ class Command(BaseCommand):
                                                          name="Field with irrigation log",
                                                          latitude=39.15,
                                                          longitude=20.98,
-                                                         ct=kiwi,
-                                                         irrt=drip,
+                                                         crop_type=kiwi,
+                                                         irrigation_type=drip,
                                                          area=10000.00)
             f.save()
             l, created = IrrigationLog.objects.get_or_create(agrifield=f,
                                                              time="2015-01-03 00:00",
-                                                             water_amount=23.00)
+                                                             applied_water=23.00)
             l.save()
 
             # Agrifield with no irrigation log
@@ -55,8 +54,8 @@ class Command(BaseCommand):
                                                          name="Field with no irrigation log",
                                                          latitude=39.10,
                                                          longitude=20.92,
-                                                         ct=kiwi,
-                                                         irrt=drip,
+                                                         crop_type=kiwi,
+                                                         irrigation_type=drip,
                                                          area=10000.00)
             f.save()
 
@@ -66,13 +65,13 @@ class Command(BaseCommand):
                                                          name="Field with log outside dataset",
                                                          latitude=39.12,
                                                          longitude=20.94,
-                                                         ct=kiwi,
-                                                         irrt=drip,
+                                                         crop_type=kiwi,
+                                                         irrigation_type=drip,
                                                          area=10000.00)
             f.save()
             l, created = IrrigationLog.objects.get_or_create(agrifield=f,
                                                              time="2014-11-15 00:00",
-                                                             water_amount=23.00)
+                                                             applied_water=23.00)
             l.save()
         except:
             raise CommandError("Use 'python manage.py populate.coeffs' first")

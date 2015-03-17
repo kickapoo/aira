@@ -17,11 +17,12 @@ def get_parameters(afield_obj):
     # For url 'advice' templates use
     fc = raster2point(afield_obj.latitude, afield_obj.longitude, fc_raster)
     wp = raster2point(afield_obj.latitude, afield_obj.longitude, pwp_raster)
-    rd = (float(afield_obj.ct.ct_rd_min) + float(afield_obj.ct.ct_rd_max)) / 2
-    kc = float(afield_obj.ct.ct_kc)
-    p = float(afield_obj.ct.ct_coeff)
+    rd = (float(afield_obj.crop_type.root_depth_min) +
+          float(afield_obj.crop_type.root_depth_max)) / 2
+    kc = float(afield_obj.crop_type.kc)
+    p = float(afield_obj.crop_type.max_allow_depletion)
     peff = 0.8  # Effective rainfall coeff 0.8 * Precip
-    irr_eff = float(afield_obj.irrt.irrt_eff)
+    irr_eff = float(afield_obj.irrigation_type.efficiency)
     theta_s = raster2point(afield_obj.latitude, afield_obj.longitude,
                            thetaS_raster)
     rd_factor = 1000  # Static for mm
@@ -32,11 +33,12 @@ def afield2swb(afield_obj, precip, evap):
     # Precip and evap must be pthelma.Timeseries afield_objects
     fc = raster2point(afield_obj.latitude, afield_obj.longitude, fc_raster)
     wp = raster2point(afield_obj.latitude, afield_obj.longitude, pwp_raster)
-    rd = (float(afield_obj.ct.ct_rd_min) + float(afield_obj.ct.ct_rd_max)) / 2
-    kc = float(afield_obj.ct.ct_kc)
-    p = float(afield_obj.ct.ct_coeff)
+    rd = (float(afield_obj.crop_type.root_depth_min) +
+          float(afield_obj.crop_type.root_depth_max)) / 2
+    kc = float(afield_obj.crop_type.kc)
+    p = float(afield_obj.crop_type.max_allow_depletion)
     peff = 0.8  # Effective rainfall coeff 0.8 * Precip
-    irr_eff = float(afield_obj.irrt.irrt_eff)
+    irr_eff = float(afield_obj.irrigation_type.efficiency)
     thetaS = raster2point(afield_obj.latitude, afield_obj.longitude,
                           thetaS_raster)
     rd_factor = 1000  # Static for mm

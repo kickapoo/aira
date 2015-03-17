@@ -19,18 +19,18 @@ class Command(BaseCommand):
             with open(irrt_csv) as f:
                 reader = csv.reader(f)
                 for row in reader:
-                    _, created = IrrigationType.objects.get_or_create(irrt_name=row[0],
-                                                                      irrt_eff=float(row[1]))
+                    _, created = IrrigationType.objects.get_or_create(name=row[0],
+                                                                      efficiency=float(row[1]))
             with open(croptype_csv) as f:
                 reader = csv.reader(f)
                 reader.next()
                 for row in reader:
-                    _, created = CropType.objects.get_or_create(ct_name=str(row[0]),
-                                                                ct_rd_min=float(row[1]),
-                                                                ct_rd_max=float(row[2]),
-                                                                ct_coeff=float(row[3]),
-                                                                ct_kc=float(row[4]),
-                                                                ct_fek=int(row[5]),
+                    _, created = CropType.objects.get_or_create(name=str(row[0]),
+                                                                root_depth_min=float(row[1]),
+                                                                root_depth_max=float(row[2]),
+                                                                max_allow_depletion=float(row[3]),
+                                                                kc=float(row[4]),
+                                                                fek_category=int(row[5]),
                                                                 )
         except:
             raise CommandError("Use 'makemigrations aira' to create aira tables")
