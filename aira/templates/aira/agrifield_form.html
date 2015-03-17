@@ -53,8 +53,8 @@
                       markers.clearMarkers();
                       markers.addMarker(marker);
                       var lonlat = map.getLonLatFromPixel(e.xy).transform('EPSG:3857', 'EPSG:4326');
-                      document.getElementById("id_latitude").value = lonlat.lat.toFixed(3);
-                      document.getElementById("id_longitude").value = lonlat.lon.toFixed(3);
+                      document.getElementById("id_latitude").value = lonlat.lat.toFixed(5);
+                      document.getElementById("id_longitude").value = lonlat.lon.toFixed(5);
           });
       </script>
     <sub> Click on Map to add your Field coordinates</sub>
