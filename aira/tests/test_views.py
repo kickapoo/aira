@@ -62,4 +62,4 @@ class TestRegistrationView(TestCase):
         self.assertRedirects(resp, '/accounts/register/complete/')
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
-                         'testserver: Please activate your account.')
+                         'example.com: Please activate your account.')
