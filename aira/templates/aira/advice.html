@@ -56,7 +56,7 @@
           <div class="panel-body">
             <b>Estimated root depth (max):</b> {{ fpars.rd }} cm <br>
             <b>kc:</b> {{ fpars.kc }}<br>
-            <b>Maximum Allowable Depletion :</b> {{ fpars.p }}%<br>
+            <b>Maximum Allowable Depletion :</b> {{ fpars.p|mul:100|floatformat:"1" }} %<br>
             <b>Field Capacity:</b> {{ fpars.fc|mul:100|floatformat:"1"  }}%<br>
             <b>Soil moisture at saturation (Θ<sub>s</sub>):</b> {{ fpars.theta_s |mul:100|floatformat:"1" }}%<br>
             <b>Wilting Point:</b> {{ fpars.wp|mul:100|floatformat:"1"  }}% <br>
@@ -111,7 +111,7 @@
                         <td align="center">{{ result.P|floatformat:"2" }}</td>
                         <td align="center"> {{ result.ETc|floatformat:"2" }} </td>
                         <td align="center">{{ result.Dr_i|floatformat:"2"}}</td>
-                        <td align="center"> {{ result.Theta_p|floatformat:"2" }}</td>
+                        <td align="center"> {{ result.Theta_p|mul:100|floatformat:"1" }}</td>
                         {% if result.irrigate > 0 %}
                           <td align="center"> YES </td>
                         {% else %}
