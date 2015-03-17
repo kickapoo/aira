@@ -35,7 +35,7 @@
                     {isBaseLayer: true,
                      projection: 'EPSG:3857'});
           // Kthmatologio
-          var ktimatologio = new OpenLayers.Layer.WMS("Hellinic Cadastre",
+          var ktimatologio = new OpenLayers.Layer.WMS("Hellenic Cadastre",
                          "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
                            {   layers: 'KTBASEMAP', transparent: false},
                            {   isBaseLayer: true,
@@ -65,6 +65,7 @@
             {% bootstrap_form form %}
             {% buttons %}
               <button type="submit" class="btn btn-success btn-xs">Add</button>
+              <a class="btn btn-success btn-xs" href="{% url 'home' %}"> Back </a>
             {% endbuttons %}
           </form>
         </div>
