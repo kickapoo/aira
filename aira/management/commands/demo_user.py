@@ -32,7 +32,8 @@ class Command(BaseCommand):
                                                          longitude=19,
                                                          crop_type=kiwi,
                                                          irrigation_type=drip,
-                                                         area=10000.00)
+                                                         area=10000.00,
+                                                         use_custom_parameters=False)
             f.save()
 
             # Agrifield with at least on irrigation log within datasample period
@@ -42,7 +43,8 @@ class Command(BaseCommand):
                                                          longitude=20.98,
                                                          crop_type=kiwi,
                                                          irrigation_type=drip,
-                                                         area=10000.00)
+                                                         area=10000.00,
+                                                         use_custom_parameters=False)
             f.save()
             l, created = IrrigationLog.objects.get_or_create(agrifield=f,
                                                              time="2015-01-03 00:00",
@@ -56,7 +58,8 @@ class Command(BaseCommand):
                                                          longitude=20.92,
                                                          crop_type=kiwi,
                                                          irrigation_type=drip,
-                                                         area=10000.00)
+                                                         area=10000.00,
+                                                         use_custom_parameters=False)
             f.save()
 
             # Agrifield with irrigation log outside datasample period
@@ -67,7 +70,8 @@ class Command(BaseCommand):
                                                          longitude=20.94,
                                                          crop_type=kiwi,
                                                          irrigation_type=drip,
-                                                         area=10000.00)
+                                                         area=10000.00,
+                                                         use_custom_parameters=False)
             f.save()
             l, created = IrrigationLog.objects.get_or_create(agrifield=f,
                                                              time="2014-11-15 00:00",

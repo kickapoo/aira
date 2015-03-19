@@ -113,15 +113,15 @@
       <a class="btn btn-success btn-xs" href="{% url 'create_agrifield' %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; Fields</a>
     </div>
     {% for f in agrifields %}
+      <hr>
       <div class="panel-body">
-        <p><b>Field Info:</b> &nbsp;<a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> is growing <a href="{% url 'update_agrifield' f.id %}">{{ f.ct.ct_name }}</a> using <a href="{% url 'update_agrifield' f.id %}">{{ f.irrt.irrt_name }}</a>. </p>
+        <p><b>Field Info:</b> &nbsp;<a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> is growing <a href="{% url 'update_agrifield' f.id %}">{{ f.crop_type.name }}</a> using <a href="{% url 'update_agrifield' f.id %}">{{ f.irrigation_type.name}}</a>. </p>
         {% if f.outside_arta_raster %}
           <div class="alert alert-danger">
             <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-danger"><i class="fa fa-exclamation-triangle">&nbsp;Warning</i></span> &nbsp;
              Your agrifield location is outside Arta's plain field. <br>
              Update you field location <a href="{% url 'update_agrifield' f.id %}">here</a>.
           </div>
-        <hr class="bhr">
         {% else %}
           {% if not f.irr_event %}
             <div class="alert alert-warning">
@@ -166,14 +166,12 @@
               {% else %}
                 No need to irrigate from <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> to  <span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span>.
               {% endif %}
-
             </p><sub>
             <a class="btn btn-success btn-xs" href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; Irrigation Events</a>
             <a class="btn btn-success btn-xs" href="{% url 'advice' f.id %}" target="_blank"></i>&nbsp;<i class="fa fa-calendar"></i>&nbsp;Irrigation Report</a>
             <a class="btn btn-success btn-xs" href="#"><i class="fa fa-line-chart"></i>&nbsp; Irrigation Performance</a>
             </sub></p>
         {% endif %}
-        <hr class="bhr">
       </div>
     {% endfor %}
 {% endif %}

@@ -54,6 +54,59 @@ class Agrifield(models.Model):
     crop_type = models.ForeignKey(CropType)
     irrigation_type = models.ForeignKey(IrrigationType)
     area = models.FloatField()
+    use_custom_parameters = models.BooleanField(default=False)
+    custom_kc = models.FloatField(null=True, blank=True)
+    custom_root_depth_max = models.FloatField(null=True, blank=True)
+    custom_root_depth_min = models.FloatField(null=True, blank=True)
+    custom_max_allow_depletion = models.DecimalField(max_digits=6,
+                                                     decimal_places=2,
+                                                     null=True, blank=True)
+    custom_efficiency = models.FloatField(null=True, blank=True)
+
+    @property
+    def get_efficiency(self):
+        if self.use_custom_parameters:
+            if self.custom_efficiency in [None, '']:
+                return self.irrigation_type.efficiency
+            return self.custom_efficiency
+        else:
+            return self.irrigation_type.efficiency
+
+    @property
+    def get_mad(self):
+        if self.use_custom_parameters:
+            if self.custom_max_allow_depletion in [None, '']:
+                return self.crop_type.max_allow_depletion
+            return self.custom_max_allow_depletion
+        else:
+            return self.crop_type.max_allow_depletion
+
+    @property
+    def get_kc(self):
+        if self.use_custom_parameters:
+            if self.custom_kc in [None, '']:
+                return self.crop_type.kc
+            return self.custom_kc
+        else:
+            return self.crop_type.kc
+
+    @property
+    def get_root_depth_max(self):
+        if self.use_custom_parameters:
+            if self.custom_root_depth_max in [None, '']:
+                return self.crop_type.root_depth_max
+            return self.custom_root_depth_max
+        else:
+            return self.crop_type.root_depth_max
+
+    @property
+    def get_root_depth_min(self):
+        if self.use_custom_parameters:
+            if self.custom_root_depth_min in [None, '']:
+                return self.crop_type.root_depth_min
+            return self.custom_root_depth_min
+        else:
+            return self.crop_type.root_depth_min
 
     class Meta:
         ordering = ('name', 'area')

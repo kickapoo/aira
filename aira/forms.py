@@ -13,8 +13,11 @@ class AgrifieldForm(forms.ModelForm):
     class Meta:
         model = Agrifield
         exclude = ('owner',)
-        fields = ['name', 'area', 'longitude', 'latitude',
-                  'crop_type', 'irrigation_type']
+        fields = ['name', 'area', 'longitude', 'latitude', 'crop_type',
+                  'irrigation_type', 'use_custom_parameters', 'custom_kc',
+                  'custom_root_depth_max', 'custom_root_depth_min',
+                  'custom_max_allow_depletion', 'custom_efficiency']
+
         labels = {
             'name': _('Field Name '),
             'latitude': _('Latitude (WGS84)'),
