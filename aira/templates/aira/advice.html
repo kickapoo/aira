@@ -51,7 +51,7 @@
       <div class="col-md-12">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <b>Crop Type:</b> <a href="{% url 'update_agrifield' f.id %}">{{ f.ct.ct_name }}</a>
+            <b>Crop Type:</b> <a href="{% url 'update_agrifield' f.id %}">{{ f.crop_type.name }}</a>
           </div>
           <div class="panel-body">
             <b>Estimated root depth (max):</b> {{ fpars.rd }} cm <br>
@@ -66,7 +66,7 @@
       <div class="col-md-12">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <b>Irrigation System Type: </b><a href="{% url 'update_agrifield' f.id %}">{{ f.irrt.irrt_name }}</a>
+            <b>Irrigation System Type: </b><a href="{% url 'update_agrifield' f.id %}">{{ f.irrigation_type.name }}</a>
           </div>
           <div class="panel-body">
             <b>Irrigation efficiency factor:</b> {{ fpars.irr_eff }}
