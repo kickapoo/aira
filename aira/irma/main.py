@@ -20,6 +20,7 @@ def get_parameters(afield_obj):
     rd = (float(afield_obj.get_root_depth_min) +
           float(afield_obj.get_root_depth_max)) / 2
     kc = float(afield_obj.get_kc)
+    # FAO table 22 , page 163
     p = float(afield_obj.get_mad)
     peff = 0.8  # Effective rainfall coeff 0.8 * Precip
     irr_eff = float(afield_obj.get_efficiency)
@@ -91,7 +92,8 @@ def over_fc(swb_report, fc_mm):
     return False
 
 
-def view_run(afield_obj, flag_run, daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps):
+def view_run(afield_obj, flag_run, daily_r_fps,
+             daily_e_fps, hourly_r_fps, hourly_e_fps):
     # Notes:  flag : "irr_event" , "no_irr_event"
     # Load Historical (daily)
     # pthelma.extract_point_from_raster dont have Timeseries.time_step
@@ -115,6 +117,7 @@ def view_run(afield_obj, flag_run, daily_r_fps, daily_e_fps, hourly_r_fps, hourl
         start_date = data_start_end_date(precip_daily, evap_daily)[0]
         # Adding 20 days to default run to make it little faster run
         start_date = start_date + timedelta(days=20)
+        # Theta init
         theta_init = swb_daily_obj.fc_mm - 0.75 * swb_daily_obj.raw_mm
         if start_date.month in [10, 11, 12, 1, 2, 3]:
             theta_init = swb_daily_obj.fc_mm
@@ -124,8 +127,18 @@ def view_run(afield_obj, flag_run, daily_r_fps, daily_e_fps, hourly_r_fps, hourl
         swb_view, depl_h, sd, ed = run_hourly(swb_hourly_obj, depl_historical)
 
     if flag_run == "irr_event":
-        theta_init = swb_daily_obj.fc_mm
         start_date = afield_obj.irrigationlog_set.latest().time
+        if afield_obj.irrigationlog_set.latest().applied_water in [None, '']:
+            theta_init = swb_daily_obj.raw_mm + swb_daily_obj.lowlim_theta_mm
+            Dr0 = theta_init - swb_daily_obj.fc_mm
+        else:
+            rd_f = 1000  # Static for mm
+            Inet = (afield_obj.irrigationlog_set.latest().applied_water /
+                    afield_obj.area) * rd_f * float(afield_obj.get_efficiency)
+            theta_init = Inet + \
+                (swb_daily_obj.fc_mm - 0.75 * swb_daily_obj.raw_mm)
+            Dr0 = swb_daily_obj.fc_mm - theta_init
+        # Why irr_event_days = [] ?
         # irr_event_days=[] is set to empty as we start from irrigation event,
         # so initial conditions are known.
         # 'irr_event_days' usage is external pthelma.swb use.
@@ -134,8 +147,9 @@ def view_run(afield_obj, flag_run, daily_r_fps, daily_e_fps, hourly_r_fps, hourl
         #              "What is the model performance if field is irrigate
         #              in next (timeseries) days ex. start_date + 2 etc
         # Above comment is set as a remainder.
-        depl_historical = run_daily(swb_daily_obj, start_date,
-                                    theta_init, irr_event_days=[])[1]
-        swb_view, depl_h, sd, ed = run_hourly(swb_hourly_obj, depl_historical)
+        # depl_historical with the use of new initial conditions
+        # depl_historical = run_daily(swb_daily_obj, start_date,
+        #                             theta_init, irr_event_days=[])[1]
+        swb_view, depl_h, sd, ed = run_hourly(swb_hourly_obj, Dr0)
     ovfc = over_fc(swb_view.wbm_report, swb_view.fc_mm)
     return swb_view, sd, ed, advice_date(swb_view.wbm_report), ovfc
