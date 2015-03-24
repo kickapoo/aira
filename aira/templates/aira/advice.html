@@ -69,7 +69,8 @@
             <b>Irrigation System Type: </b><a href="{% url 'update_agrifield' f.id %}">{{ f.irrigation_type.name }}</a>
           </div>
           <div class="panel-body">
-            <b>Irrigation efficiency factor:</b> {{ fpars.irr_eff }}
+            <b>Irrigation efficiency factor:</b> {{ fpars.irr_eff }} <br>
+            <b>Irrigation Optimizer: </b> {{ fpars.IRT }}
           </div>
         </div>
       </div>

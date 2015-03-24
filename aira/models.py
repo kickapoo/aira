@@ -44,6 +44,12 @@ class IrrigationType(models.Model):
 
 
 class Agrifield(models.Model):
+    IRT_LIST = (
+        (0.5, 'IRT (50% Inet)'),
+        (0.75, 'IRT (75% Inet)'),
+        (1.0, 'IRT (100% Inet)'),
+    )
+
     owner = models.ForeignKey(User)
     name = models.CharField(max_length=255,
                             default='i.e. MyField1')
@@ -53,7 +59,9 @@ class Agrifield(models.Model):
     longitude = models.FloatField()
     crop_type = models.ForeignKey(CropType)
     irrigation_type = models.ForeignKey(IrrigationType)
-    area = models.FloatField()
+    area = models.FloatField(null=True, blank=True)
+    irrigation_optimizer = models.FloatField(choices=IRT_LIST,
+                                             default=1.0)
     use_custom_parameters = models.BooleanField(default=False)
     custom_kc = models.FloatField(null=True, blank=True)
     custom_root_depth_max = models.FloatField(null=True, blank=True)
@@ -62,6 +70,7 @@ class Agrifield(models.Model):
                                                      decimal_places=2,
                                                      null=True, blank=True)
     custom_efficiency = models.FloatField(null=True, blank=True)
+    custom_irrigation_optimizer = models.FloatField(null=True, blank=True)
 
     @property
     def get_efficiency(self):
@@ -107,6 +116,15 @@ class Agrifield(models.Model):
             return self.custom_root_depth_min
         else:
             return self.crop_type.root_depth_min
+
+    @property
+    def get_irrigation_optimizer(self):
+        if self.use_custom_parameters:
+            if self.custom_irrigation_optimizer in [None, '']:
+                return self.irrigation_optimizer
+            return self.custom_irrigation_optimizer
+        else:
+            return self.irrigation_optimizer
 
     class Meta:
         ordering = ('name', 'area')

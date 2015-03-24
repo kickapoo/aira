@@ -14,7 +14,9 @@ class AgrifieldForm(forms.ModelForm):
         model = Agrifield
         exclude = ('owner',)
         fields = ['name', 'area', 'longitude', 'latitude', 'crop_type',
-                  'irrigation_type', 'use_custom_parameters', 'custom_kc',
+                  'irrigation_type', 'irrigation_optimizer',
+                  'use_custom_parameters', 'custom_irrigation_optimizer',
+                  'custom_kc',
                   'custom_root_depth_max', 'custom_root_depth_min',
                   'custom_max_allow_depletion', 'custom_efficiency']
 
