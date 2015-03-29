@@ -1,0 +1,630 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-03-29 16:43+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: aira/forms.py:24
+msgid "Field Name "
+msgstr "Όνομα Αγροτεμαχίου"
+
+#: aira/forms.py:25
+msgid "Latitude (WGS84)"
+msgstr "Γεωγραφικό Πλάτος"
+
+#: aira/forms.py:26
+msgid "Longitude (WGS84)"
+msgstr "Γεωγραφικό Πλάτος"
+
+#: aira/forms.py:27 aira/templates/aira/agrifield_form.html:89
+msgid "Crop Type"
+msgstr "Τύπος Καλλιέργειας"
+
+#: aira/forms.py:28 aira/templates/aira/agrifield_form.html:90
+msgid "Irrigation Type"
+msgstr "Τύπος Αρδεύσης"
+
+#: aira/forms.py:29
+msgid "Irrigated Field Area (m<sup>2</sup>)"
+msgstr "Αρδευόμενη έκταση αγροτεμάχιου"
+
+#: aira/forms.py:38
+msgid "Datetime(Y-M-D h:m:s) "
+msgstr "Ημερομηνία (Έτος-Μήνας-Ημέρα ώρα:λεπτά:δευτερόλεπτα"
+
+#: aira/forms.py:39
+msgid "Water (cubic meters)"
+msgstr ""
+
+#: aira/templates/404.html:5 aira/templates/404.html.py:9
+msgid "Page not found"
+msgstr "Σελίδα δεν βρέθηκε"
+
+#: aira/templates/404.html:11
+msgid "This not the web page you are looking for"
+msgstr ""
+
+#: aira/templates/aira/advice.html:6
+msgid "Report "
+msgstr "Αναφορά"
+
+#: aira/templates/aira/advice.html:12
+#, fuzzy
+#| msgid "Field Name "
+msgid "Field Name:"
+msgstr "Όνομα Αγροτεμαχίου"
+
+#: aira/templates/aira/advice.html:57
+msgid "Estimated root depth (max):"
+msgstr ""
+
+#: aira/templates/aira/advice.html:57
+msgid "cm "
+msgstr "χιλιοστά"
+
+#: aira/templates/aira/advice.html:58
+msgid "kc:"
+msgstr ""
+
+#: aira/templates/aira/advice.html:59
+msgid "Maximum Allowable Depletion :"
+msgstr ""
+
+#: aira/templates/aira/advice.html:60
+msgid "Field Capacity:"
+msgstr ""
+
+#: aira/templates/aira/advice.html:61
+msgid "Soil moisture at saturation"
+msgstr ""
+
+#: aira/templates/aira/advice.html:62
+msgid "Wilting Point:"
+msgstr ""
+
+#: aira/templates/aira/advice.html:69
+msgid "Irrigation System Type:"
+msgstr ""
+
+#: aira/templates/aira/advice.html:72
+msgid "Irrigation efficiency factor:"
+msgstr ""
+
+#: aira/templates/aira/advice.html:73
+msgid "Irrigation Optimizer:"
+msgstr ""
+
+#: aira/templates/aira/advice.html:86 aira/templates/aira/home.html:168
+msgid "to"
+msgstr ""
+
+#: aira/templates/aira/advice.html:88
+msgid "Irrigation Advice:"
+msgstr "Συμβουλή Άρδευσης"
+
+#: aira/templates/aira/advice.html:90
+msgid "List advice"
+msgstr "Συμβουλές"
+
+#: aira/templates/aira/advice.html:92
+msgid "No need to irrigate."
+msgstr "Δεν χρειάζεται άρδευση"
+
+#: aira/templates/aira/advice.html:99
+msgid "Date"
+msgstr "Ημερομηνία"
+
+#: aira/templates/aira/advice.html:100
+msgid "Precipitation"
+msgstr "Βροχόπτωση"
+
+#: aira/templates/aira/advice.html:100 aira/templates/aira/advice.html:101
+#: aira/templates/aira/advice.html:102 aira/templates/aira/advice.html:105
+#: aira/templates/aira/home.html:144 aira/templates/aira/home.html.py:154
+msgid "mm"
+msgstr "χιλιοστά"
+
+#: aira/templates/aira/advice.html:101
+msgid "ETc"
+msgstr ""
+
+#: aira/templates/aira/advice.html:102
+msgid "Depletion"
+msgstr ""
+
+#: aira/templates/aira/advice.html:103
+msgid "Soil moisture"
+msgstr ""
+
+#: aira/templates/aira/advice.html:104
+msgid "Irrigate ?"
+msgstr ""
+
+#: aira/templates/aira/advice.html:105 aira/templates/aira/home.html:154
+msgid "Irrigation Water Amount"
+msgstr ""
+
+#: aira/templates/aira/advice.html:117
+msgid "YES"
+msgstr "Ναι"
+
+#: aira/templates/aira/advice.html:119
+msgid "NO"
+msgstr "Όχι"
+
+#: aira/templates/aira/agrifield_confirm_delete.html:10
+#: aira/templates/aira/irrigationlog_confirm_delete.html:11
+msgid "Are you sure you want to delete"
+msgstr "Είσαι σίγουρος ότι θέλεις να διαγράψεις"
+
+#: aira/templates/aira/agrifield_confirm_delete.html:10
+msgid "Field?"
+msgstr "αγροτεμάχιο ;"
+
+#: aira/templates/aira/agrifield_confirm_delete.html:16
+#: aira/templates/aira/agrifield_form.html:102
+#: aira/templates/aira/irrigationlog_confirm_delete.html:17
+#: aira/templates/aira/irrigationlog_form.html:62
+msgid "Delete"
+msgstr "Διαγραφή"
+
+#: aira/templates/aira/agrifield_form.html:4
+msgid "Add Field "
+msgstr "Προσθήκη Αγροτεμαχίου"
+
+#: aira/templates/aira/agrifield_form.html:10
+msgid "You have"
+msgstr "Έχεις"
+
+#: aira/templates/aira/agrifield_form.html:10
+msgid "Field(s) in your database."
+msgstr "Αγροτεμάχιο/α στην βάση δεδομένων"
+
+#: aira/templates/aira/agrifield_form.html:17
+msgid "Add Field"
+msgstr "Προσθήκη Αγροτεμαχίου"
+
+#: aira/templates/aira/agrifield_form.html:60
+#: aira/templates/aira/agrifield_update.html:55
+msgid "Click on Map to add your Field coordinates"
+msgstr ""
+"Κλικάρε στο χάρτη για να προσθέσεις τις συντενταγμένες του αγροτεμαχίου"
+
+#: aira/templates/aira/agrifield_form.html:67
+msgid "Add"
+msgstr "Προσθήκη"
+
+#: aira/templates/aira/agrifield_form.html:68
+#: aira/templates/aira/agrifield_update.html:63
+msgid "Back"
+msgstr "Πίσω"
+
+#: aira/templates/aira/agrifield_form.html:80
+msgid "List of Fields"
+msgstr "Λίστα αγροτεμαχίων"
+
+#: aira/templates/aira/agrifield_form.html:87
+#: aira/templates/aira/irrigationlog_form.html:50
+msgid "#id"
+msgstr "α/α"
+
+#: aira/templates/aira/agrifield_form.html:88
+msgid "Name"
+msgstr "Όνομα"
+
+#: aira/templates/aira/agrifield_form.html:91
+msgid "TimeLogs"
+msgstr "Ημερολόγιο"
+
+#: aira/templates/aira/agrifield_form.html:107
+msgid "Nothing to show without any agrifields."
+msgstr ""
+
+#: aira/templates/aira/agrifield_update.html:10
+#: aira/templates/aira/irrigationlog_update.html:10
+#: aira/templates/aira/irrigationlog_update.html:17
+#: aira/templates/aira/profile_form.html:16
+msgid "Update"
+msgstr "Ανανεώση"
+
+#: aira/templates/aira/agrifield_update.html:62
+msgid "Submit"
+msgstr ""
+
+#: aira/templates/aira/home.html:5 aira/templates/base.html:25
+#: aira/templates/registration/password_reset_complete.html:14
+msgid "Home"
+msgstr "Αρχική"
+
+#: aira/templates/aira/home.html:10
+msgid "Please update your pernonal information"
+msgstr "Παρακαλώ ανανεώσε προσωπικές πληροφορίες"
+
+#: aira/templates/aira/home.html:10 aira/templates/aira/home.html.py:109
+#: aira/templates/aira/home.html:124 aira/templates/aira/home.html.py:130
+#: aira/templates/aira/home.html:137
+msgid "here"
+msgstr ""
+
+#: aira/templates/aira/home.html:95
+msgid "First name:"
+msgstr "Όνομα"
+
+#: aira/templates/aira/home.html:96
+msgid "Last name:"
+msgstr "Επίθετο"
+
+#: aira/templates/aira/home.html:97
+msgid "Address:"
+msgstr "Διεύθυνση"
+
+#: aira/templates/aira/home.html:109
+msgid "Hmmm, it seems you have't any fields, Add at least one"
+msgstr ""
+"Χμμμ, φαίνεται να μην έχεις προσθέσει κανένα αγροτεμάχιο, πρόσθεσε "
+"τουλάχιστον ένα"
+
+#: aira/templates/aira/home.html:114
+msgid "Fields"
+msgstr "Αγροτεμάχια"
+
+#: aira/templates/aira/home.html:119
+msgid "Field Info:"
+msgstr "Πληροφορίες Αγροτεμαχίου"
+
+#: aira/templates/aira/home.html:119
+msgid "is growing "
+msgstr ""
+
+#: aira/templates/aira/home.html:119
+msgid "using "
+msgstr ""
+
+#: aira/templates/aira/home.html:122 aira/templates/aira/home.html.py:129
+#: aira/templates/aira/home.html:136
+msgid "Warning"
+msgstr ""
+
+#: aira/templates/aira/home.html:123
+msgid "Your agrifield location is outside Arta's plain field."
+msgstr ""
+
+#: aira/templates/aira/home.html:124
+msgid "Update you field location "
+msgstr ""
+
+#: aira/templates/aira/home.html:130
+msgid "You haven't entered any irrigation event. Add  your irrigation log"
+msgstr ""
+
+#: aira/templates/aira/home.html:131 aira/templates/aira/home.html.py:138
+msgid "Irrigation Advice is estimated using system's default datasets."
+msgstr ""
+
+#: aira/templates/aira/home.html:137
+msgid ""
+"Your latest irrigation event is outside our dataset period. Update your "
+"irrigation log"
+msgstr ""
+
+#: aira/templates/aira/home.html:144
+msgid "You reached field capacity"
+msgstr ""
+
+#: aira/templates/aira/home.html:147
+msgid "rrigation Advice:"
+msgstr ""
+
+#: aira/templates/aira/home.html:153
+msgid "Date "
+msgstr ""
+
+#: aira/templates/aira/home.html:168
+msgid "No need to irrigate from"
+msgstr ""
+
+#: aira/templates/aira/home.html:171
+#: aira/templates/aira/irrigationlog_form.html:46
+msgid "Irrigation Events"
+msgstr ""
+
+#: aira/templates/aira/home.html:172
+msgid "Irrigation Report"
+msgstr "Αναφορά Άρδευσης"
+
+#: aira/templates/aira/home.html:173
+msgid "Irrigation Performance"
+msgstr ""
+
+#: aira/templates/aira/index.html:6 aira/templates/base-default.html:8
+msgid "Welcome"
+msgstr "Καλωσήρθατε"
+
+#: aira/templates/aira/index.html:12
+msgid ""
+"\n"
+"          <span class=\"text-success\">A</span>gricultural\n"
+"          <span class=\"text-success\">IR</span>rigation\n"
+"          <span class=\"text-success\">A</span>dvisor</h3>\n"
+"          <p>using\n"
+"            <a target = \"_blank\"href=\"http://openmeteo.org/\">OpenMeteo."
+"org</a> measurements,\n"
+"            <a target = \"_blank\" href=\"http://pthelma.readthedocs.org/en/"
+"latest/\">Pthelma</a> Models,\n"
+"            <a target = \"_blank\"href=\"http://cirrus.meteo.noa.gr/forecast/"
+"bolam/index.htm\">NOA</a> forecast.\n"
+"          </p>\n"
+"      "
+msgstr ""
+
+#: aira/templates/aira/index.html:33
+msgid "View historical rasters"
+msgstr ""
+
+#: aira/templates/aira/index.html:37
+msgid "Daily Rainfall"
+msgstr "Ημερήσια Βροχόπτωση"
+
+#: aira/templates/aira/index.html:38
+msgid "Daily Evaporation"
+msgstr "Ημερήσια Εξάτμιση"
+
+#: aira/templates/aira/index.html:39
+msgid "Daily Humidity"
+msgstr "Ημερήσια Υγρασία"
+
+#: aira/templates/aira/index.html:40
+msgid "Daily Temperature"
+msgstr "Ημερήσια Θερμοκρασία"
+
+#: aira/templates/aira/index.html:41
+msgid "Daily Pressure"
+msgstr ""
+
+#: aira/templates/aira/index.html:42
+msgid "Daily Solar Radiation"
+msgstr "Ημερήσια Ηλιακή Ακτινοβολία"
+
+#: aira/templates/aira/index.html:51
+msgid "Avalaible Datasets:"
+msgstr "Διαθέσιμα δεδομένα"
+
+#: aira/templates/aira/index.html:122
+msgid "Viewing"
+msgstr "Τρέχουσα Ημερομηνία"
+
+#: aira/templates/aira/irrigationlog_confirm_delete.html:11
+msgid "Irrigation Event?"
+msgstr "Αρδευτικό γεγονός"
+
+#: aira/templates/aira/irrigationlog_form.html:5
+msgid "Irrigation Log"
+msgstr ""
+
+#: aira/templates/aira/irrigationlog_form.html:12
+#, python-format
+msgid ""
+"\n"
+"        You have <b><span class=\"text text-success\">%(logs_count)s</span></"
+"b> Irrigation Events in your database.\n"
+"  "
+msgstr ""
+
+#: aira/templates/aira/irrigationlog_form.html:21
+msgid "Add Irrigation Event"
+msgstr ""
+
+#: aira/templates/aira/irrigationlog_form.html:46
+msgid "List of"
+msgstr ""
+
+#: aira/templates/aira/irrigationlog_form.html:51
+msgid "Datetime"
+msgstr ""
+
+#: aira/templates/aira/irrigationlog_form.html:52
+msgid "Applied water (m<sup>3</sup>)"
+msgstr ""
+
+#: aira/templates/aira/profile_form.html:9
+msgid "Update Profile"
+msgstr ""
+
+#: aira/templates/base.html:26
+msgid "Logout "
+msgstr ""
+
+#: aira/templates/base.html:32 aira/templates/registration/login.html:5
+#: aira/templates/registration/login.html:11
+#: aira/templates/registration/login.html:42
+#: aira/templates/registration/logout.html:4
+#: aira/templates/registration/password_reset_complete.html:13
+#: aira/templates/registration/password_reset_confirm.html:40
+msgid "Login"
+msgstr "Είσοδος"
+
+#: aira/templates/base.html:33
+#: aira/templates/registration/registration_form.html:24
+msgid "Register"
+msgstr "Εγγραφή"
+
+#: aira/templates/base.html:34
+msgid "Lost password?"
+msgstr ""
+
+#: aira/templates/base.html:56
+msgid "Copyright"
+msgstr ""
+
+#: aira/templates/registration/activate.html:3
+#: aira/templates/registration/activate.html:7
+msgid "Account activation error"
+msgstr ""
+
+#: aira/templates/registration/activate.html:9
+#, python-format
+msgid ""
+"\n"
+"       <p>The activation key <strong>%(activation_key)s</strong> is invalid "
+"or expired.</p>\n"
+"    "
+msgstr ""
+
+#: aira/templates/registration/activation_complete.html:3
+msgid "Account activation complete"
+msgstr "Η ενεργοποήση του λογιαριασμού ολοκλήρωθηκε"
+
+#: aira/templates/registration/activation_complete.html:7
+msgid "Success!"
+msgstr ""
+
+#: aira/templates/registration/activation_complete.html:8
+msgid "Account successfully activated."
+msgstr "Ο λογαριασμός σας ενεργοποιήθηκε επιτυχώς"
+
+#: aira/templates/registration/activation_complete.html:9
+msgid "You can now sign in to the website."
+msgstr ""
+
+#: aira/templates/registration/activation_complete.html:12
+msgid "Sign in"
+msgstr "Είσοδος"
+
+#: aira/templates/registration/login.html:12
+msgid "Not yet registered?"
+msgstr "Δεν έχετε ακόμα εγγραφή;"
+
+#: aira/templates/registration/login.html:13
+msgid "Register here "
+msgstr "Εγγραφή εδώ"
+
+#: aira/templates/registration/login.html:14
+msgid "Trouble signing in?"
+msgstr "Προβλήμα κατά την εγγραφή"
+
+#: aira/templates/registration/login.html:15
+msgid "Reset password."
+msgstr ""
+
+#: aira/templates/registration/login.html:22
+msgid "Login failed. Try again..."
+msgstr "Αποτυχία εισόδου. Δοκίμασε ξάνα..."
+
+#: aira/templates/registration/logout.html:7
+msgid "Logout"
+msgstr "Έξοδος"
+
+#: aira/templates/registration/logout.html:8
+msgid "You are now logged out."
+msgstr "Πραγματοποιήθηκε έξοδος με επιτυχία"
+
+#: aira/templates/registration/password_change_done.html:3
+msgid "Password change complete"
+msgstr ""
+
+#: aira/templates/registration/password_change_done.html:9
+msgid "Password changed!"
+msgstr ""
+
+#: aira/templates/registration/password_change_done.html:10
+msgid "Password successfully changed."
+msgstr ""
+
+#: aira/templates/registration/password_change_form.html:5
+#: aira/templates/registration/password_change_form.html:11
+msgid "Change Password"
+msgstr ""
+
+#: aira/templates/registration/password_change_form.html:21
+#: aira/templates/registration/password_reset_confirm.html:23
+msgid "Change password"
+msgstr ""
+
+#: aira/templates/registration/password_reset_complete.html:5
+#: aira/templates/registration/password_reset_complete.html:11
+msgid "Password reset complete"
+msgstr ""
+
+#: aira/templates/registration/password_reset_complete.html:12
+msgid "Password successfully reset."
+msgstr ""
+
+#: aira/templates/registration/password_reset_confirm.html:5
+#: aira/templates/registration/password_reset_confirm.html:11
+msgid "Password reset"
+msgstr ""
+
+#: aira/templates/registration/password_reset_confirm.html:33
+msgid "Password reset failed."
+msgstr ""
+
+#: aira/templates/registration/password_reset_done.html:5
+msgid "Password reset successful"
+msgstr ""
+
+#: aira/templates/registration/password_reset_done.html:11
+msgid "Password has been reset."
+msgstr ""
+
+#: aira/templates/registration/password_reset_done.html:12
+msgid "An email with instructions for setting a new password has been sent."
+msgstr ""
+
+#: aira/templates/registration/password_reset_form.html:5
+#: aira/templates/registration/password_reset_form.html:11
+msgid "Password Reset"
+msgstr ""
+
+#: aira/templates/registration/password_reset_form.html:22
+msgid "Reset password"
+msgstr ""
+
+#: aira/templates/registration/registration_complete.html:5
+msgid "Registration complete"
+msgstr ""
+
+#: aira/templates/registration/registration_complete.html:11
+msgid "Success, Please check your email."
+msgstr ""
+
+#: aira/templates/registration/registration_complete.html:13
+msgid "An activation email has been sent."
+msgstr "Έχει σταλθεί ηλεκτρονικό μύνημα επιβεβαίωσης"
+
+#: aira/templates/registration/registration_form.html:5
+msgid "Registration"
+msgstr "Εγγραφή"
+
+#: aira/templates/registration/registration_form.html:11
+msgid "Sign up"
+msgstr "Εγγραφή"
+
+#: aira/templates/registration/registration_form.html:12
+msgid "Already registered?"
+msgstr "Έχεις ήδη εγγραφεί?"
+
+#: aira/templates/registration/registration_form.html:13
+msgid "Login here."
+msgstr "Είσοδος εδώ"
+
+#: aira_project/settings/base.py:63
+msgid "English"
+msgstr "Αγγλίκα"
+
+#: aira_project/settings/base.py:64
+msgid "Greek"
+msgstr "Ελληνικά"

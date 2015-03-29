@@ -1,10 +1,12 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
+from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
 
-urlpatterns = patterns(
+urlpatterns = i18n_patterns(
     '',
+    (r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('registration.backends.default.urls')),
     #   http://stackoverflow.com/questions/19985103/
@@ -23,8 +25,11 @@ urlpatterns = patterns(
     url(r'', include('aira.urls')),
 )
 
-urlpatterns += patterns('django.contrib.flatpages.views',
-    url(r'^description/$', 'flatpage', {'url': '/description/'}, name='description'),
-    url(r'^terms-of-use/$', 'flatpage', {'url': '/terms-of-use/'}, name='terms'),
-    url(r'^disclaimer/$', 'flatpage', {'url': '/disclaimer/'}, name='disclaimer'),
-)
+urlpatterns += i18n_patterns('django.contrib.flatpages.views',
+                             url(r'^description/$', 'flatpage',
+                                 {'url': '/description/'}, name='description'),
+                             url(r'^terms-of-use/$', 'flatpage',
+                                 {'url': '/terms-of-use/'}, name='terms'),
+                             url(r'^disclaimer/$', 'flatpage',
+                                 {'url': '/disclaimer/'}, name='disclaimer'),
+                             )

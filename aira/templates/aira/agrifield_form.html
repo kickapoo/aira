@@ -1,20 +1,21 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load bootstrap3 %}
 
-{% block title %} {{ user }} - Add Field {% endblock %}
+{% block title %} {{ user }} - {% trans "Add Field " %}{% endblock %}
 
 {% block content %}
 {% if fields_count %}
   <div class="alert alert-warning">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <i class="fa fa-hand-o-right fa-1x"></i>&nbsp;  You have <b><span class="text text-success">{{fields_count}}</span></b> Field(s) in your database.
+    <i class="fa fa-hand-o-right fa-1x"></i>&nbsp;  {% trans "You have" %} <b><span class="text text-success">{{fields_count}}</span></b> {% trans "Field(s) in your database." %}
   </div>
 {% endif %}
 <div class="row">
   <div class="col-lg-12">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h4>Add Field</h4>
+        <h4>{% trans "Add Field" %}</h4>
       </div>
       <div class="panel panel-body">
         <div class="col-md-6">
@@ -57,15 +58,15 @@
                       document.getElementById("id_longitude").value = lonlat.lon.toFixed(5);
           });
       </script>
-    <sub> Click on Map to add your Field coordinates</sub>
+    <sub> {% trans "Click on Map to add your Field coordinates" %}</sub>
         </div>
         <div class="col-md-6">
           <form method="post" role="form">
             {% csrf_token %}
             {% bootstrap_form form %}
             {% buttons %}
-              <button type="submit" class="btn btn-success btn-xs">Add</button>
-              <a class="btn btn-success btn-xs" href="{% url 'home' %}"> Back </a>
+              <button type="submit" class="btn btn-success btn-xs">{% trans "Add" %}</button>
+              <a class="btn btn-success btn-xs" href="{% url 'home' %}"> {% trans "Back" %} </a>
             {% endbuttons %}
           </form>
         </div>
@@ -77,18 +78,18 @@
   <div class="col-lg-12">
     <div class="panel panel-default">
       <div class="panel-heading">
-      <h4> List of Fields</h4>
+      <h4> {% trans "List of Fields" %}</h4>
       </div>
       <div class="panel panel-body">
             <div class="table-responsive">
               <table class="table">
                   <thead>
                     <tr>
-                      <th>#id</th>
-                      <th>Name</th>
-                      <th>Crop Type</th>
-                      <th>Irrigation Type</th>
-                      <th>TimeLogs</th>
+                      <th>{% trans "#id" %}</th>
+                      <th>{% trans "Name" %}</th>
+                      <th>{% trans "Crop Type" %}</th>
+                      <th>{% trans "Irrigation Type" %}</th>
+                      <th>{% trans "TimeLogs" %}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -99,12 +100,12 @@
                       <td><a href="{% url 'update_agrifield' f.id%}">{{f.ct.ct_name}}</td>
                       <td><a href="{% url 'update_agrifield' f.id%}">{{f.irrt.irrt_name}}</a></td>
                       <td><a href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i></a></td>
-                      <td><a href="{% url 'delete_agrifield' f.id %}">Delete </a></td>
+                      <td><a href="{% url 'delete_agrifield' f.id %}">{% trans "Delete" %} </a></td>
                     </tr>
                   {% empty %}
                     <div class="alert alert-warning">
                       <a href="#" class="close" data-dismiss="alert">&times;</a>
-                      <i class="fa fa-hand-o-right fa-1x"></i>&nbsp;  Nothing to show without any agrifields.
+                      <i class="fa fa-hand-o-right fa-1x"></i>&nbsp;  {% trans "Nothing to show without any agrifields." %}
                     </div>
                   {% endfor %}
                   </tbody>

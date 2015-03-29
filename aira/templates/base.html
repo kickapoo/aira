@@ -1,4 +1,5 @@
 {% extends "base-default.html" %}
+{% load i18n %}
 {% load static %}
 
 {% block logo_browser %}<link rel="shortcut icon" type="image/png" href="{% static 'img/aira-logo.png' %}" /> {% endblock %}
@@ -21,16 +22,16 @@
     {% if user.is_authenticated %}
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="{% url 'home' %}"  rel="nofollow"><i class="glyphicon glyphicon-home"></i> Home</a> </li>
-        <li><a href="{% url 'django.contrib.auth.views.logout' %}"> <i class="glyphicon glyphicon-log-out"></i> Logout </a></li>
+        <li><a href="{% url 'home' %}"  rel="nofollow"><i class="glyphicon glyphicon-home"></i> {% trans "Home" %}</a> </li>
+        <li><a href="{% url 'django.contrib.auth.views.logout' %}"> <i class="glyphicon glyphicon-log-out"></i> {% trans "Logout " %}</a></li>
       </ul>
     </div>
     {% else %}
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="{% url 'django.contrib.auth.views.login' %}" rel="nofollow"><i class="glyphicon glyphicon-off"></i> Login</a></li>
-        <li><a href="{% url 'registration_register' %}" rel="nofollow"><i class="glyphicon glyphicon-user"></i> Register</a></li>
-        <li><a href="{% url 'password_reset' %}" rel="nofollow"><i class="glyphicon glyphicon-lock"></i> Lost password?</a></li>
+        <li><a href="{% url 'django.contrib.auth.views.login' %}" rel="nofollow"><i class="glyphicon glyphicon-off"></i> {% trans "Login" %}</a></li>
+        <li><a href="{% url 'registration_register' %}" rel="nofollow"><i class="glyphicon glyphicon-user"></i> {% trans "Register" %}</a></li>
+        <li><a href="{% url 'password_reset' %}" rel="nofollow"><i class="glyphicon glyphicon-lock"></i> {% trans "Lost password?" %}</a></li>
       </ul>
     </div>
     {% endif %}
@@ -52,7 +53,7 @@
 {% block footer %}
   <div class="container">
     <hr>
-      <p  class="text-success">Copyright &#169; <script>document.write(new Date().getFullYear())</script> - <a href="http://tegeo.teiep.gr/en/" target = "_blank">teiep.gr </a>  </p>
+      <p  class="text-success">{% trans "Copyright" %} &#169; <script>document.write(new Date().getFullYear())</script> - <a href="http://tegeo.teiep.gr/en/" target = "_blank">teiep.gr </a>  </p>
   </div>
 {% endblock %}
 

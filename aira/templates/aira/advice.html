@@ -3,13 +3,13 @@
 {% load bootstrap3 %}
 {% load mathfilters %}
 
-{% block title %} {{ f.name }} | Report {% endblock %}
+{% block title %} {{ f.name }} | {% trans "Report " %}{% endblock %}
 {% block content %}
 <div class="row">
   <div class="col-lg-6">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <b>Field Name:</b> <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a>
+        <b>{% trans "Field Name:" %}</b> <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a>
       </div>
       <div class="panel-body">
         <div id="field_map" class="map"></div>
@@ -54,23 +54,23 @@
             <b>Crop Type:</b> <a href="{% url 'update_agrifield' f.id %}">{{ f.crop_type.name }}</a>
           </div>
           <div class="panel-body">
-            <b>Estimated root depth (max):</b> {{ fpars.rd }} cm <br>
-            <b>kc:</b> {{ fpars.kc }}<br>
-            <b>Maximum Allowable Depletion :</b> {{ fpars.p|mul:100|floatformat:"1" }} %<br>
-            <b>Field Capacity:</b> {{ fpars.fc|mul:100|floatformat:"1"  }}%<br>
-            <b>Soil moisture at saturation (Θ<sub>s</sub>):</b> {{ fpars.theta_s |mul:100|floatformat:"1" }}%<br>
-            <b>Wilting Point:</b> {{ fpars.wp|mul:100|floatformat:"1"  }}% <br>
+            <b>{% trans "Estimated root depth (max):" %}</b> {{ fpars.rd }} {% trans "cm " %}<br>
+            <b>{% trans "kc:" %}</b> {{ fpars.kc }}<br>
+            <b>{% trans "Maximum Allowable Depletion :" %}</b> {{ fpars.p|mul:100|floatformat:"1" }} %<br>
+            <b>{% trans "Field Capacity:" %}</b> {{ fpars.fc|mul:100|floatformat:"1"  }}%<br>
+            <b>{% trans "Soil moisture at saturation" %} (Θ<sub>s</sub>):</b> {{ fpars.theta_s |mul:100|floatformat:"1" }}%<br>
+            <b>{% trans "Wilting Point:" %}</b> {{ fpars.wp|mul:100|floatformat:"1"  }}% <br>
           </div>
         </div>
       </div>
       <div class="col-md-12">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <b>Irrigation System Type: </b><a href="{% url 'update_agrifield' f.id %}">{{ f.irrigation_type.name }}</a>
+            <b>{% trans "Irrigation System Type:" %} </b><a href="{% url 'update_agrifield' f.id %}">{{ f.irrigation_type.name }}</a>
           </div>
           <div class="panel-body">
-            <b>Irrigation efficiency factor:</b> {{ fpars.irr_eff }} <br>
-            <b>Irrigation Optimizer: </b> {{ fpars.IRT }}
+            <b>{% trans "Irrigation efficiency factor:" %}</b> {{ fpars.irr_eff }} <br>
+            <b>{% trans "Irrigation Optimizer:" %} </b> {{ fpars.IRT }}
           </div>
         </div>
       </div>
@@ -82,27 +82,27 @@
     <div class="col-lg-12">
       <div class="panel panel-default">
         <div class="panel-heading">
-          Detailed Calculations for
-          Forecast Period: <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> to  <span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span>        </div>
+          {% trans "Detailed Calculations for
+          Forecast Period:" %} <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> {% trans "to" %} <span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span></div>
         <div class="panel-body">
-        <p><b>Irrigation Advice:</b><br><br>
+        <p><b>{% trans "Irrigation Advice:" %}</b><br><br>
         {% if f.adv %}
-              List advice
+              {% trans "List advice" %}
         {% else %}
-              <img src="{% static 'img/cool.png' %}" width="40" height="40" alt=""> &nbsp; No need to irrigate.
+              <img src="{% static 'img/cool.png' %}" width="40" height="40" alt=""> &nbsp; {% trans "No need to irrigate." %}
         {% endif %}</p>
         <hr>
           <div id="results" class="table-responsive">
             <table class="table">
                 <thead>
                   <tr>
-                    <th align="center">Date <br> </th>
-                    <th align="center">Precipitation <br>(mm)</th>
-                    <th align="center">ETc <br> (mm)</th>
-                    <th align="center">Depletion <br> (mm)</th>
-                    <th align="center">Soil moisture <br>(%)</th>
-                    <th align="center">Irrigate ?</th>
-                    <th align="center">Irrigation Water Amount<br> (mm)</th>
+                    <th align="center">{% trans "Date" %} <br> </th>
+                    <th align="center">{% trans "Precipitation" %} <br>({% trans "mm" %})</th>
+                    <th align="center">{% trans "ETc" %} <br> ({% trans "mm" %})</th>
+                    <th align="center">{% trans "Depletion" %} <br> ({% trans "mm" %})</th>
+                    <th align="center">{% trans "Soil moisture" %} <br>(%)</th>
+                    <th align="center">{% trans "Irrigate ?" %}</th>
+                    <th align="center">{% trans "Irrigation Water Amount" %}<br> ({% trans "mm" %})</th>
                   </tr>
                 </thead>
                  <tbody>
@@ -114,9 +114,9 @@
                         <td align="center">{{ result.Dr_i|floatformat:"2"}}</td>
                         <td align="center"> {{ result.Theta_p|mul:100|floatformat:"1" }}</td>
                         {% if result.irrigate > 0 %}
-                          <td align="center"> YES </td>
+                          <td align="center"> {% trans "YES" %} </td>
                         {% else %}
-                          <td align="center"> NO </td>
+                          <td align="center"> {% trans "NO" %} </td>
                         {% endif %}
                         <td align="center"> {{ result.Ifinal|floatformat:"2" }}</td>
                       </tr>

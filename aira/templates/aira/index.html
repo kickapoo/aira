@@ -1,21 +1,24 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load bootstrap3 %}
 {% load static %}
 
-{% block title %} Welcome {% endblock %}
+{% block title %} {% trans "Welcome" %}{% endblock %}
 
 {% block upper_main %}
   <div class="jumbotron">
     <div class="container">
       <h3>
-      <span class="text-success">A</span>gricultural
-      <span class="text-success">IR</span>rigation
-      <span class="text-success">A</span>dvisor</h3>
-      <p>using
-        <a target = "_blank"href="http://openmeteo.org/">OpenMeteo.org</a> measurements,
-        <a target = "_blank" href="http://pthelma.readthedocs.org/en/latest/">Pthelma</a> Models,
-        <a target = "_blank"href="http://cirrus.meteo.noa.gr/forecast/bolam/index.htm">NOA</a> forecast.
-      </p>
+      {% blocktrans %}
+          <span class="text-success">A</span>gricultural
+          <span class="text-success">IR</span>rigation
+          <span class="text-success">A</span>dvisor</h3>
+          <p>using
+            <a target = "_blank"href="http://openmeteo.org/">OpenMeteo.org</a> measurements,
+            <a target = "_blank" href="http://pthelma.readthedocs.org/en/latest/">Pthelma</a> Models,
+            <a target = "_blank"href="http://cirrus.meteo.noa.gr/forecast/bolam/index.htm">NOA</a> forecast.
+          </p>
+      {% endblocktrans %}
     </div>
   </div>
   <hr>
@@ -27,16 +30,16 @@
       <div class="panel-heading">
         <div class="container">
           <div class="row">
-            <h4>&nbsp;&nbsp;&nbsp;View historical rasters</h4>
+            <h4>&nbsp;&nbsp;&nbsp;{% trans "View historical rasters" %}</h4>
             <div class='col-sm-4'>
                   <div class="form-group">
                     <select onchange="create_map(document.getElementById('mirror_field').value,document.getElementById('meteo_var').value )" id="meteo_var" class="form-control">
-                        <option value="Daily_rain_">Daily Rainfall</option>
-                        <option value="Daily_evaporation_">Daily Evaporation</option>
-                        <option value="Daily_humidity_">Daily Humidity</option>
-                        <option value="Daily_temperature_">Daily Temperature</option>
-                        <option value="Daily_pressure_">Daily Pressure </option>
-                        <option value="Daily_solar_radiation_">Daily Solar Radiation</option>
+                        <option value="Daily_rain_">{% trans "Daily Rainfall" %}</option>
+                        <option value="Daily_evaporation_">{% trans "Daily Evaporation" %}</option>
+                        <option value="Daily_humidity_">{% trans "Daily Humidity" %}</option>
+                        <option value="Daily_temperature_">{% trans "Daily Temperature" %}</option>
+                        <option value="Daily_pressure_">{% trans "Daily Pressure" %} </option>
+                        <option value="Daily_solar_radiation_">{% trans "Daily Solar Radiation" %}</option>
                      </select>
                     <div onchange="create_map(document.getElementById('mirror_field').value,document.getElementById('meteo_var').value )" style="float: left;" class="form-group">
                       <div class='input-group date' id='form_datetime'>
@@ -45,7 +48,7 @@
                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                     </div>
                     </div>
-                      <h5 style="float:left;">Avalaible Datasets: <span class="text-success">2015-01-01</span> : <span class="text-success">{{ yesterday|date:"Y-m-d" }}</span></h5>
+                      <h5 style="float:left;">{% trans "Avalaible Datasets:" %} <span class="text-success">2015-01-01</span> : <span class="text-success">{{ yesterday|date:"Y-m-d" }}</span></h5>
                   </div>
             </div>
           </div>
@@ -116,7 +119,7 @@
                          projection: 'EPSG:3857',
                          opacity: 0.65});
               map.addLayer(map_variable);
-              document.getElementById('current').innerHTML = "Viewing:  " + date;
+              document.getElementById('current').innerHTML = "{% trans "Viewing" %} " + date;
               document.getElementById('next').value = moment(date, "YYYY-MM-DD").add(1,'days').format("YYYY-MM-DD");
               var n = moment(document.getElementById('next').value, "YYYY-MM-DD");
               if (n.isAfter('{{ yesterday|date:"Y-m-d" }}')) {
