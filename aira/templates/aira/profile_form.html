@@ -1,18 +1,20 @@
 {% extends 'base.html' %}
+{% load i18n %}
+
 {% load bootstrap3 %}
 
 {% block content %}
 <div class="container">
   <div class="row">
     <div class="col-lg-12">
-      <h3>Update Profile</h3>
+      <h3>{% trans "Update" %} {% trans "Profile" %}</h3>
       <hr>
       <form method="post" role="form" class="form-horizontal">
         {% csrf_token %}
         {% bootstrap_form form layout='horizontal' %}
         {% buttons %}
         <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" class="btn btn-primary">Update</button>
+          <button type="submit" class="btn btn-primary">{% trans "Update" %}</button>
         </div>
         {% endbuttons %}
       </form>

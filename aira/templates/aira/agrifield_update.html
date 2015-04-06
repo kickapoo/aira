@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load i18n %}
+
 {% load bootstrap3 %}
 {% block title %} {{ user }} {% endblock %}
 
@@ -13,6 +15,10 @@
         <div class="col-md-6">
             <div id="on_clink_map" class="map"></div>
             <script>
+              function make_coords(coord) {
+                  return parseFloat(coord.replace(",","."));
+                };
+
                 map = new OpenLayers.Map('on_clink_map',
                       {units: 'm',
                        displayProjection: 'EPSG:4326',
@@ -36,31 +42,33 @@
                                projection: new OpenLayers.Projection("EPSG:900913"),
                                iformat: 'image/png'});
                 map.addLayer(ktimatologio);
-                var fieldloc = new OpenLayers.LonLat({{ object.longitude }}, {{ object.latitude }}).transform('EPSG:4326', 'EPSG:3857');
+                //alert(parseFloat("{{ object.longitude }}".replace(",",".")));
+                var fieldloc = new OpenLayers.LonLat(make_coords("{{ object.longitude }}"),make_coords("{{ object.latitude }}")).transform('EPSG:4326', 'EPSG:3857');
                 var marker = new OpenLayers.Marker(fieldloc)
                 var markers = new OpenLayers.Layer.Markers( "{{ object.name }}" );
                 map.addLayer(markers);
                 markers.addMarker(marker);
                 map.setCenter(fieldloc, 10);
                 map.events.register("click", map , function(e){
-                            var opx = map.getLonLatFromPixel(e.xy) ;
-                            var marker = new OpenLayers.Marker(opx);
-                            markers.clearMarkers();
-                            markers.addMarker(marker);
-                            var lonlat = map.getLonLatFromPixel(e.xy).transform('EPSG:3857', 'EPSG:4326');
-                              document.getElementById("id_latitude").value = lonlat.lat.toFixed(5);
-                              document.getElementById("id_longitude").value = lonlat.lon.toFixed(5);
+                var opx = map.getLonLatFromPixel(e.xy) ;
+                var marker = new OpenLayers.Marker(opx);
+                markers.clearMarkers();
+                markers.addMarker(marker);
+                var lonlat = map.getLonLatFromPixel(e.xy).transform('EPSG:3857', 'EPSG:4326');
+                document.getElementById("id_latitude").value = lonlat.lat.toFixed(5);
+                document.getElementById("id_longitude").value = lonlat.lon.toFixed(5);
                 });
+
               </script>
-              <sub> Click on Map to add your Field coordinates</sub>
+              <sub> {% trans "Click on Map to add your Field coordinates" %}</sub>
         </div>
         <div class="col-md-6">
           <form method="post" role="form">
             {% csrf_token %}
             {% bootstrap_form form %}
             {% buttons %}
-              <button type="submit" class="btn btn-success btn-xs">Submit</button>
-              <a class="btn btn-success btn-xs" href="{% url 'home' %}"> Back </a>
+              <button type="submit" class="btn btn-success btn-xs">{% trans "Submit" %}</button>
+              <a class="btn btn-success btn-xs" href="{% url 'home' %}"> {% trans "Back" %} </a>
             {% endbuttons %}
           </form>
         </div>

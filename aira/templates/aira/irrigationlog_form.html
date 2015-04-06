@@ -1,21 +1,23 @@
 {% extends 'base.html' %}
+{% load i18n %}
+
 {% load bootstrap3 %}
 
-{% block title %} Irrigation Log {% endblock %}
+{% block title %} {% trans "Irrigation Log" %} {% endblock %}
 
 {% block content %}
 {% if logs %}
   <div class="alert alert-warning">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <i class="fa fa-hand-o-right fa-1x"></i>&nbsp;
-    You have <b><span class="text text-success">{{logs_count}}</span></b> Irrigation Events in your database.
+    {% trans "You have" %} <b><span class="text text-success">{{logs_count}}</span></b> {% trans "Irrigation Events in your database" %}.
   </div>
 {% endif %}
 <hr>
 
 <div class="container">
   <div class="row">
-  <h4>Add Irrigation Event</h4>
+  <h4>{% trans "Add Irrigation Event" %}</h4>
   <div class="col-md-4">
     <form method="post" role="form" class="form-horizontal">
       {% csrf_token %}
@@ -40,13 +42,13 @@
   <div class="col-md-7">
     <div class="table-responsive">
       <table class="table">
-        <h4> List of <a href="{% url 'update_agrifield' agrifield.id %}">{{ agrifield.name }}</a> Irrigation Events</h4>
+        <h4> {% trans "List of" %} <a href="{% url 'update_agrifield' agrifield.id %}">{{ agrifield.name }}</a> {% trans "Irrigation Events" %}</h4>
         <hr>
         <thead>
           <tr>
-            <th>#id</th>
-            <th>Datetime</th>
-            <th>Applied water (m<sup>3</sup>)</th>
+            <th>{% trans "#id" %}</th>
+            <th>{% trans "Datetime" %}</th>
+            <th>{% trans "Applied water" %} (m<sup>3</sup>)</th>
             <th></th>
           </tr>
         </thead>
@@ -56,7 +58,7 @@
               <td>{{ l.id }}</td>
               <td><a href="{% url 'update_irrlog' l.id%}">{{l.time}}</a></td>
               <td>{{l.water_amount}}</td>
-              <td><a href="{% url 'delete_irrlog' l.id %}">Delete </a></td>
+              <td><a href="{% url 'delete_irrlog' l.id %}">{% trans "Delete" %} </a></td>
             </tr>
           {% endfor %}
         </tbody>

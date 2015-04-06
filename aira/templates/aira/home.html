@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
+{% load i18n %}
+
 {% load bootstrap3 %}
 
-{% block title %} Home - {{user}} {% endblock %}
+{% block title %} {% trans "Home" %} - {{user}} {% endblock %}
 
 {% block content %}
 {% if not profile %}
   <div class="alert alert-warning">
-    <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-hand-o-right"></i> &nbsp; Please update your pernonal information<a href="{% url 'create_profile' %}"> here </a>
+    <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-hand-o-right"></i> &nbsp; {% trans "Please update your personal information" %}<a href="{% url 'create_profile' %}"> {% trans "here" %} </a>
   </div>
 {% endif %}
 <!-- context['map'] -->
@@ -15,6 +17,9 @@
     <div class="panel-body">
       <div id="open_map" class="map"></div>
       <script>
+      function make_coords(coord) {
+                  return parseFloat(coord.replace(",","."));
+                };
         map = new OpenLayers.Map('open_map',
                   {units: 'm',
                    displayProjection: 'EPSG:4326',
@@ -45,8 +50,8 @@
         {% for f in agrifields %}
         // Define markers as "features" of the vector layer:
         var feature = new OpenLayers.Feature.Vector(
-                new OpenLayers.Geometry.Point({{f.longitude}}, {{f.latitude}}).transform('EPSG:4326', 'EPSG:3857'),
-                {description:'Field Name: <a target="_blank" href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a>'} ,
+                new OpenLayers.Geometry.Point(make_coords("{{f.longitude}}"), make_coords("{{f.latitude}}")).transform('EPSG:4326', 'EPSG:3857'),
+                {description:'{% trans 'Field Name' %}: <a target="_blank" href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a>'},
                 {externalGraphic: 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/img/marker.png', graphicHeight: 25, graphicWidth: 21, graphicXOffset:-12, graphicYOffset:-25  }
             );
         vectorLayer.addFeatures(feature);
@@ -54,7 +59,7 @@
         {% empty %}
         var feature = new OpenLayers.Feature.Vector(
                 new OpenLayers.Geometry.Point(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'),
-                {description:"Hmmm, it seems you have't any fields, <br> Add at least one <a href='{% url 'create_agrifield' %}'> here </a>"} ,
+                {description:"It seems you haven't any fields, <br> Add at least one <a href='{% url 'create_agrifield' %}'> here </a>"} ,
                 {externalGraphic: 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/img/marker.png', graphicHeight: 25, graphicWidth: 21, graphicXOffset:-12, graphicYOffset:-25  }
             );
         vectorLayer.addFeatures(feature);
@@ -91,13 +96,13 @@
       </div>
       {% if profile %}
         <div class="panel-footer">
-          <strong>First name:</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.first_name }}</a><br>
-          <strong>Last name :</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.last_name }}</a><br>
-          <strong>Address:</strong>
+          <strong>{% trans "First name" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.first_name }}</a><br>
+          <strong>{% trans "Last name" %} :</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.last_name }}</a><br>
+          <strong>{% trans "Address" %}:</strong>
           {% if profile.address %}
             <a href="{% url 'update_profile' profile.id %}">{{ profile.address }}</a><br>
           {% else %}
-            <a href="{% url 'update_profile' profile.id %}"> [edit] </a><br>
+            <a href="{% url 'update_profile' profile.id %}"> {% trans "[edit]" %} </a><br>
           {% endif %}
         </div>
       {% endif %}
@@ -105,52 +110,52 @@
 {% if not agrifields %}
   <div class="alert alert-warning">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <i class="fa fa-exclamation-triangle"></i> &nbsp; Hmmm, it seems you have't any fields, Add at least one <a href="{% url 'create_agrifield' %}"> here </a>
+    <i class="fa fa-exclamation-triangle"></i> &nbsp; {% trans "It seems you haven't any fields, Add at least one" %} <a href="{% url 'create_agrifield' %}"> {% trans "here" %} </a>
   </div>
 {% else %}
   <div class="panel panel-default">
     <div class="panel-heading">
-      <a class="btn btn-success btn-xs" href="{% url 'create_agrifield' %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; Fields</a>
+      <a class="btn btn-success btn-xs" href="{% url 'create_agrifield' %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; {% trans "Fields" %}</a>
     </div>
     {% for f in agrifields %}
       <hr>
       <div class="panel-body">
-        <p><b>Field Info:</b> &nbsp;<a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> is growing <a href="{% url 'update_agrifield' f.id %}">{{ f.crop_type.name }}</a> using <a href="{% url 'update_agrifield' f.id %}">{{ f.irrigation_type.name}}</a>. </p>
+        <p><b>{% trans "Field Info" %}:</b> &nbsp;<a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> {% trans "is growing" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.crop_type.name }}</a> {% trans "using" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.irrigation_type.name}}</a>. </p>
         {% if f.outside_arta_raster %}
           <div class="alert alert-danger">
             <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-danger"><i class="fa fa-exclamation-triangle">&nbsp;Warning</i></span> &nbsp;
-             Your agrifield location is outside Arta's plain field. <br>
-             Update you field location <a href="{% url 'update_agrifield' f.id %}">here</a>.
+             {% trans "Your field location is outside Arta's plain field" %}. <br>
+             {% trans "Update you field location" %} <a href="{% url 'update_agrifield' f.id %}">{% trans "here" %}</a>.
           </div>
         {% else %}
           {% if not f.irr_event %}
             <div class="alert alert-warning">
               <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;Warning</i></span>  &nbsp;
-              You haven't entered any irrigation event. Add  your irrigation log <a href="{% url 'create_irrlog' f.id %}">here</a>.<br>
-              Irrigation Advice is estimated using system's default datasets.
+              {% trans "You haven't entered any irrigation event. Add  your irrigation log" %} <a href="{% url 'create_irrlog' f.id %}">here</a>.<br>
+              {% trans "Irrigation Advice is estimated using system's default datasets" %}.
             </div>
           {% endif %}
           {% if f.last_irr_event_outside_period %}
             <div class="alert alert-warning">
               <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;Warning</i></span>  &nbsp;
-              Your latest irrigation event is outside our dataset period. Update your irrigation log <a href="{% url 'create_irrlog' f.id %}">here</a>.<br>
-              Irrigation Advice is estimated using system's default datasets.
+              {% trans "Your latest irrigation event is outside our dataset period. Update your irrigation log" %} <a href="{% url 'create_irrlog' f.id %}">here</a>.<br>
+              {% trans "Irrigation Advice is estimated using system's default datasets" %}.
             </div>
           {% endif %}
           {% if f.over_fc %}
             <div class="alert alert-info">
               <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-exclamation-triangle "></i>
-                You reached field capacity ({{ f.fc_mm|floatformat:"1" }} mm)</a>.
+                {% trans "You reached field capacity" %} ({{ f.fc_mm|floatformat:"1" }} mm)</a>.
             </div>
           {% endif %}
-            <p><b>Irrigation Advice:</b>
+            <p><b>{% trans "Irrigation Advice" %}:</b>
               {% if f.adv %}
                 <div class="table-responsive">
                   <table class="table">
                       <thead>
                         <tr>
-                          <th>Date <br> </th>
-                          <th>Irrigation Water Amount<br> (mm)</th>
+                          <th>{% trans "Date" %} <br> </th>
+                          <th>{% trans "Irrigation Water Amount" %}<br> (mm)</th>
                         </tr>
                       </thead>
                        <tbody>
@@ -164,12 +169,12 @@
                     </table>
                   </div>
               {% else %}
-                No need to irrigate from <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> to  <span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span>.
+                {% trans "No need to irrigate from" %} <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> {% trans "to" %}  <span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span>.
               {% endif %}
             </p><sub>
-            <a class="btn btn-success btn-xs" href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; Irrigation Events</a>
-            <a class="btn btn-success btn-xs" href="{% url 'advice' f.id %}" target="_blank"></i>&nbsp;<i class="fa fa-calendar"></i>&nbsp;Irrigation Report</a>
-            <a class="btn btn-success btn-xs" href="#"><i class="fa fa-line-chart"></i>&nbsp; Irrigation Performance</a>
+            <a class="btn btn-success btn-xs" href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; {% trans "Irrigation Events" %}</a>
+            <a class="btn btn-success btn-xs" href="{% url 'advice' f.id %}" target="_blank"></i>&nbsp;<i class="fa fa-calendar"></i>&nbsp;{% trans "Irrigation Report" %}</a>
+            <a class="btn btn-success btn-xs" href="#"><i class="fa fa-line-chart"></i>&nbsp; {% trans "Irrigation Performance" %}</a>
             </sub></p>
         {% endif %}
       </div>

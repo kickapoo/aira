@@ -21,7 +21,7 @@ class AgrifieldForm(forms.ModelForm):
                   'custom_max_allow_depletion', 'custom_efficiency']
 
         labels = {
-            'name': _('Field Name '),
+            'name': _('Field Name'),
             'latitude': _('Latitude (WGS84)'),
             'longitude': _('Longitude (WGS84)'),
             'crop_type': _('Crop Type'),
@@ -35,6 +35,6 @@ class IrrigationlogForm(forms.ModelForm):
         model = IrrigationLog
         exclude = ('agrifield',)
         labels = {
-            'time': _('Datetime(Y-M-D h:m:s) '),
-            'applied_water': _('Water (cubic meters)'),
+            'time': _('Datetime (Y-M-D h:m:s) '),
+            'applied_water': _('Applied Irrigation Water (m3)'),
         }
