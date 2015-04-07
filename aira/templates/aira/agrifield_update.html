@@ -9,11 +9,11 @@
   <div class="col-lg-12">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h4>{% trans "Update" %} {{ object.name }}</h4>
+        <h4>{% trans "Update" %} {% trans "Field" %}</h4>
       </div>
-       <div class="panel panel-body">
-        <div class="col-md-6">
-            <div id="on_clink_map" class="map"></div>
+      <div class="panel panel-body">
+        <div class="col-md-12">
+        <div id="on_clink_map" class="map"></div>
             <script>
               function make_coords(coord) {
                   return parseFloat(coord.replace(",","."));
@@ -59,19 +59,53 @@
                 document.getElementById("id_longitude").value = lonlat.lon.toFixed(5);
                 });
 
-              </script>
-              <sub> {% trans "Click on Map to add your Field coordinates" %}</sub>
-        </div>
-        <div class="col-md-6">
+                $(document).ready(function(){
+                    $("#id_use_custom_parameters").click(function(){
+                        $("#custom_par").stop().toggle();
+                    });
+                });
+
+          </script>
+      <sub> {% trans "Click on Map to add your Field coordinates" %}</sub>
+      <hr>
+      <fieldset>
           <form method="post" role="form">
-            {% csrf_token %}
-            {% bootstrap_form form %}
-            {% buttons %}
-              <button type="submit" class="btn btn-success btn-xs">{% trans "Submit" %}</button>
-              <a class="btn btn-success btn-xs" href="{% url 'home' %}"> {% trans "Back" %} </a>
-            {% endbuttons %}
-          </form>
+          {% csrf_token %}
+          <div class='row'>
+              <div class='col-sm-6'>
+                  <div class='form-group'>
+                  {% bootstrap_field form.name %}
+                  {% bootstrap_field form.longitude %}
+                  {% bootstrap_field form.latitude %}
+                  {% bootstrap_field form.crop_type %}
+                  {% bootstrap_field form.irrigation_type %}
+                  {% bootstrap_field form.irrigation_optimizer %}
+                  {% bootstrap_field form.use_custom_parameters %}
+                  </div>
+              </div>
+              <div class='col-sm-6'>
+              {% if object.use_custom_parameters %}
+                  <div class='form-group' style="display:block" id="custom_par">
+              {% else %}
+                  <div class='form-group' style="display:none" id="custom_par">
+              {% endif %}
+                      {% bootstrap_field form.custom_irrigation_optimizer%}
+                      {% bootstrap_field form.custom_kc %}
+                      {% bootstrap_field form.custom_root_depth_max %}
+                      {% bootstrap_field form.custom_root_depth_min %}
+                      {% bootstrap_field form.custom_max_allow_depletion %}
+                      {% bootstrap_field form.custom_efficiency %}
+                  </div>
+              </div>
+          </div>
+          {% buttons %}
+          <button type="submit" class="btn btn-success btn-xs">{% trans "Add" %}</button>
+          <a class="btn btn-success btn-xs" href="{% url 'home' %}"> {% trans "Back" %} </a>
+          {% endbuttons %}
+        </form>
+      </fieldset>
         </div>
+      </div>
     </div>
   </div>
 </div>
