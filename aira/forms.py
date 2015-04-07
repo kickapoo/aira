@@ -26,7 +26,15 @@ class AgrifieldForm(forms.ModelForm):
             'longitude': _('Longitude (WGS84)'),
             'crop_type': _('Crop Type'),
             'irrigation_type': _('Irrigation Type'),
-            'area': _('Irrigated Field Area (m<sup>2</sup>)')
+            'area': _('Irrigated Field Area (m<sup>2</sup>)'),
+            'irrigation_optimizer': _("Irrigation Optimizer"),
+            'use_custom_parameters': _("Use Custom Parameters"),
+            'custom_irrigation_optimizer': _("Custom Irrigation Optimizer"),
+            'custom_kc': _("Custom Kc"),
+            'custom_root_depth_max': _("Custom root depth (max)"),
+            'custom_root_depth_min': _("Custom root depth (min)"),
+            'custom_max_allow_depletion': _("Custom max allow depletion"),
+            'custom_efficiency': _("Custom irrigation efficiency"),
         }
 
 
