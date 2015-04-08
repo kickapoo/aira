@@ -34,7 +34,6 @@
                           {isBaseLayer: true,
                            projection: 'EPSG:3857'});
 
-                map.addLayer(cycle);
                 var ktimatologio = new OpenLayers.Layer.WMS("Hellenic Cadastre",
                          "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
                            {   layers: 'KTBASEMAP', transparent: false},
@@ -42,6 +41,7 @@
                                projection: new OpenLayers.Projection("EPSG:900913"),
                                iformat: 'image/png'});
                 map.addLayer(ktimatologio);
+                map.addLayer(cycle);
                 //alert(parseFloat("{{ object.longitude }}".replace(",",".")));
                 var fieldloc = new OpenLayers.LonLat(make_coords("{{ object.longitude }}"),make_coords("{{ object.latitude }}")).transform('EPSG:4326', 'EPSG:3857');
                 var marker = new OpenLayers.Marker(fieldloc)
