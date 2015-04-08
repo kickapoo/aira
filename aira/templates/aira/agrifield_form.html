@@ -42,10 +42,11 @@
                          "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
                            {   layers: 'KTBASEMAP', transparent: false},
                            {   isBaseLayer: true,
+                               numZoomLevels: 24,
                                projection: new OpenLayers.Projection("EPSG:900913"),
                                iformat: 'image/png'});
           map.addLayers([cycle, ktimatologio]);
-          map.setCenter(new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 9);
+          map.setCenter(new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 20);
           // Create Marker
           var markers = new OpenLayers.Layer.Markers( "Add new Field" );
           map.addLayer(markers);

@@ -37,6 +37,7 @@
                          "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
                            {   layers: 'KTBASEMAP', transparent: false},
                            {   isBaseLayer: true,
+                                numZoomLevels: 24,
                                projection: new OpenLayers.Projection("EPSG:900913"),
                                iformat: 'image/png'});
              map.addLayers([cycle, ktimatologio]);
@@ -45,7 +46,7 @@
              var markers = new OpenLayers.Layer.Markers( "{{ f.name }}" );
              map.addLayer(markers);
              markers.addMarker(marker);
-             map.setCenter(fieldloc, 10);
+             map.setCenter(fieldloc, 20);
        </script>
       </div>
     </div>

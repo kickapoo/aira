@@ -22,7 +22,9 @@
                 map = new OpenLayers.Map('on_clink_map',
                       {units: 'm',
                        displayProjection: 'EPSG:4326',
-                       controls: [new OpenLayers.Control.LayerSwitcher(),
+                       maxResolution: 0.04612890625,
+                       controls: [
+                                  new OpenLayers.Control.LayerSwitcher(),
                                   new OpenLayers.Control.Zoom(),
                                   new OpenLayers.Control.Navigation(),
                                   new OpenLayers.Control.MousePosition(),
@@ -38,7 +40,7 @@
                          "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
                            {   layers: 'KTBASEMAP', transparent: false},
                            {   isBaseLayer: true,
-                              numZoomLevels: 16,
+                               numZoomLevels: 24,
                                projection: new OpenLayers.Projection("EPSG:900913"),
                                iformat: 'image/png'});
                 map.addLayer(ktimatologio);
@@ -49,7 +51,7 @@
                 var markers = new OpenLayers.Layer.Markers( "{{ object.name }}" );
                 map.addLayer(markers);
                 markers.addMarker(marker);
-                map.setCenter(fieldloc, 15);
+                map.setCenter(fieldloc, 20);
                 map.events.register("click", map , function(e){
                 var opx = map.getLonLatFromPixel(e.xy) ;
                 var marker = new OpenLayers.Marker(opx);
