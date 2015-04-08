@@ -38,6 +38,7 @@
                          "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
                            {   layers: 'KTBASEMAP', transparent: false},
                            {   isBaseLayer: true,
+                              numZoomLevels: 16,
                                projection: new OpenLayers.Projection("EPSG:900913"),
                                iformat: 'image/png'});
                 map.addLayer(ktimatologio);
