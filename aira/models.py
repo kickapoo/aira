@@ -59,7 +59,7 @@ class Agrifield(models.Model):
     longitude = models.FloatField()
     crop_type = models.ForeignKey(CropType)
     irrigation_type = models.ForeignKey(IrrigationType)
-    area = models.FloatField(null=True, blank=True)
+    area = models.FloatField()
     irrigation_optimizer = models.FloatField(choices=IRT_LIST,
                                              default=1.0)
     use_custom_parameters = models.BooleanField(default=False)
