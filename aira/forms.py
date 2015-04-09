@@ -8,6 +8,12 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         exclude = ('farmer',)
 
+        labels = {
+            'first_name': _('First name'),
+            'last_name': _('Last name'),
+            'address': _('Address')
+        }
+
 
 class AgrifieldForm(forms.ModelForm):
     class Meta:
