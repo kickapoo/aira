@@ -60,7 +60,7 @@
         {% empty %}
         var feature = new OpenLayers.Feature.Vector(
                 new OpenLayers.Geometry.Point(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'),
-                {description:'{% trans "It seems you haven't any fields, Add at least one" %}'+ "<a href='{% url 'create_agrifield' %}'> {% trans 'here' %}</a>"} ,
+                {description: "{% trans "It seems you haven't any fields, Add at least one" %}" } ,
                 {externalGraphic: 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/img/marker.png', graphicHeight: 25, graphicWidth: 21, graphicXOffset:-12, graphicYOffset:-25  }
             );
         vectorLayer.addFeatures(feature);
@@ -111,7 +111,7 @@
 {% if not agrifields %}
   <div class="alert alert-warning">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <i class="fa fa-exclamation-triangle"></i> &nbsp; {% trans "It seems you haven't any fields, Add at least one" %} <a href="{% url 'create_agrifield' %}"> {% trans "here" %} </a>
+    <i class="fa fa-exclamation-triangle"></i> &nbsp; {% trans "It seems you haven't any fields, Add at least one" %} <a href={% url 'create_agrifield' %}> {% trans "here" %} </a>
   </div>
 {% else %}
   <div class="panel panel-default">
@@ -139,7 +139,7 @@
           {% if f.last_irr_event_outside_period %}
             <div class="alert alert-warning">
               <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i></span>  &nbsp;
-              {% trans "Your latest irrigation event is outside our dataset period. Update your irrigation log" %} <a href="{% url 'create_irrlog' f.id %}">here</a>.<br>
+              {% trans "Your latest irrigation event is outside our dataset period. Update your irrigation log" %} <a href="{% url 'create_irrlog' f.id %}">{% trans "here" %}</a>.<br>
               {% trans "Irrigation Advice is estimated using system's default datasets" %}.
             </div>
           {% endif %}
