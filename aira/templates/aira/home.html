@@ -124,21 +124,21 @@
         <p><b>{% trans "Field Info" %}:</b> &nbsp;<a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> {% trans "is growing" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.crop_type.name }}</a> {% trans "using" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.irrigation_type.name}}</a>. </p>
         {% if f.outside_arta_raster %}
           <div class="alert alert-danger">
-            <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-danger"><i class="fa fa-exclamation-triangle">&nbsp;Warning</i></span> &nbsp;
+            <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-danger"><i class="fa fa-exclamation-triangle">&nbsp; {% trans "Warning" %}</i></span> &nbsp;
              {% trans "Your field location is outside Arta's plain field" %}. <br>
              {% trans "Update you field location" %} <a href="{% url 'update_agrifield' f.id %}">{% trans "here" %}</a>.
           </div>
         {% else %}
           {% if not f.irr_event %}
             <div class="alert alert-warning">
-              <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;Warning</i></span>  &nbsp;
+              <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i></span>  &nbsp;
               {% trans "You haven't entered any irrigation event. Add  your irrigation log" %} <a href="{% url 'create_irrlog' f.id %}">here</a>.<br>
               {% trans "Irrigation Advice is estimated using system's default datasets" %}.
             </div>
           {% endif %}
           {% if f.last_irr_event_outside_period %}
             <div class="alert alert-warning">
-              <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;Warning</i></span>  &nbsp;
+              <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i></span>  &nbsp;
               {% trans "Your latest irrigation event is outside our dataset period. Update your irrigation log" %} <a href="{% url 'create_irrlog' f.id %}">here</a>.<br>
               {% trans "Irrigation Advice is estimated using system's default datasets" %}.
             </div>
