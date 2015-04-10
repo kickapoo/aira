@@ -82,24 +82,12 @@
                   {% bootstrap_field form.crop_type %}
                   {% bootstrap_field form.irrigation_type %}
                   {% bootstrap_field form.irrigation_optimizer %}
-                  {% bootstrap_field form.use_custom_parameters %}
                   </div>
+                  {% buttons %}
+                  <button type="submit" class="btn btn-success btn-xs">{% trans "Add" %}</button>
+                  <a class="btn btn-success btn-xs" href="{% url 'home' %}"> {% trans "Back" %} </a>
+                  {% endbuttons %}
               </div>
-              <div class='col-sm-6'>
-                  <div class='form-group' style="display:none" id="custom_par">
-                      {% bootstrap_field form.custom_irrigation_optimizer%}
-                      {% bootstrap_field form.custom_kc %}
-                      {% bootstrap_field form.custom_root_depth_max %}
-                      {% bootstrap_field form.custom_root_depth_min %}
-                      {% bootstrap_field form.custom_max_allow_depletion %}
-                      {% bootstrap_field form.custom_efficiency %}
-                  </div>
-              </div>
-          </div>
-          {% buttons %}
-          <button type="submit" class="btn btn-success btn-xs">{% trans "Add" %}</button>
-          <a class="btn btn-success btn-xs" href="{% url 'home' %}"> {% trans "Back" %} </a>
-          {% endbuttons %}
         </form>
       </fieldset>
         </div>
