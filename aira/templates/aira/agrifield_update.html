@@ -51,7 +51,7 @@
                 var markers = new OpenLayers.Layer.Markers( "{{ object.name }}" );
                 map.addLayer(markers);
                 markers.addMarker(marker);
-                map.setCenter(fieldloc, 20);
+                map.setCenter(fieldloc, 18);
                 map.events.register("click", map , function(e){
                 var opx = map.getLonLatFromPixel(e.xy) ;
                 var marker = new OpenLayers.Marker(opx);
