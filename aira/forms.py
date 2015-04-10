@@ -35,12 +35,12 @@ class AgrifieldForm(forms.ModelForm):
             'area': _('Irrigated Field Area (m<sup>2</sup>)'),
             'irrigation_optimizer': _("Irrigation Optimizer"),
             'use_custom_parameters': _("Use Custom Parameters"),
-            'custom_irrigation_optimizer': _("Custom Irrigation Optimizer"),
-            'custom_kc': _("Custom Kc"),
-            'custom_root_depth_max': _("Custom root depth (max)"),
-            'custom_root_depth_min': _("Custom root depth (min)"),
-            'custom_max_allow_depletion': _("Custom max allow depletion"),
-            'custom_efficiency': _("Custom irrigation efficiency"),
+            'custom_irrigation_optimizer': _("Irrigation Optimizer"),
+            'custom_kc': _("Kc"),
+            'custom_root_depth_max': _("Root depth (max)"),
+            'custom_root_depth_min': _("Root depth (min)"),
+            'custom_max_allow_depletion': _("Max allow depletion"),
+            'custom_efficiency': _("Irrigation efficiency"),
         }
 
 
