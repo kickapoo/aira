@@ -12,6 +12,7 @@ from .forms import ProfileForm, AgrifieldForm, IrrigationlogForm
 from .irma import utils as irma_utils
 from .irma.main import get_parameters
 from .irma.main import view_run
+from .irma.main import get_default_db_value
 
 
 class TryPageView(TemplateView):
@@ -163,6 +164,12 @@ class UpdateAgrifield(UpdateView):
     form_class = AgrifieldForm
     template_name = 'aira/agrifield_update.html'
     success_url = '/home'
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateAgrifield, self).get_context_data(**kwargs)
+        afieldobj = Agrifield.objects.get(pk=self.kwargs['pk'])
+        context['default_parms'] = get_default_db_value(afieldobj)
+        return context
 
 
 class DeleteAgrifield(DeleteView):

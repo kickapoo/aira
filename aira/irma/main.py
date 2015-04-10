@@ -31,6 +31,16 @@ def get_parameters(afield_obj):
     return locals()
 
 
+def get_default_db_value(afield_obj):
+    kc = afield_obj.crop_type.kc
+    irr_eff = afield_obj.irrigation_type.efficiency
+    mad = afield_obj.crop_type.max_allow_depletion
+    rd_max = afield_obj.crop_type.root_depth_max
+    rd_min = afield_obj.crop_type.root_depth_min
+    IRT = afield_obj.irrigation_optimizer
+    return locals()
+
+
 def afield2swb(afield_obj, precip, evap):
     # Precip and evap must be pthelma.Timeseries afield_objects
     fc = raster2point(afield_obj.latitude, afield_obj.longitude, fc_raster)
