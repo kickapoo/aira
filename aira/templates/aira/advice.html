@@ -98,28 +98,35 @@
         <div class="panel-body">
         <p><b>{% trans "Irrigation Advice" %}:</b><br><br>
         {% if f.adv %}
-              <div class="table-responsive">
-                <table class="table">
-                    <thead>
+        <div class="row">
+          <div class="col-md-5">
+            <div class="table-responsive">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th>{% trans "Date" %} </th>
+                    <th>{% trans "Ks" %}</th>
+                    <th>{% trans "Irrigation Water Amount" %} (mm)</th>
+                  </tr>
+                </thead>
+                 <tbody>
+                    {% for irr_date, values in f.adv.items %}
                       <tr>
-                        <th>{% trans "Date" %}<br> </th>
-                        <th>{% trans "Irrigation Water Amount" %}<br> (mm)</th>
+                        <td align="center">{{ irr_date |date:"d/m/Y h:00:s" }}</td>
+                        <td align="center">{{ values.1 }} </td>
+                        <td align="center">{{ values.0 |floatformat:"2" }}</td>
                       </tr>
-                    </thead>
-                     <tbody>
-                        {% for irri_event in f.adv %}
-                          <tr>
-                            <td align="center">{{ irri_event.date |date:"d/m/Y h:m:s" }}</td>
-                            <td align="center">{{ irri_event.Ifinal|floatformat:"2" }}</td>
-                          </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                </div>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
         {% else %}
               <img src="{% static 'img/cool.png' %}" width="40" height="40" alt=""> &nbsp; {% trans "No need to irrigate" %}.
         {% endif %}</p>
         <hr>
+          <h4>{% trans "Calculations" %}:</h4>
           <div id="results" class="table-responsive">
             <table class="table">
                 <thead>

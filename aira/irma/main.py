@@ -99,7 +99,9 @@ def run_hourly(swb_obj, FC_IRT, Dr0):
 def advice_date(swb_report):
     irr_dates = [i['date'] for i in swb_report if i['irrigate'] >= 1]
     irr_amount = [i['Ifinal'] for i in swb_report if i['irrigate'] >= 1]
-    return dict(zip(irr_dates, irr_amount))
+    irr_Ks = [i['Ks'] for i in swb_report if i['irrigate'] >= 1]
+    irr_values = zip(irr_amount, irr_Ks)
+    return dict(zip(irr_dates, irr_values))
 
 
 def over_fc(swb_report, fc_mm):

@@ -151,24 +151,30 @@
           {% endif %}
             <p><b>{% trans "Irrigation Advice" %}:</b>
               {% if f.adv %}
-                <div class="table-responsive">
+              <div class="row">
+                <div class="col-md-5">
+                  <div class="table-responsive">
                   <table class="table">
                       <thead>
                         <tr>
-                          <th>{% trans "Date" %} <br> </th>
-                          <th>{% trans "Irrigation Water Amount" %}<br> (mm)</th>
+                          <th>{% trans "Date" %} </th>
+                          <th>{% trans "Ks" %}</th>
+                          <th>{% trans "Irrigation Water Amount" %} (mm)</th>
                         </tr>
                       </thead>
                        <tbody>
-                          {% for irri_event in f.adv %}
+                          {% for irr_date, values in f.adv.items %}
                             <tr>
-                              <td align="center">{{ irri_event.date |date:"d/m/Y h:m:s" }}</td>
-                              <td align="center">{{ irri_event.Ifinal|floatformat:"2" }}</td>
+                              <td align="center">{{ irr_date |date:"d/m/Y h:00:s" }}</td>
+                              <td align="center">{{ values.1 }} </td>
+                              <td align="center">{{ values.0 |floatformat:"2" }}</td>
                             </tr>
                         {% endfor %}
                       </tbody>
                     </table>
                   </div>
+                </div>
+              </div>
               {% else %}
                 {% trans "No need to irrigate from" %} <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> {% trans "to" %}  <span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span>.
               {% endif %}
