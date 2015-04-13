@@ -173,7 +173,7 @@
                           {% for irr_date, values in f.adv.items %}
                             <tr>
                               <td align="center">{{ irr_date |date:"d/m/Y h:00:s" }}</td>
-                              <td align="center">{{ values.1 }} </td>
+                              <td align="center">{{ values.1 |floatformat:"2" }} </td>
                               <td align="center">{{ values.0 |floatformat:"2" }}</td>
                             </tr>
                         {% endfor %}
