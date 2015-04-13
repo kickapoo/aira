@@ -93,6 +93,12 @@
         map.addControl(controls['selector']);
         controls['selector'].activate();
 
+         $(document).ready(function(){
+              $("#show_results").click(function(){
+                  $("#results").stop().toggle();
+              });
+          });
+
       </script>
       </div>
       {% if profile %}
@@ -149,10 +155,11 @@
                 {% trans "You reached field capacity" %} ({{ f.fc_mm|floatformat:"1" }} mm)</a>.
             </div>
           {% endif %}
-            <p><b>{% trans "Irrigation Advice" %}:</b>
+            <p><b>{% trans "Irrigation Advice" %}:
+            <button class="btn btn-success btn-xs" id="show_results"> {% trans "Show / Hide" %}</button></b>
               {% if f.adv %}
-              <div class="row">
-                <div class="col-md-5">
+              <div class="row" style="display:none" id="results">
+                <div class="col-md-12">
                   <div class="table-responsive">
                   <table class="table">
                       <thead>

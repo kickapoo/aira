@@ -68,7 +68,7 @@ def run_water_balance(swb_obj, start_date, end_date,
                       theta_init, irr_event_days, FC_IRT, Dr0):
     return swb_obj, swb_obj.water_balance(theta_init, irr_event_days,
                                           start_date, end_date, FC_IRT,
-                                          Dr0)
+                                          Dr0, Inet_in="NO")
 
 
 def run_daily(swb_obj, start_date, theta_init, FC_IRT, Dr0, irr_event_days=[]):
