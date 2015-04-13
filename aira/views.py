@@ -27,7 +27,6 @@ class IndexPageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexPageView, self).get_context_data(**kwargs)
-        print timezone.now() - timedelta(days=1)
         context['yesterday'] = (timezone.now() - timedelta(days=1)).date()
         return context
 

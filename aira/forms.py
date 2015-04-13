@@ -24,7 +24,10 @@ class AgrifieldForm(forms.ModelForm):
                   'use_custom_parameters', 'custom_irrigation_optimizer',
                   'custom_kc',
                   'custom_root_depth_max', 'custom_root_depth_min',
-                  'custom_max_allow_depletion', 'custom_efficiency']
+                  'custom_max_allow_depletion', 'custom_efficiency',
+                  'custom_field_capacity',
+                  'custom_thetaS',
+                  'custom_wilting_point']
 
         labels = {
             'name': _('Field Name'),
@@ -39,8 +42,11 @@ class AgrifieldForm(forms.ModelForm):
             'custom_kc': _("Kc"),
             'custom_root_depth_max': _("Root depth (max)"),
             'custom_root_depth_min': _("Root depth (min)"),
-            'custom_max_allow_depletion': _("Max allow depletion"),
+            'custom_max_allow_depletion': _("Maximum allowable depletion"),
             'custom_efficiency': _("Irrigation efficiency"),
+            'custom_field_capacity': _("Field Capacity"),
+            'custom_thetaS': _("Soil moisture at saturation"),
+            'custom_wilting_point': _("Wilting Point")
         }
 
 

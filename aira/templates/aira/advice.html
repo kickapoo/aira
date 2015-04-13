@@ -57,6 +57,9 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <b>{% trans "Crop Type" %}:</b> <a href="{% url 'update_agrifield' f.id %}">{{ f.crop_type.name }}</a>
+              {% if  fpars.custom_parameters %}
+                    {% trans "using custom parameters" %}
+              {% endif %}
           </div>
           <div class="panel-body">
             <b>{% trans "Estimated root depth (max)" %}:</b> {{ fpars.rd }} cm <br>
@@ -72,6 +75,9 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <b>{% trans "Irrigation System Type" %}: </b><a href="{% url 'update_agrifield' f.id %}">{{ f.irrigation_type.name }}</a>
+            {% if  fpars.custom_parameters %}
+                    {% trans "using custom parameters" %}
+              {% endif %}
           </div>
           <div class="panel-body">
             <b>{% trans "Irrigation efficiency factor" %}:</b> {{ fpars.irr_eff }} <br>

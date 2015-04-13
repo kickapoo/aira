@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
-
+{% load mathfilters %}
 {% load bootstrap3 %}
 {% block title %} {{ user }}-{% trans "Update" %} {% trans "Field" %}{% endblock %}
 
@@ -87,7 +87,7 @@
                   {% bootstrap_field form.use_custom_parameters %}
                   </div>
                   {% buttons %}
-                  <button type="submit" class="btn btn-success btn-xs">{% trans "Add" %}</button>
+                  <button type="submit" class="btn btn-success btn-xs">{% trans "Update" %}</button>
                   <a class="btn btn-success btn-xs" href="{% url 'home' %}"> {% trans "Back" %} </a>
                   {% endbuttons %}
               </div>
@@ -109,6 +109,12 @@
                       <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.mad }}</b></span></sup>
                       {% bootstrap_field form.custom_efficiency %}
                       <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.irr_eff }}</b></span></sup>
+                      {% bootstrap_field form.custom_field_capacity %}
+                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.fc|floatformat:"2"  }}</b></span></sup>
+                      {% bootstrap_field form.custom_thetaS %}
+                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.thetaS|floatformat:"2"  }}</b></span></sup>
+                      {% bootstrap_field form.custom_wilting_point %}
+                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.wp|floatformat:"2"  }}</b></span></sup>
               </div>
             </div>
         </form>

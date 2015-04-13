@@ -15,8 +15,8 @@ from pthelma.swb import SoilWaterBalance
 
 def get_parameters(afield_obj):
     # For url 'advice' templates use
-    fc = raster2point(afield_obj.latitude, afield_obj.longitude, fc_raster)
-    wp = raster2point(afield_obj.latitude, afield_obj.longitude, pwp_raster)
+    fc = afield_obj.get_field_capacity
+    wp = afield_obj.get_wilting_point
     rd = (float(afield_obj.get_root_depth_min) +
           float(afield_obj.get_root_depth_max)) / 2
     kc = float(afield_obj.get_kc)
@@ -24,10 +24,10 @@ def get_parameters(afield_obj):
     p = float(afield_obj.get_mad)
     peff = 0.8  # Effective rainfall coeff 0.8 * Precip
     irr_eff = float(afield_obj.get_efficiency)
-    theta_s = raster2point(afield_obj.latitude, afield_obj.longitude,
-                           thetaS_raster)
+    theta_s = afield_obj.get_thetaS
     rd_factor = 1000  # Static for mm
     IRT = afield_obj.get_irrigation_optimizer
+    custom_parameters = afield_obj.use_custom_parameters
     return locals()
 
 
@@ -38,13 +38,18 @@ def get_default_db_value(afield_obj):
     rd_max = afield_obj.crop_type.root_depth_max
     rd_min = afield_obj.crop_type.root_depth_min
     IRT = afield_obj.irrigation_optimizer
+    fc = raster2point(afield_obj.latitude, afield_obj.longitude, fc_raster)
+    wp = raster2point(afield_obj.latitude, afield_obj.longitude, pwp_raster)
+    thetaS = raster2point(afield_obj.latitude, afield_obj.longitude,
+                          thetaS_raster)
     return locals()
 
 
 def afield2swb(afield_obj, precip, evap):
     # Precip and evap must be pthelma.Timeseries afield_objects
-    fc = raster2point(afield_obj.latitude, afield_obj.longitude, fc_raster)
-    wp = raster2point(afield_obj.latitude, afield_obj.longitude, pwp_raster)
+    # HERE 1)
+    fc = afield_obj.get_field_capacity
+    wp = afield_obj.get_wilting_point
     rd = (float(afield_obj.get_root_depth_min) +
           float(afield_obj.get_root_depth_max)) / 2
     kc = float(afield_obj.get_kc)
@@ -119,7 +124,8 @@ def view_run(afield_obj, flag_run, daily_r_fps,
                                                       hourly_e_fps)
     precip_hourly.time_step.length_minutes = 60
     evap_hourly.time_step.length_minutes = 60
-
+    # Here form validation
+    # fc, thetat_s, wilting_point
     # Create a swb obj daily / hourly
     swb_daily_obj = afield2swb(afield_obj, precip_daily, evap_daily)
     swb_hourly_obj = afield2swb(afield_obj, precip_hourly, evap_hourly)

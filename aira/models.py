@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from aira.irma.utils import FC_FILE as fc_raster
+from aira.irma.utils import PWP_FILE as pwp_raster
+from aira.irma.utils import THETA_S_FILE as thetaS_raster
+from aira.irma.utils import raster2point
+
 
 class Profile(models.Model):
     farmer = models.ForeignKey(User)
@@ -71,6 +76,37 @@ class Agrifield(models.Model):
                                                      null=True, blank=True)
     custom_efficiency = models.FloatField(null=True, blank=True)
     custom_irrigation_optimizer = models.FloatField(null=True, blank=True)
+    custom_field_capacity = models.FloatField(null=True, blank=True)
+    custom_thetaS = models.FloatField(null=True, blank=True)
+    custom_wilting_point = models.FloatField(null=True, blank=True)
+
+    @property
+    def get_wilting_point(self):
+        if self.use_custom_parameters:
+            if self.custom_wilting_point in [None, '']:
+                return raster2point(self.latitude, self.longitude, pwp_raster)
+            return self.custom_wilting_point
+        else:
+            return raster2point(self.latitude, self.longitude, pwp_raster)
+
+    @property
+    def get_thetaS(self):
+        if self.use_custom_parameters:
+            if self.custom_thetaS in [None, '']:
+                return raster2point(self.latitude, self.longitude,
+                                    thetaS_raster)
+            return self.custom_thetaS
+        else:
+            return raster2point(self.latitude, self.longitude, thetaS_raster)
+
+    @property
+    def get_field_capacity(self):
+        if self.use_custom_parameters:
+            if self.custom_field_capacity in [None, '']:
+                return raster2point(self.latitude, self.longitude, fc_raster)
+            return self.custom_field_capacity
+        else:
+            return raster2point(self.latitude, self.longitude, fc_raster)
 
     @property
     def get_efficiency(self):
