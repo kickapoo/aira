@@ -69,12 +69,12 @@ msgid "Kc"
 msgstr "Kc"
 
 #: aira/forms.py:43
-msgid "Root depth (max)"
+msgid "Estimated root depth (max)"
 msgstr "Εκτιμώμενο μέγιστο βάθος ριζοστρώματος (m)"
 
 #: aira/forms.py:44
-msgid "Root depth (min)"
-msgstr "Εκτιμώμενο μέγιστο βάθος ριζοστρώματος (m)"
+msgid "Estimated root depth (min)"
+msgstr "Εκτιμώμενο ελάχιστο βάθος ριζοστρώματος (m)"
 
 #: aira/forms.py:45 aira/templates/aira/advice.html:73
 msgid "Maximum Allowable Depletion"
@@ -120,9 +120,6 @@ msgstr "Αναφορά"
 msgid "using custom parameters"
 msgstr "Χρήση προσαρμοσμένων παραμέτρων"
 
-#: aira/templates/aira/advice.html:71
-msgid "Estimated root depth (max)"
-msgstr "Εκτιμώμενο μέγιστο βάθος ριζοστρώματος (m)"
 
 #: aira/templates/aira/advice.html:83
 msgid "Irrigation System Type"
