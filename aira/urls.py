@@ -7,11 +7,13 @@ from aira.views import (IndexPageView, HomePageView, AdvicePageView,
                         CreateAgrifield, UpdateAgrifield, DeleteAgrifield,
                         CreateIrrigationLog, UpdateIrrigationLog,
                         DeleteIrrigationLog,
-                        TryPageView)
+                        TryPageView, AlbedoMapsPageView)
 
 urlpatterns = patterns(
     '',
     url(r'^$', IndexPageView.as_view(), name='welcome'),
+    # Albedo Maps
+    url(r'albedo_maps/$', AlbedoMapsPageView.as_view(), name='maps'),
     # Home
     url(r'^home/$',
         login_required(HomePageView.as_view()),

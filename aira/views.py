@@ -31,6 +31,10 @@ class IndexPageView(TemplateView):
         return context
 
 
+class AlbedoMapsPageView(TemplateView):
+    template_name = 'aira/albedo_maps.html'
+
+
 class HomePageView(TemplateView):
     template_name = 'aira/home.html'
 
