@@ -65,13 +65,14 @@ def afield2swb(afield_obj, precip, evap):
 
 
 def run_water_balance(swb_obj, start_date, end_date,
-                      theta_init, irr_event_days, FC_IRT, Dr0):
+                      theta_init, irr_event_days, FC_IRT, Dr0, Inet_in):
     return swb_obj, swb_obj.water_balance(theta_init, irr_event_days,
                                           start_date, end_date, FC_IRT,
-                                          Dr0, Inet_in="NO")
+                                          Dr0, Inet_in)
 
 
-def run_daily(swb_obj, start_date, theta_init, FC_IRT, Dr0, irr_event_days=[]):
+def run_daily(swb_obj, start_date, theta_init, FC_IRT, Inet_in,
+              Dr0, irr_event_days=[]):
     # start_date: latests.irrigation event
     #             or start_date     + 20day for default run
     end_date = data_start_end_date(swb_obj.precip, swb_obj.evap)[1]
@@ -79,11 +80,11 @@ def run_daily(swb_obj, start_date, theta_init, FC_IRT, Dr0, irr_event_days=[]):
     end_date = make_tz_datetime(end_date, flag="D")
     daily_swb, depl_daily = run_water_balance(swb_obj, start_date, end_date,
                                               theta_init, irr_event_days,
-                                              FC_IRT, Dr0)
+                                              FC_IRT, Dr0, Inet_in)
     return daily_swb, depl_daily
 
 
-def run_hourly(swb_obj, FC_IRT, Dr0):
+def run_hourly(swb_obj, FC_IRT, Inet_in, Dr0):
     start_date, end_date = data_start_end_date(swb_obj.precip, swb_obj.evap)
     theta_init = 0  # Set to zero as Dr_Historical will replace theta_init
     start_date = make_tz_datetime(start_date, flag="H")
@@ -91,7 +92,7 @@ def run_hourly(swb_obj, FC_IRT, Dr0):
     irr_event_days = []
     hourly_swb, depl_hourly = run_water_balance(swb_obj, start_date, end_date,
                                                 theta_init, irr_event_days,
-                                                FC_IRT, Dr0)
+                                                FC_IRT, Dr0, Inet_in)
     # Also returns start_date, end_date for use in url 'home'
     return hourly_swb, depl_hourly, start_date, end_date
 
@@ -111,7 +112,7 @@ def over_fc(swb_report, fc_mm):
     return False
 
 
-def view_run(afield_obj, flag_run, daily_r_fps,
+def view_run(afield_obj, flag_run, Inet_in, daily_r_fps,
              daily_e_fps, hourly_r_fps, hourly_e_fps):
     # Notes:  flag : "irr_event" , "no_irr_event"
     # Load Historical (daily)
@@ -143,10 +144,10 @@ def view_run(afield_obj, flag_run, daily_r_fps,
             theta_init = swb_daily_obj.fc_mm
         FC_IRT = afield_obj.get_irrigation_optimizer
         depl_historical = run_daily(swb_daily_obj, start_date,
-                                    theta_init, FC_IRT, Dr0=None,
+                                    theta_init, FC_IRT, Inet_in, Dr0=None,
                                     irr_event_days=[])[1]
         swb_view, depl_h, sd, ed = run_hourly(swb_hourly_obj,
-                                              FC_IRT, depl_historical)
+                                              FC_IRT, Inet_in, depl_historical)
 
     if flag_run == "irr_event":
         start_date = afield_obj.irrigationlog_set.latest().time
@@ -171,9 +172,9 @@ def view_run(afield_obj, flag_run, daily_r_fps,
         # Above comment is set as a remainder.
         FC_IRT = afield_obj.get_irrigation_optimizer
         depl_historical = run_daily(swb_daily_obj, start_date,
-                                    theta_init, FC_IRT, Dr0,
+                                    theta_init, FC_IRT, Inet_in, Dr0,
                                     irr_event_days=[])[1]
         swb_view, depl_h, sd, ed = run_hourly(swb_hourly_obj,
-                                              FC_IRT, depl_historical)
+                                              FC_IRT, Inet_in, depl_historical)
     ovfc = over_fc(swb_view.wbm_report, swb_view.fc_mm)
     return swb_view, sd, ed, advice_date(swb_view.wbm_report), ovfc

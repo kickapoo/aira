@@ -157,7 +157,9 @@
           {% endif %}
             <p><b>{% trans "Irrigation Advice" %}</b>:
               {% if f.adv %}
-              <button class="btn btn-success btn-xs" id="show_results"> {% trans "Show / Hide" %}</button>
+              {% trans "Based on the available information" %}, {% trans "from" %}
+               <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> {% trans "to" %}<span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span> {% trans "irrigation should be applied according to the following table" %}:
+              <button class="btn btn-success btn-xs" id="show_results"> {% trans "Show / Hide Table" %}</button>
               <div class="row" style="display:none" id="results">
                 <div class="col-md-12">
                   <div class="table-responsive">
@@ -170,7 +172,6 @@
                         </tr>
                       </thead>
                        <tbody>
-
                           {% for irr_date, values in f.adv_sorted  %}
                             <tr>
                               <td align="center">{{ irr_date |date:"d/m/Y h:00:s" }}</td>
@@ -183,6 +184,7 @@
                   </div>
                 </div>
               </div>
+              {% trans "For more options, refer to the irrigation report" %}.
               {% else %}
                 {% trans "No need to irrigate from" %} <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> {% trans "to" %}  <span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span>.
               {% endif %}

@@ -38,6 +38,7 @@ class HomePageView(TemplateView):
         context = super(HomePageView, self).get_context_data(**kwargs)
         # Load data paths
         daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = irma_utils.load_meteodata_file_paths()
+        Inet_in = "YES"
         # Fetch models.Profile(User)
         try:
             context['profile'] = Profile.objects.get(farmer=self.request.user)
@@ -59,14 +60,14 @@ class HomePageView(TemplateView):
                             f.last_irr_event_outside_period = False
                             flag_run = "irr_event"
                             swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
-                                f, flag_run, daily_r_fps, daily_e_fps,
+                                f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                                 hourly_r_fps, hourly_e_fps)
                             f.adv_sorted = sorted(f.adv.iteritems())
                         else:
                             f.last_irr_event_outside_period = True
                             flag_run = "no_irr_event"
                             swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
-                                f, flag_run, daily_r_fps, daily_e_fps,
+                                f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                                 hourly_r_fps, hourly_e_fps)
                             f.adv_sorted = sorted(f.adv.iteritems())
                             f.over_fc = ovfc
@@ -74,7 +75,7 @@ class HomePageView(TemplateView):
                         f.irr_event = False
                         flag_run = "no_irr_event"
                         swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
-                            f, flag_run, daily_r_fps, daily_e_fps,
+                            f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                             hourly_r_fps, hourly_e_fps)
                         f.adv_sorted = sorted(f.adv.iteritems())
                         f.over_fc = ovfc
@@ -91,6 +92,7 @@ class AdvicePageView(TemplateView):
         context = super(AdvicePageView, self).get_context_data(**kwargs)
         # Load data paths
         daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = irma_utils.load_meteodata_file_paths()
+        Inet_in = "NO"
         f = Agrifield.objects.get(pk=self.kwargs['pk'])
         context['f'] = f
         context['fpars'] = get_parameters(f)
@@ -99,8 +101,9 @@ class AdvicePageView(TemplateView):
             if irma_utils.last_timelog_in_dataperiod(f, daily_r_fps, daily_e_fps):
                 f.last_irr_event_outside_period = False
                 flag_run = "irr_event"
+                print Inet_in
                 swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
-                    f, flag_run, daily_r_fps, daily_e_fps,
+                    f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                     hourly_r_fps, hourly_e_fps)
                 f.adv_sorted = sorted(f.adv.iteritems())
                 f.swb_report = swb_view.wbm_report
@@ -108,7 +111,7 @@ class AdvicePageView(TemplateView):
                 f.last_irr_event_outside_period = True
                 flag_run = "no_irr_event"
                 swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
-                    f, flag_run, daily_r_fps, daily_e_fps,
+                    f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                     hourly_r_fps, hourly_e_fps)
                 f.adv_sorted = sorted(f.adv.iteritems())
                 f.swb_report = swb_view.wbm_report
@@ -117,7 +120,7 @@ class AdvicePageView(TemplateView):
             f.model = "None irrigation event run"
             flag_run = "no_irr_event"
             swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
-                f, flag_run, daily_r_fps, daily_e_fps,
+                f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                 hourly_r_fps, hourly_e_fps)
             f.adv_sorted = sorted(f.adv.iteritems())
             f.swb_report = swb_view.wbm_report
