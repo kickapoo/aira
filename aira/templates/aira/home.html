@@ -166,17 +166,17 @@
                   <table class="table">
                       <thead>
                         <tr>
-                          <th>{% trans "Date" %} </th>
-                          <th>{% trans "Ks" %}</th>
-                          <th>{% trans "Irrigation Water Amount" %} (mm)</th>
+                          <th align="left" >{% trans "Date" %} </th>
+                          <th align="left" >{% trans "Ks" %}</th>
+                          <th align="left" >{% trans "Irrigation Water Amount" %} (mm)</th>
                         </tr>
                       </thead>
                        <tbody>
                           {% for irr_date, values in f.adv_sorted  %}
                             <tr>
-                              <td align="center">{{ irr_date |date:"d/m/Y h:00:s" }}</td>
-                              <td align="center">{{ values.1 |floatformat:"2" }} </td>
-                              <td align="center">{{ values.0 |floatformat:"2" }}</td>
+                              <td align="left">{{ irr_date |date:"d/m/Y h:00:s" }}</td>
+                              <td align="left">{{ values.1 |floatformat:"2" }} </td>
+                              <td align="left">{{ values.0 |floatformat:"2" }}</td>
                             </tr>
                         {% endfor %}
                       </tbody>

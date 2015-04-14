@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 from aira.irma.utils import FC_FILE as fc_raster
 from aira.irma.utils import PWP_FILE as pwp_raster
@@ -68,17 +69,51 @@ class Agrifield(models.Model):
     irrigation_optimizer = models.FloatField(choices=IRT_LIST,
                                              default=1.0)
     use_custom_parameters = models.BooleanField(default=False)
-    custom_kc = models.FloatField(null=True, blank=True)
-    custom_root_depth_max = models.FloatField(null=True, blank=True)
-    custom_root_depth_min = models.FloatField(null=True, blank=True)
-    custom_max_allow_depletion = models.DecimalField(max_digits=6,
-                                                     decimal_places=2,
-                                                     null=True, blank=True)
-    custom_efficiency = models.FloatField(null=True, blank=True)
-    custom_irrigation_optimizer = models.FloatField(null=True, blank=True)
-    custom_field_capacity = models.FloatField(null=True, blank=True)
-    custom_thetaS = models.FloatField(null=True, blank=True)
-    custom_wilting_point = models.FloatField(null=True, blank=True)
+    custom_kc = models.FloatField(null=True, blank=True,
+                                  validators=[
+                                      MaxValueValidator(1.50),
+                                      MinValueValidator(0.10)
+                                  ])
+    custom_root_depth_max = models.FloatField(null=True, blank=True,
+                                  validators=[
+                                      MaxValueValidator(4.00),
+                                      MinValueValidator(0.20)
+                                  ])
+    custom_root_depth_min = models.FloatField(null=True, blank=True,
+                                  validators=[
+                                      MaxValueValidator(2.00),
+                                      MinValueValidator(0.5)
+                                  ])
+    custom_max_allow_depletion = models.FloatField(null=True, blank=True,
+                                  validators=[
+                                      MaxValueValidator(1.00),
+                                      MinValueValidator(0.00)
+                                  ])
+    custom_efficiency = models.FloatField(null=True, blank=True,
+                                  validators=[
+                                      MaxValueValidator(1.00),
+                                      MinValueValidator(0.05)
+                                  ])
+    custom_irrigation_optimizer = models.FloatField(null=True, blank=True,
+                                  validators=[
+                                      MaxValueValidator(2.00),
+                                      MinValueValidator(0.50)
+                                  ])
+    custom_field_capacity = models.FloatField(null=True, blank=True,
+                                  validators=[
+                                      MaxValueValidator(0.45),
+                                      MinValueValidator(0.10)
+                                  ])
+    custom_thetaS = models.FloatField(null=True, blank=True,
+                                  validators=[
+                                      MaxValueValidator(0.55),
+                                      MinValueValidator(0.30)
+                                  ])
+    custom_wilting_point = models.FloatField(null=True, blank=True,
+                                  validators=[
+                                      MaxValueValidator(0.22),
+                                      MinValueValidator(0.00)
+                                  ])
 
     @property
     def get_wilting_point(self):

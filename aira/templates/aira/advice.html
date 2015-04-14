@@ -106,13 +106,13 @@
             <table class="table">
                 <thead>
                   <tr>
-                    <th align="center">{% trans "Date" %}<br> </th>
-                    <th align="center">{% trans "Precipitation" %} <br>(mm)</th>
-                    <th align="center">{% trans "ETc" %} <br> (mm)</th>
-                    <th align="center">{% trans "Depletion" %} <br> (mm)</th>
-                    <th align="center">{% trans "Soil moisture" %} <br>(%)</th>
-                    <th align="center">{% trans "Irrigate" %} ?</th>
-                    <th align="center">{% trans "Irrigation Water Amount" %}<br> (mm)</th>
+                    <th align="left">{% trans "Date" %}<br> </th>
+                    <th align="left">{% trans "Precipitation" %} <br>(mm)</th>
+                    <th align="left">{% trans "ETc" %} <br> (mm)</th>
+                    <th align="left">{% trans "Depletion" %} <br> (mm)</th>
+                    <th align="left">{% trans "Soil moisture" %} <br>(%)</th>
+                    <th align="left">{% trans "Irrigate" %} ?</th>
+                    <th align="left">{% trans "Irrigation Water Amount" %}<br> (mm)</th>
                   </tr>
                 </thead>
                  <tbody>
@@ -122,17 +122,17 @@
                       {% else %}
                       <tr class="active">
                     {% endif %}
-                        <td align="center">{{ result.date |date:"d/m/Y H:00"}}</td>
-                        <td align="center">{{ result.P|floatformat:"2" }}</td>
-                        <td align="center"> {{ result.ETc|floatformat:"2" }} </td>
-                        <td align="center">{{ result.Dr_i|floatformat:"2"}}</td>
-                        <td align="center"> {{ result.Theta_p|mul:100|floatformat:"1" }}</td>
+                        <td align="left">{{ result.date |date:"d/m/Y H:00"}}</td>
+                        <td align="left">{{ result.P|floatformat:"2" }}</td>
+                        <td align="left"> {{ result.ETc|floatformat:"2" }} </td>
+                        <td align="left">{{ result.Dr_i|floatformat:"2"}}</td>
+                        <td align="left"> {{ result.Theta_p|mul:100|floatformat:"1" }}</td>
                         {% if result.irrigate > 0 %}
-                          <td align="center"> {% trans "YES" %} </td>
+                          <td align="left"> {% trans "YES" %} </td>
                         {% else %}
-                          <td align="center"> {% trans "NO" %} </td>
+                          <td align="left"> {% trans "NO" %} </td>
                         {% endif %}
-                        <td align="center"> {{ result.Ifinal|floatformat:"2" }}</td>
+                        <td align="left"> {{ result.Ifinal|floatformat:"2" }}</td>
                       </tr>
                   {% endfor %}
                 </tbody>
