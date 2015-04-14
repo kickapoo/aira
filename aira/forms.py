@@ -46,7 +46,7 @@ class AgrifieldForm(forms.ModelForm):
             'custom_efficiency': _("Irrigation efficiency"),
             'custom_field_capacity': _("Field Capacity"),
             'custom_thetaS': _("Soil moisture at saturation"),
-            'custom_wilting_point': _("Wilting Point")
+            'custom_wilting_point': _("Permanent Wilting Point")
         }
 
 

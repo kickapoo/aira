@@ -158,7 +158,7 @@
             <p><b>{% trans "Irrigation Advice" %}</b>:
               {% if f.adv %}
               {% trans "Based on the available information" %}, {% trans "from" %}
-               <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> {% trans "to" %}<span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span> {% trans "irrigation should be applied according to the following table" %}:
+               <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> {% trans "to" %} <span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span>, {% trans "irrigation should be applied according to the following table" %}:
               <button class="btn btn-success btn-xs" id="show_results"> {% trans "Show / Hide Table" %}</button>
               <div class="row" style="display:none" id="results">
                 <div class="col-md-12">
