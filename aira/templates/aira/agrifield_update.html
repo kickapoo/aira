@@ -111,24 +111,33 @@ $(document).ready(function(){
               {% else %}
                   <div class='form-group' style="display:none" id="custom_par">
               {% endif %}
+              <fieldset class="well well-sm">
+                  <legend>{% trans "Irrigation Management" %}</legend>
+                      {% bootstrap_field form.custom_efficiency %}
+                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.irr_eff }}</b></span></sup>
                       {% bootstrap_field form.custom_irrigation_optimizer%}
                       <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>1.0</b></span></sup>
+              </fieldset>
+              <fieldset class="well well-sm">
+                  <legend>{% trans "Crop" %}</legend>
                       {% bootstrap_field form.custom_kc %}
                       <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.kc }}</b></span></sup>
+                      {% bootstrap_field form.custom_max_allow_depletion %}
+                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.mad }}</b></span></sup>
                       {% bootstrap_field form.custom_root_depth_max %}
                       <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.rd_max}}</b></span></sup>
                       {% bootstrap_field form.custom_root_depth_min %}
                       <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.rd_min }}</b></span></sup>
-                      {% bootstrap_field form.custom_max_allow_depletion %}
-                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.mad }}</b></span></sup>
-                      {% bootstrap_field form.custom_efficiency %}
-                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.irr_eff }}</b></span></sup>
+              </fieldset>
+              <fieldset class="well well-sm">
+                  <legend>{% trans "Soil" %}</legend>
                       {% bootstrap_field form.custom_field_capacity %}
                       <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.fc|floatformat:"2"  }}</b></span></sup>
-                      {% bootstrap_field form.custom_thetaS %}
-                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.thetaS|floatformat:"2"  }}</b></span></sup>
                       {% bootstrap_field form.custom_wilting_point %}
                       <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.wp|floatformat:"2"  }}</b></span></sup>
+                      {% bootstrap_field form.custom_thetaS %}
+                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.thetaS|floatformat:"2"  }}</b></span></sup>
+              </fieldset>
               </div>
             </div>
         </form>
