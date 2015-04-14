@@ -42,7 +42,7 @@ class AgrifieldForm(forms.ModelForm):
             'custom_kc': _("Kc"),
             'custom_root_depth_max': _("Root depth (max)"),
             'custom_root_depth_min': _("Root depth (min)"),
-            'custom_max_allow_depletion': _("Maximum allowable depletion"),
+            'custom_max_allow_depletion': _("Maximum Allowable Depletion"),
             'custom_efficiency': _("Irrigation efficiency"),
             'custom_field_capacity': _("Field Capacity"),
             'custom_thetaS': _("Soil moisture at saturation"),
