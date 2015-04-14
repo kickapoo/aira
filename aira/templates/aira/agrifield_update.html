@@ -68,6 +68,21 @@
                     });
                 });
 
+$(document).ready(function(){
+     $('#id_area').attr('placeholder',"Irrigated Field Area m²");
+     $('#id_custom_irrigation_optimizer').attr('placeholder','0.5 - 2.0, ' +'{% trans 'step' %}' + ': 0.1');
+     $('#id_custom_kc').attr('placeholder','0.10 - 1.50, ' +'{% trans 'step' %}' + ': 0.01');
+     $('#id_custom_root_depth_max').attr('placeholder','0.2 - 4.0 m, ' +'{% trans 'step' %}' + ': 0.1');
+     $('#id_custom_root_depth_min').attr('placeholder','0.5 - 2.0 m, ' +'{% trans 'step' %}' + ': 0.1');
+     $('#id_custom_max_allow_depletion').attr('placeholder','0.00 - 1.00, ' +'{% trans 'step' %}' + ': 0.01');
+     $('#id_custom_efficiency').attr('placeholder','0.05 - 1.0, ' +'{% trans 'step' %}' + ': 0.05');
+     $('#id_custom_field_capacity').attr('placeholder','0.10 - 0.45 m³/m³, ' +'{% trans 'step' %}' + ': 0.01');
+     $('#id_custom_wilting_point').attr('placeholder','0.00 - 0.22 m³/m³, ' +'{% trans 'step' %}' + ': 0.01');
+     $('#id_custom_thetaS').attr('placeholder','0.30 - 0.55 m³/m³, ' +'{% trans 'step' %}' + ': 0.01');
+
+});
+
+
           </script>
       <sub> {% trans "Click on Map to add your Field coordinates" %}</sub>
       <hr>

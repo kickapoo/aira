@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-14 16:22+0300\n"
+"POT-Creation-Date: 2015-04-14 17:56+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -229,13 +229,13 @@ msgid "Field(s) in your database"
 msgstr "Αγροτεμάχιο(α) στην βάση δεδομένων"
 
 #: aira/templates/aira/agrifield_form.html:74
-#: aira/templates/aira/agrifield_update.html:72
+#: aira/templates/aira/agrifield_update.html:87
 msgid "Click on Map to add your Field coordinates"
 msgstr ""
 "Κάντε κλικ στο χάρτη για να προσθέσετε τις συντεταγμένες του αγροτεμαχίου σας"
 
 #: aira/templates/aira/agrifield_form.html:92
-#: aira/templates/aira/agrifield_update.html:91
+#: aira/templates/aira/agrifield_update.html:106
 msgid "Back"
 msgstr "Επιστροφή"
 
@@ -262,7 +262,7 @@ msgstr "Χωρίς αγροτεμάχια δεν μπορεί να λειτου�
 
 #: aira/templates/aira/agrifield_update.html:5
 #: aira/templates/aira/agrifield_update.html:12
-#: aira/templates/aira/agrifield_update.html:90
+#: aira/templates/aira/agrifield_update.html:105
 #: aira/templates/aira/irrigationlog_update.html:11
 #: aira/templates/aira/irrigationlog_update.html:18
 #: aira/templates/aira/profile_form.html:10
@@ -270,15 +270,27 @@ msgstr "Χωρίς αγροτεμάχια δεν μπορεί να λειτου�
 msgid "Update"
 msgstr "Ανανέωση"
 
-#: aira/templates/aira/agrifield_update.html:101
-#: aira/templates/aira/agrifield_update.html:103
-#: aira/templates/aira/agrifield_update.html:105
-#: aira/templates/aira/agrifield_update.html:107
-#: aira/templates/aira/agrifield_update.html:109
-#: aira/templates/aira/agrifield_update.html:111
-#: aira/templates/aira/agrifield_update.html:113
-#: aira/templates/aira/agrifield_update.html:115
-#: aira/templates/aira/agrifield_update.html:117
+#: aira/templates/aira/agrifield_update.html:73
+#: aira/templates/aira/agrifield_update.html:74
+#: aira/templates/aira/agrifield_update.html:75
+#: aira/templates/aira/agrifield_update.html:76
+#: aira/templates/aira/agrifield_update.html:77
+#: aira/templates/aira/agrifield_update.html:78
+#: aira/templates/aira/agrifield_update.html:79
+#: aira/templates/aira/agrifield_update.html:80
+#: aira/templates/aira/agrifield_update.html:81
+msgid "step"
+msgstr "βήμα"
+
+#: aira/templates/aira/agrifield_update.html:116
+#: aira/templates/aira/agrifield_update.html:118
+#: aira/templates/aira/agrifield_update.html:120
+#: aira/templates/aira/agrifield_update.html:122
+#: aira/templates/aira/agrifield_update.html:124
+#: aira/templates/aira/agrifield_update.html:126
+#: aira/templates/aira/agrifield_update.html:128
+#: aira/templates/aira/agrifield_update.html:130
+#: aira/templates/aira/agrifield_update.html:132
 msgid "Value from system's database"
 msgstr "Τιμή στην βάση δεδομένων του συστήματος"
 
@@ -358,6 +370,7 @@ msgstr "Φτάσατε στην υδατοϊκανότητα"
 msgid "Irrigation Advice"
 msgstr "Συμβουλή Άρδευσης"
 
+#: aira/templates/aira/home.html:160
 msgid "Based on the available information"
 msgstr "Βάση των διαθέσιμων δεδομένων"
 
