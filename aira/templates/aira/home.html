@@ -155,9 +155,9 @@
                 {% trans "You reached field capacity" %} ({{ f.fc_mm|floatformat:"1" }} mm)</a>.
             </div>
           {% endif %}
-            <p><b>{% trans "Irrigation Advice" %}:
+            <p><b>{% trans "Irrigation Advice" %}</b>:
               {% if f.adv %}
-              <button class="btn btn-success btn-xs" id="show_results"> {% trans "Show / Hide" %}</button></b>
+              <button class="btn btn-success btn-xs" id="show_results"> {% trans "Show / Hide" %}</button>
               <div class="row" style="display:none" id="results">
                 <div class="col-md-12">
                   <div class="table-responsive">
@@ -170,7 +170,8 @@
                         </tr>
                       </thead>
                        <tbody>
-                          {% for irr_date, values in f.adv.items %}
+
+                          {% for irr_date, values in f.adv_sorted  %}
                             <tr>
                               <td align="center">{{ irr_date |date:"d/m/Y h:00:s" }}</td>
                               <td align="center">{{ values.1 |floatformat:"2" }} </td>

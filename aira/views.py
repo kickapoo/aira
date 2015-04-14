@@ -61,13 +61,14 @@ class HomePageView(TemplateView):
                             swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
                                 f, flag_run, daily_r_fps, daily_e_fps,
                                 hourly_r_fps, hourly_e_fps)
+                            f.adv_sorted = sorted(f.adv.iteritems())
                         else:
                             f.last_irr_event_outside_period = True
                             flag_run = "no_irr_event"
                             swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
                                 f, flag_run, daily_r_fps, daily_e_fps,
                                 hourly_r_fps, hourly_e_fps)
-
+                            f.adv_sorted = sorted(f.adv.iteritems())
                             f.over_fc = ovfc
                     else:
                         f.irr_event = False
@@ -75,6 +76,7 @@ class HomePageView(TemplateView):
                         swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
                             f, flag_run, daily_r_fps, daily_e_fps,
                             hourly_r_fps, hourly_e_fps)
+                        f.adv_sorted = sorted(f.adv.iteritems())
                         f.over_fc = ovfc
                     f.fc_mm = swb_view.fc_mm
         except Agrifield.DoesNotExist:
@@ -100,6 +102,7 @@ class AdvicePageView(TemplateView):
                 swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
                     f, flag_run, daily_r_fps, daily_e_fps,
                     hourly_r_fps, hourly_e_fps)
+                f.adv_sorted = sorted(f.adv.iteritems())
                 f.swb_report = swb_view.wbm_report
             else:
                 f.last_irr_event_outside_period = True
@@ -107,6 +110,7 @@ class AdvicePageView(TemplateView):
                 swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
                     f, flag_run, daily_r_fps, daily_e_fps,
                     hourly_r_fps, hourly_e_fps)
+                f.adv_sorted = sorted(f.adv.iteritems())
                 f.swb_report = swb_view.wbm_report
         else:
             f.irr_event = False
@@ -115,6 +119,7 @@ class AdvicePageView(TemplateView):
             swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
                 f, flag_run, daily_r_fps, daily_e_fps,
                 hourly_r_fps, hourly_e_fps)
+            f.adv_sorted = sorted(f.adv.iteritems())
             f.swb_report = swb_view.wbm_report
         return context
 
