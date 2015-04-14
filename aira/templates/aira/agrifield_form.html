@@ -45,7 +45,7 @@
                                numZoomLevels: 24,
                                projection: new OpenLayers.Projection("EPSG:900913"),
                                iformat: 'image/png'});
-          map.addLayers([ktimatologio, cycle]);
+          map.addLayers([cycle, ktimatologio]);
           map.setCenter(new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 10);
           // Create Marker
           var markers = new OpenLayers.Layer.Markers( "Add new Field" );
