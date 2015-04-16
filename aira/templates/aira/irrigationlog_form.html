@@ -57,7 +57,7 @@
             <tr>
               <td>{{ l.id }}</td>
               <td><a href="{% url 'update_irrlog' l.id%}">{{l.time}}</a></td>
-              <td>{{l.water_amount}}</td>
+              <td align="center">{{l.applied_water}}</td>
               <td><a href="{% url 'delete_irrlog' l.id %}">{% trans "Delete" %} </a></td>
             </tr>
           {% endfor %}
