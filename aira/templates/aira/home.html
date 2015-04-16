@@ -93,12 +93,10 @@
         map.addControl(controls['selector']);
         controls['selector'].activate();
 
-         $(document).ready(function(){
-              $("#show_results").click(function(){
-                  $("#results").stop().toggle();
-              });
-          });
 
+        function togl(id) {
+            $("#"+ id).stop().toggle()
+        }
       </script>
       </div>
       {% if profile %}
@@ -159,8 +157,8 @@
               {% if f.adv %}
               {% trans "Based on the available information" %}, {% trans "from" %}
                <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> {% trans "to" %} <span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span>, {% trans "irrigation should be applied according to the following table" %}:
-              <button class="btn btn-success btn-xs" id="show_results"> {% trans "Show / Hide Table" %}</button>
-              <div class="row" style="display:none" id="results">
+              <button onclick="togl('{{f.id}}')"class="btn btn-success btn-xs" id="show_results"> {% trans "Show / Hide Table" %}</button>
+              <div class="row" style="display:none" id="{{f.id}}">
                 <div class="col-md-12">
                   <div class="table-responsive">
                   <table class="table">
