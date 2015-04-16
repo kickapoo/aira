@@ -363,7 +363,7 @@ msgstr "Συμβουλή Άρδευσης"
 
 #: aira/templates/aira/home.html:160
 msgid "Based on the available information"
-msgstr "Βάση των διαθέσιμων δεδομένων"
+msgstr "Βάσει των διαθέσιμων δεδομένων"
 
 #: aira/templates/aira/home.html:160
 msgid "from"
