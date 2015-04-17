@@ -143,8 +143,9 @@ def view_run(afield_obj, flag_run, Inet_in, daily_r_fps,
         if start_date.month in [10, 11, 12, 1, 2, 3]:
             theta_init = swb_daily_obj.fc_mm
         FC_IRT = afield_obj.get_irrigation_optimizer
+        Inet_in_h = "NO"
         depl_historical = run_daily(swb_daily_obj, start_date,
-                                    theta_init, FC_IRT, Inet_in, Dr0=None,
+                                    theta_init, FC_IRT, Inet_in_h, Dr0=None,
                                     irr_event_days=[])[1]
         swb_view, depl_h, sd, ed = run_hourly(swb_hourly_obj,
                                               FC_IRT, Inet_in, depl_historical)
@@ -171,8 +172,9 @@ def view_run(afield_obj, flag_run, Inet_in, daily_r_fps,
         #              in next (timeseries) days ex. start_date + 2 etc
         # Above comment is set as a remainder.
         FC_IRT = afield_obj.get_irrigation_optimizer
+        Inet_in_h = "NO"
         depl_historical = run_daily(swb_daily_obj, start_date,
-                                    theta_init, FC_IRT, Inet_in, Dr0,
+                                    theta_init, FC_IRT, Inet_in_h, Dr0,
                                     irr_event_days=[])[1]
         swb_view, depl_h, sd, ed = run_hourly(swb_hourly_obj,
                                               FC_IRT, Inet_in, depl_historical)
