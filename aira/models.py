@@ -82,7 +82,7 @@ class Agrifield(models.Model):
     custom_root_depth_min = models.FloatField(null=True, blank=True,
                                   validators=[
                                       MaxValueValidator(2.00),
-                                      MinValueValidator(0.5)
+                                      MinValueValidator(0.1)
                                   ])
     custom_max_allow_depletion = models.FloatField(null=True, blank=True,
                                   validators=[
