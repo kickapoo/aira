@@ -105,7 +105,6 @@ class AdvicePageView(TemplateView):
             if irma_utils.last_timelog_in_dataperiod(f, daily_r_fps, daily_e_fps):
                 f.last_irr_event_outside_period = False
                 flag_run = "irr_event"
-                print Inet_in
                 swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
                     f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                     hourly_r_fps, hourly_e_fps)
