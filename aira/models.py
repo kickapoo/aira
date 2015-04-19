@@ -209,7 +209,7 @@ class Agrifield(models.Model):
 class IrrigationLog(models.Model):
     agrifield = models.ForeignKey(Agrifield)
     time = models.DateTimeField()
-    applied_water = models.IntegerField()
+    applied_water = models.IntegerField(null=True, blank=True)
 
     class Meta:
         get_latest_by = 'time'
