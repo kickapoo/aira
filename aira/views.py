@@ -63,14 +63,15 @@ class HomePageView(TemplateView):
                         if irma_utils.last_timelog_in_dataperiod(f, daily_r_fps, daily_e_fps):
                             f.last_irr_event_outside_period = False
                             flag_run = "irr_event"
-                            swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
+                            swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
                                 f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                                 hourly_r_fps, hourly_e_fps)
                             f.adv_sorted = sorted(f.adv.iteritems())
+                            f.last_irrigate_date = f.irrigationlog_set.latest().time
                         else:
                             f.last_irr_event_outside_period = True
                             flag_run = "no_irr_event"
-                            swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
+                            swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
                                 f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                                 hourly_r_fps, hourly_e_fps)
                             f.adv_sorted = sorted(f.adv.iteritems())
@@ -78,7 +79,7 @@ class HomePageView(TemplateView):
                     else:
                         f.irr_event = False
                         flag_run = "no_irr_event"
-                        swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
+                        swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
                             f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                             hourly_r_fps, hourly_e_fps)
                         f.adv_sorted = sorted(f.adv.iteritems())
@@ -105,7 +106,7 @@ class AdvicePageView(TemplateView):
             if irma_utils.last_timelog_in_dataperiod(f, daily_r_fps, daily_e_fps):
                 f.last_irr_event_outside_period = False
                 flag_run = "irr_event"
-                swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
+                swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal  = view_run(
                     f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                     hourly_r_fps, hourly_e_fps)
                 f.adv_sorted = sorted(f.adv.iteritems())
@@ -113,7 +114,7 @@ class AdvicePageView(TemplateView):
             else:
                 f.last_irr_event_outside_period = True
                 flag_run = "no_irr_event"
-                swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
+                swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal  = view_run(
                     f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                     hourly_r_fps, hourly_e_fps)
                 f.adv_sorted = sorted(f.adv.iteritems())
@@ -122,7 +123,7 @@ class AdvicePageView(TemplateView):
             f.irr_event = False
             f.model = "None irrigation event run"
             flag_run = "no_irr_event"
-            swb_view, f.sd, f.ed, f.adv, ovfc = view_run(
+            swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal  = view_run(
                 f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                 hourly_r_fps, hourly_e_fps)
             f.adv_sorted = sorted(f.adv.iteritems())

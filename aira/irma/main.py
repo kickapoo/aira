@@ -81,7 +81,9 @@ def run_daily(swb_obj, start_date, theta_init, FC_IRT, Inet_in,
     daily_swb, depl_daily = run_water_balance(swb_obj, start_date, end_date,
                                               theta_init, irr_event_days,
                                               FC_IRT, Dr0, Inet_in)
-    return daily_swb, depl_daily
+
+    last_day_ifinal = [i['Ifinal'] for i in daily_swb.wbm_report if i['date'] == end_date]
+    return daily_swb, depl_daily, start_date, end_date, last_day_ifinal[0]
 
 
 def run_hourly(swb_obj, FC_IRT, Inet_in, Dr0):
@@ -150,6 +152,11 @@ def view_run(afield_obj, flag_run, Inet_in, daily_r_fps,
         swb_view, depl_h, sd, ed = run_hourly(swb_hourly_obj,
                                               FC_IRT, Inet_in, depl_historical)
 
+        # In the flag_run ="irr_event" the start, end historical data is returned
+        # so for shortness reasons are set equal to None
+        # This comment is a remainder for the future global code review
+        start_date, end_date, ifinal  = (None, None, None)
+
     if flag_run == "irr_event":
         start_date = afield_obj.irrigationlog_set.latest().time
         if afield_obj.irrigationlog_set.latest().applied_water in [None, '']:
@@ -173,10 +180,11 @@ def view_run(afield_obj, flag_run, Inet_in, daily_r_fps,
         # Above comment is set as a remainder.
         FC_IRT = afield_obj.get_irrigation_optimizer
         Inet_in_h = "NO"
-        depl_historical = run_daily(swb_daily_obj, start_date,
-                                    theta_init, FC_IRT, Inet_in_h, Dr0,
-                                    irr_event_days=[])[1]
+        daily_swb, depl_daily, start_date, end_date, ifinal = run_daily(swb_daily_obj, start_date,
+                                                                theta_init, FC_IRT, Inet_in_h, Dr0,
+                                                                irr_event_days=[])
+        depl_historical = depl_daily
         swb_view, depl_h, sd, ed = run_hourly(swb_hourly_obj,
                                               FC_IRT, Inet_in, depl_historical)
     ovfc = over_fc(swb_view.wbm_report, swb_view.fc_mm)
-    return swb_view, sd, ed, advice_date(swb_view.wbm_report), ovfc
+    return swb_view, sd, ed, advice_date(swb_view.wbm_report), ovfc, start_date, end_date, ifinal
