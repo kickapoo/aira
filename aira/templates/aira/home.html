@@ -157,7 +157,7 @@
               {% if f.adv %}
               <img style="display:block;float:left;"src="{% static 'img/warning.png' %}" alt="" height="20" width="20">&nbsp;
               <b>{% trans "Irrigation Advice" %}</b>: <br><br>
-              {% trans "Since the last recorded irrigation" %} <span class="text-warning">{{f.last_irrigate_date}}</span> {% trans "up to" %} <span class="text-warning">{{ f.edh }}</span>,  <span class="text-success">{{ f.ifinal |floatformat:"2" }} mm </span> {% trans "of additional water are needed" %}.
+              {% trans "Since the last recorded irrigation" %} (<span class="text-warning">{{f.last_irrigate_date|date:"d/m/Y"}}</span>) {% trans "up to" %} <span class="text-warning">{{ f.edh|date:"d/m/Y" }}</span>, {% trans "there is need of" %}  <span class="text-success">{{ f.ifinal |floatformat:"2" }} mm </span> {% trans "additional water" %}.
                 <br>
               {% trans "Based on the available information" %}, {% trans "from" %}
                <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> {% trans "to" %} <span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span>, {% trans "irrigation should be applied according to the following table" %}:
