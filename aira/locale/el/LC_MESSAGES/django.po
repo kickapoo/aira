@@ -678,3 +678,9 @@ msgstr "υπάρχει ανάγκη"
 
 msgid "additional water"
 msgstr "επιπλέον νερού"
+
+msgid "Account"
+msgstr "Λογαριασμός"
+
+msgid "msgid "Management"
+msgstr "Διαχείριση""

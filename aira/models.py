@@ -9,7 +9,7 @@ from aira.irma.utils import raster2point
 
 
 class Profile(models.Model):
-    farmer = models.ForeignKey(User)
+    farmer = models.OneToOneField(User)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     address = models.CharField(max_length=255, blank=True)

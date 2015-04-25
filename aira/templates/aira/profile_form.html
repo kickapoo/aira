@@ -15,9 +15,11 @@
         {% buttons %}
         <div class="col-sm-offset-2 col-sm-10">
           <button type="submit" class="btn btn-primary">{% trans "Update" %}</button>
-        </div>
+        <a class="btn btn-primary"href="{% url 'django.contrib.auth.views.password_reset' %}">{% trans "Reset password" %}</a>
         {% endbuttons %}
+        </div>
       </form>
+
     </div>
   </div>
 </div>
