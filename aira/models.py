@@ -34,7 +34,7 @@ class CropType(models.Model):
         verbose_name_plural = 'Crop Types'
 
     def __unicode__(self):
-        return u"{}".format(str(self.name))
+        return unicode(self.name)
 
 
 class IrrigationType(models.Model):
@@ -46,7 +46,7 @@ class IrrigationType(models.Model):
         verbose_name_plural = 'Irrigation Types'
 
     def __unicode__(self):
-        return u"{}".format(str(self.name))
+        return unicode(self.name)
 
 
 class Agrifield(models.Model):
