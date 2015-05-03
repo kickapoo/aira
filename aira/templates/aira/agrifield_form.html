@@ -6,6 +6,12 @@
 {% block title %} {{ user }}-{% trans "Add" %} {% trans "Field" %} {% endblock %}
 
 {% block content %}
+{% if user.is_demo %}
+ <div class="alert alert-info">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <i class="fa fa-info-circle fa-2x"></i>&nbsp; <span style="font-size:32px">{% trans "demo" %}</span>
+</div>
+{% endif %}
 {% if fields_count %}
   <div class="alert alert-warning">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
@@ -88,7 +94,9 @@
                   {% bootstrap_field form.irrigation_optimizer %}
                   </div>
                   {% buttons %}
-                  <button type="submit" class="btn btn-success btn-xs">{% trans "Add" %}</button>
+                  {% if not user.is_demo %}
+                      <button type="submit" class="btn btn-success btn-xs">{% trans "Add" %}</button>
+                  {% endif %}
                   <a class="btn btn-success btn-xs" href="{% url 'home' %}"> {% trans "Back" %} </a>
                   {% endbuttons %}
               </div>
@@ -125,7 +133,11 @@
                       <td><a href="{% url 'update_agrifield' f.id%}">{{f.crop_type.name}}</td>
                       <td><a href="{% url 'update_agrifield' f.id%}">{{f.irrigation_type.name}}</a></td>
                       <td><a href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i></a></td>
+                      {% if not user.is_demo %}
                       <td><a href="{% url 'delete_agrifield' f.id %}">{% trans "Delete" %}</a></td>
+                      {% else %}
+                      <td> - </td>
+                      {% endif %}
                     </tr>
                   {% empty %}
                     <div class="alert alert-warning">

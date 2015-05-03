@@ -5,6 +5,12 @@
 {% block title %} {{ user }} {% endblock %}
 
 {% block content %}
+{% if user.is_demo %}
+ <div class="alert alert-info">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <i class="fa fa-info-circle fa-2x"></i>&nbsp; <span style="font-size:32px">{% trans "demo" %}</span>
+</div>
+{% endif %}
 <div class="container">
   <div class="row">
     <div class="col-lg-12">
@@ -14,9 +20,11 @@
         {% csrf_token %}
         {% bootstrap_form form layout='horizontal' %}
         {% buttons %}
+        {% if not user.is_demo %}
         <div class="col-sm-offset-2 col-sm-10">
           <button type="submit" class="btn btn-success btn-xs">{% trans "Update" %}</button>
         </div>
+        {% endif %}
         {% endbuttons %}
         <script type="text/javascript">
           $("#id_time").datetimepicker({
