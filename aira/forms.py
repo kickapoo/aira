@@ -35,7 +35,7 @@ class AgrifieldForm(forms.ModelForm):
             'longitude': _('Longitude (WGS84)'),
             'crop_type': _('Crop Type'),
             'irrigation_type': _('Irrigation Type'),
-            'area': _('Irrigated Field Area (m<sup>2</sup>)'),
+            'area': _('Irrigated Field Area (m³)'),
             'irrigation_optimizer': _("Irrigation Optimizer"),
             'use_custom_parameters': _("Use Custom Parameters"),
             'custom_irrigation_optimizer': _("Irrigation Optimizer"),
