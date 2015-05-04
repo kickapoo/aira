@@ -35,7 +35,7 @@ class AgrifieldForm(forms.ModelForm):
             'longitude': _('Longitude (WGS84)'),
             'crop_type': _('Crop Type'),
             'irrigation_type': _('Irrigation Type'),
-            'area': _('Irrigated Field Area (m³)'),
+            'area': _('Irrigated Field Area (m<sup>2</sup>)'),
             'irrigation_optimizer': _("Irrigation Optimizer"),
             'use_custom_parameters': _("Use Custom Parameters"),
             'custom_irrigation_optimizer': _("Irrigation Optimizer"),
@@ -56,5 +56,5 @@ class IrrigationlogForm(forms.ModelForm):
         exclude = ('agrifield',)
         labels = {
             'time': _('Datetime (Y-M-D h:m:s) '),
-            'applied_water': _('Applied Irrigation Water (m3)'),
+            'applied_water': _('Applied Irrigation Water'),
         }
