@@ -1,3 +1,5 @@
+from django.utils.translation import ugettext_lazy as _
+
 from datetime import timedelta
 # Fetch Data files
 from aira.irma.utils import FC_FILE as fc_raster
@@ -28,6 +30,21 @@ def get_parameters(afield_obj):
     rd_factor = 1000  # Static for mm
     IRT = afield_obj.get_irrigation_optimizer
     custom_parameters = afield_obj.use_custom_parameters
+    last_irrigate = None
+    if afield_obj.irrigationlog_set.exists():
+        last_irrigate = afield_obj.irrigationlog_set.latest()
+        if last_irrigate.applied_water is None:
+            rd_factor = 1000
+            fc = raster2point(afield_obj.latitude, afield_obj.longitude, fc_raster)
+            wp = raster2point(afield_obj.latitude,
+                              afield_obj.longitude, pwp_raster)
+            fc_mm = fc * rd * rd_factor
+            wp_mm = wp * rd * rd_factor
+            taw_mm = fc_mm - wp_mm
+            p = float(afield_obj.get_mad)
+            raw_mm = p * taw_mm
+            last_irrigate.applied_water = (raw_mm * afield_obj.area) / 1000
+            last_irrigate.message = _("Irrigation water is estimated using system's default parameters.")
     return locals()
 
 
