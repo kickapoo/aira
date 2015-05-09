@@ -1,6 +1,8 @@
 from django import forms
 from .models import Agrifield, Profile, IrrigationLog
 from django.utils.translation import ugettext_lazy as _
+from captcha.fields import CaptchaField
+from registration.forms import RegistrationForm
 
 
 class ProfileForm(forms.ModelForm):
@@ -58,3 +60,10 @@ class IrrigationlogForm(forms.ModelForm):
             'time': _('Datetime (Y-M-D h:m:s) '),
             'applied_water': _('Applied Irrigation Water'),
         }
+
+
+class MyRegistrationForm(RegistrationForm):
+    """
+    Extension of the default registration form to include a captcha
+    """
+    captcha = CaptchaField(label=_('Are you human?'))

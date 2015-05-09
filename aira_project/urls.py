@@ -1,10 +1,14 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-
+from aira.forms import MyRegistrationForm
+from registration.backends.default.views import RegistrationView
 
 urlpatterns = patterns(
     '',
+    url(r'^accounts/register/$',
+        RegistrationView.as_view(form_class=MyRegistrationForm),
+        name='registration_register'),
     (r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('registration.backends.default.urls')),
@@ -22,10 +26,14 @@ urlpatterns = patterns(
     url(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$',
         auth_views.password_reset_confirm, name='password_reset_confirm'),
     url(r'', include('aira.urls')),
+    url(r'^captcha/', include('captcha.urls')),
 )
 
 urlpatterns += patterns('django.contrib.flatpages.views',
-    url(r'^description/$', 'flatpage', {'url': '/description/'}, name='description'),
-    url(r'^terms-of-use/$', 'flatpage', {'url': '/terms-of-use/'}, name='terms'),
-    url(r'^disclaimer/$', 'flatpage', {'url': '/disclaimer/'}, name='disclaimer'),
-)
+                        url(r'^description/$', 'flatpage',
+                            {'url': '/description/'}, name='description'),
+                        url(r'^terms-of-use/$', 'flatpage',
+                            {'url': '/terms-of-use/'}, name='terms'),
+                        url(r'^disclaimer/$', 'flatpage',
+                            {'url': '/disclaimer/'}, name='disclaimer'),
+                        )
