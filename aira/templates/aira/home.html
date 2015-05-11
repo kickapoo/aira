@@ -116,6 +116,8 @@
           {% else %}
             <a href="{% url 'update_profile' profile.id %}"> {% trans "[edit]" %} </a><br>
           {% endif %}
+          <strong>{% trans "Email Alert" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.get_notification_display|default:_("Not set") }}</a><br>
+          <strong>{% trans "Supervisor" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.supervisor|default:_("Not set")}}</a><br>
         </div>
       {% endif %}
 </div>

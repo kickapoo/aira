@@ -13,7 +13,8 @@ class ProfileForm(forms.ModelForm):
         labels = {
             'first_name': _('First name'),
             'last_name': _('Last name'),
-            'address': _('Address')
+            'address': _('Address'),
+            'notification': _('Email Alert per'),
         }
 
 

@@ -10,25 +10,40 @@
     <i class="fa fa-info-circle fa-2x"></i>&nbsp; <span style="font-size:32px">{% trans "demo" %}</span>
 </div>
 {% endif %}
-<div class="container">
-  <div class="row">
-    <div class="col-lg-12">
-      <h3>{% trans "Update" %} {% trans "Profile" %}</h3>
-      <hr>
-      <form method="post" role="form" class="form-horizontal">
-        {% csrf_token %}
-        {% bootstrap_form form layout='horizontal' %}
-        {% buttons %}
-        {% if not user.is_demo %}
-          <div class="col-sm-offset-2 col-sm-10">
-            <button type="submit" class="btn btn-primary">{% trans "Update" %}</button>
-          <a class="btn btn-primary"href="{% url 'django.contrib.auth.views.password_reset' %}">{% trans "Reset password" %}</a>
-        {% endif %}
-        {% endbuttons %}
-        </div>
-      </form>
-
+  <form method="post" role="form" >
+    {% csrf_token %}
+    <div class='row'>
+          <div class='col-sm-4'>
+          <h4 class="lead">{% trans "Update" %} {% trans "Profile" %}</h4>
+            <div class='form-group'>
+              {% bootstrap_field form.first_name %}
+              {% bootstrap_field form.last_name %}
+              {% bootstrap_field form.address %}
+              {% if not user.is_demo %}
+                    <button type="submit" class="btn btn-primary">{% trans "Update" %}</button>
+                    <a class="btn btn-primary"href="{% url 'django.contrib.auth.views.password_reset' %}">{% trans "Reset password" %}</a>
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <h4 class="lead">{% trans "Notification setup" %}</h4>
+             <div class="form-group">
+                {% bootstrap_field form.notification %}
+             </div>
+          </div>
+          <div class="col-sm-4">
+            <h4 class="lead">{% trans "Supervision" %}</h4>
+             <div class="form-group">
+                {% bootstrap_field form.supervisor %}
+             </div>
+          </div>
     </div>
-  </div>
-</div>
+    {% buttons %}
+    {% if not user.is_demo %}
+    <hr>
+
+    {% endif %}
+    {% endbuttons %}
+
+  </form>
 {% endblock%}
