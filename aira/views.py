@@ -54,10 +54,18 @@ class HomePageView(TemplateView):
             context['profile'] = None
         # Fetch models.Agrifield(User)
         try:
-            agrifields = Agrifield.objects.filter(
+            agrifields_user = Agrifield.objects.filter(
                 owner=self.request.user).all()
+            agrifields = list(agrifields_user)
+            if Profile.objects.filter(supervisor=self.request.user).exists():
+                supervising_users = Profile.objects.filter(
+                    supervisor=self.request.user)
+                for user in supervising_users:
+                    fields = Agrifield.objects.filter(owner=user).all()
+                    for field in fields:
+                        agrifields.append(field)
             context['agrifields'] = agrifields
-            context['fields_count'] = agrifields.count()
+            context['fields_count'] = agrifields_user.count()
             for f in agrifields:
                 if not irma_utils.agripoint_in_raster(f):
                     f.outside_arta_raster = True
