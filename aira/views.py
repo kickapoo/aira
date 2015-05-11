@@ -16,6 +16,7 @@ from .irma.main import get_default_db_value
 
 
 class TryPageView(TemplateView):
+
     def get(self, request):
         user = authenticate(username="demo", password="demo")
         login(request, user)
@@ -28,6 +29,9 @@ class IndexPageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(IndexPageView, self).get_context_data(**kwargs)
         context['yesterday'] = (timezone.now() - timedelta(days=1)).date()
+        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = irma_utils.load_meteodata_file_paths()
+        context['start_date'] = str(daily_e_fps[0][72:-4])
+        context['end_date'] = daily_e_fps[-1][72:-4]
         return context
 
 
@@ -106,7 +110,7 @@ class AdvicePageView(TemplateView):
             if irma_utils.last_timelog_in_dataperiod(f, daily_r_fps, daily_e_fps):
                 f.last_irr_event_outside_period = False
                 flag_run = "irr_event"
-                swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal  = view_run(
+                swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
                     f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                     hourly_r_fps, hourly_e_fps)
                 f.adv_sorted = sorted(f.adv.iteritems())
@@ -114,7 +118,7 @@ class AdvicePageView(TemplateView):
             else:
                 f.last_irr_event_outside_period = True
                 flag_run = "no_irr_event"
-                swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal  = view_run(
+                swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
                     f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                     hourly_r_fps, hourly_e_fps)
                 f.adv_sorted = sorted(f.adv.iteritems())
@@ -123,7 +127,7 @@ class AdvicePageView(TemplateView):
             f.irr_event = False
             f.model = "None irrigation event run"
             flag_run = "no_irr_event"
-            swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal  = view_run(
+            swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
                 f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
                 hourly_r_fps, hourly_e_fps)
             f.adv_sorted = sorted(f.adv.iteritems())
