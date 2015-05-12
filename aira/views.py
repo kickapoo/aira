@@ -60,12 +60,13 @@ class HomePageView(TemplateView):
             if Profile.objects.filter(supervisor=self.request.user).exists():
                 supervising_users = Profile.objects.filter(
                     supervisor=self.request.user)
+                context['supervising_users'] = supervising_users
                 for user in supervising_users:
                     fields = Agrifield.objects.filter(owner=user).all()
                     for field in fields:
                         agrifields.append(field)
             context['agrifields'] = agrifields
-            context['fields_count'] = agrifields_user.count()
+            context['fields_count'] = len(agrifields)
             for f in agrifields:
                 if not irma_utils.agripoint_in_raster(f):
                     f.outside_arta_raster = True

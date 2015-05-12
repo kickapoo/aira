@@ -118,6 +118,13 @@
           {% endif %}
           <strong>{% trans "Email Alert" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.get_notification_display|default:_("Not set") }}</a><br>
           <strong>{% trans "Supervisor" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.supervisor|default:_("Not set")}}</a><br>
+          <hr>
+        {% if supervising_users %}
+           {% trans "You are field supervisor for users:" %}
+           {% for user in  supervising_users %}
+              <li> {{ user.farmer }} </li>
+           {% endfor %}
+        {% endif %}
         </div>
       {% endif %}
 </div>
@@ -134,7 +141,10 @@
     {% for f in agrifields %}
       <hr>
       <div class="panel-body">
-        <p><b>{% trans "Field Info" %}:</b> &nbsp;<a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> {% trans "is growing" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.crop_type.name }}</a> {% trans "using" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.irrigation_type.name}}</a>. </p>
+        <p>
+        <b>{% trans "Field Owner" %}:</b>  {{ f.owner }}<br>
+        <b>{% trans "Field Info" %}:</b> &nbsp;
+        <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> {% trans "is growing" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.crop_type.name }}</a> {% trans "using" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.irrigation_type.name}}</a>. </p>
         {% if f.outside_arta_raster %}
           <div class="alert alert-danger">
             <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-danger"><i class="fa fa-exclamation-triangle">&nbsp; {% trans "Warning" %}</i></span> &nbsp;
