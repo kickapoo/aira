@@ -14,7 +14,7 @@ from .irma import utils as irma_utils
 from .irma.main import get_parameters
 from .irma.main import view_run
 from .irma.main import get_default_db_value
-
+from .irma.main import availiable_data_period
 from django.core.urlresolvers import reverse
 
 
@@ -32,9 +32,9 @@ class IndexPageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(IndexPageView, self).get_context_data(**kwargs)
         context['yesterday'] = (timezone.now() - timedelta(days=1)).date()
-        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = irma_utils.load_meteodata_file_paths()
-        context['start_date'] = str(daily_e_fps[0][72:-4])
-        context['end_date'] = daily_e_fps[-1][72:-4]
+        start_data, end_data = availiable_data_period(lat=39.15, long=20.98)
+        context['start_date'] = start_data
+        context['end_date'] = end_data
         return context
 
 

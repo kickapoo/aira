@@ -30,7 +30,7 @@
     <div class="row">
       <div class="col-md-4">
         <h4>&nbsp;&nbsp;&nbsp;{% trans "View historical available data" %}<br>
-            &nbsp;&nbsp;&nbsp;<sub>{% trans "Time Period" %}: <span class="text-success">{{ start_date }}</span> : <span class="text-success">{{ end_date }}</span></sub>
+            &nbsp;&nbsp;&nbsp;<sub>{% trans "Time Period" %}: <span class="text-success">{{ start_date|date:"Y-m-d" }}</span> : <span class="text-success">{{ end_date|date:"Y-m-d" }}</span></sub>
         </h4>
       </div>
       <div class="col-md-6">

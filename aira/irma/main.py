@@ -130,6 +130,11 @@ def over_fc(swb_report, fc_mm):
         return True
     return False
 
+def availiable_data_period(lat=39.15, long=20.98):
+    daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
+    arta_rainfall = rasters2point(lat, long, daily_r_fps)
+    arta_evap = rasters2point(lat, long, daily_e_fps)
+    return data_start_end_date(arta_rainfall, arta_evap)
 
 def view_run(afield_obj, flag_run, Inet_in, daily_r_fps,
              daily_e_fps, hourly_r_fps, hourly_e_fps):
