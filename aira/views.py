@@ -25,6 +25,8 @@ class TryPageView(TemplateView):
         login(request, user)
         return redirect("home", user)
 
+class ConversionTools(TemplateView):
+    template_name = 'aira/tools.html'
 
 class IndexPageView(TemplateView):
     template_name = 'aira/index.html'

@@ -7,7 +7,8 @@ from aira.views import (IndexPageView, HomePageView, AdvicePageView,
                         CreateAgrifield, UpdateAgrifield, DeleteAgrifield,
                         CreateIrrigationLog, UpdateIrrigationLog,
                         DeleteIrrigationLog,
-                        TryPageView, AlbedoMapsPageView)
+                        TryPageView, AlbedoMapsPageView,
+                        ConversionTools)
 
 urlpatterns = patterns(
     '',
@@ -53,6 +54,9 @@ urlpatterns = patterns(
     url(r'^delete_irrigationlog/(?P<pk>\d+)/$',
         login_required(DeleteIrrigationLog.as_view()),
         name="delete_irrlog"),
+    url(r'^conversion_tools$',
+        login_required(ConversionTools.as_view()),
+        name='tools'),
     url(r'^try/$', TryPageView.as_view(),
         name="try")
 )

@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% load bootstrap3 %}
+
+
+{% block title %} {% trans "Conversion Tools" %} {% endblock %}
+{% block content %}
+
+<div ng-app class="row">
+  <div class="container">
+    <h3>{% trans "Conversion Tools" %} </h3>
+    <div class="input-group">
+      <span class="input-group-addon">{% trans "Unit factor" %}</span>
+      {% verbatim %}
+      <input type="number" min='0' ng-model="rdfactor" ng-init="rdfactor=1000" class="form-control" >
+      {% endverbatim %}
+      <span class="input-group-addon"></span>
+    </div>
+    <br>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+          <b>{% trans "Irrigation water units conversion" %}</b>
+        </div>
+        <div class="panel-body">
+          <div class="col-md-6">
+            <h4> mm {% trans "to" %} m³</h4>
+            <div class="input-group">
+              <span class="input-group-addon">{% trans "Area" %}</span>
+              {% verbatim %}
+              <input type="number" min='0' ng-model="area" class="form-control" >
+              {% endverbatim %}
+              <span class="input-group-addon">m²</span>
+            </div>
+            <br>
+            <div class="input-group">
+              <span class="input-group-addon">{% trans "Irrigation water amount" %}</span>
+              {% verbatim %}
+              <input type="number" min='0' ng-model="irriwaterm3" class="form-control">
+              {% endverbatim %}
+              <span class="input-group-addon">mm</span>
+            </div>
+            <br>
+              <div class="well well-sm">
+                {% verbatim %}
+                 = {{ irriwaterm3/rdfactor * area|number:0 }} m³
+                {% endverbatim %}
+              </div>
+            </div>
+            <div class="col-md-6">
+            </div>
+          <div class="col-md-6">
+            <h4> m³ {% trans "to" %} mm </h4>
+            <div class="input-group">
+              <span class="input-group-addon">{% trans "Area" %}</span>
+              {% verbatim %}
+              <input type="number" min='0' ng-model="area" class="form-control" >
+              {% endverbatim %}
+              <span class="input-group-addon">m²</span>
+            </div>
+            <br>
+            <div class="input-group">
+              <span class="input-group-addon">{% trans "Irrigation water amount" %}</span>
+              {% verbatim %}
+              <input type="number" min='0' ng-model="irriwatermm" class="form-control" >
+              {% endverbatim %}
+              <span class="input-group-addon">m³</span>
+            </div>
+            <br>
+              <div class="well well-sm">
+                {% verbatim %}
+                 = {{ irriwatermm/rdfactor * area| number:0 }} mm
+                {% endverbatim %}
+              </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+          <b>{% trans "Irrigation duration" %}</b>
+        </div>
+        <div class="panel-body">
+           <div class="col-md-6">
+             <div class="input-group">
+               <span class="input-group-addon">{% trans "Area" %}</span>
+               {% verbatim %}
+               <input type="number" ng-model="area" class="form-control" >
+               {% endverbatim %}
+               <span class="input-group-addon">m²</span>
+             </div>
+             <br>
+             <div class="input-group">
+               <span class="input-group-addon">{% trans "Irrigation water amount" %}</span>
+               {% verbatim %}
+               <input type="number" ng-model="irriwaterm3" class="form-control" >
+               {% endverbatim %}
+               <span class="input-group-addon">m³</span>
+             </div>
+             <br>
+             <div class="input-group">
+               <span class="input-group-addon">{% trans "Pump flow rate" %}</span>
+               {% verbatim %}
+               <input type="number" ng-model="pump" class="form-control" >
+               {% endverbatim %}
+               <span class="input-group-addon">m³ / h</span>
+             </div>
+             <br>
+               <div class="well well-sm">
+                 {% verbatim %}
+                  = {{ irriwaterm3/rdfactor * (area/pump)| number:0 }} h
+                 {% endverbatim %}
+               </div>
+             </div>
+        </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+          <b>{% trans "Pump flow rate" %}</b>
+        </div>
+        <div class="panel-body">
+           <div class="col-md-6">
+             <div class="input-group">
+               <span class="input-group-addon">{% trans "Area" %}</span>
+               {% verbatim %}
+               <input type="number" ng-model="area" class="form-control" >
+               {% endverbatim %}
+               <span class="input-group-addon">m²</span>
+             </div>
+             <br>
+             <div class="input-group">
+               <span class="input-group-addon">{% trans "Irrigation water amount" %}</span>
+               {% verbatim %}
+               <input type="number" ng-model="irriwaterm3" class="form-control" >
+               {% endverbatim %}
+               <span class="input-group-addon">m³</span>
+             </div>
+             <br>
+             <div class="input-group">
+               <span class="input-group-addon">{% trans "Desired irrigation duration" %}</span>
+               {% verbatim %}
+               <input type="number" ng-model="desired_dur" class="form-control">
+               {% endverbatim %}
+               <span class="input-group-addon"> h</span>
+             </div>
+             <br>
+               <div class="well well-sm">
+                 {% verbatim %}
+                  = {{ irriwaterm3/rdfactor * (area/desired_dur)| number:0}} m³ / h
+                 {% endverbatim %}
+               </div>
+             </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
