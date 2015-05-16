@@ -20,6 +20,12 @@ NOTIFICATIONS = (
 )
 
 
+YES_OR_NO = (
+    (True, 'Yes'),
+    (False, 'No')
+)
+
+
 class Profile(models.Model):
     farmer = models.OneToOneField(User)
     first_name = models.CharField(max_length=255)
@@ -29,6 +35,8 @@ class Profile(models.Model):
                                     choices=NOTIFICATIONS)
     supervisor = models.ForeignKey(User, related_name='supervisor', null=True,
                                    blank=True)
+    supervision_question = models.BooleanField(choices=YES_OR_NO,
+                                               default=False)
 
     class Meta:
         verbose_name_plural = "Profiles"

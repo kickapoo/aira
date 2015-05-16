@@ -19,11 +19,12 @@
   </div>
 {% endif %}
 <!-- context['map'] -->
+
 <div class="panel panel-default">
   <div class="panel-heading"></div>
     <div class="panel-body">
       <div id="open_map" class="map"></div>
-      <script>
+<script>
       function make_coords(coord) {
                   return parseFloat(coord.replace(",","."));
                 };
@@ -104,30 +105,36 @@
         function togl(id) {
             $("#"+ id).stop().toggle()
         }
-      </script>
-      </div>
-      {% if profile %}
-        <div class="panel-footer">
-          <strong>{% trans "First name" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.first_name }}</a><br>
-          <strong>{% trans "Last name" %} :</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.last_name }}</a><br>
-          <strong>{% trans "Address" %}:</strong>
-          {% if profile.address %}
-            <a href="{% url 'update_profile' profile.id %}">{{ profile.address }}</a><br>
-          {% else %}
-            <a href="{% url 'update_profile' profile.id %}"> {% trans "[edit]" %} </a><br>
-          {% endif %}
-          <strong>{% trans "Email Alert" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.get_notification_display|default:_("Not set") }}</a><br>
-          <strong>{% trans "Supervisor" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ profile.supervisor|default:_("Not set")}}</a><br>
-          <hr>
-        {% if supervising_users %}
-           {% trans "You are field supervisor for users:" %}
-           {% for user in  supervising_users %}
-              <li> {{ user.farmer }} </li>
-           {% endfor %}
-        {% endif %}
-        </div>
-      {% endif %}
+</script>
+    </div>
 </div>
+
+{% if profile %}
+<div class="panel panel-default">
+  <div class="panel-heading"> <a href="{% url 'update_profile' profile.id %}">{% trans "Account Information" %}</a></div>
+    <div class="panel-body">
+        <div class="col-md-5">
+              <strong>{% trans "Full Name" %}: </strong><a href="{% url 'update_profile' profile.id %}">{{ user.profile.first_name}} {{ user.profile.last_name }},</a> <br>
+               <strong>{% trans "Address" %}: </strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.address }}</a> <br>
+               <strong>{% trans "Set me as Supervisor" %} :</strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.get_supervision_question_display }} </a><br>
+               <strong>{% trans "Email Alerts per" %} :</strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.get_notification_display }}</a> <br>
+        </div>
+        {% if supervising_users %}
+        <div class="col-md-7">
+              <strong>{% trans "The following system  users have set you as their  'field supervisor'" %}</strong>: <br>
+              {% for user in  supervising_users %}
+                  <a href="{% url 'home' user.farmer %}">{{ user.farmer }} {{ user.profile.first_name }} {{ user.profile.last_name}} </a>,
+              {% endfor %}
+        </div>
+        {% else %}
+
+
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+
 {% if not agrifields %}
   <div class="alert alert-warning">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
@@ -136,13 +143,15 @@
 {% else %}
   <div class="panel panel-default">
     <div class="panel-heading">
+       <b>{% trans "Field Owner" %}:</b>  {{ url_username }}
+    </div>
+    <div class="panel-heading">
       <a class="btn btn-success btn-xs" href="{% url 'create_agrifield' %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; {% trans "Fields" %}</a>
     </div>
     {% for f in agrifields %}
       <hr>
       <div class="panel-body">
         <p>
-        <b>{% trans "Field Owner" %}:</b>  {{ f.owner }}<br>
         <b>{% trans "Field Info" %}:</b> &nbsp;
         <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> {% trans "is growing" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.crop_type.name }}</a> {% trans "using" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.irrigation_type.name}}</a>. </p>
         {% if f.outside_arta_raster %}
@@ -175,8 +184,10 @@
               {% if f.adv %}
               <img style="display:block;float:left;"src="{% static 'img/warning.png' %}" alt="" height="20" width="20">&nbsp;
               <b>{% trans "Irrigation Advice" %}</b>: <br><br>
+              {% if f.last_irrigate_date %}
               {% trans "Since the last recorded irrigation" %} (<span class="text-warning">{{f.last_irrigate_date|date:"d/m/Y"}}</span>) {% trans "up to" %} <span class="text-warning">{{ f.edh|date:"d/m/Y" }}</span>, {% trans "there is need of" %}  <span class="text-success">{{ f.ifinal |floatformat:"2" }} mm </span> {% trans "additional water" %}.
                 <br>
+              {% endif %}
               {% trans "Based on the available information" %}, {% trans "from" %}
                <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> {% trans "to" %} <span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span>, {% trans "irrigation should be applied according to the following table" %}:
               <br><br>

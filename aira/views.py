@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
+from django.contrib.auth.models import User
 from .models import Profile, Agrifield, IrrigationLog
 from .forms import ProfileForm, AgrifieldForm, IrrigationlogForm
 
@@ -14,13 +15,15 @@ from .irma.main import get_parameters
 from .irma.main import view_run
 from .irma.main import get_default_db_value
 
+from django.core.urlresolvers import reverse
+
 
 class TryPageView(TemplateView):
 
     def get(self, request):
         user = authenticate(username="demo", password="demo")
         login(request, user)
-        return redirect("home")
+        return redirect("home", user)
 
 
 class IndexPageView(TemplateView):
@@ -45,26 +48,30 @@ class HomePageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(HomePageView, self).get_context_data(**kwargs)
         # Load data paths
+        url_username = kwargs.get('username')
+        context['url_username'] = kwargs.get('username')
+        if kwargs.get('username') == None:
+            url_username = self.request.user
+            context['url_username']  = self.request.user
+        # User is url_slug <username>
+        user = User.objects.get(username = url_username)
         daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = irma_utils.load_meteodata_file_paths()
         Inet_in = "YES"
         # Fetch models.Profile(User)
+        # Fetch alwayer self.request.user
         try:
             context['profile'] = Profile.objects.get(farmer=self.request.user)
         except Profile.DoesNotExist:
             context['profile'] = None
         # Fetch models.Agrifield(User)
         try:
-            agrifields_user = Agrifield.objects.filter(
-                owner=self.request.user).all()
-            agrifields = list(agrifields_user)
+            agrifields = Agrifield.objects.filter(owner=user).all()
+            # For Profile section
+            # Select self.request.user user that set him supervisor
             if Profile.objects.filter(supervisor=self.request.user).exists():
                 supervising_users = Profile.objects.filter(
                     supervisor=self.request.user)
                 context['supervising_users'] = supervising_users
-                for user in supervising_users:
-                    fields = Agrifield.objects.filter(owner=user).all()
-                    for field in fields:
-                        agrifields.append(field)
             context['agrifields'] = agrifields
             context['fields_count'] = len(agrifields)
             for f in agrifields:
@@ -165,11 +172,15 @@ class UpdateProfile(UpdateView):
 class CreateAgrifield(CreateView):
     model = Agrifield
     form_class = AgrifieldForm
-    success_url = "/home"
+    success_url = '/home'
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super(CreateAgrifield, self).form_valid(form)
+
+    def get_success_url(self):
+        field = Agrifield.objects.get(pk=self.kwargs['pk'])
+        return reverse('home', kwargs={'username': field.owner })
 
     def get_context_data(self, **kwargs):
         context = super(CreateAgrifield, self).get_context_data(**kwargs)
@@ -187,7 +198,12 @@ class UpdateAgrifield(UpdateView):
     model = Agrifield
     form_class = AgrifieldForm
     template_name = 'aira/agrifield_update.html'
-    success_url = '/home'
+
+    def get_success_url(self):
+        print self.kwargs
+        field = Agrifield.objects.get(pk=self.kwargs['pk'])
+        print field.owner
+        return reverse('home', kwargs={'username': field.owner })
 
     def get_context_data(self, **kwargs):
         context = super(UpdateAgrifield, self).get_context_data(**kwargs)
@@ -199,13 +215,22 @@ class UpdateAgrifield(UpdateView):
 class DeleteAgrifield(DeleteView):
     model = Agrifield
     form_class = AgrifieldForm
-    success_url = '/home'
+
+    def get_success_url(self):
+        print self.kwargs
+        field = Agrifield.objects.get(pk=self.kwargs['pk'])
+        print field.owner
+        return reverse('home', kwargs={'username': field.owner })
 
 
 class CreateIrrigationLog(CreateView):
     model = IrrigationLog
     form_class = IrrigationlogForm
     success_url = "/home"
+
+    def get_success_url(self):
+        field = Agrifield.objects.get(pk=self.kwargs['pk'])
+        return reverse('home', kwargs={'username': field.owner })
 
     def form_valid(self, form):
         form.instance.agrifield = Agrifield.objects.get(pk=self.kwargs['pk'])
@@ -227,10 +252,16 @@ class UpdateIrrigationLog(UpdateView):
     model = IrrigationLog
     form_class = IrrigationlogForm
     template_name = 'aira/irrigationlog_update.html'
-    success_url = '/home'
+
+    def get_success_url(self):
+        field = Agrifield.objects.get(pk=self.kwargs['pk'])
+        return reverse('home', kwargs={'username': field.owner })
 
 
 class DeleteIrrigationLog(DeleteView):
     model = IrrigationLog
     form_class = IrrigationlogForm
-    success_url = '/home'
+
+    def get_success_url(self):
+        field = Agrifield.objects.get(pk=self.kwargs['pk'])
+        return reverse('home', kwargs={'username': field.owner })

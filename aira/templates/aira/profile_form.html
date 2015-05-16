@@ -19,6 +19,7 @@
               {% bootstrap_field form.first_name %}
               {% bootstrap_field form.last_name %}
               {% bootstrap_field form.address %}
+              {% bootstrap_field form.supervision_question %}
               {% if not user.is_demo %}
                     <button type="submit" class="btn btn-primary">{% trans "Update" %}</button>
                     <a class="btn btn-primary"href="{% url 'django.contrib.auth.views.password_reset' %}">{% trans "Reset password" %}</a>
@@ -38,12 +39,6 @@
              </div>
           </div>
     </div>
-    {% buttons %}
-    {% if not user.is_demo %}
-    <hr>
-
-    {% endif %}
-    {% endbuttons %}
 
   </form>
 {% endblock%}

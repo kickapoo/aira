@@ -15,7 +15,11 @@ urlpatterns = patterns(
     # Albedo Maps
     url(r'albedo_maps/$', AlbedoMapsPageView.as_view(), name='maps'),
     # Home
-    url(r'^home/$',
+
+    url(r'^home/(?P<username>[\w.@+-]+)/$',
+        login_required(HomePageView.as_view()),
+        name='home'),
+    url(r'^home/',
         login_required(HomePageView.as_view()),
         name='home'),
     # Advice

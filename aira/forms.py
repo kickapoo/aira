@@ -3,9 +3,11 @@ from .models import Agrifield, Profile, IrrigationLog
 from django.utils.translation import ugettext_lazy as _
 from captcha.fields import CaptchaField
 from registration.forms import RegistrationForm
-
+from django.contrib.auth.models import User
 
 class ProfileForm(forms.ModelForm):
+    supervisor = forms.ModelChoiceField(queryset=User.objects.filter(profile__supervision_question=True))
+
     class Meta:
         model = Profile
         exclude = ('farmer',)
@@ -15,6 +17,8 @@ class ProfileForm(forms.ModelForm):
             'last_name': _('Last name'),
             'address': _('Address'),
             'notification': _('Email Alert per'),
+            'supervisor': _('IRMA Supervisors'),
+            'supervision_question': _('Consider me as supervisor')
         }
 
 

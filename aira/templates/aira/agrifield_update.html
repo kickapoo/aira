@@ -118,7 +118,7 @@ $(document).ready(function(){
                   <button type="submit" class="btn btn-success btn-xs">{% trans "Update" %}</button>
                   {% endif %}
 
-                  <a class="btn btn-success btn-xs" href="{% url 'home' %}"> {% trans "Back" %} </a>
+                  <a class="btn btn-success btn-xs" href="{% url 'home' user %}"> {% trans "Back" %} </a>
                   {% endbuttons %}
               </div>
               <div class='col-sm-6'>
