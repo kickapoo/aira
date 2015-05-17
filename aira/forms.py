@@ -6,7 +6,8 @@ from registration.forms import RegistrationForm
 from django.contrib.auth.models import User
 
 class ProfileForm(forms.ModelForm):
-    supervisor = forms.ModelChoiceField(queryset=User.objects.filter(profile__supervision_question=True))
+    supervisor = forms.ModelChoiceField(queryset=User.objects.filter(profile__supervision_question=True),
+                                        required=False)
 
     class Meta:
         model = Profile
