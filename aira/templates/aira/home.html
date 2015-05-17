@@ -125,7 +125,7 @@
         <div class="col-md-7">
               <strong>{% trans "The following system  users have set you as their  'field supervisor'" %}</strong>: <br>
               {% for user in  supervising_users %}
-                  <a href="{% url 'home' user.farmer %}">{{ user.farmer }} {{ user.profile.first_name }} {{ user.profile.last_name}} </a>,
+                  <a href="{% url 'home' user.farmer %}">{{ user.farmer }}</a>,&nbsp;
               {% endfor %}
         </div>
         {% else %}

@@ -10,13 +10,6 @@
 <div ng-app class="row">
   <div class="container">
     <h3>{% trans "Conversion Tools" %} </h3>
-    <div class="input-group">
-      <span class="input-group-addon">{% trans "Unit factor" %}</span>
-      {% verbatim %}
-      <input type="number" min='0' ng-model="rdfactor" ng-init="rdfactor=1000" class="form-control" >
-      {% endverbatim %}
-      <span class="input-group-addon"></span>
-    </div>
     <br>
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -36,14 +29,14 @@
             <div class="input-group">
               <span class="input-group-addon">{% trans "Irrigation water amount" %}</span>
               {% verbatim %}
-              <input type="number" min='0' ng-model="irriwaterm3" ng-init="irriwaterm3=30" class="form-control">
+              <input type="number" min='0' ng-model="irriwatermm" ng-init="irriwatermm=30" class="form-control">
               {% endverbatim %}
               <span class="input-group-addon">mm</span>
             </div>
             <br>
               <div class="well well-sm">
                 {% verbatim %}
-                 = {{ irriwaterm3/rdfactor * area|number:0 }} m³
+                 = {{ irriwatermm/1000 * area|number:0 }} m³
                 {% endverbatim %}
               </div>
             </div>
@@ -62,14 +55,14 @@
             <div class="input-group">
               <span class="input-group-addon">{% trans "Irrigation water amount" %}</span>
               {% verbatim %}
-              <input type="number" min='0' ng-model="irriwatermm" ng-init="irriwatermm=30" class="form-control" >
+              <input type="number" min='0' ng-model="irriwaterm3" ng-init="irriwaterm3=30" class="form-control" >
               {% endverbatim %}
               <span class="input-group-addon">m³</span>
             </div>
             <br>
               <div class="well well-sm">
                 {% verbatim %}
-                 = {{ irriwatermm/rdfactor * area| number:0 }} mm
+                 = {{ irriwaterm3/area * 1000|number:0 }} mm
                 {% endverbatim %}
               </div>
             </div>
@@ -94,9 +87,9 @@
              <div class="input-group">
                <span class="input-group-addon">{% trans "Irrigation water amount" %}</span>
                {% verbatim %}
-               <input type="number" ng-model="irriwaterm3" class="form-control" >
+               <input type="number" ng-model="irriwatermm" class="form-control" >
                {% endverbatim %}
-               <span class="input-group-addon">m³</span>
+               <span class="input-group-addon">mm</span>
              </div>
              <br>
              <div class="input-group">
@@ -109,7 +102,7 @@
              <br>
                <div class="well well-sm">
                  {% verbatim %}
-                  = {{ irriwaterm3/rdfactor * (area/pump)| number:0 }} h
+                  = {{ irriwatermm/1000 * (area/pump)| number:0 }} h
                  {% endverbatim %}
                </div>
              </div>
@@ -134,9 +127,9 @@
              <div class="input-group">
                <span class="input-group-addon">{% trans "Irrigation water amount" %}</span>
                {% verbatim %}
-               <input type="number" ng-model="irriwaterm3" class="form-control" >
+               <input type="number" ng-model="irriwatermm" class="form-control" >
                {% endverbatim %}
-               <span class="input-group-addon">m³</span>
+               <span class="input-group-addon">mm</span>
              </div>
              <br>
              <div class="input-group">
@@ -149,7 +142,7 @@
              <br>
                <div class="well well-sm">
                  {% verbatim %}
-                  = {{ irriwaterm3/rdfactor * (area/desired_dur)| number:0}} m³ / h
+                  = {{ irriwatermm/1000 * (area/desired_dur)| number:0}} m³ / h
                  {% endverbatim %}
                </div>
              </div>
