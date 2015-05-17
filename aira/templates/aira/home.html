@@ -117,7 +117,9 @@
               <strong>{% trans "Full Name" %}: </strong><a href="{% url 'update_profile' profile.id %}">{{ user.profile.first_name}} {{ user.profile.last_name }},</a> <br>
                <strong>{% trans "Address" %}: </strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.address }}</a> <br>
                <strong>{% trans "Set me as Supervisor" %} :</strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.get_supervision_question_display }} </a><br>
-               <strong>{% trans "Email Alerts per" %} :</strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.get_notification_display }}</a> <br>
+               {% trans "Not Set" as not_set %}
+               <strong>{% trans "Email Alerts per" %} :</strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.get_notification_display|default:not_set }}</a> <br>
+               <strong>{% trans "Your supervisor" %} :</strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.supervisor|default:not_set }}</a>
         </div>
         {% if supervising_users %}
         <div class="col-md-7">
