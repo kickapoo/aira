@@ -28,7 +28,7 @@
             <div class="input-group">
               <span class="input-group-addon">{% trans "Area" %}</span>
               {% verbatim %}
-              <input type="number" min='0' ng-model="area" class="form-control" >
+              <input type="number" min='0' ng-model="area" ng-init="area=2000" class="form-control" >
               {% endverbatim %}
               <span class="input-group-addon">m²</span>
             </div>
@@ -36,7 +36,7 @@
             <div class="input-group">
               <span class="input-group-addon">{% trans "Irrigation water amount" %}</span>
               {% verbatim %}
-              <input type="number" min='0' ng-model="irriwaterm3" class="form-control">
+              <input type="number" min='0' ng-model="irriwaterm3" ng-init="irriwaterm3=30" class="form-control">
               {% endverbatim %}
               <span class="input-group-addon">mm</span>
             </div>
@@ -62,7 +62,7 @@
             <div class="input-group">
               <span class="input-group-addon">{% trans "Irrigation water amount" %}</span>
               {% verbatim %}
-              <input type="number" min='0' ng-model="irriwatermm" class="form-control" >
+              <input type="number" min='0' ng-model="irriwatermm" ng-init="irriwatermm=30" class="form-control" >
               {% endverbatim %}
               <span class="input-group-addon">m³</span>
             </div>
@@ -102,7 +102,7 @@
              <div class="input-group">
                <span class="input-group-addon">{% trans "Pump flow rate" %}</span>
                {% verbatim %}
-               <input type="number" ng-model="pump" class="form-control" >
+               <input type="number" ng-model="pump"  ng-init="pump=5" class="form-control" >
                {% endverbatim %}
                <span class="input-group-addon">m³ / h</span>
              </div>
@@ -142,7 +142,7 @@
              <div class="input-group">
                <span class="input-group-addon">{% trans "Desired irrigation duration" %}</span>
                {% verbatim %}
-               <input type="number" ng-model="desired_dur" class="form-control">
+               <input type="number" ng-model="desired_dur" ng-init="desired_dur=12" class="form-control">
                {% endverbatim %}
                <span class="input-group-addon"> h</span>
              </div>
