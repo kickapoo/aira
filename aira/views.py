@@ -25,8 +25,10 @@ class TryPageView(TemplateView):
         login(request, user)
         return redirect("home", user)
 
+
 class ConversionTools(TemplateView):
     template_name = 'aira/tools.html'
+
 
 class IndexPageView(TemplateView):
     template_name = 'aira/index.html'
@@ -54,9 +56,9 @@ class HomePageView(TemplateView):
         context['url_username'] = kwargs.get('username')
         if kwargs.get('username') == None:
             url_username = self.request.user
-            context['url_username']  = self.request.user
+            context['url_username'] = self.request.user
         # User is url_slug <username>
-        user = User.objects.get(username = url_username)
+        user = User.objects.get(username=url_username)
         daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = irma_utils.load_meteodata_file_paths()
         Inet_in = "YES"
         # Fetch models.Profile(User)
@@ -174,7 +176,6 @@ class UpdateProfile(UpdateView):
 class CreateAgrifield(CreateView):
     model = Agrifield
     form_class = AgrifieldForm
-    success_url = '/home'
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
@@ -182,7 +183,7 @@ class CreateAgrifield(CreateView):
 
     def get_success_url(self):
         field = Agrifield.objects.get(pk=self.kwargs['pk'])
-        return reverse('home', kwargs={'username': field.owner })
+        return reverse('home', kwargs={'username': field.owner})
 
     def get_context_data(self, **kwargs):
         context = super(CreateAgrifield, self).get_context_data(**kwargs)
@@ -202,10 +203,8 @@ class UpdateAgrifield(UpdateView):
     template_name = 'aira/agrifield_update.html'
 
     def get_success_url(self):
-        print self.kwargs
         field = Agrifield.objects.get(pk=self.kwargs['pk'])
-        print field.owner
-        return reverse('home', kwargs={'username': field.owner })
+        return reverse('home', kwargs={'username': field.owner})
 
     def get_context_data(self, **kwargs):
         context = super(UpdateAgrifield, self).get_context_data(**kwargs)
@@ -219,10 +218,8 @@ class DeleteAgrifield(DeleteView):
     form_class = AgrifieldForm
 
     def get_success_url(self):
-        print self.kwargs
         field = Agrifield.objects.get(pk=self.kwargs['pk'])
-        print field.owner
-        return reverse('home', kwargs={'username': field.owner })
+        return reverse('home', kwargs={'username': field.owner})
 
 
 class CreateIrrigationLog(CreateView):
@@ -232,7 +229,7 @@ class CreateIrrigationLog(CreateView):
 
     def get_success_url(self):
         field = Agrifield.objects.get(pk=self.kwargs['pk'])
-        return reverse('home', kwargs={'username': field.owner })
+        return reverse('home', kwargs={'username': field.owner})
 
     def form_valid(self, form):
         form.instance.agrifield = Agrifield.objects.get(pk=self.kwargs['pk'])
@@ -257,7 +254,7 @@ class UpdateIrrigationLog(UpdateView):
 
     def get_success_url(self):
         field = Agrifield.objects.get(pk=self.kwargs['pk'])
-        return reverse('home', kwargs={'username': field.owner })
+        return reverse('home', kwargs={'username': field.owner})
 
 
 class DeleteIrrigationLog(DeleteView):
@@ -266,4 +263,4 @@ class DeleteIrrigationLog(DeleteView):
 
     def get_success_url(self):
         field = Agrifield.objects.get(pk=self.kwargs['pk'])
-        return reverse('home', kwargs={'username': field.owner })
+        return reverse('home', kwargs={'username': field.owner})
