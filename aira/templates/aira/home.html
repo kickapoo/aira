@@ -148,7 +148,7 @@
        <b>{% trans "Field Owner" %}:</b>  {{ url_username }}
     </div>
     <div class="panel-heading">
-      <a class="btn btn-success btn-xs" href="{% url 'create_agrifield' %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; {% trans "Fields" %}</a>
+      <a class="btn btn-success btn-xs" href="{% url 'create_agrifield' url_username %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; {% trans "Fields" %}</a>
     </div>
     {% for f in agrifields %}
       <hr>

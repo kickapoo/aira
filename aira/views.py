@@ -178,18 +178,21 @@ class CreateAgrifield(CreateView):
     form_class = AgrifieldForm
 
     def form_valid(self, form):
-        form.instance.owner = self.request.user
+        user = User.objects.get(username=self.kwargs['username'])
+        form.instance.owner = user
         return super(CreateAgrifield, self).form_valid(form)
 
     def get_success_url(self):
-        field = Agrifield.objects.get(pk=self.kwargs['pk'])
-        return reverse('home', kwargs={'username': field.owner})
+        url_username = self.kwargs['username']
+        return reverse('home', kwargs={'username': url_username})
 
     def get_context_data(self, **kwargs):
         context = super(CreateAgrifield, self).get_context_data(**kwargs)
         try:
+            url_username = self.kwargs['username']
+            user = User.objects.get(username=url_username)
             context['agrifields'] = Agrifield.objects.filter(
-                owner=self.request.user).all()
+                owner=user).all()
             context['fields_count'] = context['agrifields'].count()
         except Agrifield.DoesNotExist:
             context['agrifields'] = None

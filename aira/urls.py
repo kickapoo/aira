@@ -35,7 +35,7 @@ urlpatterns = patterns(
         login_required(UpdateProfile.as_view()),
         name="update_profile"),
     # Agrifield
-    url(r'^create_agrifield$',
+    url(r'^create_agrifield/(?P<username>[\w.@+-]+)/$',
         login_required(CreateAgrifield.as_view()),
         name="create_agrifield"),
     url(r'^update_agrifield/(?P<pk>\d+)/$',
