@@ -48,7 +48,7 @@ urlpatterns = patterns(
     url(r'^create_irrigationlog/(?P<pk>\d+)/$',
         login_required(CreateIrrigationLog.as_view()),
         name="create_irrlog"),
-    url(r'^update_irrigationlog/(?P<pk>\d+)/$',
+    url(r'^update_irrigationlog/(?P<pk_a>\d+)/(?P<pk>\d+)/$',
         login_required(UpdateIrrigationLog.as_view()),
         name="update_irrlog"),
     url(r'^delete_irrigationlog/(?P<pk>\d+)/$',

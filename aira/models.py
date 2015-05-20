@@ -7,6 +7,7 @@ from aira.irma.utils import FC_FILE as fc_raster
 from aira.irma.utils import PWP_FILE as pwp_raster
 from aira.irma.utils import THETA_S_FILE as thetaS_raster
 from aira.irma.utils import raster2point
+from django.http import Http404
 
 NOTIFICATIONS = (
     ("D", _("Day")),
@@ -222,6 +223,11 @@ class Agrifield(models.Model):
         else:
             return self.irrigation_optimizer
 
+    def can_edit(self, user):
+        if (user == self.owner) or (user == self.owner.profile.supervisor):
+            return True
+        raise Http404
+
     class Meta:
         ordering = ('name', 'area')
         verbose_name_plural = 'Agrifields'
@@ -235,6 +241,11 @@ class IrrigationLog(models.Model):
     agrifield = models.ForeignKey(Agrifield)
     time = models.DateTimeField()
     applied_water = models.IntegerField(null=True, blank=True)
+
+    def can_edit(self, agriobj):
+        if agriobj == self.agrifield:
+            return True
+        raise Http404
 
     class Meta:
         get_latest_by = 'time'

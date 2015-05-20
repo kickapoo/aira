@@ -67,7 +67,7 @@
           {% for l in logs  %}
             <tr>
               <td>{{ l.id }}</td>
-              <td><a href="{% url 'update_irrlog' l.id%}">{{l.time}}</a></td>
+              <td><a href="{% url 'update_irrlog' agrifield.id l.id %}">{{l.time}}</a></td>
               <td align="center">{{l.applied_water}}</td>
               {% if not user.is_demo %}
               <td><a href="{% url 'delete_irrlog' l.id %}">{% trans "Delete" %} </a></td>
