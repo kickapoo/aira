@@ -5,6 +5,7 @@ from captcha.fields import CaptchaField
 from registration.forms import RegistrationForm
 from django.contrib.auth.models import User
 
+
 class ProfileForm(forms.ModelForm):
     supervisor = forms.ModelChoiceField(queryset=User.objects.filter(profile__supervision_question=True),
                                         required=False)
@@ -14,16 +15,17 @@ class ProfileForm(forms.ModelForm):
         exclude = ('farmer',)
 
         labels = {
-            'first_name': _('First name'),
-            'last_name': _('Last name'),
+            'first_name': _('First Name'),
+            'last_name': _('Last Name'),
             'address': _('Address'),
-            'notification': _('Email Alert per'),
-            'supervisor': _('IRMA Supervisors'),
-            'supervision_question': _('Consider me as supervisor')
+            'notification': _('Email notification per'),
+            'supervisor': _('Supervisor'),
+            'supervision_question': _('Consider me as supervisor for other accounts')
         }
 
 
 class AgrifieldForm(forms.ModelForm):
+
     class Meta:
         model = Agrifield
         exclude = ('owner',)
@@ -59,6 +61,7 @@ class AgrifieldForm(forms.ModelForm):
 
 
 class IrrigationlogForm(forms.ModelForm):
+
     class Meta:
         model = IrrigationLog
         exclude = ('agrifield',)
@@ -69,6 +72,7 @@ class IrrigationlogForm(forms.ModelForm):
 
 
 class MyRegistrationForm(RegistrationForm):
+
     """
     Extension of the default registration form to include a captcha
     """
