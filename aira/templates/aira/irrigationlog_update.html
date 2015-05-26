@@ -26,6 +26,12 @@
         </div>
         {% endif %}
         {% endbuttons %}
+      </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
         <script type="text/javascript">
           $("#id_time").datetimepicker({
             format: "yyyy-mm-dd hh:ii",
@@ -34,7 +40,4 @@
             pickerPosition: "bottom-left"
             });
       </script>
-      </form>
-    </div>
-</div>
 {% endblock %}

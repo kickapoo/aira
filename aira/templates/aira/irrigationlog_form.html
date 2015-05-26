@@ -34,17 +34,6 @@
         <button type="submit" class="btn btn-success btn-xs">{% trans "Add" %}</button>
         {% endif %}
       {% endbuttons %}
-      <script type="text/javascript">
-          $("#id_time").datetimepicker({
-            format: "yyyy-mm-dd hh:ii",
-            autoclose: true,
-            todayBtn: true,
-            pickerPosition: "bottom-left"
-            });
-          $(document).ready(function(){
-          $('#id_applied_water').attr('placeholder',"m³");
-        });
-      </script>
     </form>
   </div>
   <div class="col-md-1">
@@ -83,4 +72,18 @@
   {% endif %}
   </div> <!-- row -->
 </div> <!-- container -->
+{% endblock %}
+
+{% block extrajs %}
+      <script type="text/javascript">
+          $("#id_time").datetimepicker({
+            format: "yyyy-mm-dd hh:ii",
+            autoclose: true,
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+            });
+          $(document).ready(function(){
+          $('#id_applied_water').attr('placeholder',"m³");
+        });
+      </script>
 {% endblock %}

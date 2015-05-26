@@ -27,56 +27,6 @@
       <div class="panel panel-body">
         <div class="col-md-12">
         <div id="on_clink_map" class="map"></div>
-      <script>
-
-          map = new OpenLayers.Map('on_clink_map',
-                {units: 'm',
-                 displayProjection: 'EPSG:4326',
-                 controls: [new OpenLayers.Control.LayerSwitcher(),
-                            new OpenLayers.Control.Navigation(),
-                            new OpenLayers.Control.Zoom(),
-                            new OpenLayers.Control.MousePosition(),
-                            new OpenLayers.Control.ScaleLine()]
-                 });
-          // Open Cycle
-          var cycle = new OpenLayers.Layer.OSM.CycleMap(
-                    "Open Cycle Map",
-                    {isBaseLayer: true,
-                     projection: 'EPSG:3857'});
-          // Kthmatologio
-          var ktimatologio = new OpenLayers.Layer.WMS("Hellenic Cadastre",
-                         "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
-                           {   layers: 'KTBASEMAP', transparent: false},
-                           {   isBaseLayer: true,
-                               numZoomLevels: 24,
-                               projection: new OpenLayers.Projection("EPSG:900913"),
-                               iformat: 'image/png'});
-          map.addLayers([cycle, ktimatologio]);
-          map.setCenter(new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 10);
-          // Create Marker
-          var markers = new OpenLayers.Layer.Markers( "Add new Field" );
-          map.addLayer(markers);
-          // Display Marker
-          map.events.register("click", map , function(e){
-                      var opx = map.getLonLatFromPixel(e.xy) ;
-                      var marker = new OpenLayers.Marker(opx);
-                      markers.clearMarkers();
-                      markers.addMarker(marker);
-                      var lonlat = map.getLonLatFromPixel(e.xy).transform('EPSG:3857', 'EPSG:4326');
-                      document.getElementById("id_latitude").value = lonlat.lat.toFixed(5);
-                      document.getElementById("id_longitude").value = lonlat.lon.toFixed(5);
-          });
-
-          $(document).ready(function(){
-              $("#id_use_custom_parameters").click(function(){
-                  $("#custom_par").stop().toggle();
-              });
-          });
-
-          $(document).ready(function(){
-              $('#id_area').attr('placeholder',"m²");
-            });
-          </script>
       <sub> {% trans "Click on Map to add your Field coordinates" %}</sub>
       <hr>
       <fieldset>
@@ -152,4 +102,57 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extrajs %}
+      <script>
+
+          map = new OpenLayers.Map('on_clink_map',
+                {units: 'm',
+                 displayProjection: 'EPSG:4326',
+                 controls: [new OpenLayers.Control.LayerSwitcher(),
+                            new OpenLayers.Control.Navigation(),
+                            new OpenLayers.Control.Zoom(),
+                            new OpenLayers.Control.MousePosition(),
+                            new OpenLayers.Control.ScaleLine()]
+                 });
+          // Open Cycle
+          var cycle = new OpenLayers.Layer.OSM.CycleMap(
+                    "Open Cycle Map",
+                    {isBaseLayer: true,
+                     projection: 'EPSG:3857'});
+          // Kthmatologio
+          var ktimatologio = new OpenLayers.Layer.WMS("Hellenic Cadastre",
+                         "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
+                           {   layers: 'KTBASEMAP', transparent: false},
+                           {   isBaseLayer: true,
+                               numZoomLevels: 24,
+                               projection: new OpenLayers.Projection("EPSG:900913"),
+                               iformat: 'image/png'});
+          map.addLayers([cycle, ktimatologio]);
+          map.setCenter(new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 10);
+          // Create Marker
+          var markers = new OpenLayers.Layer.Markers( "Add new Field" );
+          map.addLayer(markers);
+          // Display Marker
+          map.events.register("click", map , function(e){
+                      var opx = map.getLonLatFromPixel(e.xy) ;
+                      var marker = new OpenLayers.Marker(opx);
+                      markers.clearMarkers();
+                      markers.addMarker(marker);
+                      var lonlat = map.getLonLatFromPixel(e.xy).transform('EPSG:3857', 'EPSG:4326');
+                      document.getElementById("id_latitude").value = lonlat.lat.toFixed(5);
+                      document.getElementById("id_longitude").value = lonlat.lon.toFixed(5);
+          });
+
+          $(document).ready(function(){
+              $("#id_use_custom_parameters").click(function(){
+                  $("#custom_par").stop().toggle();
+              });
+          });
+
+          $(document).ready(function(){
+              $('#id_area').attr('placeholder',"m²");
+            });
+          </script>
 {% endblock %}
