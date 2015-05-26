@@ -51,7 +51,7 @@ urlpatterns = patterns(
     url(r'^update_irrigationlog/(?P<pk_a>\d+)/(?P<pk>\d+)/$',
         login_required(UpdateIrrigationLog.as_view()),
         name="update_irrlog"),
-    url(r'^delete_irrigationlog/(?P<pk>\d+)/$',
+    url(r'^delete_irrigationlog/(?P<pk_a>\d+)/(?P<pk>\d+)/$',
         login_required(DeleteIrrigationLog.as_view()),
         name="delete_irrlog"),
     url(r'^conversion_tools$',

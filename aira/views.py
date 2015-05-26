@@ -293,5 +293,5 @@ class DeleteIrrigationLog(DeleteView):
     form_class = IrrigationlogForm
 
     def get_success_url(self):
-        field = Agrifield.objects.get(pk=self.kwargs['pk'])
+        field = Agrifield.objects.get(pk=self.kwargs['pk_a'])
         return reverse('home', kwargs={'username': field.owner})
