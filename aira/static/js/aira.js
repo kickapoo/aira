@@ -122,7 +122,11 @@ function create_map(date, meteo_var)
 
             xhr.open('GET', url, false);
             xhr.send()
-            if (xhr.readyState == 4) {
+            /* The test "length < 250" below is an ugly hack for not showing
+             * popups at a masked area. The masked area has the value nodata,
+             * which displays as a large negative number with very many digits.
+             */
+            if (xhr.readyState == 4  &&  xhr.responseText.length < 250) {
                 map.addPopup(new OpenLayers.Popup.FramedCloud(
                              null, lonlat, null,
                              xhr.responseText,
