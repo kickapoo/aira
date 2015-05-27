@@ -24,88 +24,6 @@
   <div class="panel-heading"></div>
     <div class="panel-body">
       <div id="open_map" class="map"></div>
-<script>
-      function make_coords(coord) {
-                  return parseFloat(coord.replace(",","."));
-                };
-        map = new OpenLayers.Map('open_map',
-                  {units: 'm',
-                   displayProjection: 'EPSG:4326',
-                   controls: [new OpenLayers.Control.LayerSwitcher(),
-                              new OpenLayers.Control.Zoom(),
-                              new OpenLayers.Control.Navigation(),
-                              new OpenLayers.Control.MousePosition(),
-                              new OpenLayers.Control.ScaleLine()]
-                   });
-        // Open Cycle
-        var cycle = new OpenLayers.Layer.OSM.CycleMap(
-                      "Open Cycle Map",
-                      {isBaseLayer: true,
-                       projection: 'EPSG:3857'});
-        map.addLayer(cycle);
-        // Kthmatologio
-        var ktimatologio = new OpenLayers.Layer.WMS("Hellenic Cadastre",
-                       "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
-                         {   layers: 'KTBASEMAP', transparent: false},
-                         {   isBaseLayer: true,
-                             numZoomLevels: 24,
-                             projection: new OpenLayers.Projection("EPSG:900913"),
-                             iformat: 'image/png'});
-        map.addLayer(ktimatologio);
-        var arta = new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857');
-        map.setCenter(new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 10);
-
-        var vectorLayer = new OpenLayers.Layer.Vector("{{ user }} Fields");
-        {% for f in agrifields %}
-        // Define markers as "features" of the vector layer:
-        var feature = new OpenLayers.Feature.Vector(
-                new OpenLayers.Geometry.Point(make_coords("{{f.longitude}}"), make_coords("{{f.latitude}}")).transform('EPSG:4326', 'EPSG:3857'),
-                {description:'{% trans 'Field Name' %}: <a target="_blank" href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a>'},
-                {externalGraphic: 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/img/marker.png', graphicHeight: 25, graphicWidth: 21, graphicXOffset:-12, graphicYOffset:-25  }
-            );
-        vectorLayer.addFeatures(feature);
-        map.addLayer(vectorLayer);
-        {% empty %}
-        var feature = new OpenLayers.Feature.Vector(
-                new OpenLayers.Geometry.Point(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'),
-                {description: "{% trans "It seems you haven't any fields, Add at least one" %}" } ,
-                {externalGraphic: 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/img/marker.png', graphicHeight: 25, graphicWidth: 21, graphicXOffset:-12, graphicYOffset:-25  }
-            );
-        vectorLayer.addFeatures(feature);
-        map.addLayer(vectorLayer);
-
-        {% endfor %}
-        //Add a selector control to the vectorLayer with popup functions
-        var controls = {
-          selector: new OpenLayers.Control.SelectFeature(vectorLayer, { onSelect: createPopup, onUnselect: destroyPopup })
-        };
-
-        function createPopup(feature) {
-          feature.popup = new OpenLayers.Popup.FramedCloud("pop",
-              feature.geometry.getBounds().getCenterLonLat(),
-              null,
-              '<div class="markerContent">'+feature.attributes.description+'</div>',
-              null,
-              true,
-              function() { controls['selector'].unselectAll(); }
-          );
-          //feature.popup.closeOnMove = true;
-          map.addPopup(feature.popup);
-        }
-
-        function destroyPopup(feature) {
-          feature.popup.destroy();
-          feature.popup = null;
-        }
-
-        map.addControl(controls['selector']);
-        controls['selector'].activate();
-
-
-        function togl(id) {
-            $("#"+ id).stop().toggle()
-        }
-</script>
     </div>
 </div>
 
@@ -236,4 +154,89 @@
       </div>
     {% endfor %}
 {% endif %}
+{% endblock %}
+
+{% block extrajs %}
+<script>
+      function make_coords(coord) {
+                  return parseFloat(coord.replace(",","."));
+                };
+        map = new OpenLayers.Map('open_map',
+                  {units: 'm',
+                   displayProjection: 'EPSG:4326',
+                   controls: [new OpenLayers.Control.LayerSwitcher(),
+                              new OpenLayers.Control.Zoom(),
+                              new OpenLayers.Control.Navigation(),
+                              new OpenLayers.Control.MousePosition(),
+                              new OpenLayers.Control.ScaleLine()]
+                   });
+        // Open Cycle
+        var cycle = new OpenLayers.Layer.OSM.CycleMap(
+                      "Open Cycle Map",
+                      {isBaseLayer: true,
+                       projection: 'EPSG:3857'});
+        map.addLayer(cycle);
+        // Kthmatologio
+        var ktimatologio = new OpenLayers.Layer.WMS("Hellenic Cadastre",
+                       "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
+                         {   layers: 'KTBASEMAP', transparent: false},
+                         {   isBaseLayer: true,
+                             numZoomLevels: 24,
+                             projection: new OpenLayers.Projection("EPSG:900913"),
+                             iformat: 'image/png'});
+        map.addLayer(ktimatologio);
+        var arta = new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857');
+        map.setCenter(new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 10);
+
+        var vectorLayer = new OpenLayers.Layer.Vector("{{ user }} Fields");
+        {% for f in agrifields %}
+        // Define markers as "features" of the vector layer:
+        var feature = new OpenLayers.Feature.Vector(
+                new OpenLayers.Geometry.Point(make_coords("{{f.longitude}}"), make_coords("{{f.latitude}}")).transform('EPSG:4326', 'EPSG:3857'),
+                {description:'{% trans 'Field Name' %}: <a target="_blank" href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a>'},
+                {externalGraphic: 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/img/marker.png', graphicHeight: 25, graphicWidth: 21, graphicXOffset:-12, graphicYOffset:-25  }
+            );
+        vectorLayer.addFeatures(feature);
+        map.addLayer(vectorLayer);
+        {% empty %}
+        var feature = new OpenLayers.Feature.Vector(
+                new OpenLayers.Geometry.Point(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'),
+                {description: "{% trans "It seems you haven't any fields, Add at least one" %}" } ,
+                {externalGraphic: 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/img/marker.png', graphicHeight: 25, graphicWidth: 21, graphicXOffset:-12, graphicYOffset:-25  }
+            );
+        vectorLayer.addFeatures(feature);
+        map.addLayer(vectorLayer);
+
+        {% endfor %}
+        //Add a selector control to the vectorLayer with popup functions
+        var controls = {
+          selector: new OpenLayers.Control.SelectFeature(vectorLayer, { onSelect: createPopup, onUnselect: destroyPopup })
+        };
+
+        function createPopup(feature) {
+          feature.popup = new OpenLayers.Popup.FramedCloud("pop",
+              feature.geometry.getBounds().getCenterLonLat(),
+              null,
+              '<div class="markerContent">'+feature.attributes.description+'</div>',
+              null,
+              true,
+              function() { controls['selector'].unselectAll(); }
+          );
+          //feature.popup.closeOnMove = true;
+          map.addPopup(feature.popup);
+        }
+
+        function destroyPopup(feature) {
+          feature.popup.destroy();
+          feature.popup = null;
+        }
+
+        map.addControl(controls['selector']);
+        controls['selector'].activate();
+
+
+        function togl(id) {
+            $("#"+ id).stop().toggle()
+        }
+</script>
 {% endblock %}

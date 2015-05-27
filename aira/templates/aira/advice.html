@@ -20,46 +20,6 @@
       </div>
       <div class="panel-body">
         <div id="field_map" class="map"></div>
-         <script type="text/javascript">
-          function make_coords(coord) {
-              return parseFloat(coord.replace(",","."));
-            };
-             map = new OpenLayers.Map('field_map',
-                   {units: 'm',
-                    displayProjection: 'EPSG:4326',
-                    controls: [new OpenLayers.Control.LayerSwitcher(),
-                               new OpenLayers.Control.Zoom(),
-                               new OpenLayers.Control.Navigation(),
-                               new OpenLayers.Control.MousePosition(),
-                               new OpenLayers.Control.ScaleLine()]
-                    });
-             // Open Cycle
-             var cycle = new OpenLayers.Layer.OSM.CycleMap(
-                       "Open Cycle Map",
-                       {isBaseLayer: true,
-                        projection: 'EPSG:3857'});
-             // Kthmatologio
-             var ktimatologio = new OpenLayers.Layer.WMS("Hellenic Cadastre",
-                         "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
-                           {   layers: 'KTBASEMAP', transparent: false},
-                           {   isBaseLayer: true,
-                                numZoomLevels: 24,
-                               projection: new OpenLayers.Projection("EPSG:900913"),
-                               iformat: 'image/png'});
-             map.addLayers([ktimatologio, cycle]);
-             var fieldloc = new OpenLayers.LonLat(make_coords("{{ f.longitude }}"), make_coords("{{ f.latitude }}")).transform('EPSG:4326', 'EPSG:3857');
-             var marker = new OpenLayers.Marker(fieldloc)
-             var markers = new OpenLayers.Layer.Markers( "{{ f.name }}" );
-             map.addLayer(markers);
-             markers.addMarker(marker);
-             map.setCenter(fieldloc, 18);
-
-              $(document).ready(function(){
-              $("#show_results").click(function(){
-                  $("#results").stop().toggle();
-              });
-          });
-       </script>
       </div>
     </div>
   </div>
@@ -162,3 +122,46 @@
 </div>
 
 {% endblock %}
+
+{% block extrajs %}
+         <script type="text/javascript">
+          function make_coords(coord) {
+              return parseFloat(coord.replace(",","."));
+            };
+             map = new OpenLayers.Map('field_map',
+                   {units: 'm',
+                    displayProjection: 'EPSG:4326',
+                    controls: [new OpenLayers.Control.LayerSwitcher(),
+                               new OpenLayers.Control.Zoom(),
+                               new OpenLayers.Control.Navigation(),
+                               new OpenLayers.Control.MousePosition(),
+                               new OpenLayers.Control.ScaleLine()]
+                    });
+             // Open Cycle
+             var cycle = new OpenLayers.Layer.OSM.CycleMap(
+                       "Open Cycle Map",
+                       {isBaseLayer: true,
+                        projection: 'EPSG:3857'});
+             // Kthmatologio
+             var ktimatologio = new OpenLayers.Layer.WMS("Hellenic Cadastre",
+                         "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
+                           {   layers: 'KTBASEMAP', transparent: false},
+                           {   isBaseLayer: true,
+                                numZoomLevels: 24,
+                               projection: new OpenLayers.Projection("EPSG:900913"),
+                               iformat: 'image/png'});
+             map.addLayers([ktimatologio, cycle]);
+             var fieldloc = new OpenLayers.LonLat(make_coords("{{ f.longitude }}"), make_coords("{{ f.latitude }}")).transform('EPSG:4326', 'EPSG:3857');
+             var marker = new OpenLayers.Marker(fieldloc)
+             var markers = new OpenLayers.Layer.Markers( "{{ f.name }}" );
+             map.addLayer(markers);
+             markers.addMarker(marker);
+             map.setCenter(fieldloc, 18);
+
+              $(document).ready(function(){
+              $("#show_results").click(function(){
+                  $("#results").stop().toggle();
+              });
+          });
+       </script>
+{% block extrajs %}
