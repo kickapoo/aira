@@ -401,7 +401,7 @@ msgstr "Ειδοποιήσεις κάθε"
 
 #: aira/templates/aira/home.html:122
 msgid "Your account supervisor"
-msgstr "Επιτηρητής του λογαριασμούς σας"
+msgstr "Επιτηρητής του λογαριασμού σας"
 
 #: aira/templates/aira/home.html:126
 msgid "The following users have set you as their supervisor"
