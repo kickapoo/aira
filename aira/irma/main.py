@@ -130,11 +130,13 @@ def over_fc(swb_report, fc_mm):
         return True
     return False
 
+
 def availiable_data_period(lat=39.15, long=20.98):
     daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
     arta_rainfall = rasters2point(lat, long, daily_r_fps)
     arta_evap = rasters2point(lat, long, daily_e_fps)
     return data_start_end_date(arta_rainfall, arta_evap)
+
 
 def view_run(afield_obj, flag_run, Inet_in, daily_r_fps,
              daily_e_fps, hourly_r_fps, hourly_e_fps):
@@ -158,10 +160,10 @@ def view_run(afield_obj, flag_run, Inet_in, daily_r_fps,
     swb_hourly_obj = afield2swb(afield_obj, precip_hourly, evap_hourly)
 
     if flag_run == "no_irr_event":
-        # Run daily with defaults
-        start_date = data_start_end_date(precip_daily, evap_daily)[0]
-        # Adding 20 days to default run to make it little faster run
-        start_date = start_date + timedelta(days=20)
+        # Start date is historical data end date minus one day
+        # Start data is the previous date
+        start_date = data_start_end_date(precip_daily, evap_daily)[1]
+        start_date = start_date - timedelta(days=1)
         # Theta init
         theta_init = swb_daily_obj.fc_mm - 0.75 * swb_daily_obj.raw_mm
         if start_date.month in [10, 11, 12, 1, 2, 3]:
