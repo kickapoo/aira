@@ -240,7 +240,10 @@ class Agrifield(models.Model):
 class IrrigationLog(models.Model):
     agrifield = models.ForeignKey(Agrifield)
     time = models.DateTimeField()
-    applied_water = models.IntegerField(null=True, blank=True)
+    applied_water = models.FloatField(null=True, blank=True,
+                                      validators=[
+                                          MinValueValidator(0.0)
+                                      ])
 
     def can_edit(self, agriobj):
         if agriobj == self.agrifield:
