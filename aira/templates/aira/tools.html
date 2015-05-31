@@ -36,7 +36,7 @@
             <br>
               <div class="well well-sm">
                 {% verbatim %}
-                 = {{ irriwatermm/1000 * area|number:0 }} m³
+                 = {{ irriwatermm/1000 * area|number:1 }} m³
                 {% endverbatim %}
               </div>
             </div>
@@ -62,7 +62,7 @@
             <br>
               <div class="well well-sm">
                 {% verbatim %}
-                 = {{ irriwaterm3/area * 1000|number:0 }} mm
+                 = {{ irriwaterm3/area * 1000|number:1 }} mm
                 {% endverbatim %}
               </div>
             </div>
@@ -102,7 +102,7 @@
              <br>
                <div class="well well-sm">
                  {% verbatim %}
-                  = {{ irriwatermm/1000 * (area/pump)| number:0 }} h
+                  = {{ irriwatermm/1000 * (area/pump)| number:1 }} h
                  {% endverbatim %}
                </div>
              </div>
@@ -142,7 +142,7 @@
              <br>
                <div class="well well-sm">
                  {% verbatim %}
-                  = {{ irriwatermm/1000 * (area/desired_dur)| number:0}} m³ / h
+                  = {{ irriwatermm/1000 * (area/desired_dur)| number:1}} m³ / h
                  {% endverbatim %}
                </div>
              </div>
