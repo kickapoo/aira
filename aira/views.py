@@ -205,6 +205,8 @@ class CreateAgrifield(CreateView):
             context['agrifields'] = Agrifield.objects.filter(
                 owner=user).all()
             context['fields_count'] = context['agrifields'].count()
+            context['agrifield_user'] = user
+
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
         return context
@@ -267,6 +269,7 @@ class CreateIrrigationLog(CreateView):
             context['logs'] = IrrigationLog.objects.filter(
                 agrifield=afieldobj).all()
             context['logs_count'] = context['logs'].count()
+            context['agrifield_user'] = afieldobj.owner
         except Agrifield.DoesNotExist:
             context['logs'] = None
         return context
