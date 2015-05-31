@@ -23,7 +23,9 @@
         {% if not user.is_demo %}
         <div class="col-sm-offset-2 col-sm-10">
           <button type="submit" class="btn btn-success btn-xs">{% trans "Update" %}</button>
+          <a class="btn btn-success btn-xs" href="{% url 'create_irrlog' agrifield_id %}"> {% trans "Back" %} </a>
         </div>
+
         {% endif %}
         {% endbuttons %}
       </form>

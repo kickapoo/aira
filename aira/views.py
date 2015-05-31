@@ -226,7 +226,7 @@ class UpdateAgrifield(UpdateView):
         context = super(UpdateAgrifield, self).get_context_data(**kwargs)
         afieldobj = Agrifield.objects.get(pk=self.kwargs['pk'])
         afieldobj.can_edit(self.request.user)
-        print irma_utils.agripoint_in_raster(afieldobj)
+        context['agrifield_user'] = afieldobj.owner
         if irma_utils.agripoint_in_raster(afieldobj):
             context['default_parms'] = get_default_db_value(afieldobj)
         return context
@@ -290,6 +290,7 @@ class UpdateIrrigationLog(UpdateView):
         afieldobj.can_edit(self.request.user)
         log = IrrigationLog.objects.get(pk=self.kwargs['pk'])
         log.can_edit(afieldobj)
+        context['agrifield_id'] = afieldobj.id
         return context
 
 
