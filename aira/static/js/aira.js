@@ -19,6 +19,8 @@ function create_map(date, meteo_var)
     meteo_var = (meteo_var === undefined) ? 'Daily_rain_' : meteo_var;
     // Clear previous map
     document.getElementById('wms_map').innerHTML = ""
+    document.getElementById('mirror_field').value = date;
+    document.getElementById('datepicker_input').value = date;
     // Map object
     map = new OpenLayers.Map('wms_map',
             {units: 'm',
