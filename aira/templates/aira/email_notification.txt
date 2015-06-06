@@ -1,0 +1,8 @@
+{% load i18n %}
+{% spaceless %}
+    {% if must_irrigate %}
+        {% trans "You must irrigate." %}
+    {% else %}
+        {% trans "You need not irrigate." %}
+    {% endif %}
+{% endspaceless %}

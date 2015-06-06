@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -9,16 +11,24 @@ from aira.irma.utils import THETA_S_FILE as thetaS_raster
 from aira.irma.utils import raster2point
 from django.http import Http404
 
-NOTIFICATIONS = (
-    ("D", _("Day")),
-    ("2D", _("2 Days")),
-    ("3D", _("3 Days")),
-    ("4D", _("4 Days")),
-    ("5D", _("5 Days")),
-    ("7D", _("Week")),
-    ("10D", _("10 Day")),
-    ("30D", _("Month")),
-)
+# notification_options is the list of options the user can select for
+# notifications, e.g. be notified every day, every two days, every week, and so
+# on. It is a dictionary; the key is an id of the option, and the value is a
+# tuple whose first element is the human-readable description of an option,
+# and the second element is a function receiving a single argument (normally
+# the current date) and returning True if notifications are due in that
+# particular date.
+
+notification_options = OrderedDict((
+    ("D", (_("Day"), lambda x: True)),
+    ("2D", (_("2 Days"), lambda x: x.toordinal() % 2 == 0)),
+    ("3D", (_("3 Days"), lambda x: x.toordinal() % 3 == 0)),
+    ("4D", (_("4 Days"), lambda x: x.toordinal() % 4 == 0)),
+    ("5D", (_("5 Days"), lambda x: x.toordinal() % 5 == 0)),
+    ("7D", (_("Week"), lambda x: x.weekday() == 0)),
+    ("10D", (_("10 Day"), lambda x: x.day in (1, 11, 21))),
+    ("30D", (_("Month"), lambda x: x.day == 1)),
+))
 
 
 YES_OR_NO = (
@@ -32,8 +42,10 @@ class Profile(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     address = models.CharField(max_length=255, blank=True)
-    notification = models.CharField(max_length=2, null=True, blank=True,
-                                    choices=NOTIFICATIONS)
+    notification = models.CharField(
+        max_length=2, blank=True, default='',
+        choices=[(x, notification_options[x][0])
+                 for x in notification_options])
     supervisor = models.ForeignKey(User, related_name='supervisor', null=True,
                                    blank=True)
     supervision_question = models.BooleanField(choices=YES_OR_NO,
