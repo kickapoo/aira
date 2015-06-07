@@ -27,7 +27,7 @@ class Command(BaseCommand):
             if self.send_notification(user):
                 user_agrifields  = Agrifield.objects.filter(owner=user)
                 self.notify_user(user, user_agrifields, user)
-            if Profile.objects.filter(supervisor=user).exists:
+            if Profile.objects.filter(supervisor=user).exists():
                 for supervised_user in Profile.objects.filter(supervisor=user):
                     if Agrifield.objects.filter(owner=supervised_user).exists():
                         supervised_agrifields = Agrifield.objects.filter(owner=supervised_user)
