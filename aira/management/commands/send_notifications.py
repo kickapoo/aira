@@ -52,14 +52,11 @@ class Command(BaseCommand):
         return context
 
     def notify_user(self, user, agrifields, owner):
-        # https://docs.djangoproject.com/en/1.7/topics/email/#send-mail
-        msg_plain = ''
         msg_html = render_to_string('aira/email_notification.html',
-                                     self.get_email_context(agrifields, user, owner))
-
-        send_mail(_("Irrigation status for " + str(owner) ),
-                  msg_plain,
+                                    self.get_email_context(agrifields, user,
+                                                           owner))
+        send_mail(_("Irrigation status for " + str(owner)),
+                  '',
                   settings.DEFAULT_FROM_EMAIL,
                   [user.email, ],
                   html_message=msg_html)
-        self.stdout.write('Notifications are sent ')
