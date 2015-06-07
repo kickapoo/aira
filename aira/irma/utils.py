@@ -117,6 +117,11 @@ def last_timelog_in_dataperiod(obj, r_fps, e_fps):
     sd, fd = data_start_end_date(precip, evap)
     sd = make_tz_datetime(sd, flag="D")
     fd = make_tz_datetime(fd, flag="D")
+    # pthlema.timeseries object for Daily data
+    # tags datetime with hour=00, minutes=00
+    # in order to check in a irrigationlog is in the period,
+    # manual addition hour=23 and minute=59 is made
+    fd = fd.replace(hour=23, minute=59)
     latest_tl = obj.irrigationlog_set.latest().time
     if latest_tl < sd or latest_tl > fd:
         return False
