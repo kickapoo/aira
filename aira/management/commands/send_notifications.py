@@ -51,8 +51,7 @@ class Command(BaseCommand):
 
     def notify_user(self, user, agrifields, owner):
         # https://docs.djangoproject.com/en/1.7/topics/email/#send-mail
-        msg_plain = render_to_string('aira/email_notification.html',
-                                     self.get_email_context(agrifields))
+        msg_plain = ''
         msg_html = render_to_string('aira/email_notification.html',
                                      self.get_email_context(agrifields))
 
