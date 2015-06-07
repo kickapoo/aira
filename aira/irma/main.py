@@ -212,3 +212,39 @@ def view_run(afield_obj, flag_run, Inet_in, daily_r_fps,
                                               FC_IRT, Inet_in, depl_historical)
     ovfc = over_fc(swb_view.wbm_report, swb_view.fc_mm)
     return swb_view, sd, ed, advice_date(swb_view.wbm_report), ovfc, start_date, end_date, ifinal
+
+
+def email_users_response_data(f):
+    daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
+    Inet_in = "YES"
+    if not agripoint_in_raster(f):
+        f.outside_arta_raster = True
+    else:
+        if timelog_exists(f):
+            f.irr_event = True
+            if last_timelog_in_dataperiod(f, daily_r_fps, daily_e_fps):
+                f.last_irr_event_outside_period = False
+                flag_run = "irr_event"
+                swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
+                    f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
+                    hourly_r_fps, hourly_e_fps)
+                f.adv_sorted = sorted(f.adv.iteritems())
+                f.last_irrigate_date = f.irrigationlog_set.latest().time
+            else:
+                f.last_irr_event_outside_period = True
+                flag_run = "no_irr_event"
+                swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
+                    f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
+                    hourly_r_fps, hourly_e_fps)
+                f.adv_sorted = sorted(f.adv.iteritems())
+                f.over_fc = ovfc
+        else:
+            f.irr_event = False
+            flag_run = "no_irr_event"
+            swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
+                f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
+                hourly_r_fps, hourly_e_fps)
+            f.adv_sorted = sorted(f.adv.iteritems())
+            f.over_fc = ovfc
+        f.fc_mm = swb_view.fc_mm
+    return f

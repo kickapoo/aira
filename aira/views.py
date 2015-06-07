@@ -15,6 +15,7 @@ from .irma.main import get_parameters
 from .irma.main import view_run
 from .irma.main import get_default_db_value
 from .irma.main import availiable_data_period
+from .irma.main import email_users_response_data
 from django.core.urlresolvers import reverse
 from django.http import Http404
 

@@ -1,0 +1,65 @@
+{% load i18n %}
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{% trans "IRMA System Notifications" %}</title>
+  <link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="{% static "css/email.css" %}">
+</head>
+<body>
+  <div class="grid-container centered">
+    <div class="grid-100">
+      <div class="contained">
+        <div class="grid-100">
+          <div class="heading">
+            <img
+                style="
+                       padding-bottom:10px;
+                       margin-left:10px"
+                src="http://{{ site.domain}}/static/img/IRMA_SYSLogo.png" ></a>
+            <br><br>
+            <h1>{% trans "Notification Report" %}</h1>
+          </div>
+        </div>
+        <section class="grid-100 main">
+          <p>
+            {% trans "Field Owner" %}: <a href="#">{{ owner }}</a> <br>
+            {% trans "Forecast Period" %}: {{ sd|date:"d/m/Y" }} - {{ ed|date:"d/m/Y" }}
+          </p>
+          <hr>
+          <h2>{% trans "Irrigation Actions" %}</h2>
+          {% for f in agrifields  %}
+          <p>
+            <ul class="bulleted">
+              <li class="{% if  f.adv %} in {% else %} out {% endif %}">
+                <ul class="irrigate">
+                    {% if f.adv %}
+                      {% for irr_date, values in f.adv_sorted  %}
+                      <li class="empty">
+                        <a href="http://{{ site.domain }}/home/{{ owner }}/">{{ f.name }}</a> {% trans "needs to be irrigate with " %}
+                        <b>{{ values.0 |floatformat:"2" }} </b> m²
+                        at <b>{{ irr_date |date:"d/m/Y h:00:s" }} </b>.
+                      </li>
+                      {% endfor %}
+                    {% else %}
+                      <li class="full">
+                        <a href="#"> {{ f.name }}</a> {% trans "does not need to be irrigated" %}
+                      </li>
+                  {% endif %}
+                </ul>
+              </li>
+            </ul>
+          </p>
+          {% endfor %}
+        </section>
+        <footer class="grid-100">
+          <p>Copyright, <a href="http://{{ site.name }}">IRMA System</a></p>
+        </footer>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
