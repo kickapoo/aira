@@ -245,8 +245,7 @@ class Agrifield(models.Model):
         verbose_name_plural = 'Agrifields'
 
     def __unicode__(self):
-        return "User:{} | Agrifield: {}".format(str(self.owner.username),
-                                                str(self.name))
+        return unicode(self.name)
 
 
 class IrrigationLog(models.Model):
