@@ -22,8 +22,8 @@ NOTIFICATIONS = (
 
 
 YES_OR_NO = (
-    (True, 'Yes'),
-    (False, 'No')
+    (True, _('Yes')),
+    (False,_('No'))
 )
 
 
