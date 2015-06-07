@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <title>{% trans "IRMA System Notifications" %}</title>
   <link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="{% static "css/email.css" %}">
+  <link rel="stylesheet" href="http://{{ site.domain }}/static/css/email.css">
 </head>
 <body>
   <div class="grid-container centered">
@@ -26,7 +26,7 @@
         </div>
         <section class="grid-100 main">
           <p>
-            {% trans "Field Owner" %}: <a href="#">{{ owner }}</a> <br>
+            {% trans "Field Owner" %}: <a href="http://{{ site.domain }}/home/{{ owner }}/">{{ owner }}</a> <br>
             {% trans "Forecast Period" %}: {{ sd|date:"d/m/Y" }} - {{ ed|date:"d/m/Y" }}
           </p>
           <hr>
