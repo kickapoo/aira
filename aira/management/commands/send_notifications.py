@@ -39,11 +39,11 @@ class Command(BaseCommand):
             return notification_options[user_profile.notification][1](date.today())
         return False
 
-    def get_email_context(self, agrifields, user ):
+    def get_email_context(self, agrifields, user, owner ):
         context = Context()
         for f in agrifields:
-            context['owner'] = f.owner
             f = email_users_response_data(f)
+        context['owner'] = owner
         context['sd'] = agrifields[0].sd
         context['ed'] = agrifields[0].ed
         context['agrifields'] = agrifields
@@ -55,7 +55,7 @@ class Command(BaseCommand):
         # https://docs.djangoproject.com/en/1.7/topics/email/#send-mail
         msg_plain = ''
         msg_html = render_to_string('aira/email_notification.html',
-                                     self.get_email_context(agrifields, user))
+                                     self.get_email_context(agrifields, user, owner))
 
         send_mail(_("Irrigation status for " + str(owner) ),
                   msg_plain,

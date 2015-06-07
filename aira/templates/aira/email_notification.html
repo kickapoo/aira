@@ -377,14 +377,14 @@ ul.bulleted .in {
   color: #5A6772;
 }
 ul.bulleted .in:before {
-  content: "YES";
+  content: "{% trans 'YES' %}";
   background-color: #5fcf80;
 }
 ul.bulleted .out {
   color: #A7B4BF;
 }
 ul.bulleted .out:before {
-  content: "NO";
+  content: "{% trans 'NO' %}";
   background-color: #ed5a5a;
 }
 
@@ -411,7 +411,7 @@ footer p {
             <br><br>
             <h1>{% trans "Notification Report" %}</h1><br>
             <p>
-              {% trans "for forecast period" %}: {{ sd|date:"d/m/Y" }} - {{ ed|date:"d/m/Y" }}
+              {% trans "for period" %}: {{ sd|date:"d/m/Y" }} - {{ ed|date:"d/m/Y" }}
             </p>
             <p>
               <a href="http://{{ site.domain }}//accounts/login/">{% trans "Home Page" %}</a>
@@ -433,13 +433,13 @@ footer p {
                       {% for irr_date, values in f.adv_sorted  %}
                       <li class="empty">
                         <a href="http://{{ site.domain }}/home/{{ owner }}/">{{ f.name }}</a> {% trans "needs to be irrigated with " %}
-                        <b>{{ values.0 |floatformat:"2" }} </b> m³
+                        <b>{{ values.0 |floatformat:"2" }} </b> mm
                         at <b>{{ irr_date |date:"d/m/Y h:00:s" }} </b>.
                       </li>
                       {% endfor %}
                     {% else %}
                       <li class="full">
-                        <a href="#"> {{ f.name }}</a> {% trans "does not need to be irrigated" %}
+                        <a href="http://{{ site.domain }}/home/{{ owner }}/"> {{ f.name }}</a> {% trans "does not need to be irrigated" %}
                       </li>
                   {% endif %}
                 </ul>
