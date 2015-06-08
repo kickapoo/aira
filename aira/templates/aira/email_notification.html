@@ -409,7 +409,9 @@ footer p {
                        margin-left:10px"
                 src="http://{{ site.domain}}/static/img/IRMA_SYSLogo.png" ></a>
             <br><br>
-            <h1>{% trans "Notification Report" %}</h1><br>
+            <sup>{% trans "generated" %}: {{ timestamp }}</sup>
+            <h1>{% trans "Notification Report" %}</h1>
+            <br>
             <p>
               {% trans "for period" %}: {{ sd|date:"d/m/Y" }} - {{ ed|date:"d/m/Y" }}
             </p>

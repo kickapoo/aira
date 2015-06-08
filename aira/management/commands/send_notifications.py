@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -49,6 +49,7 @@ class Command(BaseCommand):
         context['agrifields'] = agrifields
         context['site'] = Site.objects.get_current()
         context['user'] = user
+        context['timestamp'] = datetime.now()
         return context
 
     def notify_user(self, user, agrifields, owner):
