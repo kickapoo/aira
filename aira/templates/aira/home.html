@@ -129,7 +129,7 @@
                        <tbody>
                           {% for irr_date, values in f.adv_sorted  %}
                             <tr>
-                              <td align="left">{{ irr_date |date:"d/m/Y h:00:s" }}</td>
+                              <td align="left">{{ irr_date |date:"d/m/Y H:00" }}</td>
                               <td align="left">{{ values.1 |floatformat:"2" }} </td>
                               <td align="left">{{ values.0 |floatformat:"2" }}</td>
                             </tr>
