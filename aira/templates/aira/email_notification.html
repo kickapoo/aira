@@ -357,7 +357,7 @@ footer p {
                        margin-left:10px"
                 src="http://{{ site.domain}}/static/img/IRMA_SYSLogo.png" ></a>
             <br><br>
-            <sup>{{ timestamp }}</sup>
+            {{ timestamp }}<br>
             <h1>{% trans "Notification Report" %}</h1>
             <br>
             <p>
@@ -384,7 +384,7 @@ footer p {
                       <li class="empty">
                         <a href="http://{{ site.domain }}/home/{{ owner }}/">{{ f.name }}</a> {% trans "needs to be irrigated with " %}
                         <b>{{ values.0 |floatformat:"2" }} </b> mm
-                        at <b>{{ irr_date |date:"d/m/Y h:00:s" }} </b>.
+                        at <b>{{ irr_date |date:"d/m/Y H:00:s" }} </b>.
                       </li>
                       {% endfor %}
                     {% else %}
