@@ -8,7 +8,7 @@ from aira.views import (IndexPageView, HomePageView, AdvicePageView,
                         CreateIrrigationLog, UpdateIrrigationLog,
                         DeleteIrrigationLog,
                         TryPageView, AlbedoMapsPageView,
-                        ConversionTools)
+                        ConversionTools, IrrigationPerformance)
 
 urlpatterns = patterns(
     '',
@@ -58,5 +58,7 @@ urlpatterns = patterns(
         login_required(ConversionTools.as_view()),
         name='tools'),
     url(r'^try/$', TryPageView.as_view(),
-        name="try")
+        name="try"),
+    url(r'^irrigation-performance-chart/(?P<pk_a>\d+)/$', IrrigationPerformance.as_view(),
+        name="irrigation-chart"),
 )

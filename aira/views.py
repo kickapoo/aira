@@ -15,8 +15,24 @@ from .irma.main import get_parameters
 from .irma.main import view_run
 from .irma.main import get_default_db_value
 from .irma.main import availiable_data_period
+from .irma.main import performance_chart
 from django.core.urlresolvers import reverse
 from django.http import Http404
+
+
+class IrrigationPerformance(TemplateView):
+    template_name = 'aira/performance-chart.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(IrrigationPerformance,
+                        self).get_context_data(**kwargs)
+        # Load data paths
+        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = irma_utils.load_meteodata_file_paths()
+        f = Agrifield.objects.get(pk=self.kwargs['pk_a'])
+        f.can_edit(self.request.user)
+        f.chart_dates, f.chart_ifinal, f.applied_water = performance_chart(f, daily_r_fps, daily_e_fps)
+        context['f'] = f
+        return context
 
 
 class TryPageView(TemplateView):

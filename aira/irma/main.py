@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.utils.translation import ugettext_lazy as _
 
 from datetime import timedelta
@@ -10,6 +11,7 @@ from aira.irma.utils import *
 
 from pthelma.swb import SoilWaterBalance
 
+from aira.models import IrrigationLog
 # Name shorten
 # afield = agrifield
 # swb = SoilWaterBalance
@@ -87,6 +89,9 @@ def run_water_balance(swb_obj, start_date, end_date,
                                           start_date, end_date, FC_IRT,
                                           Dr0, Inet_in)
 
+def find_date_index(dates, date):
+    index = dates.index(date)
+    return index
 
 def run_daily(swb_obj, start_date, theta_init, FC_IRT, Inet_in,
               Dr0, irr_event_days=[]):
@@ -102,6 +107,55 @@ def run_daily(swb_obj, start_date, theta_init, FC_IRT, Inet_in,
     last_day_ifinal = [i['Ifinal'] for i in daily_swb.wbm_report if i['date'] == end_date]
     return daily_swb, depl_daily, start_date, end_date, last_day_ifinal[0]
 
+def performance_chart(afield_obj, daily_r_fps, daily_e_fps):
+    precip_daily, evap_daily = load_ts_from_rasters(afield_obj, daily_r_fps,
+                                                    daily_e_fps)
+    precip_daily.time_step.length_minutes = 1440
+    evap_daily.time_step.length_minutes = 1440
+    # precip_daily
+    swb_obj = afield2swb(afield_obj, precip_daily, evap_daily)
+    # Default Greek irrigation period
+    sd, fd = data_start_end_date(precip_daily, evap_daily)
+    non_irr_period_start_date = sd
+    non_irr_period_finish_date = datetime(2015, 3, 31)
+    irr_period_start_date = datetime(2015, 4, 1)
+    irr_period_finish_date = fd
+    # Non irrigation season
+    dr_non_irr_period = swb_obj.water_balance(swb_obj.fc_mm, [], sd,
+                          non_irr_period_finish_date,
+                          afield_obj.get_irrigation_optimizer,
+                          None, "NO")
+
+    non_irr_period_dates = [i['date'].date() for i in swb_obj.wbm_report]
+    non_irr_period_ifinal = [i['Ifinal'] for i in swb_obj.wbm_report]
+
+    # Irrigation season
+    swb_obj.wbm_report = [] #  make sure is empty
+    # theta_init is zero because Dr_Historical exists
+    dr_irr_period = swb_obj.water_balance(0, [], irr_period_start_date, fd,
+                              afield_obj.get_irrigation_optimizer,
+                              dr_non_irr_period, "YES")
+    irr_period_dates = [i['date'].date() for i in swb_obj.wbm_report]
+    irr_period_ifinal = [i['Ifinal'] for i in swb_obj.wbm_report]
+
+    # Concat the data
+    chart_dates = non_irr_period_dates + irr_period_dates
+    chart_ifinal = non_irr_period_ifinal + irr_period_ifinal
+
+	# Get agrifields irrigations log if they exists
+    applied_water = [0] * len(chart_dates)
+    if afield_obj.irrigationlog_set.exists():
+        irr_events_objs = IrrigationLog.objects.filter(agrifield=afield_obj).all()
+        unique_dates = list(set([obj.time.date() for obj in irr_events_objs]))
+        for date in unique_dates:
+            # 0.0 exist because we can have irrigationlog without any amount
+            sum_water = [obj.applied_water or 0.0  for obj
+                        in IrrigationLog.objects.filter(agrifield=afield_obj,
+                        time__contains=date)] or 0.0
+            daily_applied_water = sum(sum_water)
+            idx = find_date_index(chart_dates, date)
+            applied_water[idx] = daily_applied_water
+    return chart_dates, chart_ifinal, applied_water
 
 def run_hourly(swb_obj, FC_IRT, Inet_in, Dr0):
     start_date, end_date = data_start_end_date(swb_obj.precip, swb_obj.evap)
