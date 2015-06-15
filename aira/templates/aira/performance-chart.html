@@ -6,10 +6,13 @@
 {% block title %} {{ f.name}} {% endblock %}
 
 {% block content  %}
-
-<h4>{% trans "Irrigation Performance Chart" %}</h4>
-
+<h4 style="text-align: center;">{% trans 'Irrigation Performance' %}</h4>
 <div id="irrchart" style="width:100%; height:400px;"></div>
+<div class="container">
+    <b>{% trans 'Total Estimated Irrigation Water Amount' %}</b>: {{ f.sum_ifinal|floatformat:"2"  }} mm <br>
+    <b>{% trans "Total Applied Water Amount" %}</b>: {{ f.sum_applied_water|floatformat:"2" }} mm <br>
+    <b>{% trans "Percentage difference"%}</b>: {{ f.percentage_diff|floatformat:"0" }} %
+</div>
 <br><br><br><br><br><br><br>
 {% endblock %}
 {% block extrajs %}
@@ -17,8 +20,9 @@
    performance = {}; //empty js object
    performance.title = " {{ f.name }}"
    performance.subtitle = "{{ f.crop_type}} - " + "{{ f.irrigation_type }}"
-   performance.ifinal_title = "Ifinal"
-   performance.applied_water_title = " Applied Water "
+   performance.ifinal_title = "{% trans 'Estimated Irrigation Water Amount' %}"
+   performance.applied_water_title = "{% trans 'Applied Water Amount' %}"
+   performance.yAxis_title =  " "
    performance.dates = [
             {% for d in f.chart_dates  %}
                 "{{ d | safe }}" {% if not forloop.last %},{% endif %}

@@ -22,9 +22,13 @@ $(function () {
       },
       yAxis: {
           min: 0,
+          tickInterval: 5,
           title: {
-              text: 'performance'
-          }
+              text: performance.yAxis_title
+          },
+          labels: {
+              format: '{value} mm',
+         }
       },
       tooltip: {
           headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
@@ -37,11 +41,12 @@ $(function () {
       plotOptions: {
           column: {
               pointPadding: 0.2,
-              borderWidth: 0
+              borderWidth: 5
           }
       },
       series: [{
           name: performance.ifinal_title,
+          color: '#008000',
           data: performance.ifinal
 
       }, {

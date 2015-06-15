@@ -1,3 +1,4 @@
+from __future__ import division
 from datetime import datetime
 from django.utils.translation import ugettext_lazy as _
 
@@ -152,7 +153,7 @@ def performance_chart(afield_obj, daily_r_fps, daily_e_fps):
             sum_water = [obj.applied_water or 0.0  for obj
                         in IrrigationLog.objects.filter(agrifield=afield_obj,
                         time__contains=date)] or 0.0
-            daily_applied_water = sum(sum_water)
+            daily_applied_water = sum(sum_water) / afield_obj.area * 1000 # m3 --> mm
             idx = find_date_index(chart_dates, date)
             applied_water[idx] = daily_applied_water
     return chart_dates, chart_ifinal, applied_water

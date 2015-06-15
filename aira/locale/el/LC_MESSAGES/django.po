@@ -831,3 +831,6 @@ msgstr "Τα Αγροτεμάχια μου"
 
 msgid "Tools"
 msgstr "Εργαλεία"
+
+msgid "Estimated Irrigation Water Amount"
+msgstr "Εκτιμώμενη Δόση Άρδευσης"

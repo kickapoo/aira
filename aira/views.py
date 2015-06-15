@@ -31,6 +31,9 @@ class IrrigationPerformance(TemplateView):
         f = Agrifield.objects.get(pk=self.kwargs['pk_a'])
         f.can_edit(self.request.user)
         f.chart_dates, f.chart_ifinal, f.applied_water = performance_chart(f, daily_r_fps, daily_e_fps)
+        f.sum_ifinal = sum(f.chart_ifinal)
+        f.sum_applied_water = sum(f.applied_water)
+        f.percentage_diff = ((f.sum_applied_water - f.sum_ifinal) / f.sum_ifinal)*100
         context['f'] = f
         return context
 
