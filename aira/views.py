@@ -1,7 +1,10 @@
+import csv
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
+from django.http import HttpResponse
+
 
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -36,6 +39,18 @@ class IrrigationPerformance(TemplateView):
         f.percentage_diff = ((f.sum_applied_water - f.sum_ifinal) / f.sum_ifinal)*100
         context['f'] = f
         return context
+
+def performance_csv(request, pk ):
+    f = Agrifield.objects.get(pk=pk)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="{}-performance.csv"'.format(f.name)
+    daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = irma_utils.load_meteodata_file_paths()
+    f.can_edit(request.user)
+    f.chart_dates, f.chart_ifinal, f.applied_water = performance_chart(f, daily_r_fps, daily_e_fps)
+    writer = csv.writer(response)
+    for row in zip(f.chart_dates, f.chart_ifinal, f.applied_water):
+            writer.writerow(row)
+    return response
 
 
 class TryPageView(TemplateView):

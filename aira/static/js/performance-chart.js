@@ -1,11 +1,13 @@
-console.log("Hello from static motherfucker !!!");
-
 
 $(function () {
     $('#irrchart').highcharts({
       chart: {
           type: 'column'
       },
+      credits: {
+          enabled: false
+      },
+
       title: {
           text: performance.title
       },

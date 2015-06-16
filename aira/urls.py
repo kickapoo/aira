@@ -8,7 +8,8 @@ from aira.views import (IndexPageView, HomePageView, AdvicePageView,
                         CreateIrrigationLog, UpdateIrrigationLog,
                         DeleteIrrigationLog,
                         TryPageView, AlbedoMapsPageView,
-                        ConversionTools, IrrigationPerformance)
+                        ConversionTools, IrrigationPerformance,
+                        performance_csv)
 
 urlpatterns = patterns(
     '',
@@ -61,4 +62,6 @@ urlpatterns = patterns(
         name="try"),
     url(r'^irrigation-performance-chart/(?P<pk_a>\d+)/$', IrrigationPerformance.as_view(),
         name="irrigation-chart"),
+    url(r'^download-irrigation-performance/(?P<pk>\d+)/$', performance_csv,
+        name='performance_csv')
 )
