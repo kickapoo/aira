@@ -12,7 +12,7 @@
     <a style="float:right"  href="{% url 'performance_csv' f.id %}"> <i class="fa fa-cloud-download"></i> {% trans "Download Chart Data" %}</a><br>
     <b>{% trans 'Total Estimated Irrigation Water Amount' %}</b>: {{ f.sum_ifinal|floatformat:"2"  }} mm <br>
     <b>{% trans "Total Applied Water Amount" %}</b>: {{ f.sum_applied_water|floatformat:"2" }} mm <br>
-    <b>{% trans "Percentage difference"%}</b>: {{ f.percentage_diff|floatformat:"0" }} % <br>
+    <b>{% trans "Percentage difference"%}</b>: {{ f.percentage_diff }} % <br>
 </div>
 <br><br><br><br><br><br><br>
 {% endblock %}

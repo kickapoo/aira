@@ -1,24 +1,108 @@
 from __future__ import division
-from datetime import datetime
+import os
+import math
+from glob import glob
+from datetime import datetime, timedelta
+
+from django.conf import settings
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from datetime import timedelta
-# Fetch Data files
-from aira.irma.utils import FC_FILE as fc_raster
-from aira.irma.utils import PWP_FILE as pwp_raster
-from aira.irma.utils import THETA_S_FILE as thetaS_raster
 
-from aira.irma.utils import *
-
+from osgeo import gdal, ogr, osr
+from pthelma.spatial import (extract_point_from_raster,
+                             extract_point_timeseries_from_rasters)
 from pthelma.swb import SoilWaterBalance
 
 from aira.models import IrrigationLog
-# Name shorten
-# afield = agrifield
-# swb = SoilWaterBalance
+
+
+# Raster Static Files with afield_obj parameters values
+# FIELD CAPACITY RASTER
+FC_FILE = os.path.join(
+    settings.AIRA_COEFFS_RASTERS_DIR,
+    'fc.tif')
+
+# WILTING POINT RASTER
+PWP_FILE = os.path.join(
+    settings.AIRA_COEFFS_RASTERS_DIR,
+    'pwp.tif')
+
+# THETA_S RASTER
+THETA_S_FILE = os.path.join(
+    settings.AIRA_COEFFS_RASTERS_DIR,
+    'theta_s.tif')
+
+
+def load_meteodata_file_paths():
+    """
+    	Load meteorological data paths from settings.AIRA_DATA_*
+    """
+    # Daily
+    d_rain_fps = glob(
+        os.path.join(settings.AIRA_DATA_HISTORICAL, 'daily_rain*.tif'))
+    d_evap_fps = glob(
+        os.path.join(settings.AIRA_DATA_HISTORICAL, 'daily_evaporation*.tif'))
+
+    # Contains current day + forecast
+    h_rain_fps = glob(os.path.join(settings.AIRA_DATA_HISTORICAL, 'hourly_rain*.tif')) +  \
+        glob(os.path.join(settings.AIRA_DATA_FORECAST, 'hourly_rain*.tif'))
+
+    h_evap_fps = glob(os.path.join(settings.AIRA_DATA_HISTORICAL, 'hourly_evaporation*.tif')) +  \
+        glob(
+            os.path.join(settings.AIRA_DATA_FORECAST, 'hourly_evaporation*.tif'))
+    return d_rain_fps, d_evap_fps, h_rain_fps, h_evap_fps
+
+
+def rasters2point(lat, long, files):
+    """
+    	Convert a series of raster files to single
+	point pthelma.timeseries obj
+    """
+    point = ogr.Geometry(ogr.wkbPoint)
+    sr = osr.SpatialReference()
+    sr.ImportFromEPSG(4326)
+    point.AssignSpatialReference(sr)
+    point.AddPoint(long, lat)
+    return extract_point_timeseries_from_rasters(files, point)
+
+
+def raster2point(lat, long, file):
+    """
+    	Convert a single raster file to single
+	point pthelma.timeseries obj
+    """
+    point = ogr.Geometry(ogr.wkbPoint)
+    sr = osr.SpatialReference()
+    sr.ImportFromEPSG(4326)
+    point.AssignSpatialReference(sr)
+    point.AddPoint(long, lat)
+    f = gdal.Open(file)
+    return extract_point_from_raster(point, f)
+
+
+def get_default_db_value(afield_obj):
+    """
+       doc str is missing
+    """
+    kc = afield_obj.crop_type.kc
+    irr_eff = afield_obj.irrigation_type.efficiency
+    mad = afield_obj.crop_type.max_allow_depletion
+    rd_max = afield_obj.crop_type.root_depth_max
+    rd_min = afield_obj.crop_type.root_depth_min
+    IRT = afield_obj.irrigation_optimizer
+    fc = raster2point(afield_obj.latitude, afield_obj.longitude, FC_FILE)
+    wp = raster2point(afield_obj.latitude, afield_obj.longitude, PWP_FILE)
+    thetaS = raster2point(afield_obj.latitude, afield_obj.longitude,
+                          THETA_S_FILE)
+    return locals()
 
 
 def get_parameters(afield_obj):
+    """
+        For url:advice, populate  afield_obj
+        information table
+    """
     # For url 'advice' templates use
     fc = afield_obj.get_field_capacity
     wp = afield_obj.get_wilting_point
@@ -51,23 +135,97 @@ def get_parameters(afield_obj):
     return locals()
 
 
-def get_default_db_value(afield_obj):
-    kc = afield_obj.crop_type.kc
-    irr_eff = afield_obj.irrigation_type.efficiency
-    mad = afield_obj.crop_type.max_allow_depletion
-    rd_max = afield_obj.crop_type.root_depth_max
-    rd_min = afield_obj.crop_type.root_depth_min
-    IRT = afield_obj.irrigation_optimizer
-    fc = raster2point(afield_obj.latitude, afield_obj.longitude, fc_raster)
-    wp = raster2point(afield_obj.latitude, afield_obj.longitude, pwp_raster)
-    thetaS = raster2point(afield_obj.latitude, afield_obj.longitude,
-                          thetaS_raster)
-    return locals()
+def agripoint_in_raster(obj, mask=FC_FILE):
+    """
+    	Check if a afield_obj location is
+	    within 'mask' raster file
+    """
+    try:
+        tmp_check = raster2point(obj.latitude, obj.longitude, mask)
+        if math.isnan(tmp_check):
+            return False
+        return True
+    except:
+        return False
 
 
-def afield2swb(afield_obj, precip, evap):
-    # Precip and evap must be pthelma.Timeseries afield_objects
-    # HERE 1)
+def common_period_dates(precip, evap):
+    """
+	Return common period dates based on
+	precipitation and evaporation
+	pthlema.timeseries
+    """
+    pstart = precip.bounding_dates()[0]
+    estart = evap.bounding_dates()[0]
+    pend = precip.bounding_dates()[1]
+    eend = evap.bounding_dates()[1]
+
+    return max(pstart, estart), min(pend, eend)
+
+
+def last_timelog_in_dataperiod(obj, r_fps, e_fps):
+    """
+	Search in afield_obj last irrigation event
+	is within r_fps, e_fps rasters
+    """
+    tz_config = timezone.get_default_timezone()
+    precip = rasters2point(obj.latitude, obj.longitude,
+                                     r_fps)
+    evap = rasters2point(obj.latitude, obj.longitude,
+                                   e_fps)
+    sd, fd = common_period_dates(precip, evap)
+    sd = sd.replace(tzinfo=tz_config)
+    fd = fd.replace(tzinfo=tz_config)
+    # pthlema.timeseries object for Daily data
+    # tags datetime with hour=00, minutes=00
+    # in order to check in a irrigationlog is in the period,
+    # manual addition hour=23 and minute=59 is made
+    fd = fd.replace(hour=23, minute=59)
+    latest_tl = obj.irrigationlog_set.latest().time
+    if latest_tl < sd or latest_tl > fd:
+        return False
+    return True
+
+
+class Results():
+	pass
+
+
+
+def model_run(afield_obj, Inet_in_forecast,
+	      daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps):
+    """
+	Run pthelma.SoilWaterBalance model based on afield_obj
+    """
+    results = Results()
+    tz_config = timezone.get_default_timezone()
+    # Check is the afield_obj in study area
+    if not agripoint_in_raster(afield_obj):
+        results.outside_arta_raster = True
+        return results
+
+    # Prepage  Meteological Data as pthelma.timeseries
+    precip_daily = rasters2point(afield_obj.latitude, afield_obj.longitude,
+                                 daily_r_fps)
+    evap_daily = rasters2point(afield_obj.latitude, afield_obj.longitude,
+                               daily_e_fps)
+
+    precip_daily.time_step.length_minutes = 1440
+    evap_daily.time_step.length_minutes = 1440
+
+    precip_hourly = rasters2point(afield_obj.latitude, afield_obj.longitude,
+                                  hourly_r_fps)
+    evap_hourly = rasters2point(afield_obj.latitude, afield_obj.longitude,
+                                hourly_e_fps)
+
+    precip_hourly.time_step.length_minutes = 60
+    evap_hourly.time_step.length_minutes = 60
+
+    # Starting, Finish dates of common dataperiod
+    # _d = daily , _h = hourly
+    sd_d, fd_d = common_period_dates(precip_daily, evap_daily)
+    sd_h, fd_h = common_period_dates(precip_hourly, evap_hourly)
+    #  Get afield_obj parameters
     fc = afield_obj.get_field_capacity
     wp = afield_obj.get_wilting_point
     rd = (float(afield_obj.get_root_depth_min) +
@@ -76,51 +234,155 @@ def afield2swb(afield_obj, precip, evap):
     p = float(afield_obj.get_mad)
     peff = 0.8  # Effective rainfall coeff 0.8 * Precip
     irr_eff = float(afield_obj.get_efficiency)
+    # ThetaS from raster file
     thetaS = raster2point(afield_obj.latitude, afield_obj.longitude,
-                          thetaS_raster)
-    rd_factor = 1000  # Static for mm
-    swb_obj = SoilWaterBalance(fc, wp, rd, kc, p, peff, irr_eff,
-                               thetaS, precip, evap, rd_factor)
-    return swb_obj
+                          THETA_S_FILE)
+    rd_factor = 1000  # Unit convertor for mm
+
+    # Create SoilWaterBalance Object for daily and hourly data
+    # daily swb
+    swb_daily_obj = SoilWaterBalance(fc, wp, rd, kc, p, peff, irr_eff, thetaS,
+                                     precip_daily, evap_daily, rd_factor)
+    # Special message is Inet_in="Yes" in "Since last irrigate..."
+    swb_daily_obj_special_message = SoilWaterBalance(fc, wp, rd, kc, p, peff,
+                                    irr_eff, thetaS,
+                                precip_daily, evap_daily, rd_factor)
+    # hourly swb
+    swb_hourly_obj = SoilWaterBalance(fc, wp, rd, kc, p, peff, irr_eff, thetaS,
+                                      precip_hourly, evap_hourly, rd_factor)
+
+    # Select model run with or without irrigation event
+    if afield_obj.irrigationlog_set.exists():
+        results.irr_event = True
+        results.last_irrigate_date = afield_obj.irrigationlog_set.latest().time
+        if last_timelog_in_dataperiod(afield_obj, daily_r_fps, daily_e_fps):
+            results.last_irr_event_outside_period = False
+            results.flag_run = "irr_event"
+            last_irr_date = afield_obj.irrigationlog_set.latest().time
+            results.last_irr_date = last_irr_date.replace(tzinfo=tz_config)
+            # Get theta_init & Dr0 if irrigation event has or not irrigation
+	    # water amount
+            if afield_obj.irrigationlog_set.latest().applied_water in [None, '']:
+                theta_init = swb_daily_obj.raw_mm + swb_daily_obj.lowlim_theta_mm
+                Dr0 = theta_init - swb_daily_obj.fc_mm
+            else:
+                Inet = (afield_obj.irrigationlog_set.latest().applied_water /
+                        afield_obj.area) * rd_factor * float(afield_obj.get_efficiency)
+                theta_init = Inet + \
+                    (swb_daily_obj.fc_mm - 0.75 * swb_daily_obj.raw_mm)
+                Dr0 = swb_daily_obj.fc_mm - theta_init
+
+	        # Daily run, historical depletion , Inet_in = NO
+            depl_daily = swb_daily_obj.water_balance(theta_init, [],
+                                      last_irr_date.replace(hour=0, minute=0,
+                                                            tzinfo=None),
+                                      fd_d.replace(tzinfo=None),
+                                      afield_obj.get_irrigation_optimizer,Dr0,
+                                      "NO")
+            swb_daily_obj_special_message.water_balance(theta_init, [],
+                                      last_irr_date.replace(hour=0, minute=0,
+                                                            tzinfo=None),
+                                      fd_d.replace(tzinfo=None),
+                                      afield_obj.get_irrigation_optimizer,Dr0,
+                                      "NO")
+
+            # Hourly
+            swb_hourly_obj.water_balance(0, [], sd_h.replace(tzinfo=None),
+                                         fd_h.replace(tzinfo=None),
+                                         afield_obj.get_irrigation_optimizer,
+                                         depl_daily, Inet_in_forecast)
+    else:
+        results.irr_event = False
+        results.flag_run = "no_irr_event"
+
+        # Start date is historical data finish date minus one day
+        # Start data is the previous date
+        sd_d = fd_d - timedelta(days=1)
+        # Get theta_init for summer or winter
+        theta_init = swb_daily_obj.fc_mm - 0.75 * swb_daily_obj.raw_mm
+        if sd_d.month in [10, 11, 12, 1, 2, 3]:
+            theta_init = swb_daily_obj.fc_mm
+	# Daily run, historical depletion , Inet_in = NO
+        depl_daily = swb_daily_obj.water_balance(theta_init, [],
+                                           sd_d.replace(tzinfo=None), fd_d.replace(tzinfo=None),
+                                           afield_obj.get_irrigation_optimizer,
+                                           None, "NO")
+        swb_daily_obj_special_message.water_balance(theta_init, [],
+                                  sd_d.replace(tzinfo=None),
+                                  fd_d.replace(tzinfo=None),
+                                  afield_obj.get_irrigation_optimizer, None,
+                                  "NO")
+        # Hourly
+        swb_hourly_obj.water_balance(0, [], sd_h.replace(tzinfo=None), fd_h.replace(tzinfo=None),
+                                     afield_obj.get_irrigation_optimizer,
+                                     depl_daily, Inet_in_forecast)
+
+    # Attach to afield_obj results from model runs
+    # Get the advice and last date ifinal
+    last_day_ifinal = [i['Ifinal'] for i in swb_daily_obj_special_message.wbm_report
+                       if i['date'] == fd_d.replace(hour=0, minute=0)]
+
+    irr_dates = [i['date'] for i in swb_hourly_obj.wbm_report if i['irrigate'] >= 1]
+    irr_amount = [i['Ifinal'] for i in swb_hourly_obj.wbm_report if i['irrigate'] >= 1]
+    irr_Ks = [i['Ks'] for i in swb_hourly_obj.wbm_report if i['irrigate'] >= 1]
+    irr_values = zip(irr_amount, irr_Ks)
+    advice = dict(zip(irr_dates, irr_values))
+    # Make attachment to afield_obj
+    results.sd = sd_h # Starting date of forecast  data (_h = _hourly)
+    results.ed = fd_h # Finish date of forecast  data (_h = hourly)
+    results.adv = advice # Advice based on model
+    results.sdh = sd_d # Starting date of historical data (_d = daily)
+    results.edh = fd_d # Finish data of historical data (_d = daily)
+    results.ifinal = last_day_ifinal[0] # Model run / last date Water Amount
+    results.adv_sorted = sorted(advice.iteritems()) # Sorted advice dates
+    results.swb_report = swb_hourly_obj.wbm_report
+
+    return results
 
 
-def run_water_balance(swb_obj, start_date, end_date,
-                      theta_init, irr_event_days, FC_IRT, Dr0, Inet_in):
-    return swb_obj, swb_obj.water_balance(theta_init, irr_event_days,
-                                          start_date, end_date, FC_IRT,
-                                          Dr0, Inet_in)
+def email_users_response_data(afield_obj):
+   """
+     SoilWaterBalance model runs for email_notifications mamagement command
+   """
+   daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
+   Inet_in_forecast = "YES"
 
-def find_date_index(dates, date):
-    index = dates.index(date)
-    return index
-
-def run_daily(swb_obj, start_date, theta_init, FC_IRT, Inet_in,
-              Dr0, irr_event_days=[]):
-    # start_date: latests.irrigation event
-    #             or start_date     + 20day for default run
-    end_date = data_start_end_date(swb_obj.precip, swb_obj.evap)[1]
-    start_date = make_tz_datetime(start_date, flag="D")
-    end_date = make_tz_datetime(end_date, flag="D")
-    daily_swb, depl_daily = run_water_balance(swb_obj, start_date, end_date,
-                                              theta_init, irr_event_days,
-                                              FC_IRT, Dr0, Inet_in)
-
-    last_day_ifinal = [i['Ifinal'] for i in daily_swb.wbm_report if i['date'] == end_date]
-    return daily_swb, depl_daily, start_date, end_date, last_day_ifinal[0]
+   return model_run(afield_obj, Inet_in_forecast, daily_r_fps, daily_e_fps,
+		   hourly_r_fps, hourly_e_fps)
 
 def performance_chart(afield_obj, daily_r_fps, daily_e_fps):
-    precip_daily, evap_daily = load_ts_from_rasters(afield_obj, daily_r_fps,
-                                                    daily_e_fps)
+    results = Results()
+    precip_daily = rasters2point(afield_obj.latitude, afield_obj.longitude,
+                                 daily_r_fps)
+    evap_daily = rasters2point(afield_obj.latitude, afield_obj.longitude,
+                               daily_e_fps)
     precip_daily.time_step.length_minutes = 1440
     evap_daily.time_step.length_minutes = 1440
     # precip_daily
-    swb_obj = afield2swb(afield_obj, precip_daily, evap_daily)
+    fc = afield_obj.get_field_capacity
+    wp = afield_obj.get_wilting_point
+    rd = (float(afield_obj.get_root_depth_min) +
+          float(afield_obj.get_root_depth_max)) / 2
+    kc = float(afield_obj.get_kc)
+    p = float(afield_obj.get_mad)
+    peff = 0.8  # Effective rainfall coeff 0.8 * Precip
+    irr_eff = float(afield_obj.get_efficiency)
+    # ThetaS from raster file
+    thetaS = raster2point(afield_obj.latitude, afield_obj.longitude,
+                          THETA_S_FILE)
+    rd_factor = 1000  # Unit convertor for mm
+
+    # Create SoilWaterBalance Object for daily and hourly data
+    # daily swb
+    swb_obj = SoilWaterBalance(fc, wp, rd, kc, p, peff, irr_eff, thetaS,
+                                     precip_daily, evap_daily, rd_factor)
     # Default Greek irrigation period
-    sd, fd = data_start_end_date(precip_daily, evap_daily)
+    sd, fd = common_period_dates(precip_daily, evap_daily)
     non_irr_period_start_date = sd
     non_irr_period_finish_date = datetime(2015, 3, 31)
     irr_period_start_date = datetime(2015, 4, 1)
     irr_period_finish_date = fd
+
     # Non irrigation season
     dr_non_irr_period = swb_obj.water_balance(swb_obj.fc_mm, [], sd,
                           non_irr_period_finish_date,
@@ -140,9 +402,8 @@ def performance_chart(afield_obj, daily_r_fps, daily_e_fps):
     irr_period_ifinal = [i['Ifinal'] for i in swb_obj.wbm_report]
 
     # Concat the data
-    chart_dates = non_irr_period_dates + irr_period_dates
-    chart_ifinal = non_irr_period_ifinal + irr_period_ifinal
-
+    chart_dates = irr_period_dates
+    chart_ifinal = irr_period_ifinal
 	# Get agrifields irrigations log if they exists
     applied_water = [0] * len(chart_dates)
     if afield_obj.irrigationlog_set.exists():
@@ -154,152 +415,10 @@ def performance_chart(afield_obj, daily_r_fps, daily_e_fps):
                         in IrrigationLog.objects.filter(agrifield=afield_obj,
                         time__contains=date)] or 0.0
             daily_applied_water = sum(sum_water) / afield_obj.area * 1000 # m3 --> mm
-            idx = find_date_index(chart_dates, date)
-            applied_water[idx] = daily_applied_water
-    return chart_dates, chart_ifinal, applied_water
-
-def run_hourly(swb_obj, FC_IRT, Inet_in, Dr0):
-    start_date, end_date = data_start_end_date(swb_obj.precip, swb_obj.evap)
-    theta_init = 0  # Set to zero as Dr_Historical will replace theta_init
-    start_date = make_tz_datetime(start_date, flag="H")
-    end_date = make_tz_datetime(end_date, flag="H")
-    irr_event_days = []
-    hourly_swb, depl_hourly = run_water_balance(swb_obj, start_date, end_date,
-                                                theta_init, irr_event_days,
-                                                FC_IRT, Dr0, Inet_in)
-    # Also returns start_date, end_date for use in url 'home'
-    return hourly_swb, depl_hourly, start_date, end_date
-
-
-def advice_date(swb_report):
-    irr_dates = [i['date'] for i in swb_report if i['irrigate'] >= 1]
-    irr_amount = [i['Ifinal'] for i in swb_report if i['irrigate'] >= 1]
-    irr_Ks = [i['Ks'] for i in swb_report if i['irrigate'] >= 1]
-    irr_values = zip(irr_amount, irr_Ks)
-    return dict(zip(irr_dates, irr_values))
-
-
-def over_fc(swb_report, fc_mm):
-    temp_over_search = [True for i in swb_report if i['Dr_i'] >= fc_mm]
-    if len(temp_over_search) >= 1:
-        return True
-    return False
-
-
-def availiable_data_period(lat=39.15, long=20.98):
-    daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
-    arta_rainfall = rasters2point(lat, long, daily_r_fps)
-    arta_evap = rasters2point(lat, long, daily_e_fps)
-    return data_start_end_date(arta_rainfall, arta_evap)
-
-
-def view_run(afield_obj, flag_run, Inet_in, daily_r_fps,
-             daily_e_fps, hourly_r_fps, hourly_e_fps):
-    # Notes:  flag : "irr_event" , "no_irr_event"
-    # Load Historical (daily)
-    # pthelma.extract_point_from_raster dont have Timeseries.time_step
-    precip_daily, evap_daily = load_ts_from_rasters(afield_obj, daily_r_fps,
-                                                    daily_e_fps)
-    precip_daily.time_step.length_minutes = 1440
-    evap_daily.time_step.length_minutes = 1440
-
-    # Load Hourly (Current day + forecast days0
-    precip_hourly, evap_hourly = load_ts_from_rasters(afield_obj, hourly_r_fps,
-                                                      hourly_e_fps)
-    precip_hourly.time_step.length_minutes = 60
-    evap_hourly.time_step.length_minutes = 60
-    # Here form validation
-    # fc, thetat_s, wilting_point
-    # Create a swb obj daily / hourly
-    swb_daily_obj = afield2swb(afield_obj, precip_daily, evap_daily)
-    swb_hourly_obj = afield2swb(afield_obj, precip_hourly, evap_hourly)
-
-    if flag_run == "no_irr_event":
-        # Start date is historical data end date minus one day
-        # Start data is the previous date
-        start_date = data_start_end_date(precip_daily, evap_daily)[1]
-        start_date = start_date - timedelta(days=1)
-        # Theta init
-        theta_init = swb_daily_obj.fc_mm - 0.75 * swb_daily_obj.raw_mm
-        if start_date.month in [10, 11, 12, 1, 2, 3]:
-            theta_init = swb_daily_obj.fc_mm
-        FC_IRT = afield_obj.get_irrigation_optimizer
-        Inet_in_h = "NO"
-        depl_historical = run_daily(swb_daily_obj, start_date,
-                                    theta_init, FC_IRT, Inet_in_h, Dr0=None,
-                                    irr_event_days=[])[1]
-        swb_view, depl_h, sd, ed = run_hourly(swb_hourly_obj,
-                                              FC_IRT, Inet_in, depl_historical)
-
-        # In the flag_run ="irr_event" the start, end historical data is returned
-        # so for shortness reasons are set equal to None
-        # This comment is a remainder for the future global code review
-        start_date, end_date, ifinal  = (None, None, None)
-
-    if flag_run == "irr_event":
-        start_date = afield_obj.irrigationlog_set.latest().time
-        if afield_obj.irrigationlog_set.latest().applied_water in [None, '']:
-            theta_init = swb_daily_obj.raw_mm + swb_daily_obj.lowlim_theta_mm
-            Dr0 = theta_init - swb_daily_obj.fc_mm
-        else:
-            rd_f = 1000  # Static for mm
-            Inet = (afield_obj.irrigationlog_set.latest().applied_water /
-                    afield_obj.area) * rd_f * float(afield_obj.get_efficiency)
-            theta_init = Inet + \
-                (swb_daily_obj.fc_mm - 0.75 * swb_daily_obj.raw_mm)
-            Dr0 = swb_daily_obj.fc_mm - theta_init
-        # Why irr_event_days = [] ?
-        # irr_event_days=[] is set to empty as we start from irrigation event,
-        # so initial conditions are known.
-        # 'irr_event_days' usage is external pthelma.swb use.
-        # For example: user starts run model from irrigation day
-        #              and wants to check the scenario
-        #              "What is the model performance if field is irrigate
-        #              in next (timeseries) days ex. start_date + 2 etc
-        # Above comment is set as a remainder.
-        FC_IRT = afield_obj.get_irrigation_optimizer
-        Inet_in_h = "NO"
-        daily_swb, depl_daily, start_date, end_date, ifinal = run_daily(swb_daily_obj, start_date,
-                                                                theta_init, FC_IRT, Inet_in_h, Dr0,
-                                                                irr_event_days=[])
-        depl_historical = depl_daily
-        swb_view, depl_h, sd, ed = run_hourly(swb_hourly_obj,
-                                              FC_IRT, Inet_in, depl_historical)
-    ovfc = over_fc(swb_view.wbm_report, swb_view.fc_mm)
-    return swb_view, sd, ed, advice_date(swb_view.wbm_report), ovfc, start_date, end_date, ifinal
-
-
-def email_users_response_data(f):
-    daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
-    Inet_in = "YES"
-    if not agripoint_in_raster(f):
-        f.outside_arta_raster = True
-    else:
-        if timelog_exists(f):
-            f.irr_event = True
-            if last_timelog_in_dataperiod(f, daily_r_fps, daily_e_fps):
-                f.last_irr_event_outside_period = False
-                flag_run = "irr_event"
-                swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
-                    f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
-                    hourly_r_fps, hourly_e_fps)
-                f.adv_sorted = sorted(f.adv.iteritems())
-                f.last_irrigate_date = f.irrigationlog_set.latest().time
-            else:
-                f.last_irr_event_outside_period = True
-                flag_run = "no_irr_event"
-                swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
-                    f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
-                    hourly_r_fps, hourly_e_fps)
-                f.adv_sorted = sorted(f.adv.iteritems())
-                f.over_fc = ovfc
-        else:
-            f.irr_event = False
-            flag_run = "no_irr_event"
-            swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
-                f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
-                hourly_r_fps, hourly_e_fps)
-            f.adv_sorted = sorted(f.adv.iteritems())
-            f.over_fc = ovfc
-        f.fc_mm = swb_view.fc_mm
-    return f
+            if date in chart_dates:
+                idx = chart_dates.index(date)
+                applied_water[idx] = daily_applied_water
+    results.chart_dates = chart_dates
+    results.chart_ifinal = chart_ifinal
+    results.applied_water = applied_water
+    return results

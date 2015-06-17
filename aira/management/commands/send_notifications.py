@@ -43,7 +43,7 @@ class Command(BaseCommand):
     def get_email_context(self, agrifields, user, owner ):
         context = Context()
         for f in agrifields:
-            f = email_users_response_data(f)
+            f.results = email_users_response_data(f)
         context['owner'] = owner
         context['sd'] = agrifields[0].sd
         context['ed'] = agrifields[0].ed

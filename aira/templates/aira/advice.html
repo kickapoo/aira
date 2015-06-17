@@ -74,7 +74,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           {% trans "Detailed Calculations for" %}
-          {% trans "Forecast Period" %}: <span <class class="text-warning">{{ f.sd|date:"d/m/Y" }}</span> {% trans "to" %} <span <class class="text-warning">{{ f.ed|date:"d/m/Y" }}</span>        </div>
+          {% trans "Forecast Period" %}: <span <class class="text-warning">{{ f.results.sd|date:"d/m/Y" }}</span> {% trans "to" %} <span <class class="text-warning">{{ f.results.ed|date:"d/m/Y" }}</span>        </div>
         <div class="panel-body">
           <div id="results" class="table-responsive">
             <table class="table">
@@ -91,7 +91,7 @@
                   </tr>
                 </thead>
                  <tbody>
-                    {% for result in f.swb_report  %}
+                    {% for result in f.results.swb_report  %}
                     {% if result.irrigate > 0 %}
                       <tr class="success">
                       {% else %}

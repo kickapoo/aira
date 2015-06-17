@@ -4,7 +4,9 @@ from django.utils import timezone
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
 from django.http import HttpResponse
-
+from django.core.urlresolvers import reverse
+from django.http import Http404
+from django.utils.translation import ugettext_lazy as _
 
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -13,14 +15,7 @@ from django.contrib.auth.models import User
 from .models import Profile, Agrifield, IrrigationLog
 from .forms import ProfileForm, AgrifieldForm, IrrigationlogForm
 
-from .irma import utils as irma_utils
-from .irma.main import get_parameters
-from .irma.main import view_run
-from .irma.main import get_default_db_value
-from .irma.main import availiable_data_period
-from .irma.main import performance_chart
-from django.core.urlresolvers import reverse
-from django.http import Http404
+from .irma.main import *
 
 
 class IrrigationPerformance(TemplateView):
@@ -30,13 +25,18 @@ class IrrigationPerformance(TemplateView):
         context = super(IrrigationPerformance,
                         self).get_context_data(**kwargs)
         # Load data paths
-        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = irma_utils.load_meteodata_file_paths()
+        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
         f = Agrifield.objects.get(pk=self.kwargs['pk_a'])
         f.can_edit(self.request.user)
-        f.chart_dates, f.chart_ifinal, f.applied_water = performance_chart(f, daily_r_fps, daily_e_fps)
-        f.sum_ifinal = sum(f.chart_ifinal)
-        f.sum_applied_water = sum(f.applied_water)
-        f.percentage_diff = ((f.sum_applied_water - f.sum_ifinal) / f.sum_ifinal)*100
+        results = performance_chart(f, daily_r_fps, daily_e_fps)
+        f.chart_dates = results.chart_dates
+        f.chart_ifinal = results.chart_ifinal
+        f.applied_water = results.applied_water
+        f.sum_ifinal = sum(results.chart_ifinal)
+        f.sum_applied_water = sum(results.applied_water)
+        f.percentage_diff = _("Not Available")
+        if f.sum_ifinal != 0.0:
+            f.percentage_diff = round(((f.sum_applied_water - f.sum_ifinal) / f.sum_ifinal)*100 or 0.0)
         context['f'] = f
         return context
 
@@ -44,11 +44,11 @@ def performance_csv(request, pk ):
     f = Agrifield.objects.get(pk=pk)
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="{}-performance.csv"'.format(f.name)
-    daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = irma_utils.load_meteodata_file_paths()
+    daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
     f.can_edit(request.user)
-    f.chart_dates, f.chart_ifinal, f.applied_water = performance_chart(f, daily_r_fps, daily_e_fps)
+    results = performance_chart(f, daily_r_fps, daily_e_fps)
     writer = csv.writer(response)
-    for row in zip(f.chart_dates, f.chart_ifinal, f.applied_water):
+    for row in zip(results.chart_dates, results.chart_ifinal, results.applied_water):
             writer.writerow(row)
     return response
 
@@ -71,7 +71,10 @@ class IndexPageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(IndexPageView, self).get_context_data(**kwargs)
         context['yesterday'] = (timezone.now() - timedelta(days=1)).date()
-        start_data, end_data = availiable_data_period(lat=39.15, long=20.98)
+        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
+        arta_rainfall = rasters2point(39.15, 20.98, daily_r_fps)
+        arta_evap = rasters2point(39.15, 20.98, daily_e_fps)
+        start_data, end_data = common_period_dates(arta_rainfall, arta_evap )
         context['start_date'] = start_data
         context['end_date'] = end_data
         return context
@@ -94,10 +97,9 @@ class HomePageView(TemplateView):
             context['url_username'] = self.request.user
         # User is url_slug <username>
         user = User.objects.get(username=url_username)
-        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = irma_utils.load_meteodata_file_paths()
-        Inet_in = "YES"
-        # Fetch models.Profile(User)
-        # Fetch alwayer self.request.user
+        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
+
+	# Fetch models.Profile(User)
         try:
             context['profile'] = Profile.objects.get(farmer=self.request.user)
         except Profile.DoesNotExist:
@@ -106,6 +108,7 @@ class HomePageView(TemplateView):
         try:
             agrifields = Agrifield.objects.filter(owner=user).all()
             for f in agrifields:
+		# Check if user is allowed or 404
                 f.can_edit(self.request.user)
             # For Profile section
             # Select self.request.user user that set him supervisor
@@ -116,36 +119,8 @@ class HomePageView(TemplateView):
             context['agrifields'] = agrifields
             context['fields_count'] = len(agrifields)
             for f in agrifields:
-                if not irma_utils.agripoint_in_raster(f):
-                    f.outside_arta_raster = True
-                else:
-                    if irma_utils.timelog_exists(f):
-                        f.irr_event = True
-                        if irma_utils.last_timelog_in_dataperiod(f, daily_r_fps, daily_e_fps):
-                            f.last_irr_event_outside_period = False
-                            flag_run = "irr_event"
-                            swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
-                                f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
-                                hourly_r_fps, hourly_e_fps)
-                            f.adv_sorted = sorted(f.adv.iteritems())
-                            f.last_irrigate_date = f.irrigationlog_set.latest().time
-                        else:
-                            f.last_irr_event_outside_period = True
-                            flag_run = "no_irr_event"
-                            swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
-                                f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
-                                hourly_r_fps, hourly_e_fps)
-                            f.adv_sorted = sorted(f.adv.iteritems())
-                            f.over_fc = ovfc
-                    else:
-                        f.irr_event = False
-                        flag_run = "no_irr_event"
-                        swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
-                            f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
-                            hourly_r_fps, hourly_e_fps)
-                        f.adv_sorted = sorted(f.adv.iteritems())
-                        f.over_fc = ovfc
-                    f.fc_mm = swb_view.fc_mm
+       		f.results = model_run(f, "YES",  daily_r_fps, daily_e_fps,
+			              hourly_r_fps, hourly_e_fps)
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
         return context
@@ -157,39 +132,14 @@ class AdvicePageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(AdvicePageView, self).get_context_data(**kwargs)
         # Load data paths
-        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = irma_utils.load_meteodata_file_paths()
+        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
         Inet_in = "NO"
         f = Agrifield.objects.get(pk=self.kwargs['pk'])
         f.can_edit(self.request.user)
-        context['f'] = f
         context['fpars'] = get_parameters(f)
-        if irma_utils.timelog_exists(f):
-            f.irr_event = True
-            if irma_utils.last_timelog_in_dataperiod(f, daily_r_fps, daily_e_fps):
-                f.last_irr_event_outside_period = False
-                flag_run = "irr_event"
-                swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
-                    f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
-                    hourly_r_fps, hourly_e_fps)
-                f.adv_sorted = sorted(f.adv.iteritems())
-                f.swb_report = swb_view.wbm_report
-            else:
-                f.last_irr_event_outside_period = True
-                flag_run = "no_irr_event"
-                swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
-                    f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
-                    hourly_r_fps, hourly_e_fps)
-                f.adv_sorted = sorted(f.adv.iteritems())
-                f.swb_report = swb_view.wbm_report
-        else:
-            f.irr_event = False
-            f.model = "None irrigation event run"
-            flag_run = "no_irr_event"
-            swb_view, f.sd, f.ed, f.adv, ovfc, f.sdh, f.edh, f.ifinal = view_run(
-                f, flag_run, Inet_in, daily_r_fps, daily_e_fps,
-                hourly_r_fps, hourly_e_fps)
-            f.adv_sorted = sorted(f.adv.iteritems())
-            f.swb_report = swb_view.wbm_report
+	f.results = model_run(f, "NO", daily_r_fps, daily_e_fps,
+		     	          hourly_r_fps, hourly_e_fps)
+	context['f'] = f
         return context
 
 
@@ -261,7 +211,7 @@ class UpdateAgrifield(UpdateView):
         afieldobj = Agrifield.objects.get(pk=self.kwargs['pk'])
         afieldobj.can_edit(self.request.user)
         context['agrifield_user'] = afieldobj.owner
-        if irma_utils.agripoint_in_raster(afieldobj):
+        if agripoint_in_raster(afieldobj):
             context['default_parms'] = get_default_db_value(afieldobj)
         return context
 

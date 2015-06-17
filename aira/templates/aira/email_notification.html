@@ -379,8 +379,8 @@ footer p {
             <ul class="bulleted">
               <li class="{% if  f.adv %} in {% else %} out {% endif %}">
                 <ul class="irrigate">
-                    {% if f.adv %}
-                      {% for irr_date, values in f.adv_sorted  %}
+                    {% if f.resutls.adv %}
+                      {% for irr_date, values in f.resutls.adv_sorted  %}
                       <li class="empty">
                         <a href="http://{{ site.domain }}/home/{{ owner }}/">{{ f.name }}</a> {% trans "needs to be irrigated with " %}
                         <b>{{ values.0 |floatformat:"2" }} </b> mm
