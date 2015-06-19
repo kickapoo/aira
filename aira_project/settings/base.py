@@ -44,6 +44,12 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    },
+}
+
 ROOT_URLCONF = 'aira_project.urls'
 WSGI_APPLICATION = 'aira_project.wsgi.application'
 

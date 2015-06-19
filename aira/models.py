@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import ugettext_lazy as _
 
@@ -246,6 +247,12 @@ class Agrifield(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
+
+    def save(self, *args, **kwargs):
+        super(Agrifield, self).save(*args, **kwargs)
+        cache.delete_many(('model_run_{}_YES'.format(self.id),
+                           'model_run_{}_NO'.format(self.id),
+                           'performance_chart_{}'.format(self.id)))
 
 
 class IrrigationLog(models.Model):

@@ -5,6 +5,7 @@ from glob import glob
 from datetime import datetime, timedelta
 
 from django.conf import settings
+from django.core.cache import cache
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
@@ -190,13 +191,19 @@ def last_timelog_in_dataperiod(obj, r_fps, e_fps):
 class Results():
 	pass
 
-
-
 def model_run(afield_obj, Inet_in_forecast,
-	      daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps):
+              daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps,
+              ignore_cache=False):
     """
 	Run pthelma.SoilWaterBalance model based on afield_obj
     """
+
+    # If we have the results cached, return them immediately
+    cache_key = 'model_run_{}_{}'.format(afield_obj.id, Inet_in_forecast)
+    results = None if ignore_cache else cache.get(cache_key)
+    if results is not None:
+        return results
+
     results = Results()
     tz_config = timezone.get_default_timezone()
     # Check is the afield_obj in study area
@@ -337,6 +344,7 @@ def model_run(afield_obj, Inet_in_forecast,
     results.adv_sorted = sorted(advice.iteritems()) # Sorted advice dates
     results.swb_report = swb_hourly_obj.wbm_report
 
+    cache.set(cache_key, results, 7200)
     return results
 
 
@@ -350,7 +358,15 @@ def email_users_response_data(afield_obj):
    return model_run(afield_obj, Inet_in_forecast, daily_r_fps, daily_e_fps,
 		   hourly_r_fps, hourly_e_fps)
 
-def performance_chart(afield_obj, daily_r_fps, daily_e_fps):
+def performance_chart(afield_obj, daily_r_fps, daily_e_fps,
+                      ignore_cache=False):
+
+    # If we have the results cached, return them immediately
+    cache_key = 'performance_chart_{}'.format(afield_obj.id)
+    results = None if ignore_cache else cache.get(cache_key)
+    if results is not None:
+        return results
+
     results = Results()
     precip_daily = rasters2point(afield_obj.latitude, afield_obj.longitude,
                                  daily_r_fps)
@@ -421,4 +437,6 @@ def performance_chart(afield_obj, daily_r_fps, daily_e_fps):
     results.chart_dates = chart_dates
     results.chart_ifinal = chart_ifinal
     results.applied_water = applied_water
+
+    cache.set(cache_key, results, 7200)
     return results
