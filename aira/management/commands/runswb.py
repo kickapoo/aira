@@ -21,5 +21,5 @@ class Command(BaseCommand):
             try:
                 performance_chart(agrifield, daily_r_fps, daily_e_fps,
                                   ignore_cache=True)
-            except RuntimeError:
+            except:
                 pass
