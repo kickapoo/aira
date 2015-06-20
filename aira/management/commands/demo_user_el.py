@@ -12,7 +12,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            demo, created = User.objects.get_or_create(username="demo")
+            demo, created = User.objects.get_or_create(username="demo",
+                                                       email="anastasiadis.st00@gmail.com")
             demo.set_password('demo')
             demo.is_active = True
             demo.save()
@@ -47,7 +48,7 @@ class Command(BaseCommand):
                                                          use_custom_parameters=False)
             f.save()
             l, created = IrrigationLog.objects.get_or_create(agrifield=f,
-                                                             time="2015-01-03 00:00",
+                                                             time="2015-02-15 00:00",
                                                              applied_water=23.00)
             l.save()
 
@@ -74,7 +75,7 @@ class Command(BaseCommand):
                                                          use_custom_parameters=False)
             f.save()
             l, created = IrrigationLog.objects.get_or_create(agrifield=f,
-                                                             time="2015-02-15 00:00",
+                                                             time="2014-02-15 00:00",
                                                              applied_water=23.00)
             l.save()
         except:
