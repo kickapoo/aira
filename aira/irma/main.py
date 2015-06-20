@@ -123,9 +123,9 @@ def get_parameters(afield_obj):
         last_irrigate = afield_obj.irrigationlog_set.latest()
         if last_irrigate.applied_water is None:
             rd_factor = 1000
-            fc = raster2point(afield_obj.latitude, afield_obj.longitude, fc_raster)
+            fc = raster2point(afield_obj.latitude, afield_obj.longitude, FC_FILE)
             wp = raster2point(afield_obj.latitude,
-                              afield_obj.longitude, pwp_raster)
+                              afield_obj.longitude, PWP_FILE)
             fc_mm = fc * rd * rd_factor
             wp_mm = wp * rd * rd_factor
             taw_mm = fc_mm - wp_mm
