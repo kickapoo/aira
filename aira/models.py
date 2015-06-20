@@ -274,4 +274,4 @@ class IrrigationLog(models.Model):
         verbose_name_plural = 'Irrigation Logs'
 
     def __unicode__(self):
-        return unicode(self.agrifield + self.time)
+        return unicode(self.time)
