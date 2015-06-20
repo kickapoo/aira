@@ -299,6 +299,9 @@ def model_run(afield_obj, Inet_in_forecast,
                                          afield_obj.get_irrigation_optimizer,
                                          depl_daily, Inet_in_forecast)
     else:
+        if afield_obj.irrigationlog_set.exists():
+            if not last_timelog_in_dataperiod(afield_obj, daily_r_fps, daily_e_fps):
+                results.last_irr_event_outside_period = True
         results.irr_event = False
         results.flag_run = "no_irr_event"
 
@@ -327,8 +330,9 @@ def model_run(afield_obj, Inet_in_forecast,
     # Attach to afield_obj results from model runs
     # Get the advice and last date ifinal
     last_day_ifinal = [i['Ifinal'] for i in swb_daily_obj_special_message.wbm_report
-                       if i['date'] == fd_d.replace(hour=0, minute=0)]
-
+                       if i['date'] == fd_d] or [0.0] # A very special case when the user add
+						    # irrigation log date outside the period
+    print last_day_ifinal
     irr_dates = [i['date'] for i in swb_hourly_obj.wbm_report if i['irrigate'] >= 1]
     irr_amount = [i['Ifinal'] for i in swb_hourly_obj.wbm_report if i['irrigate'] >= 1]
     irr_Ks = [i['Ks'] for i in swb_hourly_obj.wbm_report if i['irrigate'] >= 1]
