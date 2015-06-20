@@ -74,7 +74,7 @@ class Command(BaseCommand):
                                                          use_custom_parameters=False)
             f.save()
             l, created = IrrigationLog.objects.get_or_create(agrifield=f,
-                                                             time="2014-11-15 00:00",
+                                                             time="2015-02-15 00:00",
                                                              applied_water=23.00)
             l.save()
         except:
