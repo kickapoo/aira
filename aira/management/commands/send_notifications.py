@@ -45,8 +45,8 @@ class Command(BaseCommand):
         for f in agrifields:
             f.results = email_users_response_data(f)
         context['owner'] = owner
-        context['sd'] = agrifields[0].sd
-        context['ed'] = agrifields[0].ed
+        context['sd'] = agrifields[0].results.sd
+        context['ed'] = agrifields[0].results.ed
         context['agrifields'] = agrifields
         context['site'] = Site.objects.get_current()
         context['user'] = user
