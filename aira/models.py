@@ -250,6 +250,9 @@ class Agrifield(models.Model):
 
     def save(self, *args, **kwargs):
         super(Agrifield, self).save(*args, **kwargs)
+        self.invalidate_cache()
+
+    def invalidate_cache(self):
         cache.delete_many(('model_run_{}_YES'.format(self.id),
                            'model_run_{}_NO'.format(self.id),
                            'performance_chart_{}'.format(self.id)))
@@ -275,3 +278,11 @@ class IrrigationLog(models.Model):
 
     def __unicode__(self):
         return unicode(self.time)
+
+    def save(self, *args, **kwargs):
+        super(IrrigationLog, self).save(*args, **kwargs)
+        self.agrifield.invalidate_cache()
+
+    def delete(self, *args, **kwargs):
+        super(IrrigationLog, self).delete(*args, **kwargs)
+        self.agrifield.invalidate_cache()
