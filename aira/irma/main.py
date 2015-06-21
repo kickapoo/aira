@@ -260,9 +260,9 @@ def model_run(afield_obj, Inet_in_forecast,
 
     # Select model run with or without irrigation event
     if afield_obj.irrigationlog_set.exists():
-        results.irr_event = True
         results.last_irrigate_date = afield_obj.irrigationlog_set.latest().time
         if last_timelog_in_dataperiod(afield_obj, daily_r_fps, daily_e_fps):
+            results.irr_event = True
             results.last_irr_event_outside_period = False
             results.flag_run = "irr_event"
             last_irr_date = afield_obj.irrigationlog_set.latest().time
@@ -298,10 +298,34 @@ def model_run(afield_obj, Inet_in_forecast,
                                          fd_h.replace(tzinfo=None),
                                          afield_obj.get_irrigation_optimizer,
                                          depl_daily, Inet_in_forecast)
+        else:
+            results.last_irr_event_outside_period = True
+            results.irr_event = False
+            results.flag_run = "no_irr_event"
+
+            # Start date is historical data finish date minus one day
+            # Start data is the previous date
+            sd_d = fd_d - timedelta(days=1)
+            # Get theta_init for summer or winter
+            theta_init = swb_daily_obj.fc_mm - 0.75 * swb_daily_obj.raw_mm
+            if sd_d.month in [10, 11, 12, 1, 2, 3]:
+                theta_init = swb_daily_obj.fc_mm
+    	# Daily run, historical depletion , Inet_in = NO
+            depl_daily = swb_daily_obj.water_balance(theta_init, [],
+                                               sd_d.replace(tzinfo=None), fd_d.replace(tzinfo=None),
+                                               afield_obj.get_irrigation_optimizer,
+                                               None, "NO")
+            swb_daily_obj_special_message.water_balance(theta_init, [],
+                                      sd_d.replace(tzinfo=None),
+                                      fd_d.replace(tzinfo=None),
+                                      afield_obj.get_irrigation_optimizer, None,
+                                      "NO")
+            # Hourly
+            swb_hourly_obj.water_balance(0, [], sd_h.replace(tzinfo=None), fd_h.replace(tzinfo=None),
+                                         afield_obj.get_irrigation_optimizer,
+                                         depl_daily, Inet_in_forecast)
     else:
-        if afield_obj.irrigationlog_set.exists():
-            if not last_timelog_in_dataperiod(afield_obj, daily_r_fps, daily_e_fps):
-                results.last_irr_event_outside_period = True
+        results.no_irrigation_log = True
         results.irr_event = False
         results.flag_run = "no_irr_event"
 
