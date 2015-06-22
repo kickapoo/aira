@@ -1,5 +1,7 @@
 import csv
-from datetime import timedelta
+from datetime import date, timedelta
+import os
+
 from django.utils import timezone
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
@@ -72,13 +74,15 @@ class IndexPageView(TemplateView):
         context = super(IndexPageView, self).get_context_data(**kwargs)
         context['yesterday'] = (timezone.now() - timedelta(days=1)).date()
         daily_r_fps, daily_e_fps = load_meteodata_file_paths()[:2]
-        dates_r = sorted([x.split('.')[0].partition('-')[2]
+        dates_r = sorted([os.path.basename(x).split('.')[0].partition('-')[2]
                           for x in daily_r_fps])
-        dates_e = sorted([x.split('.')[0].partition('-')[2]
+        dates_e = sorted([os.path.basename(x).split('.')[0].partition('-')[2]
                           for x in daily_e_fps])
         common_dates = [x for x in dates_r if x in dates_e]
-        context['start_date'] = common_dates[0]
-        context['end_date'] = common_dates[-1]
+        y1, m1, d1 = (int(x) for x in common_dates[0].split('-'))
+        y2, m2, d2 = (int(x) for x in common_dates[-1].split('-'))
+        context['start_date'] = date(y1, m1, d1)
+        context['end_date'] = date(y2, m2, d2)
         return context
 
 
