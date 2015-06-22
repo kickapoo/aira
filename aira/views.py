@@ -71,12 +71,14 @@ class IndexPageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(IndexPageView, self).get_context_data(**kwargs)
         context['yesterday'] = (timezone.now() - timedelta(days=1)).date()
-        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
-        arta_rainfall = rasters2point(39.15, 20.98, daily_r_fps)
-        arta_evap = rasters2point(39.15, 20.98, daily_e_fps)
-        start_data, end_data = common_period_dates(arta_rainfall, arta_evap )
-        context['start_date'] = start_data
-        context['end_date'] = end_data
+        daily_r_fps, daily_e_fps = load_meteodata_file_paths()[:2]
+        dates_r = sorted([x.split('.')[0].partition('-')[2]
+                          for x in daily_r_fps])
+        dates_e = sorted([x.split('.')[0].partition('-')[2]
+                          for x in daily_e_fps])
+        common_dates = [x for x in dates_r if x in dates_e]
+        context['start_date'] = common_dates[0]
+        context['end_date'] = common_dates[-1]
         return context
 
 
