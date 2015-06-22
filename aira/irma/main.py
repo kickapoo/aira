@@ -371,7 +371,7 @@ def model_run(afield_obj, Inet_in_forecast,
     results.adv_sorted = sorted(advice.iteritems()) # Sorted advice dates
     results.swb_report = swb_hourly_obj.wbm_report
 
-    cache.set(cache_key, results, 7200)
+    cache.set(cache_key, results, None)
     return results
 
 
@@ -465,5 +465,5 @@ def performance_chart(afield_obj, daily_r_fps, daily_e_fps,
     results.chart_ifinal = chart_ifinal
     results.applied_water = applied_water
 
-    cache.set(cache_key, results, 7200)
+    cache.set(cache_key, results, None)
     return results
