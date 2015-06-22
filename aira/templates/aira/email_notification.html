@@ -377,7 +377,7 @@ footer p {
           {% for f in agrifields  %}
           <p>
             <ul class="bulleted">
-              <li class="{% if  f.adv %} in {% else %} out {% endif %}">
+              <li class="{% if  f.results.adv %} in {% else %} out {% endif %}">
                 <ul class="irrigate">
                     {% if f.results.adv %}
                       {% for irr_date, values in f.results.adv_sorted  %}
