@@ -84,7 +84,7 @@
              {% trans "Update you field location" %} <a href="{% url 'update_agrifield' f.id %}">{% trans "here" %}</a>.
           </div>
         {% else %}
-          {% if not f.results.irr_event %}
+          {% if f.results.no_irrigation_log %}
             <div class="alert alert-warning">
               <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i></span>  &nbsp;
               {% trans "You haven't entered any irrigation event. Add  your irrigation log" %} <a href="{% url 'create_irrlog' f.id %}">{% trans "here" %}</a>.<br>
