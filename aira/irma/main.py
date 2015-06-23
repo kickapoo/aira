@@ -164,16 +164,12 @@ def common_period_dates(precip, evap):
     return max(pstart, estart), min(pend, eend)
 
 
-def last_timelog_in_dataperiod(obj, r_fps, e_fps):
+def last_timelog_in_dataperiod(obj, precip, evap):
     """
 	Search in afield_obj last irrigation event
 	is within r_fps, e_fps rasters
     """
     tz_config = timezone.get_default_timezone()
-    precip = rasters2point(obj.latitude, obj.longitude,
-                                     r_fps)
-    evap = rasters2point(obj.latitude, obj.longitude,
-                                   e_fps)
     sd, fd = common_period_dates(precip, evap)
     sd = sd.replace(tzinfo=tz_config)
     fd = fd.replace(tzinfo=tz_config)
@@ -261,7 +257,7 @@ def model_run(afield_obj, Inet_in_forecast,
     # Select model run with or without irrigation event
     if afield_obj.irrigationlog_set.exists():
         results.last_irrigate_date = afield_obj.irrigationlog_set.latest().time
-        if last_timelog_in_dataperiod(afield_obj, daily_r_fps, daily_e_fps):
+        if last_timelog_in_dataperiod(afield_obj,  precip_daily, evap_daily):
             results.irr_event = True
             results.last_irr_event_outside_period = False
             results.flag_run = "irr_event"
