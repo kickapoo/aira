@@ -467,7 +467,7 @@ msgstr "Συμβουλή Άρδευσης"
 
 #: aira/templates/aira/home.html:193
 msgid "Since the last recorded irrigation"
-msgstr "Από την τελευταία καταχωρημένη άδρευση"
+msgstr "Από την τελευταία καταχωρημένη άρδευση"
 
 #: aira/templates/aira/home.html:193
 msgid "up to"
