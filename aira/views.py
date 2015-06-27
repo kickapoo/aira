@@ -27,10 +27,9 @@ class IrrigationPerformance(TemplateView):
         context = super(IrrigationPerformance,
                         self).get_context_data(**kwargs)
         # Load data paths
-        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
         f = Agrifield.objects.get(pk=self.kwargs['pk_a'])
         f.can_edit(self.request.user)
-        results = performance_chart(f, daily_r_fps, daily_e_fps)
+        results = get_performance_chart(f)
         f.chart_dates = results.chart_dates
         f.chart_ifinal = results.chart_ifinal
         f.applied_water = results.applied_water
@@ -46,9 +45,8 @@ def performance_csv(request, pk ):
     f = Agrifield.objects.get(pk=pk)
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="{}-performance.csv"'.format(f.name)
-    daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
     f.can_edit(request.user)
-    results = performance_chart(f, daily_r_fps, daily_e_fps)
+    results = get_performance_chart(f)
     writer = csv.writer(response)
     for row in zip(results.chart_dates, results.chart_ifinal, results.applied_water):
             writer.writerow(row)
@@ -103,9 +101,8 @@ class HomePageView(TemplateView):
             context['url_username'] = self.request.user
         # User is url_slug <username>
         user = User.objects.get(username=url_username)
-        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
 
-	# Fetch models.Profile(User)
+        # Fetch models.Profile(User)
         try:
             context['profile'] = Profile.objects.get(farmer=self.request.user)
         except Profile.DoesNotExist:
@@ -114,7 +111,7 @@ class HomePageView(TemplateView):
         try:
             agrifields = Agrifield.objects.filter(owner=user).all()
             for f in agrifields:
-		# Check if user is allowed or 404
+                # Check if user is allowed or 404
                 f.can_edit(self.request.user)
             # For Profile section
             # Select self.request.user user that set him supervisor
@@ -122,11 +119,10 @@ class HomePageView(TemplateView):
                 supervising_users = Profile.objects.filter(
                     supervisor=self.request.user)
                 context['supervising_users'] = supervising_users
+            for f in agrifields:
+                f.results = model_results(f, "YES")
             context['agrifields'] = agrifields
             context['fields_count'] = len(agrifields)
-            for f in agrifields:
-       		f.results = model_run(f, "YES",  daily_r_fps, daily_e_fps,
-			              hourly_r_fps, hourly_e_fps)
         except Agrifield.DoesNotExist:
             context['agrifields'] = None
         return context
@@ -138,14 +134,12 @@ class AdvicePageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(AdvicePageView, self).get_context_data(**kwargs)
         # Load data paths
-        daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = load_meteodata_file_paths()
         Inet_in = "NO"
         f = Agrifield.objects.get(pk=self.kwargs['pk'])
         f.can_edit(self.request.user)
         context['fpars'] = get_parameters(f)
-	f.results = model_run(f, "NO", daily_r_fps, daily_e_fps,
-		     	          hourly_r_fps, hourly_e_fps)
-	context['f'] = f
+        f.results = model_results(f, "NO")
+        context['f'] = f
         return context
 
 

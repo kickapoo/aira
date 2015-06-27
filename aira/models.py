@@ -2,15 +2,14 @@ from collections import OrderedDict
 
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.cache import cache
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 
 from aira.irma.utils import FC_FILE as fc_raster
 from aira.irma.utils import PWP_FILE as pwp_raster
 from aira.irma.utils import THETA_S_FILE as thetaS_raster
 from aira.irma.utils import raster2point
-from django.http import Http404
 
 # notification_options is the list of options the user can select for
 # notifications, e.g. be notified every day, every two days, every week, and so
@@ -34,7 +33,7 @@ notification_options = OrderedDict((
 
 YES_OR_NO = (
     (True, _('Yes')),
-    (False,_('No'))
+    (False, _('No'))
 )
 
 
@@ -250,12 +249,13 @@ class Agrifield(models.Model):
 
     def save(self, *args, **kwargs):
         super(Agrifield, self).save(*args, **kwargs)
-        self.invalidate_cache()
+        self.execute_model()
 
-    def invalidate_cache(self):
-        cache.delete_many(('model_run_{}_YES'.format(self.id),
-                           'model_run_{}_NO'.format(self.id),
-                           'performance_chart_{}'.format(self.id)))
+    def execute_model(self):
+        from aira import tasks
+        tasks.execute_model.delay(self, 'YES')
+        tasks.execute_model.delay(self, 'NO')
+        tasks.calculate_performance_chart.delay(self)
 
 
 class IrrigationLog(models.Model):
@@ -281,8 +281,8 @@ class IrrigationLog(models.Model):
 
     def save(self, *args, **kwargs):
         super(IrrigationLog, self).save(*args, **kwargs)
-        self.agrifield.invalidate_cache()
+        self.agrifield.execute_model()
 
     def delete(self, *args, **kwargs):
         super(IrrigationLog, self).delete(*args, **kwargs)
-        self.agrifield.invalidate_cache()
+        self.agrifield.execute_model()

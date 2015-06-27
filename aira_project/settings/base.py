@@ -28,7 +28,10 @@ DJANGO_APPS = ('django.contrib.admin',
 THIRD_PARTY_APPS = ('bootstrap3',
                     'registration',
                     'mathfilters',
-                    'captcha',)
+                    'captcha',
+                    'kombu.transport.django',
+                    )
+
 # LOCAL APPS
 LOCAL_APPS = ('aira',)
 
@@ -75,6 +78,9 @@ TEMPLATE_DIRS = (
 
 ACCOUNT_ACTIVATION_DAYS = 3
 LOGIN_REDIRECT = "/home"
+
+# Celery
+BROKER_URL = 'django://'
 
 AIRA_PARAMETERS_FILE_DIR = os.path.join(PROJECT_ROOT, 'airadb_coeffs')
 
