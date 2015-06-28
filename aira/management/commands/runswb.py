@@ -8,4 +8,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for agrifield in Agrifield.objects.all():
-            self.execute_model()
+            agrifield.execute_model()
