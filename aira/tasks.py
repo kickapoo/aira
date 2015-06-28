@@ -1,10 +1,9 @@
 from __future__ import absolute_import
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 import os
 from django.core.cache import cache
 from django.conf import settings
-from django.utils import timezone
 
 from pthelma.swb import SoilWaterBalance
 
@@ -26,7 +25,6 @@ def execute_model(agrifield, Inet_in_forecast):
     """
 
     results = Results()
-    tz_config = timezone.get_default_timezone()
 
     # Verify that the agrifield is in study area
     if not agripoint_in_raster(agrifield):
@@ -187,10 +185,22 @@ def calculate_performance_chart(agrifield):
     # daily swb
     swb_obj = SoilWaterBalance(fc, wp, rd, kc, p, peff, irr_eff, thetaS,
                                precip_daily, evap_daily, rd_factor)
+    # Default Greek irrigation period
     sd, fd = common_period_dates(precip_daily, evap_daily)
+    non_irr_period_finish_date = datetime(2015, 3, 31)
+    irr_period_start_date = datetime(2015, 4, 1)
+
+    # Non irrigation season
+    dr_non_irr_period = swb_obj.water_balance(
+        swb_obj.fc_mm, [], sd, non_irr_period_finish_date,
+        agrifield.get_irrigation_optimizer, None, "NO")
 
     # Irrigation season
     swb_obj.wbm_report = []  # make sure is empty
+    # theta_init is zero because Dr_Historical exists
+    swb_obj.water_balance(
+        0, [], irr_period_start_date, fd, agrifield.get_irrigation_optimizer,
+        dr_non_irr_period, "YES")
     irr_period_dates = [i['date'].date() for i in swb_obj.wbm_report]
     irr_period_ifinal = [i['Ifinal'] for i in swb_obj.wbm_report]
 
