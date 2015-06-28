@@ -1,6 +1,7 @@
+from __future__ import absolute_import
+
 from datetime import timedelta
 import os
-
 from django.core.cache import cache
 from django.conf import settings
 from django.utils import timezone
@@ -83,8 +84,8 @@ def execute_model(agrifield, Inet_in_forecast):
     results.flag_run = "no_irr_event" if results.irr_event else "irr_event"
 
     if (not results.last_irr_event_outside_period) and results.irr_event:
-        last_irr_date = agrifield.irrigationlog_set.latest().time
-        results.last_irr_date = last_irr_date.replace(tzinfo=tz_config)
+        results.last_irr_date = agrifield.irrigationlog_set.latest().time.\
+            replace(hour=0, minute=0)
         # Get theta_init & Dr0 if irrigation event has or not irrigation
         # water amount
         if agrifield.irrigationlog_set.latest().applied_water in [None, '']:
@@ -98,7 +99,7 @@ def execute_model(agrifield, Inet_in_forecast):
                 (swb_daily.fc_mm - 0.75 * swb_daily.raw_mm)
             Dr0 = swb_daily.fc_mm - theta_init
 
-        run_start_date = last_irr_date
+        run_start_date = results.last_irr_date
     else:
 
         # Start date is historical data finish date minus one day
@@ -153,6 +154,12 @@ def execute_model(agrifield, Inet_in_forecast):
 @app.task
 def calculate_performance_chart(agrifield):
     results = Results()
+
+    # Verify that the agrifield is in study area
+    if not agripoint_in_raster(agrifield):
+        results.outside_arta_raster = True
+        return results
+
     daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = \
         load_meteodata_file_paths()
     precip_daily = rasters2point(agrifield.latitude, agrifield.longitude,
