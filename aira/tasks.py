@@ -8,9 +8,9 @@ from django.conf import settings
 from pthelma.swb import SoilWaterBalance
 
 from aira.celery import app
-from aira.irma.main import (
-    agripoint_in_raster, common_period_dates, last_timelog_in_dataperiod,
-    load_meteodata_file_paths, raster2point, rasters2point)
+from aira.irma.main import (agripoint_in_raster, common_period_dates,
+                            load_meteodata_file_paths, raster2point,
+                            rasters2point)
 from aira.models import IrrigationLog
 
 
@@ -18,7 +18,6 @@ class Results():
     pass
 
 
-@app.task
 def execute_model(agrifield, Inet_in_forecast):
     """
     Run pthelma.SoilWaterBalance model on agrifield
@@ -47,9 +46,11 @@ def execute_model(agrifield, Inet_in_forecast):
                                 hourly_e_fps)
     evap_hourly.time_step.length_minutes = 60
 
-    # Start and end dates of common dataperiod
+    # Start and end dates of common data period
     start_date_daily, end_date_daily = common_period_dates(precip_daily,
                                                            evap_daily)
+    start_date_daily = start_date_daily.date()
+    end_date_daily = end_date_daily.date()
     start_date_hourly, end_date_hourly = common_period_dates(precip_hourly,
                                                              evap_hourly)
 
@@ -73,61 +74,47 @@ def execute_model(agrifield, Inet_in_forecast):
     swb_hourly = SoilWaterBalance(fc, wp, rd, kc, p, peff, irr_eff, thetaS,
                                   precip_hourly, evap_hourly, rd_factor)
 
-    results.last_irr_event_outside_period = \
-        not agrifield.irrigationlog_set.exists()
-    results.irr_event = agrifield.irrigationlog_set.exists() and \
-        last_timelog_in_dataperiod(agrifield,  precip_daily, evap_daily)
-    if results.irr_event:
-        results.last_irrigate_date = agrifield.irrigationlog_set.latest().time
-    results.flag_run = "no_irr_event" if results.irr_event else "irr_event"
+    # Determine last irrigation, if applicable
+    last_irrigation = (agrifield.irrigationlog_set.latest()
+                       if agrifield.irrigationlog_set.exists() else None)
+    if last_irrigation and ((last_irrigation.time.date() < start_date_daily) or
+                            (last_irrigation.time.date() > end_date_daily)):
+        last_irrigation = None
 
-    if (not results.last_irr_event_outside_period) and results.irr_event:
-        results.last_irr_date = agrifield.irrigationlog_set.latest().time.\
-            replace(hour=0, minute=0)
-        # Get theta_init & Dr0 if irrigation event has or not irrigation
-        # water amount
-        if agrifield.irrigationlog_set.latest().applied_water in [None, '']:
+    # Determine Dr0, theta_init, and run_start_date
+    if last_irrigation:
+        results.last_irr_date = last_irrigation.time.date()
+        applied_water = last_irrigation.applied_water
+        if applied_water is None:
             theta_init = swb_daily.raw_mm + swb_daily.lowlim_theta_mm
             Dr0 = theta_init - swb_daily.fc_mm
         else:
-            Inet = (agrifield.irrigationlog_set.latest().applied_water /
-                    agrifield.area) * rd_factor * float(
-                        agrifield.get_efficiency)
-            theta_init = Inet + \
-                (swb_daily.fc_mm - 0.75 * swb_daily.raw_mm)
+            theta_init = applied_water / agrifield.area * rd_factor * \
+                float(agrifield.get_efficiency) + swb_daily.fc_mm - \
+                0.75 * swb_daily.raw_mm
             Dr0 = swb_daily.fc_mm - theta_init
-
         run_start_date = results.last_irr_date
     else:
-
-        # Start date is historical data finish date minus one day
-        # Start data is the previous date
         start_date_daily = end_date_daily - timedelta(days=1)
-        # Get theta_init for summer or winter
         theta_init = swb_daily.fc_mm - 0.75 * swb_daily.raw_mm
         if start_date_daily.month in [10, 11, 12, 1, 2, 3]:
             theta_init = swb_daily.fc_mm
         run_start_date = start_date_daily
         Dr0 = None
 
+    # Run the model
     depl_daily = swb_daily.water_balance(
-        theta_init, [], run_start_date.replace(tzinfo=None),
-        end_date_daily.replace(tzinfo=None),
+        theta_init, [], datetime.combine(run_start_date, datetime.min.time()),
+        datetime.combine(end_date_daily, datetime.min.time()),
         agrifield.get_irrigation_optimizer, Dr0, "NO")
-    # Hourly
     swb_hourly.water_balance(0, [], start_date_hourly.replace(tzinfo=None),
                              end_date_hourly.replace(tzinfo=None),
                              agrifield.get_irrigation_optimizer, depl_daily,
                              Inet_in_forecast)
 
-    # Attach to agrifield results from model runs
-    # Get the advice and last date ifinal
-
-    # A very special case when the user add irrigation log date outside the
-    # period
+    # Store results
     last_day_ifinal = [i['Ifinal'] for i in swb_daily.wbm_report
                        if i['date'] == end_date_daily] or [0.0]
-
     irr_dates = [i['date'] for i in swb_hourly.wbm_report
                  if i['irrigate'] >= 1]
     irr_amount = [i['Ifinal'] for i in swb_hourly.wbm_report
@@ -135,7 +122,6 @@ def execute_model(agrifield, Inet_in_forecast):
     irr_Ks = [i['Ks'] for i in swb_hourly.wbm_report if i['irrigate'] >= 1]
     irr_values = zip(irr_amount, irr_Ks)
     advice = dict(zip(irr_dates, irr_values))
-
     results.sd = start_date_hourly  # Starting date of forecast data
     results.ed = end_date_hourly  # Finish date of forecast  data
     results.adv = advice  # Advice based on model
@@ -145,11 +131,11 @@ def execute_model(agrifield, Inet_in_forecast):
     results.adv_sorted = sorted(advice.iteritems())  # Sorted advice dates
     results.swb_report = swb_hourly.wbm_report
 
+    # Save results to cache
     cache.set('model_run_{}_{}'.format(agrifield.id, Inet_in_forecast),
               results, None)
 
 
-@app.task
 def calculate_performance_chart(agrifield):
     results = Results()
 
@@ -227,3 +213,22 @@ def calculate_performance_chart(agrifield):
     results.applied_water = applied_water
 
     cache.set('performance_chart_{}'.format(agrifield.id), results, None)
+
+
+@app.task
+def calculate_agrifield(agrifield):
+    cache_key = 'agrifield_{}_status'.format(agrifield.id)
+    cache.set(cache_key, 'being processed')
+    try:
+        execute_model(agrifield, 'YES')
+        execute_model(agrifield, 'NO')
+        calculate_performance_chart(agrifield)
+    except:
+        # Oops! We failed. We should probably do something smart here, such as
+        # sending the traceback to someone, and possibly requeue the job for
+        # a retry, but for now let's just raise the exception, leaving the
+        # status at 'being processed'. If the error persists, the field will
+        # never be calculated and the user will eventually ask the admins
+        # what the heck is going on.
+        raise
+    cache.set(cache_key, 'done')

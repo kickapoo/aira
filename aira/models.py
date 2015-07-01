@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
@@ -253,9 +254,16 @@ class Agrifield(models.Model):
 
     def execute_model(self):
         from aira import tasks
-        tasks.execute_model.delay(self, 'YES')
-        tasks.execute_model.delay(self, 'NO')
-        tasks.calculate_performance_chart.delay(self)
+
+        cache_key = 'agrifield_{}_status'.format(self.id)
+
+        # If the agrifield is already in the Celery queue for calculation,
+        # return without doing anything.
+        if cache.get(cache_key) == 'queued':
+            return
+
+        tasks.calculate_agrifield.delay(self)
+        cache.set(cache_key, 'queued')
 
 
 class IrrigationLog(models.Model):

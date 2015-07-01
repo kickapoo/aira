@@ -91,7 +91,7 @@
               {% trans "Irrigation Advice is estimated using system's default datasets" %}.
             </div>
           {% endif %}
-          {% if f.results.last_irr_event_outside_period %}
+          {% if not f.irrigationlog_set.exists %}
             <div class="alert alert-warning">
               <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i></span>  &nbsp;
               {% trans "Your latest irrigation event is outside our dataset period. Update your irrigation log" %} <a href="{% url 'create_irrlog' f.id %}">{% trans "here" %}</a>.<br>
@@ -107,8 +107,8 @@
               {% if f.results.adv %}
               <img style="display:block;float:left;"src="{% static 'img/warning.png' %}" alt="" height="20" width="20">&nbsp;
               <b>{% trans "Irrigation Advice" %}</b>: <br><br>
-              {% if f.results.last_irrigate_date %}
-              {% trans "Since the last recorded irrigation" %} (<span class="text-warning">{{f.results.last_irrigate_date|date:"d/m/Y"}}</span>) {% trans "up to" %} <span class="text-warning">{{ f.results.edh|date:"d/m/Y" }}</span>, {% trans "there is need of" %}  <span class="text-success">{{ f.results.ifinal|floatformat:"2" }} mm </span> {% trans "additional water" %}.
+              {% if f.results.last_irr_date %}
+              {% trans "Since the last recorded irrigation" %} (<span class="text-warning">{{f.results.last_irr_date|date:"d/m/Y"}}</span>) {% trans "up to" %} <span class="text-warning">{{ f.results.edh|date:"d/m/Y" }}</span>, {% trans "there is need of" %}  <span class="text-success">{{ f.results.ifinal|floatformat:"2" }} mm </span> {% trans "additional water" %}.
                 <br>
               {% endif %}
               {% trans "Based on the available information" %}, {% trans "from" %}

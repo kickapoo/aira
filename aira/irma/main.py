@@ -5,7 +5,6 @@ from glob import glob
 
 from django.conf import settings
 from django.core.cache import cache
-from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -159,26 +158,6 @@ def common_period_dates(precip, evap):
     eend = evap.bounding_dates()[1]
 
     return max(pstart, estart), min(pend, eend)
-
-
-def last_timelog_in_dataperiod(obj, precip, evap):
-    """
-        Search in afield_obj last irrigation event
-        is within r_fps, e_fps rasters
-    """
-    tz_config = timezone.get_default_timezone()
-    sd, fd = common_period_dates(precip, evap)
-    sd = sd.replace(tzinfo=tz_config)
-    fd = fd.replace(tzinfo=tz_config)
-    # pthlema.timeseries object for Daily data
-    # tags datetime with hour=00, minutes=00
-    # in order to check in a irrigationlog is in the period,
-    # manual addition hour=23 and minute=59 is made
-    fd = fd.replace(hour=23, minute=59)
-    latest_tl = obj.irrigationlog_set.latest().time
-    if latest_tl < sd or latest_tl > fd:
-        return False
-    return True
 
 
 class Results():
