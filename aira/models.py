@@ -263,7 +263,7 @@ class Agrifield(models.Model):
             return
 
         tasks.calculate_agrifield.delay(self)
-        cache.set(cache_key, 'queued')
+        cache.set(cache_key, 'queued', None)
 
     @property
     def status(self):

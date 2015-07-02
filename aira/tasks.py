@@ -218,7 +218,7 @@ def calculate_performance_chart(agrifield):
 @app.task
 def calculate_agrifield(agrifield):
     cache_key = 'agrifield_{}_status'.format(agrifield.id)
-    cache.set(cache_key, 'being processed')
+    cache.set(cache_key, 'being processed', None)
     try:
         execute_model(agrifield, 'YES')
         execute_model(agrifield, 'NO')
@@ -231,4 +231,4 @@ def calculate_agrifield(agrifield):
         # never be calculated and the user will eventually ask the admins
         # what the heck is going on.
         raise
-    cache.set(cache_key, 'done')
+    cache.set(cache_key, 'done', None)
