@@ -29,17 +29,18 @@ class IrrigationPerformance(TemplateView):
         # Load data paths
         f = Agrifield.objects.get(pk=self.kwargs['pk_a'])
         f.can_edit(self.request.user)
-        results = get_performance_chart(f)
-        f.chart_dates = results.chart_dates
-        f.chart_ifinal = results.chart_ifinal
-        f.applied_water = results.applied_water
-        f.sum_ifinal = sum(results.chart_ifinal)
-        f.sum_applied_water = sum(results.applied_water)
-        f.percentage_diff = _("Not Available")
-        if f.sum_ifinal != 0.0:
-            f.percentage_diff = round(((f.sum_applied_water - f.sum_ifinal) / f.sum_ifinal)*100 or 0.0)
+        f.chart = get_performance_chart(f)
+        if f.chart:
+            f.chart.sum_ifinal = sum(f.chart.chart_ifinal)
+            f.chart.sum_applied_water = sum(f.chart.applied_water)
+            f.chart.percentage_diff = _("Not Available")
+            if f.chart.sum_ifinal != 0.0:
+                f.chart.percentage_diff = round(
+                    ((f.chart.sum_applied_water - f.chart.sum_ifinal) /
+                    f.chart.sum_ifinal)*100 or 0.0)
         context['f'] = f
         return context
+
 
 def performance_csv(request, pk ):
     f = Agrifield.objects.get(pk=pk)

@@ -265,6 +265,10 @@ class Agrifield(models.Model):
         tasks.calculate_agrifield.delay(self)
         cache.set(cache_key, 'queued')
 
+    @property
+    def status(self):
+        return cache.get('agrifield_{}_status'.format(self.id))
+
 
 class IrrigationLog(models.Model):
     agrifield = models.ForeignKey(Agrifield)
