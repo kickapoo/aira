@@ -45,7 +45,7 @@ class IrrigationPerformance(TemplateView):
 def performance_csv(request, pk ):
     f = Agrifield.objects.get(pk=pk)
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="{}-performance.csv"'.format(f.name)
+    response['Content-Disposition'] = 'attachment; filename="{}-performance.csv"'.format(unicode(f.name))
     f.can_edit(request.user)
     results = get_performance_chart(f)
     writer = csv.writer(response)
