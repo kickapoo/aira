@@ -32,7 +32,7 @@
     </div>
 </div>
 {% endblock %}
-
+    
 {% block extrajs %}
         <script type="text/javascript">
           $("#id_time").datetimepicker({
@@ -41,5 +41,9 @@
             todayBtn: true,
             pickerPosition: "bottom-left"
             });
+        $(document).ready(function() {
+            var label_inner = $("label[for='id_applied_water']").html()
+            $("label[for='id_applied_water']").html(label_inner + " (m³)")
+        });
       </script>
 {% endblock %}
