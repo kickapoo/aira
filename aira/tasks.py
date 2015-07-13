@@ -71,6 +71,8 @@ def execute_model(agrifield, Inet_in_forecast):
     # Create SoilWaterBalance Object for daily and hourly data
     swb_daily = SoilWaterBalance(fc, wp, rd, kc, p, peff, irr_eff, thetaS,
                                  precip_daily, evap_daily, rd_factor)
+    swb_last_day_ifinal = SoilWaterBalance(fc, wp, rd, kc, p, peff, irr_eff,
+                                 thetaS, precip_daily, evap_daily, rd_factor)
     swb_hourly = SoilWaterBalance(fc, wp, rd, kc, p, peff, irr_eff, thetaS,
                                   precip_hourly, evap_hourly, rd_factor)
 
@@ -107,14 +109,19 @@ def execute_model(agrifield, Inet_in_forecast):
         theta_init, [], datetime.combine(run_start_date, datetime.min.time()),
         datetime.combine(end_date_daily, datetime.min.time()),
         agrifield.get_irrigation_optimizer, Dr0, "NO")
+    swb_last_day_ifinal.water_balance(
+        theta_init, [], datetime.combine(run_start_date, datetime.min.time()),
+        datetime.combine(end_date_daily, datetime.min.time()),
+        agrifield.get_irrigation_optimizer, None, "NO")
     swb_hourly.water_balance(0, [], start_date_hourly.replace(tzinfo=None),
                              end_date_hourly.replace(tzinfo=None),
                              agrifield.get_irrigation_optimizer, depl_daily,
                              Inet_in_forecast)
 
     # Store results
-    last_day_ifinal = [i['Ifinal'] for i in swb_daily.wbm_report
-                       if i['date'] == end_date_daily] or [0.0]
+    last_day_ifinal = [i['Ifinal'] for i in swb_last_day_ifinal.wbm_report
+                       if i['date'] == datetime.combine(end_date_daily, 
+                                            datetime.min.time()) ] or [0.0]
     irr_dates = [i['date'] for i in swb_hourly.wbm_report
                  if i['irrigate'] >= 1]
     irr_amount = [i['Ifinal'] for i in swb_hourly.wbm_report
