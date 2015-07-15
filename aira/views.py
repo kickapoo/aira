@@ -49,6 +49,8 @@ def performance_csv(request, pk ):
     f.can_edit(request.user)
     results = get_performance_chart(f)
     writer = csv.writer(response)
+    writer.writerow(['Date', 'Estimated water', 'Applied water'])
+    writer.writerow(['', 'amount (mm)', 'amount (mm)'])
     for row in zip(results.chart_dates, results.chart_ifinal, results.applied_water):
             writer.writerow(row)
     return response
