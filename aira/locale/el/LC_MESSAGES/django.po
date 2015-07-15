@@ -834,3 +834,6 @@ msgstr "Εργαλεία"
 
 msgid "Estimated Irrigation Water Amount"
 msgstr "Εκτιμώμενη Δόση Άρδευσης"
+
+msgid "Pump flow rate"
+msgstr "Παροχή ζώνης"
