@@ -66,6 +66,7 @@ def execute_model(agrifield, Inet_in_forecast):
     thetaS = raster2point(agrifield.latitude, agrifield.longitude,
                           os.path.join(settings.AIRA_COEFFS_RASTERS_DIR,
                                        'theta_s.tif'))
+    IRT = agrifield.get_irrigation_optimizer
     rd_factor = 1000
 
     # Create SoilWaterBalance Object for daily and hourly data
@@ -93,12 +94,12 @@ def execute_model(agrifield, Inet_in_forecast):
         else:
             theta_init = applied_water / agrifield.area * rd_factor * \
                 float(agrifield.get_efficiency) + swb_daily.fc_mm - \
-                0.75 * swb_daily.raw_mm
+                IRT * swb_daily.raw_mm
             Dr0 = swb_daily.fc_mm - theta_init
         run_start_date = results.last_irr_date
     else:
         start_date_daily = end_date_daily - timedelta(days=1)
-        theta_init = swb_daily.fc_mm - 0.75 * swb_daily.raw_mm
+        theta_init = swb_daily.fc_mm - IRT * swb_daily.raw_mm
         if start_date_daily.month in [10, 11, 12, 1, 2, 3]:
             theta_init = swb_daily.fc_mm
         run_start_date = start_date_daily
