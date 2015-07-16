@@ -34,7 +34,6 @@
                   {% bootstrap_field form.latitude %}
                   {% bootstrap_field form.crop_type %}
                   {% bootstrap_field form.irrigation_type %}
-                  {% bootstrap_field form.irrigation_optimizer %}
                   {% bootstrap_field form.use_custom_parameters %}
                   </div>
                   {% buttons %}
@@ -55,7 +54,7 @@
                       {% bootstrap_field form.custom_efficiency %}
                       <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.irr_eff }}</b></span></sup>
                       {% bootstrap_field form.custom_irrigation_optimizer%}
-                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>1.0</b></span></sup>
+                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>0.5</b></span></sup>
               </fieldset>
               <fieldset class="well well-sm">
                   <legend>{% trans "Crop" %}</legend>
@@ -145,7 +144,7 @@
 
 $(document).ready(function(){
      $('#id_area').attr('placeholder',"m²");
-     $('#id_custom_irrigation_optimizer').attr('placeholder','0.5 - 2.0');
+     $('#id_custom_irrigation_optimizer').attr('placeholder','0.1 - 1.0');
       $('#id_custom_irrigation_optimizer').attr("step", 0.1);
      $('#id_custom_kc').attr('placeholder','0.10 - 1.50');
       $('#id_custom_kc').attr("step", 0.01);

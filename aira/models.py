@@ -88,12 +88,6 @@ class IrrigationType(models.Model):
 
 
 class Agrifield(models.Model):
-    IRT_LIST = (
-        (0.5, 'IRT (50% Inet)'),
-        (0.75, 'IRT (75% Inet)'),
-        (1.0, 'IRT (100% Inet)'),
-    )
-
     owner = models.ForeignKey(User)
     name = models.CharField(max_length=255,
                             default='i.e. MyField1')
@@ -104,8 +98,7 @@ class Agrifield(models.Model):
     crop_type = models.ForeignKey(CropType)
     irrigation_type = models.ForeignKey(IrrigationType)
     area = models.FloatField()
-    irrigation_optimizer = models.FloatField(choices=IRT_LIST,
-                                             default=1.0)
+    irrigation_optimizer = models.FloatField(default=0.5)
     use_custom_parameters = models.BooleanField(default=False)
     custom_kc = models.FloatField(null=True, blank=True,
                                   validators=[
@@ -135,8 +128,8 @@ class Agrifield(models.Model):
     custom_irrigation_optimizer = models.FloatField(null=True, blank=True,
                                                     validators=[
                                                         MaxValueValidator(
-                                                            2.00),
-                                                        MinValueValidator(0.50)
+                                                            1.00),
+                                                        MinValueValidator(0.10)
                                                     ])
     custom_field_capacity = models.FloatField(null=True, blank=True,
                                               validators=[

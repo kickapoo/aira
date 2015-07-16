@@ -30,7 +30,7 @@ class AgrifieldForm(forms.ModelForm):
         model = Agrifield
         exclude = ('owner',)
         fields = ['name', 'area', 'longitude', 'latitude', 'crop_type',
-                  'irrigation_type', 'irrigation_optimizer',
+                  'irrigation_type',
                   'use_custom_parameters', 'custom_irrigation_optimizer',
                   'custom_kc',
                   'custom_root_depth_max', 'custom_root_depth_min',
@@ -46,7 +46,6 @@ class AgrifieldForm(forms.ModelForm):
             'crop_type': _('Crop Type'),
             'irrigation_type': _('Irrigation Type'),
             'area': _('Irrigated Field Area (m<sup>2</sup>)'),
-            'irrigation_optimizer': _("Irrigation Optimizer"),
             'use_custom_parameters': _("Use Custom Parameters"),
             'custom_irrigation_optimizer': _("Irrigation Optimizer"),
             'custom_kc': _("Kc"),
