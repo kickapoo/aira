@@ -63,9 +63,7 @@ def execute_model(agrifield, Inet_in_forecast):
     p = float(agrifield.get_mad)
     peff = 0.8  # Effective rainfall is 0.8 * Precip
     irr_eff = float(agrifield.get_efficiency)
-    thetaS = raster2point(agrifield.latitude, agrifield.longitude,
-                          os.path.join(settings.AIRA_COEFFS_RASTERS_DIR,
-                                       'theta_s.tif'))
+    thetaS = float(agrifield.get_thetaS)
     IRT = agrifield.get_irrigation_optimizer
     rd_factor = 1000
 
@@ -170,9 +168,7 @@ def calculate_performance_chart(agrifield):
     peff = 0.8  # Effective rainfall coeff 0.8 * Precip
     irr_eff = float(agrifield.get_efficiency)
     # ThetaS from raster file
-    thetaS = raster2point(agrifield.latitude, agrifield.longitude,
-                          os.path.join(settings.AIRA_COEFFS_RASTERS_DIR,
-                                       'theta_s.tif'))
+    thetaS = float(agrifield.get_thetaS)
     rd_factor = 1000  # Unit convertor for mm
 
     # Create SoilWaterBalance Object for daily and hourly data
