@@ -65,6 +65,7 @@ def execute_model(agrifield, Inet_in_forecast):
     irr_eff = float(agrifield.get_efficiency)
     thetaS = float(agrifield.get_thetaS)
     IRT = agrifield.get_irrigation_optimizer
+    area = agrifield.area
     rd_factor = 1000
 
     # Create SoilWaterBalance Object for daily and hourly data
@@ -123,7 +124,8 @@ def execute_model(agrifield, Inet_in_forecast):
                                             datetime.min.time()) ] or [0.0]
     irr_dates = [i['date'] for i in swb_hourly.wbm_report
                  if i['irrigate'] >= 1]
-    irr_amount = [i['Ifinal'] for i in swb_hourly.wbm_report
+    irr_amount = [(i['Ifinal'], i['Ifinal']/1000 * area)
+                  for i in swb_hourly.wbm_report
                   if i['irrigate'] >= 1]
     irr_Ks = [i['Ks'] for i in swb_hourly.wbm_report if i['irrigate'] >= 1]
     irr_values = zip(irr_amount, irr_Ks)
@@ -134,6 +136,7 @@ def execute_model(agrifield, Inet_in_forecast):
     results.sdh = start_date_daily  # Starting date of historical data
     results.edh = end_date_daily  # Finish data of historical data
     results.ifinal = last_day_ifinal[0]  # Model run / last date Water Amount
+    resutls.ifinal_m3 = (results.ifinal/1000) * area
     results.adv_sorted = sorted(advice.iteritems())  # Sorted advice dates
     results.swb_report = swb_hourly.wbm_report
 
