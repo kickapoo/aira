@@ -7,10 +7,10 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 
-from aira.irma.utils import FC_FILE as fc_raster
-from aira.irma.utils import PWP_FILE as pwp_raster
-from aira.irma.utils import THETA_S_FILE as thetaS_raster
-from aira.irma.utils import raster2point
+from aira.irma.main import FC_FILE as fc_raster
+from aira.irma.main import PWP_FILE as pwp_raster
+from aira.irma.main import THETA_S_FILE as thetaS_raster
+from aira.irma.main import raster2point
 
 # notification_options is the list of options the user can select for
 # notifications, e.g. be notified every day, every two days, every week, and so
