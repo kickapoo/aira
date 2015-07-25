@@ -136,7 +136,7 @@ def execute_model(agrifield, Inet_in_forecast):
     results.sdh = start_date_daily  # Starting date of historical data
     results.edh = end_date_daily  # Finish data of historical data
     results.ifinal = last_day_ifinal[0]  # Model run / last date Water Amount
-    resutls.ifinal_m3 = (results.ifinal/1000) * area
+    results.ifinal_m3 = (results.ifinal/1000) * area
     results.adv_sorted = sorted(advice.iteritems())  # Sorted advice dates
     results.swb_report = swb_hourly.wbm_report
 
