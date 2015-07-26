@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load mathfilters %}
 {% load bootstrap3 %}
+{% load static %}
 {% block title %} {{ user }}-{% trans "Update Field" %}{% endblock %}
 
 {% block content %}
@@ -109,7 +110,13 @@
                           "Open Cycle Map",
                           {isBaseLayer: true,
                            projection: 'EPSG:3857'});
-
+                // Study area
+               var kml = new OpenLayers.Layer.Vector("{% trans 'Study Area'%}",
+                         {strategies: [new OpenLayers.Strategy.Fixed()],
+                           visibility: true,
+                         protocol: new OpenLayers.Protocol.HTTP(
+                                  {url: "{% static 'kml/study_area.kml' %}",
+                                  format: new OpenLayers.Format.KML()})})
                 var ktimatologio = new OpenLayers.Layer.WMS("Hellenic Cadastre",
                          "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
                            {   layers: 'KTBASEMAP', transparent: false},
@@ -119,6 +126,8 @@
                                iformat: 'image/png'});
                 map.addLayer(ktimatologio);
                 map.addLayer(cycle);
+                map.addLayer(kml);
+
                 //alert(parseFloat("{{ object.longitude }}".replace(",",".")));
                 var fieldloc = new OpenLayers.LonLat(make_coords("{{ object.longitude }}"),make_coords("{{ object.latitude }}")).transform('EPSG:4326', 'EPSG:3857');
                 var marker = new OpenLayers.Marker(fieldloc)

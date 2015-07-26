@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load static %}
 
 {% load bootstrap3 %}
 
@@ -120,6 +121,15 @@
                     "Open Cycle Map",
                     {isBaseLayer: true,
                      projection: 'EPSG:3857'});
+
+           // Study area
+           var kml = new OpenLayers.Layer.Vector("{% trans 'Study Area' %}",
+                     {strategies: [new OpenLayers.Strategy.Fixed()],
+                       visibility: true,
+                     protocol: new OpenLayers.Protocol.HTTP(
+                              {url: "{% static 'kml/study_area.kml' %}",
+                              format: new OpenLayers.Format.KML()})})
+           map.addLayer(kml);
           // Kthmatologio
           var ktimatologio = new OpenLayers.Layer.WMS("Hellenic Cadastre",
                          "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",

@@ -137,7 +137,7 @@
                                 <tr>
                                 <td align="left">{{ irr_date |date:"d/m/Y H:00" }}</td>
                                 <td align="left">{{ values.1 |floatformat:"2" }} </td>
-                                <td align="left">{{ values.0.0 |floatformat:"2" }} mm 
+                                <td align="left">{{ values.0.0 |floatformat:"2" }} mm
                                                 ( {{ values.0.1 |floatformat:"2"}} m<sup>3</sup> )
                                 </td>
                                 </tr>
@@ -186,6 +186,15 @@
                       {isBaseLayer: true,
                        projection: 'EPSG:3857'});
         map.addLayer(cycle);
+
+        // Study area
+        var kml = new OpenLayers.Layer.Vector("{% trans 'Study Area'%}",
+                  {strategies: [new OpenLayers.Strategy.Fixed()],
+                    visibility: true,
+                  protocol: new OpenLayers.Protocol.HTTP(
+                           {url: "{% static 'kml/study_area.kml' %}",
+                           format: new OpenLayers.Format.KML()})})
+        map.addLayer(kml);
         // Kthmatologio
         var ktimatologio = new OpenLayers.Layer.WMS("Hellenic Cadastre",
                        "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
