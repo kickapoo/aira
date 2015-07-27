@@ -168,9 +168,7 @@ class Agrifield(models.Model):
 
     @property
     def get_field_capacity(self):
-        if self.use_custom_parameters:
-            if self.custom_field_capacity in [None, '']:
-                return raster2point(self.latitude, self.longitude, fc_raster)
+        if self.use_custom_parameters and self.custom_field_capacity:
             return self.custom_field_capacity
         else:
             return raster2point(self.latitude, self.longitude, fc_raster)

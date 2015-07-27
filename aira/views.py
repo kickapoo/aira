@@ -140,9 +140,11 @@ class AdvicePageView(TemplateView):
         Inet_in = "NO"
         f = Agrifield.objects.get(pk=self.kwargs['pk'])
         f.can_edit(self.request.user)
+        context['f'] = f
+        if not agripoint_in_raster(f):
+            return context
         context['fpars'] = get_parameters(f)
         f.results = model_results(f, "NO")
-        context['f'] = f
         return context
 
 

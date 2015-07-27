@@ -141,7 +141,7 @@ def agripoint_in_raster(obj, mask=FC_FILE):
     """
     try:
         tmp_check = raster2point(obj.latitude, obj.longitude, mask)
-    except RuntimeError:
+    except (RuntimeError, ValueError):
         tmp_check = float('nan')
     return not math.isnan(tmp_check)
 
