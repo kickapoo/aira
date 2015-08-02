@@ -1,8 +1,8 @@
 $("#form_datetime").datetimepicker({
     format: "yyyy-mm-dd",
     startDate: "2015-01-01",
-    initialDate: aira.yesterday,
-    endDate: aira.yesterday,
+    initialDate: aira.daybeforeyesterday,
+    endDate: aira.daybeforeyesterday,
     autoclose: true,
     pickerPosition: "bottom-left",
     minView:2,
@@ -15,7 +15,7 @@ $("#form_datetime").datetimepicker({
 
 function create_map(date, meteo_var)
 {
-    date = (date === undefined) ? aira.yesterday : date;
+    date = (date === undefined) ? aira.daybeforeyesterday : date;
     meteo_var = (meteo_var === undefined) ? 'Daily_rain_' : meteo_var;
     // Clear previous map
     document.getElementById('wms_map').innerHTML = ""
@@ -45,8 +45,9 @@ function create_map(date, meteo_var)
                      projection: new OpenLayers.Projection("EPSG:900913"),
                      iformat: 'image/png'});
     map.addLayer(ktimatologio);
+    console.log("Calling data for:" + moment(date, "YYYY-MM-DD").add(1,'days').format("YYYY-MM-DD") )
     var map_variable = new OpenLayers.Layer.WMS(
-              meteo_var + date,
+              meteo_var + moment(date, "YYYY-MM-DD").add(1,'days').format("YYYY-MM-DD"),
               "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
               {layers: meteo_var + date,
                format: 'image/png'},
@@ -57,7 +58,7 @@ function create_map(date, meteo_var)
     document.getElementById('current').innerHTML = aira.trans_viewing + date;
     document.getElementById('next').value = moment(date, "YYYY-MM-DD").add(1,'days').format("YYYY-MM-DD");
     var n = moment(document.getElementById('next').value, "YYYY-MM-DD");
-    if (n.isAfter(aira.yesterday)) {
+    if (n.isAfter(aira.daybeforeyesterday)) {
         document.getElementById('next').style.display ='none';
     } else {
         document.getElementById('next').style.display = 'inline-block';
