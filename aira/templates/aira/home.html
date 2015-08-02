@@ -155,8 +155,8 @@
                     {% trans "No need to irrigate from" %} <span class="text-warning">{{ f.results.sd|date:"d/m/Y" }}</span> {% trans "to" %}  <span class="text-warning">{{ f.results.ed|date:"d/m/Y" }}</span>.
                 {% endif %}
                 </p><sub>
-                <div class='btn-group'>
-                <a class="btn btn-success btn-xs" href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; {% trans "Irrigation Events" %}</a>
+                <div>
+                <a  class="btn btn-success btn-xs" href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; {% trans "Irrigation Events" %}</a>
                 <a class="btn btn-success btn-xs" href="{% url 'advice' f.id %}" ></i>&nbsp;<i class="fa fa-calendar"></i>&nbsp;{% trans "Irrigation Report" %}</a>
                 <a class="btn btn-success btn-xs" href="{% url 'irrigation-chart' f.id %}"><i class="fa fa-line-chart"></i>&nbsp; {% trans "Irrigation Performance" %}</a>
                 </div>
