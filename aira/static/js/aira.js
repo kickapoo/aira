@@ -48,7 +48,7 @@ function create_map(date, meteo_var)
     console.log("Calling data for:" + moment(date, "YYYY-MM-DD").add(1,'days').format("YYYY-MM-DD") )
     var map_variable = new OpenLayers.Layer.WMS(
               meteo_var + moment(date, "YYYY-MM-DD").add(1,'days').format("YYYY-MM-DD"),
-              "http://megdobas.irrigation-management.eu/cgi-bin/mapserver?map=/var/cache/pthelma/mapserver-historical.map",
+              "http://arta.irrigation-management.eu/mapserver/historical/" + date + "/",
               {layers: meteo_var + date,
                format: 'image/png'},
               {isBaseLayer: false,
@@ -118,7 +118,7 @@ function create_map(date, meteo_var)
             })
 
             // Assemble URL
-            var url = 'http://arta.irrigation-management.eu/mapserver-historical/';
+            var url = 'http://arta.irrigation-management.eu/mapserver/historical/' + date + '/';
             url = url + '?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&SRS=EPSG:3857&info_format=text/html';
             url = url + '&BBOX=' + bbox + '&WIDTH=2&HEIGHT=2&X=0&Y=0';
             url = url + '&LAYERS=' + layers + '&QUERY_LAYERS=' + layers;
