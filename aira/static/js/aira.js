@@ -1,8 +1,8 @@
 $("#form_datetime").datetimepicker({
     format: "yyyy-mm-dd",
     startDate: "2015-01-01",
-    initialDate: aira.daybeforeyesterday,
-    endDate: aira.daybeforeyesterday,
+    initialDate: aira.yesterday,
+    endDate: aira.yesterday,
     autoclose: true,
     pickerPosition: "bottom-left",
     minView:2,
@@ -15,10 +15,10 @@ $("#form_datetime").datetimepicker({
 
 function create_map(date, meteo_var)
 {
-    date = (date === undefined) ? aira.daybeforeyesterday : date;
+    date = (date === undefined) ? aira.yesterday : date;
     meteo_var = (meteo_var === undefined) ? 'Daily_rain_' : meteo_var;
     // Clear previous map
-    document.getElementById('wms_map').innerHTML = ""
+    document.getElementById('wms_map').innerHTML = "";
     document.getElementById('mirror_field').value = date;
     document.getElementById('datepicker_input').value = date;
     // Map object
@@ -45,11 +45,11 @@ function create_map(date, meteo_var)
                      projection: new OpenLayers.Projection("EPSG:900913"),
                      iformat: 'image/png'});
     map.addLayer(ktimatologio);
-    console.log("Calling data for:" + moment(date, "YYYY-MM-DD").add(1,'days').format("YYYY-MM-DD") )
+    date_to_request = moment(date, "YYYY-MM-DD").add(1,'days').format("YYYY-MM-DD");
     var map_variable = new OpenLayers.Layer.WMS(
-              meteo_var + moment(date, "YYYY-MM-DD").add(1,'days').format("YYYY-MM-DD"),
-              "http://arta.irrigation-management.eu/mapserver/historical/" + date + "/",
-              {layers: meteo_var + date,
+              meteo_var + date,
+              "http://arta.irrigation-management.eu/mapserver/historical/" + date_to_request + "/",
+              {layers: meteo_var + date_to_request,
                format: 'image/png'},
               {isBaseLayer: false,
                projection: 'EPSG:3857',
@@ -58,7 +58,7 @@ function create_map(date, meteo_var)
     document.getElementById('current').innerHTML = aira.trans_viewing + date;
     document.getElementById('next').value = moment(date, "YYYY-MM-DD").add(1,'days').format("YYYY-MM-DD");
     var n = moment(document.getElementById('next').value, "YYYY-MM-DD");
-    if (n.isAfter(aira.daybeforeyesterday)) {
+    if (n.isAfter(aira.yesterday)) {
         document.getElementById('next').style.display ='none';
     } else {
         document.getElementById('next').style.display = 'inline-block';
@@ -114,11 +114,11 @@ function create_map(date, meteo_var)
                 if (layers != '') {
                     layers = layers + ',';
                 }
-                layers = layers + 'Daily_' + s + '_' + date;
+                layers = layers + 'Daily_' + s + '_' + date_to_request;
             })
 
             // Assemble URL
-            var url = 'http://arta.irrigation-management.eu/mapserver/historical/' + date + '/';
+            var url = 'http://arta.irrigation-management.eu/mapserver/historical/' + date_to_request + '/';
             url = url + '?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&SRS=EPSG:3857&info_format=text/html';
             url = url + '&BBOX=' + bbox + '&WIDTH=2&HEIGHT=2&X=0&Y=0';
             url = url + '&LAYERS=' + layers + '&QUERY_LAYERS=' + layers;

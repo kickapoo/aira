@@ -69,7 +69,7 @@
 {% endblock %}
 {% block extrajs %}
 <script type="text/javascript">
-    aira.daybeforeyesterday = '{{ daybeforeyesterday|date:"Y-m-d" }}';
+    aira.yesterday = '{{ yesterday|date:"Y-m-d" }}';
     aira.trans_viewing = '{% trans "Viewing:" %}';
 </script>
 <script type="text/javascript" src="{% static 'js/aira.js' %}"></script>
