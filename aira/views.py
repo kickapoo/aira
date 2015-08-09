@@ -122,8 +122,13 @@ class HomePageView(TemplateView):
                 supervising_users = Profile.objects.filter(
                     supervisor=self.request.user)
                 context['supervising_users'] = supervising_users
+
+
             for f in agrifields:
+                if not agripoint_in_raster(f):
+                    f.outside_arta_raster = True
                 f.results = model_results(f, "YES")
+
             context['agrifields'] = agrifields
             context['fields_count'] = len(agrifields)
         except Agrifield.DoesNotExist:

@@ -27,7 +27,6 @@ def execute_model(agrifield, Inet_in_forecast):
 
     # Verify that the agrifield is in study area
     if not agripoint_in_raster(agrifield):
-        results.outside_arta_raster = True
         return results
 
     # Retrieve precipitation and evaporation time series at the agrifield
@@ -120,7 +119,7 @@ def execute_model(agrifield, Inet_in_forecast):
 
     # Store results
     last_day_ifinal = [i['Ifinal'] for i in swb_last_day_ifinal.wbm_report
-                       if i['date'] == datetime.combine(end_date_daily, 
+                       if i['date'] == datetime.combine(end_date_daily,
                                             datetime.min.time()) ] or [0.0]
     irr_dates = [i['date'] for i in swb_hourly.wbm_report
                  if i['irrigate'] >= 1]
