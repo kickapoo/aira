@@ -55,6 +55,12 @@ $(function () {
           name: performance.applied_water_title,
           data: performance.applied_water
 
+      },
+      {
+          name: performance.peff_title,
+          color: '#4c4ca6',
+          data: performance.peff
+
       }]
   });
 });

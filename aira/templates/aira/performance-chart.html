@@ -28,7 +28,8 @@
    performance.title = " {{ f.name }}";
    performance.subtitle = "{{ f.crop_type}} - " + "{{ f.irrigation_type }}";
    performance.ifinal_title = "{% trans 'Estimated Irrigation Water Amount' %}";
-   performance.applied_water_title = "{% trans 'Applied Water Amount' %}";
+   performance.applied_water_title = "{% trans 'Applied Irrigation Water Amount' %}";
+   performance.peff_title = "{% trans 'Effective precipitation' %}"
    performance.yAxis_title =  " ";
    {% if f.chart %}
         performance.dates = [
@@ -38,10 +39,12 @@
             ];
         performance.ifinal = {{ f.chart.chart_ifinal }};
         performance.applied_water = {{ f.chart.applied_water}};
+        performance.peff = {{ f.chart.chart_peff }}
     {% else %}
         performance.dates = [];
         performance.ifinal = null;
         performance.applied_water = null;
+        performance.peff = null;
     {% endif %}
 </script>
 
