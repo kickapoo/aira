@@ -89,24 +89,18 @@
         </div>
         {% else %}
         {% if f.results %}
-            {% if f.results.no_irrigation_log %}
+            {% if f.results.irrigation_log_not_exists  %}
                 <div class="alert alert-warning">
                 <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i></span>  &nbsp;
                 {% trans "You haven't entered any irrigation event. Add  your irrigation log" %} <a href="{% url 'create_irrlog' f.id %}">{% trans "here" %}</a>.<br>
                 {% trans "Irrigation Advice is estimated using system's default datasets" %}.
                 </div>
             {% endif %}
-            {% if not f.irrigationlog_set.exists %}
+            {% if f.results.irrigation_log_outside_time_period %}
                 <div class="alert alert-warning">
                 <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i></span>  &nbsp;
                 {% trans "Your latest irrigation event is outside our dataset period. Update your irrigation log" %} <a href="{% url 'create_irrlog' f.id %}">{% trans "here" %}</a>.<br>
                 {% trans "Irrigation Advice is estimated using system's default datasets" %}.
-                </div>
-            {% endif %}
-            {% if f.results.over_fc %}
-                <div class="alert alert-info">
-                <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-exclamation-triangle "></i>
-                    {% trans "You reached field capacity" %} ({{ f.results.fc_mm|floatformat:"1" }} mm)</a>.
                 </div>
             {% endif %}
             {% if f.results.adv %}

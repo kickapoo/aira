@@ -75,12 +75,19 @@ def execute_model(agrifield, Inet_in_forecast):
     swb_hourly = SoilWaterBalance(fc, wp, rd, kc, p, peff, irr_eff, thetaS,
                                   precip_hourly, evap_hourly, rd_factor)
 
+    # Template messages
+    if not agrifield.irrigationlog_set.exists():
+        results.irrigation_log_not_exists = True
+
     # Determine last irrigation, if applicable
     last_irrigation = (agrifield.irrigationlog_set.latest()
                        if agrifield.irrigationlog_set.exists() else None)
+
     if last_irrigation and ((last_irrigation.time.date() < start_date_daily) or
                             (last_irrigation.time.date() > end_date_daily)):
         last_irrigation = None
+        # Template messages
+        results.irrigation_log_outside_time_period = True
 
     # Determine Dr0, theta_init, and run_start_date
     if last_irrigation:
