@@ -203,11 +203,13 @@ def calculate_performance_chart(agrifield):
     irr_period_dates = [i['date'].date() for i in swb_obj.wbm_report]
     irr_period_ifinal = [i['Ifinal'] for i in swb_obj.wbm_report]
     irr_period_peff = [i['Peff'] for i in swb_obj.wbm_report]
+    irr_period_peff_cumulative = sum(irr_period_peff)
 
     # Concat the data
     chart_dates = irr_period_dates
     chart_ifinal = irr_period_ifinal
     chart_peff = irr_period_peff
+    chart_irr_period_peff_cumulative = irr_period_peff_cumulative
     # Get agrifields irrigations log if they exists
     applied_water = [0] * len(chart_dates)
     if agrifield.irrigationlog_set.exists():
@@ -226,6 +228,7 @@ def calculate_performance_chart(agrifield):
     results.chart_dates = chart_dates
     results.chart_ifinal = chart_ifinal
     results.chart_peff = chart_peff
+    results.chart_irr_period_peff_cumulative = chart_irr_period_peff_cumulative
     results.applied_water = applied_water
 
     cache.set('performance_chart_{}'.format(agrifield.id), results, None)
