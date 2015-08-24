@@ -37,8 +37,6 @@
                   {% bootstrap_field form.irrigation_type %}
                   {% bootstrap_field form.use_custom_parameters %}
                   </div>
-                  {{ user }}
-                  {{ user.is_demo }}
                   {% buttons %}
                   {% if not user.is_demo %}
                   <button type="submit" class="btn btn-success btn-xs">{% trans "Update" %}</button>
