@@ -44,7 +44,7 @@
   <div class="col-md-7">
     <div class="table-responsive">
       <table class="table">
-        <h4> {% trans "List of" %} <a href="{% url 'update_agrifield' agrifield.id %}">{{ agrifield.name }}</a> {% trans "Irrigation Events" %}</h4>
+        <h4> {% trans "List of" %} {% trans "Irrigation Events" %}, <a href="{% url 'update_agrifield' agrifield.id %}">{{ agrifield.name }}</a></h4>
         <hr>
         <thead>
           <tr>
