@@ -107,7 +107,7 @@
                 <img style="display:block;float:left;"src="{% static 'img/warning.png' %}" alt="" height="20" width="20">&nbsp;
                 <b>{% trans "Irrigation Advice" %}</b>: <br><br>
                 {% if f.results.last_irr_date %}
-                {% trans "Since the last recorded irrigation" %} (<span class="text-warning">{{f.results.last_irr_date|date:"d/m/Y"}}</span>) {% trans "up to" %} <span class="text-warning">{{ f.results.edh|date:"d/m/Y" }}</span>, {% trans "there is need of" %}  <span class="text-success">{{ f.results.ifinal|floatformat:"2" }} mm ( {{f.results.ifinal_m3 |floatformat:"2"}} m <sup>3</sup> ) </span> {% trans "additional water" %}.
+                {% trans "Since the last recorded irrigation" %} (<span class="text-warning">{{f.results.last_irr_date|date:"d/m/Y"}}</span>) {% trans "up to" %} <span class="text-warning">{{ f.results.edh|date:"d/m/Y" }}</span>, {% trans "there is need of" %}  <span class="text-success">{{ f.results.ifinal|floatformat:"2" }} mm ({{f.results.ifinal_m3 |floatformat:"2"}} m³) </span> {% trans "additional water" %}.
                     <br>
                 {% endif %}
                 {% trans "Based on the available information" %}, {% trans "from" %}
@@ -131,7 +131,7 @@
                                 <td align="left">{{ irr_date |date:"d/m/Y H:00" }}</td>
                                 <td align="left">{{ values.1 |floatformat:"2" }} </td>
                                 <td align="left">{{ values.0.0 |floatformat:"2" }} mm
-                                                ({{ values.0.1 |floatformat:"2"}} m<sup>3</sup>)
+                                                ({{ values.0.1 |floatformat:"2"}} m³)
                                 </td>
                                 </tr>
                             {% endfor %}

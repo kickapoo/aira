@@ -383,7 +383,7 @@ footer p {
                       {% for irr_date, values in f.results.adv_sorted  %}
                       <li class="empty">
                         <a href="http://{{ site.domain }}/home/{{ owner }}/">{{ f.name }}</a> {% trans "needs to be irrigated with " %}
-                        <b>{{ values.0.0 |floatformat:"2" }} </b> mm ({{ values.0.1 |floatformat:"2" }} m<sup>3</sup>) 
+                        <b>{{ values.0.0 |floatformat:"2" }} </b> mm ({{ values.0.1 |floatformat:"2" }} m³) 
                         at <b>{{ irr_date |date:"d/m/Y H:00:s" }} </b>.
                       </li>
                       {% endfor %}
