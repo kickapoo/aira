@@ -201,8 +201,8 @@ def calculate_performance_chart(agrifield):
         0, [], irr_period_start_date, fd, agrifield.get_irrigation_optimizer,
         dr_non_irr_period, "YES")
     irr_period_dates = [i['date'].date() for i in swb_obj.wbm_report]
-    irr_period_ifinal = [i['Ifinal'] for i in swb_obj.wbm_report]
-    irr_period_peff = [i['Peff'] for i in swb_obj.wbm_report]
+    irr_period_ifinal = [round(i['Ifinal'], 1) for i in swb_obj.wbm_report]
+    irr_period_peff = [round(i['Peff'], 1) for i in swb_obj.wbm_report]
     irr_period_peff_cumulative = sum(irr_period_peff)
 
     # Concat the data
@@ -211,7 +211,7 @@ def calculate_performance_chart(agrifield):
     chart_peff = irr_period_peff
     chart_irr_period_peff_cumulative = irr_period_peff_cumulative
     # Get agrifields irrigations log if they exists
-    applied_water = [0] * len(chart_dates)
+    applied_water = [0.0] * len(chart_dates)
     if agrifield.irrigationlog_set.exists():
         irr_events_objs = IrrigationLog.objects.filter(agrifield=agrifield
                                                        ).all()
@@ -221,7 +221,7 @@ def calculate_performance_chart(agrifield):
             sum_water = [obj.applied_water or 0.0 for obj
                          in IrrigationLog.objects.filter(
                              agrifield=agrifield, time__contains=date)] or 0.0
-            daily_applied_water = sum(sum_water) / agrifield.area * 1000
+            daily_applied_water = round(sum(sum_water) / agrifield.area * 1000, 1)
             if date in chart_dates:
                 idx = chart_dates.index(date)
                 applied_water[idx] = daily_applied_water
