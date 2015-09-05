@@ -618,7 +618,7 @@ msgstr "Για την περίοδο"
 
 #: aira/templates/aira/index-default.html:39
 msgid "Daily Rainfall"
-msgstr "Μέση Ημερήσια βροχόπτωση"
+msgstr "Ημερήσια βροχόπτωση"
 
 #: aira/templates/aira/index-default.html:40
 msgid "Daily Potential Evapotranspiration"
