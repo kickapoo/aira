@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-27 19:59+0300\n"
+"POT-Creation-Date: 2015-09-07 15:23+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -301,6 +301,7 @@ msgstr "Αγροτεμάχιο"
 
 #: aira/templates/aira/agrifield_confirm_delete.html:12
 #: aira/templates/aira/irrigationlog_confirm_delete.html:12
+#: aira/templates/aira/profile_confirm_delete.html:12
 msgid "?"
 msgstr ";"
 
@@ -308,6 +309,7 @@ msgstr ";"
 #: aira/templates/aira/agrifield_form.html:87
 #: aira/templates/aira/irrigationlog_confirm_delete.html:18
 #: aira/templates/aira/irrigationlog_form.html:64
+#: aira/templates/aira/profile_confirm_delete.html:18
 msgid "Delete"
 msgstr "Διαγραφή"
 
@@ -700,6 +702,9 @@ msgstr "Αρδεύσεις που πραγματοποιήθηκαν"
 msgid "Effective precipitation"
 msgstr "Ενεργός βροχόπτωση"
 
+msgid "Are you sure you want to delete all user data"
+msgstr "Είσαι σίγουρος ότι θέλεις να διαγράψεις όλα τα δεδομένα του χρήστη"
+
 #: aira/templates/aira/profile_form.html:5
 msgid "Account Settings"
 msgstr "Πληροφορίες Λογαριασμού"
@@ -714,11 +719,14 @@ msgstr "Προφίλ"
 msgid "Reset password"
 msgstr "Αλλαγή συνθηματικού"
 
-#: aira/templates/aira/profile_form.html:31
+msgid "Delete account"
+msgstr "Διαγραφή Λογαριασμού"
+
+#: aira/templates/aira/profile_form.html:34
 msgid "Notification Setup"
 msgstr "Ρυθμίσεις Ειδοποιήσεων"
 
-#: aira/templates/aira/profile_form.html:37
+#: aira/templates/aira/profile_form.html:40
 msgid "Supervision"
 msgstr "Επιτήρηση"
 

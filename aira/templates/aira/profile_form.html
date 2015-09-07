@@ -14,7 +14,7 @@
   <form method="post" role="form" >
     {% csrf_token %}
     <div class='row'>
-          <div class='col-sm-4'>
+          <div class='col-sm-5'>
           <h4 class="lead">{% trans "Update" %} {% trans "Profile" %}</h4>
             <div class='form-group'>
               {% bootstrap_field form.first_name %}
@@ -22,8 +22,11 @@
               {% bootstrap_field form.address %}
               {% bootstrap_field form.supervision_question %}
               {% if not user.is_demo %}
-                    <button type="submit" class="btn btn-primary">{% trans "Update" %}</button>
-                    <a class="btn btn-primary"href="{% url 'django.contrib.auth.views.password_reset' %}">{% trans "Reset password" %}</a>
+                    <button type="submit" class="btn  btn-sm btn-primary">{% trans "Update" %}</button>
+                    <a class="btn btn-sm btn-primary"href="{% url 'django.contrib.auth.views.password_reset' %}">{% trans "Reset password" %}</a>
+                {% if user.profile.id %}
+                  <a class="btn btn-sm btn-danger" href="{% url 'delete_profile' user.profile.id %}"> {% trans "Delete account" %}</a>
+                {% endif %}
               {% endif %}
             </div>
           </div>
@@ -33,7 +36,7 @@
                 {% bootstrap_field form.notification %}
              </div>
           </div>
-          <div class="col-sm-4">
+          <div class="col-sm-3">
             <h4 class="lead">{% trans "Supervision" %}</h4>
              <div class="form-group">
                 {% bootstrap_field form.supervisor %}

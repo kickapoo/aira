@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 
 from aira.views import (IndexPageView, HomePageView, AdvicePageView,
-                        CreateProfile, UpdateProfile,
+                        CreateProfile, UpdateProfile, DeleteProfile,
                         CreateAgrifield, UpdateAgrifield, DeleteAgrifield,
                         CreateIrrigationLog, UpdateIrrigationLog,
                         DeleteIrrigationLog,
@@ -35,6 +35,10 @@ urlpatterns = patterns(
     url(r'^update_profile/(?P<pk>\d+)/$',
         login_required(UpdateProfile.as_view()),
         name="update_profile"),
+
+    url(r'^delete_profile/(?P<pk>\d+)/$',
+        login_required(DeleteProfile.as_view()),
+        name="delete_profile"),
     # Agrifield
     url(r'^create_agrifield/(?P<username>[\w.@+-]+)/$',
         login_required(CreateAgrifield.as_view()),

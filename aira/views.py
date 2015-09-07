@@ -178,6 +178,15 @@ class UpdateProfile(UpdateView):
             raise Http404
         return context
 
+class DeleteProfile(DeleteView):
+    model = Profile
+
+    def get_success_url(self):
+        profile = Profile.objects.get(pk=self.kwargs['pk'])
+        user = User.objects.get(pk=profile.farmer.id)
+        # Delete all user data using bult in cascade delete
+        user.delete()
+        return reverse('welcome')
 
 # Agrifield Create/Update/Delete
 class CreateAgrifield(CreateView):
