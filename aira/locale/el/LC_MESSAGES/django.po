@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-07 15:23+0300\n"
+"POT-Creation-Date: 2015-09-25 13:55+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -301,7 +301,7 @@ msgstr "Αγροτεμάχιο"
 
 #: aira/templates/aira/agrifield_confirm_delete.html:12
 #: aira/templates/aira/irrigationlog_confirm_delete.html:12
-#: aira/templates/aira/profile_confirm_delete.html:12
+#: aira/templates/aira/profile_confirm_delete.html:16
 msgid "?"
 msgstr ";"
 
@@ -309,7 +309,7 @@ msgstr ";"
 #: aira/templates/aira/agrifield_form.html:87
 #: aira/templates/aira/irrigationlog_confirm_delete.html:18
 #: aira/templates/aira/irrigationlog_form.html:64
-#: aira/templates/aira/profile_confirm_delete.html:18
+#: aira/templates/aira/profile_confirm_delete.html:23
 msgid "Delete"
 msgstr "Διαγραφή"
 
@@ -498,7 +498,7 @@ msgstr "Πληροφορίες Αγροτεμαχίου"
 msgid "is growing"
 msgstr "καλλιεργεί"
 
-#: aira/templates/aira/home.html:79 aira/templates/aira/index-default.html:15
+#: aira/templates/aira/home.html:79 aira/templates/aira/index-default.html:14
 msgid "using"
 msgstr "χρησιμοποιώντας"
 
@@ -594,19 +594,19 @@ msgstr "Αρδευτική Αποδοτικότητα"
 msgid "Welcome "
 msgstr "Καλωσήρθατε"
 
-#: aira/templates/aira/index-default.html:16
+#: aira/templates/aira/index-default.html:15
 msgid "measurements"
 msgstr "μετρήσεις"
 
-#: aira/templates/aira/index-default.html:17
+#: aira/templates/aira/index-default.html:16
 msgid "Models"
 msgstr "μοντέλα"
 
-#: aira/templates/aira/index-default.html:18
+#: aira/templates/aira/index-default.html:17
 msgid "NOA"
 msgstr "Εθνικό Αστεροσκοπείο Αθηνών"
 
-#: aira/templates/aira/index-default.html:18
+#: aira/templates/aira/index-default.html:17
 msgid "forecast"
 msgstr "πρόγνωση"
 
@@ -618,33 +618,49 @@ msgstr "Διαθέσιμα ιστορικά δεδομένα"
 msgid "Time Period"
 msgstr "Για την περίοδο"
 
-#: aira/templates/aira/index-default.html:39
+#: aira/templates/aira/index-default.html:50
 msgid "Daily Rainfall"
 msgstr "Ημερήσια βροχόπτωση"
 
-#: aira/templates/aira/index-default.html:40
+#: aira/templates/aira/index-default.html:51
 msgid "Daily Potential Evapotranspiration"
 msgstr "Ημερήσια Δυνητική Εξατμισοδιαπνοή"
 
-#: aira/templates/aira/index-default.html:41
+#: aira/templates/aira/index-default.html:52
 msgid "Daily Humidity"
 msgstr "Μέση Ημερήσια Υγρασία Αέρα"
 
-#: aira/templates/aira/index-default.html:42
+#: aira/templates/aira/index-default.html:53
 msgid "Daily Temperature"
 msgstr "Μέση Ημερήσια Θερμοκρασία"
 
-#: aira/templates/aira/index-default.html:43
+#: aira/templates/aira/index-default.html:54
 msgid "Daily Wind Speed"
 msgstr "Μέση Ημερήσια Ταχύτητα Ανέμου"
 
-#: aira/templates/aira/index-default.html:44
+#: aira/templates/aira/index-default.html:55
 msgid "Daily Solar Radiation"
 msgstr "Μέση Ημερήσια Ηλιακή Ακτινοβολία"
 
-#: aira/templates/aira/index-default.html:73
-msgid "Viewing:"
+#: aira/templates/aira/index-default.html:61
+msgid "Monthly Potential Evapotranspiration"
+msgstr "Μηνιαία Δυνητική Εξατμισοδιαπνοή"
+
+#: aira/templates/aira/index-default.html:113
+msgid "Switch to Daily"
+msgstr "Μετάβαση σε Ημερησίο βήμα"
+
+#: aira/templates/aira/index-default.html:114
+msgid "Switch to Monthly"
+msgstr "Μετάβαση σε Μηνιαίο βήμα"
+
+#: aira/templates/aira/index-default.html:115
+msgid "Viewing: "
 msgstr "Τρέχουσα Ημερομηνία: "
+
+#: aira/templates/aira/index-default.html:116
+msgid "Click on the map to get values"
+msgstr "Κάντε κλίκ στο χάρτη για να δείτε τιμές"
 
 #: aira/templates/aira/irrigationlog_confirm_delete.html:12
 msgid "Irrigation Event"
@@ -702,6 +718,7 @@ msgstr "Αρδεύσεις που πραγματοποιήθηκαν"
 msgid "Effective precipitation"
 msgstr "Ενεργός βροχόπτωση"
 
+#: aira/templates/aira/profile_confirm_delete.html:12
 msgid "Are you sure you want to delete all user data"
 msgstr "Είσαι σίγουρος ότι θέλεις να διαγράψεις όλα τα δεδομένα του χρήστη"
 
@@ -719,6 +736,7 @@ msgstr "Προφίλ"
 msgid "Reset password"
 msgstr "Αλλαγή συνθηματικού"
 
+#: aira/templates/aira/profile_form.html:28
 msgid "Delete account"
 msgstr "Διαγραφή Λογαριασμού"
 
