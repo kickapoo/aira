@@ -162,9 +162,9 @@ aira.toogleIndexMapsUI = (function namespace() {
 
         map.addLayer(meteoVarWMS);
 
-        if (timestamp === 'daily') {
-            // When clicking on the map, show popup with values of variables
-            OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
+        //if (timestamp === 'daily') {
+        // When clicking on the map, show popup with values of variables
+        OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
               defaultHandlerOptions: {
                   'single': true,
                   'double': false,
@@ -196,22 +196,36 @@ aira.toogleIndexMapsUI = (function namespace() {
                   var bbox = xlow + ',' + ylow + ',' + xhigh + ',' + yhigh;
 
                   // Determine layers
-                  var layers = '';
-                  ['temperature', 'humidity', 'wind_speed', 'rain', 'evaporation',
-                   'solar_radiation'].forEach(function (s) {
-                      if (layers !== '') {
-                          layers = layers + ',';
-                      }
-                      layers = layers + 'Daily_' + s + '_' + dateToRequest;
-                  });
-
+                  if (timestamp === 'daily')  {
+                      var layers = '';
+                      ['temperature', 'humidity', 'wind_speed', 'rain', 'evaporation',
+                       'solar_radiation'].forEach(function (s) {
+                        if (layers !== '') {
+                            layers = layers + ',';
+                        }
+                        layers = layers + 'Daily_' + s + '_' + dateToRequest;
+                    });
+                      urlPoint = url + dateToRequest + '/';
+                  }
+                  if (timestamp === 'monthly')  {
+                      var layers = '';
+                      // forEach is used because in near future more monthly
+                      // meteorogical variables will be added.
+                      ['evaporation'].forEach(function (s) {
+                        if (layers !== '') {
+                            layers = layers + ',';
+                        }
+                        layers = layers + 'Monthly_' + s + '_' + dateToRequest;
+                    });
+                      var urlPoint = url;
+                  }
+                  console.log(urlPoint);
                   // Assemble URL
-                  var urlPoing = url + dateToRequest + '/';
-                  urlPoing = urlPoing + '?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&SRS=EPSG:3857&info_format=text/html';
-                  urlPoing = urlPoing + '&BBOX=' + bbox + '&WIDTH=2&HEIGHT=2&X=0&Y=0';
-                  urlPoing = urlPoing + '&LAYERS=' + layers + '&QUERY_LAYERS=' + layers;
+                  urlPoint = urlPoint + '?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo&SRS=EPSG:3857&info_format=text/html';
+                  urlPoint = urlPoint + '&BBOX=' + bbox + '&WIDTH=2&HEIGHT=2&X=0&Y=0';
+                  urlPoint = urlPoint + '&LAYERS=' + layers + '&QUERY_LAYERS=' + layers;
 
-                  xhr.open('GET', urlPoing, false);
+                  xhr.open('GET', urlPoint, false);
                   xhr.send();
                   /* The test "length < 250" below is an ugly hack for not showing
                    * popups at a masked area. The masked area has the value nodata,
@@ -225,10 +239,9 @@ aira.toogleIndexMapsUI = (function namespace() {
                   }
               }
           });
-            var click = new OpenLayers.Control.Click();
-            map.addControl(click);
-            click.activate();
-        }
+        var click = new OpenLayers.Control.Click();
+        map.addControl(click);
+        click.activate();
 
         // Add control and center
         map.setCenter (new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 10);
