@@ -186,8 +186,8 @@ def calculate_performance_chart(agrifield):
                                precip_daily, evap_daily, rd_factor)
     # Default Greek irrigation period
     sd, fd = common_period_dates(precip_daily, evap_daily)
-    non_irr_period_finish_date = datetime(2015, 3, 31)
-    irr_period_start_date = datetime(2015, 4, 1)
+    non_irr_period_finish_date = datetime(datetime.now().year, 3, 31)
+    irr_period_start_date = datetime(datetime.now().year, 4, 1)
 
     # Non irrigation season
     dr_non_irr_period = swb_obj.water_balance(
@@ -196,6 +196,11 @@ def calculate_performance_chart(agrifield):
 
     # Irrigation season
     swb_obj.wbm_report = []  # make sure is empty
+
+    # Check if finish date in over current year September
+    if fd > datetime(datetime.now().year, 9, 30):
+        fd = datetime(datetime.now().year, 9, 30)
+
     # theta_init is zero because Dr_Historical exists
     swb_obj.water_balance(
         0, [], irr_period_start_date, fd, agrifield.get_irrigation_optimizer,
