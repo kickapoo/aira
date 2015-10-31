@@ -44,7 +44,7 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=255)
     address = models.CharField(max_length=255, blank=True)
     notification = models.CharField(
-        max_length=2, blank=True, default='',
+        max_length=3, blank=True, default='',
         choices=[(x, notification_options[x][0])
                  for x in notification_options])
     supervisor = models.ForeignKey(User, related_name='supervisor', null=True,
