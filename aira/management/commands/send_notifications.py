@@ -27,12 +27,12 @@ class Command(BaseCommand):
             if self.send_notification(user):
                 user_agrifields  = Agrifield.objects.filter(owner=user)
                 self.notify_user(user, user_agrifields, user)
-            if Profile.objects.filter(supervisor=user).exists():
-                for supervised_user in Profile.objects.filter(supervisor=user):
-                    supervised_user = User.objects.get(username=supervised_user.farmer)
-                    if Agrifield.objects.filter(owner=supervised_user).exists():
-                        supervised_agrifields = Agrifield.objects.filter(owner=supervised_user)
-                        self.notify_user(user, supervised_agrifields, supervised_user)
+                if Profile.objects.filter(supervisor=user).exists():
+                    for supervised_user in Profile.objects.filter(supervisor=user):
+                        supervised_user = User.objects.get(username=supervised_user.farmer)
+                        if Agrifield.objects.filter(owner=supervised_user).exists():
+                            supervised_agrifields = Agrifield.objects.filter(owner=supervised_user)
+                            self.notify_user(user, supervised_agrifields, supervised_user)
 
     def send_notification(self, user):
         if Profile.objects.filter(farmer=user).exclude(notification='').exists():
