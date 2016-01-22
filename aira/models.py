@@ -56,7 +56,7 @@ class Profile(models.Model):
         verbose_name_plural = "Profiles"
 
     def __unicode__(self):
-        return u"UserProfile: {}".format(str(self.farmer))
+        return u"UserProfile: {}".format(self.farmer)
 
 
 class CropType(models.Model):
