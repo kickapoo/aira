@@ -75,7 +75,6 @@ class IndexPageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexPageView, self).get_context_data(**kwargs)
-        context['yesterday'] = (timezone.now() - timedelta(days=1)).date()
         daily_r_fps, daily_e_fps = load_meteodata_file_paths()[:2]
         dates_r = sorted([os.path.basename(x).split('.')[0].partition('-')[2]
                           for x in daily_r_fps])

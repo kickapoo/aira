@@ -108,7 +108,7 @@
 {% block extrajs %}
   <script type="text/javascript">
       var aira = {};
-      aira.yesterday = '{{ yesterday|date:"Y-m-d" }}';
+      aira.yesterday = '{{ end_date|date:"Y-m-d" }}';
       aira.transToggleTimestampMap = {
         toogleDaily: '{% trans "Switch to Daily" %}',
         toogleMonthly: '{% trans "Switch to Monthly" %}',
