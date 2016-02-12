@@ -186,8 +186,8 @@ def calculate_performance_chart(agrifield):
                                precip_daily, evap_daily, rd_factor)
     # Default Greek irrigation period
     sd, fd = common_period_dates(precip_daily, evap_daily)
-    non_irr_period_finish_date = datetime(datetime.now().year, 3, 31)
-    irr_period_start_date = datetime(datetime.now().year, 4, 1)
+    non_irr_period_finish_date = datetime(datetime.now().year, 3, 15)
+    irr_period_start_date = datetime(datetime.now().year, 3, 16)
 
     # Non irrigation season
     dr_non_irr_period = swb_obj.water_balance(
