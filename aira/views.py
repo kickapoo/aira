@@ -84,7 +84,7 @@ class IndexPageView(TemplateView):
         y1, m1, d1 = (int(x) for x in common_dates[0].split('-'))
         y2, m2, d2 = (int(x) for x in common_dates[-1].split('-'))
         context['start_date'] = date(y1, m1, d1)
-        context['end_date'] = date(y2, m2, d2)
+        context['end_date'] = date(y2, m2, d2) - timedelta(days=1)
         return context
 
 
