@@ -37,6 +37,12 @@ YES_OR_NO = (
     (False, _('No'))
 )
 
+YES_OR_NO_OR_NULL = (
+    (True, _('Yes')),
+    (False, _('No')),
+    (None,'-')
+)
+
 
 class Profile(models.Model):
     farmer = models.OneToOneField(User)
@@ -91,6 +97,8 @@ class Agrifield(models.Model):
     owner = models.ForeignKey(User)
     name = models.CharField(max_length=255,
                             default='i.e. MyField1')
+    is_virtual = models.NullBooleanField(choices=YES_OR_NO_OR_NULL, null=True,
+                                         default=None)
     # Latitude / Longitude are crucial locations parameters
     # Keeping their long names is more clear for developers/users
     latitude = models.FloatField()

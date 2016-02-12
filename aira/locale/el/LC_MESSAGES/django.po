@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-25 13:55+0300\n"
+"POT-Creation-Date: 2016-02-12 23:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,75 +48,83 @@ msgid "Field Name"
 msgstr "Όνομα Αγροτεμάχιου"
 
 #: aira/forms.py:44
+msgid "Is this virtual field?"
+msgstr "Το αγροτεμάχιο είναι εικονικό;"
+
+#: aira/forms.py:45
 msgid "Latitude (WGS84)"
 msgstr "Γεωγραφικό Πλάτος (WGS84)"
 
-#: aira/forms.py:45
+#: aira/forms.py:46
 msgid "Longitude (WGS84)"
 msgstr "Γεωγραφικό Μήκος (WGS84)"
 
-#: aira/forms.py:46 aira/templates/aira/advice.html:31
-#: aira/templates/aira/agrifield_form.html:73
+#: aira/forms.py:47 aira/templates/aira/advice.html:31
+#: aira/templates/aira/agrifield_form.html:75
 msgid "Crop Type"
 msgstr "Καλλιέργεια"
 
-#: aira/forms.py:47 aira/templates/aira/agrifield_form.html:74
+#: aira/forms.py:48 aira/templates/aira/agrifield_form.html:76
 msgid "Irrigation Type"
 msgstr "Μέθοδος Άρδευσης"
 
-#: aira/forms.py:48
+#: aira/forms.py:49
 msgid "Irrigated Field Area (m<sup>2</sup>)"
 msgstr "Αρδευόμενη έκταση (m<sup>2</sup>)"
 
-#: aira/forms.py:49
+#: aira/forms.py:50
 msgid "Use Custom Parameters"
 msgstr "Χρήση προσαρμοσμένων παραμέτρων"
 
-#: aira/forms.py:50 aira/templates/aira/advice.html:56
+#: aira/forms.py:51 aira/templates/aira/advice.html:56
 msgid "Irrigation Optimizer"
 msgstr "Συντελεστής βελτιστοποίησης άρδευσης"
 
-#: aira/forms.py:51 aira/templates/aira/advice.html:38
+#: aira/forms.py:52 aira/templates/aira/advice.html:38
 msgid "Kc"
 msgstr ""
 
-#: aira/forms.py:52 aira/templates/aira/advice.html:37
+#: aira/forms.py:53 aira/templates/aira/advice.html:37
 msgid "Estimated root depth (max)"
 msgstr "Εκτιμώμενο μέγιστο βάθος ριζοστρώματος (m)"
 
-#: aira/forms.py:53
+#: aira/forms.py:54
 msgid "Estimated root depth (min)"
 msgstr "Εκτιμώμενο ελάχιστο βάθος ριζοστρώματος (m)"
 
-#: aira/forms.py:54 aira/templates/aira/advice.html:39
+#: aira/forms.py:55 aira/templates/aira/advice.html:39
 msgid "Maximum Allowable Depletion"
 msgstr "Μέγιστο Επιτρεπόμενο Υδατικό Έλλειμμα"
 
-#: aira/forms.py:55
+#: aira/forms.py:56
 msgid "Irrigation efficiency"
 msgstr "Συντελεστής αρδευτικής αποδοτικότητας"
 
-#: aira/forms.py:56 aira/templates/aira/advice.html:40
+#: aira/forms.py:57 aira/templates/aira/advice.html:40
 msgid "Field Capacity"
 msgstr "Υδατοϊκανότητα"
 
-#: aira/forms.py:57 aira/templates/aira/advice.html:41
+#: aira/forms.py:58 aira/templates/aira/advice.html:41
 msgid "Soil moisture at saturation"
 msgstr "Εδαφική Υγρασία στον κορεσμό"
 
-#: aira/forms.py:58 aira/templates/aira/advice.html:42
+#: aira/forms.py:59 aira/templates/aira/advice.html:42
 msgid "Permanent Wilting Point"
 msgstr "Σημείο Μόνιμης Μάρανσης"
 
-#: aira/forms.py:68
+#: aira/forms.py:67
+msgid "You must select if field is virtual or not"
+msgstr "Πρέπει να καταχωρήσεις αν το αγροτεμάχιο είναι εικονικό ή όχι"
+
+#: aira/forms.py:77
 msgid "Datetime (Y-M-D h:m:s) "
 msgstr "Ημερομηνία και ώρα (Y-M-D h:m:s)"
 
-#: aira/forms.py:69
+#: aira/forms.py:78
 msgid "Applied Irrigation Water"
 msgstr "Δόση άρδευσης"
 
-#: aira/forms.py:78
+#: aira/forms.py:87
 msgid "Are you human?"
 msgstr "Ελέγχος χρήστη"
 
@@ -160,11 +168,11 @@ msgstr "10 Ημέρες"
 msgid "Month"
 msgstr "Μήνα"
 
-#: aira/models.py:36
+#: aira/models.py:36 aira/models.py:41
 msgid "Yes"
 msgstr "Ναι"
 
-#: aira/models.py:37
+#: aira/models.py:37 aira/models.py:42
 msgid "No"
 msgstr "Όχι"
 
@@ -273,18 +281,20 @@ msgid "Irrigation Water Amount"
 msgstr "Δόση Άρδευσης"
 
 #: aira/templates/aira/advice.html:110
+#: aira/templates/aira/agrifield_form.html:84
 #: aira/templates/aira/email_notification.html:330
 msgid "YES"
 msgstr "Ναί"
 
 #: aira/templates/aira/advice.html:112
+#: aira/templates/aira/agrifield_form.html:84
 #: aira/templates/aira/email_notification.html:337
 msgid "NO"
 msgstr "Όχι"
 
 #: aira/templates/aira/advice.html:152
-#: aira/templates/aira/agrifield_form.html:126
-#: aira/templates/aira/agrifield_update.html:114
+#: aira/templates/aira/agrifield_form.html:129
+#: aira/templates/aira/agrifield_update.html:115
 #: aira/templates/aira/home.html:186
 msgid "IRMA area"
 msgstr "Περιοχή μελέτης IRMA"
@@ -306,7 +316,7 @@ msgid "?"
 msgstr ";"
 
 #: aira/templates/aira/agrifield_confirm_delete.html:18
-#: aira/templates/aira/agrifield_form.html:87
+#: aira/templates/aira/agrifield_form.html:90
 #: aira/templates/aira/irrigationlog_confirm_delete.html:18
 #: aira/templates/aira/irrigationlog_form.html:64
 #: aira/templates/aira/profile_confirm_delete.html:23
@@ -314,7 +324,7 @@ msgid "Delete"
 msgstr "Διαγραφή"
 
 #: aira/templates/aira/agrifield_form.html:7
-#: aira/templates/aira/agrifield_form.html:48
+#: aira/templates/aira/agrifield_form.html:49
 #: aira/templates/aira/irrigationlog_form.html:34
 msgid "Add"
 msgstr "Προσθήκη"
@@ -338,31 +348,35 @@ msgid "Click on Map to add your Field coordinates"
 msgstr ""
 "Κάντε κλικ στο χάρτη για να προσθέσετε τις συντεταγμένες του αγροτεμαχίου σας"
 
-#: aira/templates/aira/agrifield_form.html:50
-#: aira/templates/aira/agrifield_update.html:44
+#: aira/templates/aira/agrifield_form.html:51
+#: aira/templates/aira/agrifield_update.html:45
 #: aira/templates/aira/irrigationlog_form.html:35
 #: aira/templates/aira/irrigationlog_update.html:26
 msgid "Back"
 msgstr "Επιστροφή"
 
-#: aira/templates/aira/agrifield_form.html:64
+#: aira/templates/aira/agrifield_form.html:65
 msgid "List of Fields"
 msgstr "Κατάλογος Αγροτεμαχίων"
 
-#: aira/templates/aira/agrifield_form.html:71
+#: aira/templates/aira/agrifield_form.html:72
 #: aira/templates/aira/irrigationlog_form.html:51
 msgid "#id"
 msgstr "α/α"
 
-#: aira/templates/aira/agrifield_form.html:72
+#: aira/templates/aira/agrifield_form.html:73
+msgid "Is Virtual?"
+msgstr "Εικονικό;"
+
+#: aira/templates/aira/agrifield_form.html:74
 msgid "Name"
 msgstr "Όνομα"
 
-#: aira/templates/aira/agrifield_form.html:75
+#: aira/templates/aira/agrifield_form.html:77
 msgid "TimeLogs"
 msgstr "Ημερολόγιο Καταγραφών"
 
-#: aira/templates/aira/agrifield_form.html:95
+#: aira/templates/aira/agrifield_form.html:98
 msgid "Nothing to show without any fields"
 msgstr "Χωρίς αγροτεμάχια δεν μπορεί να λειτουργήσει το σύστημα"
 
@@ -371,7 +385,7 @@ msgstr "Χωρίς αγροτεμάχια δεν μπορεί να λειτου�
 msgid "Update Field"
 msgstr "Ανανέωση Αγροτεμαχίου"
 
-#: aira/templates/aira/agrifield_update.html:42
+#: aira/templates/aira/agrifield_update.html:43
 #: aira/templates/aira/irrigationlog_update.html:17
 #: aira/templates/aira/irrigationlog_update.html:25
 #: aira/templates/aira/profile_form.html:18
@@ -379,27 +393,27 @@ msgstr "Ανανέωση Αγροτεμαχίου"
 msgid "Update"
 msgstr "Ανανέωση"
 
-#: aira/templates/aira/agrifield_update.html:54
+#: aira/templates/aira/agrifield_update.html:55
 msgid "Irrigation Management"
 msgstr "Διαχείριση Άρδευσης"
 
-#: aira/templates/aira/agrifield_update.html:56
-#: aira/templates/aira/agrifield_update.html:58
-#: aira/templates/aira/agrifield_update.html:63
-#: aira/templates/aira/agrifield_update.html:65
-#: aira/templates/aira/agrifield_update.html:67
-#: aira/templates/aira/agrifield_update.html:69
-#: aira/templates/aira/agrifield_update.html:74
-#: aira/templates/aira/agrifield_update.html:76
-#: aira/templates/aira/agrifield_update.html:78
+#: aira/templates/aira/agrifield_update.html:57
+#: aira/templates/aira/agrifield_update.html:59
+#: aira/templates/aira/agrifield_update.html:64
+#: aira/templates/aira/agrifield_update.html:66
+#: aira/templates/aira/agrifield_update.html:68
+#: aira/templates/aira/agrifield_update.html:70
+#: aira/templates/aira/agrifield_update.html:75
+#: aira/templates/aira/agrifield_update.html:77
+#: aira/templates/aira/agrifield_update.html:79
 msgid "Value from system's database"
 msgstr "Τιμή στην βάση δεδομένων του συστήματος"
 
-#: aira/templates/aira/agrifield_update.html:61
+#: aira/templates/aira/agrifield_update.html:62
 msgid "Crop"
 msgstr "Καλλιέργεια"
 
-#: aira/templates/aira/agrifield_update.html:72
+#: aira/templates/aira/agrifield_update.html:73
 msgid "Soil"
 msgstr "Έδαφος"
 
@@ -489,6 +503,10 @@ msgstr "Προφανώς δεν έχετε καταχωρίσει αγροτεμ
 #: aira/templates/aira/home.html:72
 msgid "Fields"
 msgstr "Αγροτεμάχια"
+
+#: aira/templates/aira/home.html:78
+msgid "Virtual"
+msgstr "Εικονικό"
 
 #: aira/templates/aira/home.html:78
 msgid "Field Info"
@@ -659,6 +677,7 @@ msgid "Viewing: "
 msgstr "Τρέχουσα Ημερομηνία: "
 
 #: aira/templates/aira/index-default.html:116
+#: aira/templates/aira/index-default.html:117
 msgid "Click on the map to get values"
 msgstr "Κάντε κλίκ στο χάρτη για να δείτε τιμές"
 
@@ -950,10 +969,8 @@ msgstr "Έχετε ήδη εγγραφεί;"
 msgid "Not Available"
 msgstr "Δεν είναι διαθέσιμο"
 
-#: aira_project/settings/base.py:62
-msgid "English"
-msgstr "Αγγλικά"
+#~ msgid "English"
+#~ msgstr "Αγγλικά"
 
-#: aira_project/settings/base.py:63
-msgid "Greek"
-msgstr "Ελληνικά"
+#~ msgid "Greek"
+#~ msgstr "Ελληνικά"

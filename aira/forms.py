@@ -30,7 +30,7 @@ class AgrifieldForm(forms.ModelForm):
         model = Agrifield
         exclude = ('owner',)
         fields = ['name', 'area', 'longitude', 'latitude', 'crop_type',
-                  'irrigation_type',
+                  'irrigation_type','is_virtual',
                   'use_custom_parameters', 'custom_irrigation_optimizer',
                   'custom_kc',
                   'custom_root_depth_max', 'custom_root_depth_min',
@@ -41,6 +41,7 @@ class AgrifieldForm(forms.ModelForm):
 
         labels = {
             'name': _('Field Name'),
+            'is_virtual': _('Is this virtual field?'),
             'latitude': _('Latitude (WGS84)'),
             'longitude': _('Longitude (WGS84)'),
             'crop_type': _('Crop Type'),
@@ -57,6 +58,14 @@ class AgrifieldForm(forms.ModelForm):
             'custom_thetaS': _("Soil moisture at saturation"),
             'custom_wilting_point': _("Permanent Wilting Point")
         }
+
+    def clean(self):
+        cleaned_data = super(AgrifieldForm, self).clean()
+        is_virtual = cleaned_data.get("is_virtual")
+
+        if is_virtual is None:
+            msg = _("You must select if field is virtual or not")
+            self.add_error('is_virtual', msg)
 
 
 class IrrigationlogForm(forms.ModelForm):
