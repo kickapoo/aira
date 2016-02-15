@@ -284,7 +284,7 @@ class IrrigationLog(models.Model):
 
     class Meta:
         get_latest_by = 'time'
-        ordering = ('time',)
+        ordering = ('-time',)
         verbose_name_plural = 'Irrigation Logs'
 
     def __unicode__(self):
