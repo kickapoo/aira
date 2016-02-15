@@ -188,6 +188,16 @@ def calculate_performance_chart(agrifield):
     sd, fd = common_period_dates(precip_daily, evap_daily)
     non_irr_period_finish_date = datetime(datetime.now().year, 3, 15)
     irr_period_start_date = datetime(datetime.now().year, 3, 16)
+    # Dont run performance_chart if finish date is inside non irrigation period
+    if fd <= non_irr_period_finish_date:
+        results.chart_dates = []
+        results.chart_ifinal = []
+        results.chart_peff = []
+        results.chart_irr_period_peff_cumulative = []
+        results.applied_water = []
+        results.inside_non_irrigation_period = True
+        cache.set('performance_chart_{}'.format(agrifield.id), results, None)
+        return
 
     # Non irrigation season
     dr_non_irr_period = swb_obj.water_balance(
@@ -198,8 +208,8 @@ def calculate_performance_chart(agrifield):
     swb_obj.wbm_report = []  # make sure is empty
 
     # Check if finish date in over current year September
-    if fd > datetime(datetime.now().year, 9, 30):
-        fd = datetime(datetime.now().year, 9, 30)
+    # if fd > datetime(datetime.now().year, 9, 30):
+    #     fd = datetime(datetime.now().year, 9, 30)
 
     # theta_init is zero because Dr_Historical exists
     swb_obj.water_balance(

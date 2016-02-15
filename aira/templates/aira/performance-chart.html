@@ -6,6 +6,12 @@
 {% block title %} {{ f.name}} {% endblock %}
 
 {% block content  %}
+{% if f.chart.inside_non_irrigation_period %}
+ <div class="alert alert-info">
+   <i class="fa fa-info-circle fa-2x"></i>
+   {% trans "From the 16th of October until the 15th of Marchthe Irrigation Performance graph is not available" %}
+ </div
+{% endif %}
 <h4 style="text-align: center;">{% trans 'Irrigation Performance' %}</h4>
 {% if f.status != 'done' %}
     <p class="alert alert-warning">{% trans "This field is being (re)calculated. Reload the page some time later to view the updated results. The calculation usually takes from a few seconds to a few minutes." %}</p>
