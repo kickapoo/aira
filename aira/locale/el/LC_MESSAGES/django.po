@@ -975,5 +975,5 @@ msgstr "Δεν είναι διαθέσιμο"
 #~ msgid "Greek"
 #~ msgstr "Ελληνικά"
 
-msgid "From the 16th of October until the 15th of March the Irrigation Performance graph is not available"
-msgstr "Από τις 16 Οκτωβρίου μέχρι τις 15 Μαρτίου  το γράφημα Αρδευτικής Αποδοτικότητας δεν είναι διαθέσιμο"
+msgid "The Irrigation Performance graph is available only during irrigation period (16 March to 15 October)"
+msgstr "Το γράφημα Αρδευτικής Αποδοτικότητας είναι διαθέσιμο μόνο κατά την διάρκεια της αρδευτικής περιόδου (16 Μαρτίου με 15 Οκτωβρίου)"
