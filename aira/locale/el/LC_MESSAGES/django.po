@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-12 23:28+0200\n"
+"POT-Creation-Date: 2016-03-08 10:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -225,7 +225,7 @@ msgid "None"
 msgstr "Δεν έχετε εισάγει δεδομένα"
 
 #: aira/templates/aira/advice.html:77 aira/templates/aira/home.html:82
-#: aira/templates/aira/performance-chart.html:11
+#: aira/templates/aira/performance-chart.html:17
 msgid ""
 "This field is being (re)calculated. Reload the page some time later to view "
 "the updated results. The calculation usually takes from a few seconds to a "
@@ -604,7 +604,7 @@ msgid "Irrigation Report"
 msgstr "Αναφορά Άρδευσης"
 
 #: aira/templates/aira/home.html:154
-#: aira/templates/aira/performance-chart.html:9
+#: aira/templates/aira/performance-chart.html:15
 msgid "Irrigation Performance"
 msgstr "Αρδευτική Αποδοτικότητα"
 
@@ -705,35 +705,43 @@ msgstr "Κατάλογος"
 msgid "Datetime"
 msgstr "Ημερομηνία"
 
-#: aira/templates/aira/performance-chart.html:16
+#: aira/templates/aira/performance-chart.html:12
+msgid ""
+"The Irrigation Performance graph is available only during irrigation period "
+"(16 March to 15 October)"
+msgstr ""
+"Το γράφημα Αρδευτικής Αποδοτικότητας είναι διαθέσιμο μόνο κατά την διάρκεια "
+"της αρδευτικής περιόδου (16 Μαρτίου με 15 Οκτωβρίου)"
+
+#: aira/templates/aira/performance-chart.html:22
 msgid "Download Chart Data"
 msgstr "Λήψη δεδομένων γραφήματος"
 
-#: aira/templates/aira/performance-chart.html:17
+#: aira/templates/aira/performance-chart.html:23
 msgid "Total Effective Precipitation"
 msgstr "Σύνολο ενεργού βροχόπτωσης"
 
-#: aira/templates/aira/performance-chart.html:19
+#: aira/templates/aira/performance-chart.html:25
 msgid "Total Estimated Irrigation Water Amount"
 msgstr "Εκτίμηση συνόλου αρδευτικών αναγκών"
 
-#: aira/templates/aira/performance-chart.html:20
+#: aira/templates/aira/performance-chart.html:26
 msgid "Total Applied Irrigation Water Amount"
 msgstr "Σύνολο αρδεύσεων που πραγματοποιήθηκαν"
 
-#: aira/templates/aira/performance-chart.html:21
+#: aira/templates/aira/performance-chart.html:27
 msgid "Percentage difference"
 msgstr "Επί τοις εκατό διαφορά"
 
-#: aira/templates/aira/performance-chart.html:32
+#: aira/templates/aira/performance-chart.html:38
 msgid "Estimated Irrigation Water Amount"
 msgstr "Εκτίμηση αρδευτικών αναγκών"
 
-#: aira/templates/aira/performance-chart.html:33
+#: aira/templates/aira/performance-chart.html:39
 msgid "Applied Irrigation Water Amount"
 msgstr "Αρδεύσεις που πραγματοποιήθηκαν"
 
-#: aira/templates/aira/performance-chart.html:34
+#: aira/templates/aira/performance-chart.html:40
 msgid "Effective precipitation"
 msgstr "Ενεργός βροχόπτωση"
 
@@ -934,7 +942,7 @@ msgstr "Το συνθηματικό άλλαξε"
 #: aira/templates/registration/password_reset_done.html:13
 msgid "An email with instructions for setting a new password has been sent"
 msgstr ""
-"Σας έχει σταλθεί ηλεκτρονικό μύνημα με οδηγίες αλλαγής του συνθηματικού σας"
+"Σας έχει σταλθεί ηλεκτρονικό μήνυμα με οδηγίες αλλαγής του συνθηματικού σας"
 
 #: aira/templates/registration/password_reset_form.html:6
 #: aira/templates/registration/password_reset_form.html:12
@@ -951,7 +959,7 @@ msgstr "Επιτυχία, Παρακαλώ ελέγξτε το ηλ. ταχυδ�
 
 #: aira/templates/registration/registration_complete.html:14
 msgid "An activation email has been sent"
-msgstr "Σας έχει σταλθεί ηλεκτρονικό μύνημα ενεργοποίησης"
+msgstr "Σας έχει σταλθεί ηλεκτρονικό μήνυμα ενεργοποίησης"
 
 #: aira/templates/registration/registration_form.html:6
 msgid "Registration"
@@ -974,6 +982,3 @@ msgstr "Δεν είναι διαθέσιμο"
 
 #~ msgid "Greek"
 #~ msgstr "Ελληνικά"
-
-msgid "The Irrigation Performance graph is available only during irrigation period (16 March to 15 October)"
-msgstr "Το γράφημα Αρδευτικής Αποδοτικότητας είναι διαθέσιμο μόνο κατά την διάρκεια της αρδευτικής περιόδου (16 Μαρτίου με 15 Οκτωβρίου)"
