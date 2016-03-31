@@ -25,8 +25,9 @@ class Command(BaseCommand):
         self.template = get_template('aira/email_notification.html')
         for user in User.objects.all():
             if self.send_notification(user):
-                user_agrifields  = Agrifield.objects.filter(owner=user)
-                self.notify_user(user, user_agrifields, user)
+                if Agrifield.objects.fitler(owner=user).exists():
+                    user_agrifields  = Agrifield.objects.filter(owner=user)
+                    self.notify_user(user, user_agrifields, user)
                 if Profile.objects.filter(supervisor=user).exists():
                     for supervised_user in Profile.objects.filter(supervisor=user):
                         supervised_user = User.objects.get(username=supervised_user.farmer)
