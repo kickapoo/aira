@@ -140,12 +140,43 @@
                <span class="input-group-addon"> h</span>
              </div>
              <br>
-               <div class="well well-sm">
-                 {% verbatim %}
-                  = {{ irriwatermm/1000 * (area/desired_dur)| number:1}} m³ / h
-                 {% endverbatim %}
-               </div>
+             <div class="well well-sm" >
+               {% verbatim %}
+                = {{ irriwatermm/1000 * (area/desired_dur)| number:1}} m³ / h
+                <span ng-model='irrigation_duration'>
+               {% endverbatim %}
              </div>
+           </div>
+           <div class="col-md-6">
+             <div class="input-group">
+               <span class="input-group-addon">{% trans "Irrigation duration" %}</span>
+               {% verbatim %}
+               <input type="number" ng-model="irrigation_duration" ng-init="irrigation_duration=5" class="form-control" >
+               {% endverbatim %}
+               <span class="input-group-addon">h</span>
+             </div>
+             <br>
+             <div class="input-group">
+               <span class="input-group-addon">{% trans "Number of emitters" %}</span>
+               {% verbatim %}
+               <input type="number" ng-model="number_of_emitters" ng-init="number_of_emitters=200" class="form-control" >
+               {% endverbatim %}
+             </div>
+             <br>
+             <div class="input-group">
+               <span class="input-group-addon">{% trans "Emitter discharge" %}</span>
+               {% verbatim %}
+               <input type="number" ng-model="emitter_discharge" ng-init="emitter_discharge=4" class="form-control">
+               {% endverbatim %}
+               <span class="input-group-addon"> L/h</span>
+             </div>
+             <br>
+             <div class="well well-sm">
+               {% verbatim %}
+                = {{ (irrigation_duration*number_of_emitters*emitter_discharge)/1000 | number:1}} m³ / h
+               {% endverbatim %}
+             </div>
+           </div>
         </div>
     </div>
   </div>
