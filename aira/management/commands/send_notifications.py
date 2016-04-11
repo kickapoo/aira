@@ -9,8 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from aira.models import Profile, Agrifield
 from aira.models import notification_options
-from aira.irma.main import email_users_response_data
-
+from aira.irma.main import email_users_response_data, agripoint_in_raster
 
 from django.contrib.sites.models import Site
 
@@ -55,6 +54,8 @@ class Command(BaseCommand):
         return context
 
     def notify_user(self, user, agrifields, owner):
+        # Clear agrifields from the ones outside the study_area
+        agrifields = [f for f in agrifields if agripoint_in_raster(f)]
         msg_html = render_to_string('aira/email_notification.html',
                                     self.get_email_context(agrifields, user,
                                                            owner))
