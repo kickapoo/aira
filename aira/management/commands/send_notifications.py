@@ -56,11 +56,12 @@ class Command(BaseCommand):
     def notify_user(self, user, agrifields, owner):
         # Clear agrifields from the ones outside the study_area
         agrifields = [f for f in agrifields if agripoint_in_raster(f)]
-        msg_html = render_to_string('aira/email_notification.html',
-                                    self.get_email_context(agrifields, user,
-                                                           owner))
-        send_mail(_("Irrigation status for " + str(owner)),
-                  '',
-                  settings.DEFAULT_FROM_EMAIL,
-                  [user.email, ],
-                  html_message=msg_html)
+        if len(agrifields) > 0:
+            msg_html = render_to_string('aira/email_notification.html',
+                                         self.get_email_context(agrifields,
+                                                                user, owner))
+            send_mail(_("Irrigation status for " + str(owner)),
+                      '',
+                      settings.DEFAULT_FROM_EMAIL,
+                      [user.email, ],
+                      html_message=msg_html)
