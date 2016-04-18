@@ -60,7 +60,7 @@ class Command(BaseCommand):
             msg_html = render_to_string('aira/email_notification.html',
                                          self.get_email_context(agrifields,
                                                                 user, owner))
-            send_mail(_("Irrigation status for " + str(owner)),
+            send_mail(_(u"Irrigation status for ") + unicode(owner),
                       '',
                       settings.DEFAULT_FROM_EMAIL,
                       [user.email, ],
