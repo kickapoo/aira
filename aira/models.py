@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from collections import OrderedDict
 
 from django.db import models
@@ -43,6 +44,10 @@ YES_OR_NO_OR_NULL = (
     (None,'-')
 )
 
+EMAIL_LANGUAGE_CHOISES = (
+    ('En', 'English'),
+    ('El', 'Ελληνικά')
+)
 
 class Profile(models.Model):
     farmer = models.OneToOneField(User)
@@ -53,6 +58,8 @@ class Profile(models.Model):
         max_length=3, blank=True, default='',
         choices=[(x, notification_options[x][0])
                  for x in notification_options])
+    email_language = models.CharField(max_length=3,
+        default=EMAIL_LANGUAGE_CHOISES[0][0], choices=EMAIL_LANGUAGE_CHOISES)
     supervisor = models.ForeignKey(User, related_name='supervisor', null=True,
                                    blank=True)
     supervision_question = models.BooleanField(choices=YES_OR_NO,

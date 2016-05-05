@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-08 10:42+0200\n"
+"POT-Creation-Date: 2016-05-05 18:09+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,97 +34,101 @@ msgstr "Διεύθυνση"
 msgid "Email notification per"
 msgstr "Ειδοποιήσεις μέσω ηλεκτρονικού ταχυδρομείου κάθε"
 
-#: aira/forms.py:22 aira/templates/aira/home.html:37
+#: aira/forms.py:22
+msgid "Email notification language"
+msgstr "Γλώσσα ειδοποιήσεων"
+
+#: aira/forms.py:23 aira/templates/aira/home.html:37
 msgid "Supervisor"
 msgstr "Επιτηρητής"
 
-#: aira/forms.py:23
+#: aira/forms.py:24
 msgid "Consider me as supervisor for other accounts"
 msgstr "Επιθυμώ να είμαι επιτηρητής άλλων λογαριασμών"
 
-#: aira/forms.py:43 aira/templates/aira/advice.html:19
+#: aira/forms.py:44 aira/templates/aira/advice.html:19
 #: aira/templates/aira/home.html:210
 msgid "Field Name"
 msgstr "Όνομα Αγροτεμάχιου"
 
-#: aira/forms.py:44
+#: aira/forms.py:45
 msgid "Is this virtual field?"
 msgstr "Το αγροτεμάχιο είναι εικονικό;"
 
-#: aira/forms.py:45
+#: aira/forms.py:46
 msgid "Latitude (WGS84)"
 msgstr "Γεωγραφικό Πλάτος (WGS84)"
 
-#: aira/forms.py:46
+#: aira/forms.py:47
 msgid "Longitude (WGS84)"
 msgstr "Γεωγραφικό Μήκος (WGS84)"
 
-#: aira/forms.py:47 aira/templates/aira/advice.html:31
+#: aira/forms.py:48 aira/templates/aira/advice.html:31
 #: aira/templates/aira/agrifield_form.html:75
 msgid "Crop Type"
 msgstr "Καλλιέργεια"
 
-#: aira/forms.py:48 aira/templates/aira/agrifield_form.html:76
+#: aira/forms.py:49 aira/templates/aira/agrifield_form.html:76
 msgid "Irrigation Type"
 msgstr "Μέθοδος Άρδευσης"
 
-#: aira/forms.py:49
+#: aira/forms.py:50
 msgid "Irrigated Field Area (m<sup>2</sup>)"
 msgstr "Αρδευόμενη έκταση (m<sup>2</sup>)"
 
-#: aira/forms.py:50
+#: aira/forms.py:51
 msgid "Use Custom Parameters"
 msgstr "Χρήση προσαρμοσμένων παραμέτρων"
 
-#: aira/forms.py:51 aira/templates/aira/advice.html:56
+#: aira/forms.py:52 aira/templates/aira/advice.html:56
 msgid "Irrigation Optimizer"
 msgstr "Συντελεστής βελτιστοποίησης άρδευσης"
 
-#: aira/forms.py:52 aira/templates/aira/advice.html:38
+#: aira/forms.py:53 aira/templates/aira/advice.html:38
 msgid "Kc"
 msgstr ""
 
-#: aira/forms.py:53 aira/templates/aira/advice.html:37
+#: aira/forms.py:54 aira/templates/aira/advice.html:37
 msgid "Estimated root depth (max)"
 msgstr "Εκτιμώμενο μέγιστο βάθος ριζοστρώματος (m)"
 
-#: aira/forms.py:54
+#: aira/forms.py:55
 msgid "Estimated root depth (min)"
 msgstr "Εκτιμώμενο ελάχιστο βάθος ριζοστρώματος (m)"
 
-#: aira/forms.py:55 aira/templates/aira/advice.html:39
+#: aira/forms.py:56 aira/templates/aira/advice.html:39
 msgid "Maximum Allowable Depletion"
 msgstr "Μέγιστο Επιτρεπόμενο Υδατικό Έλλειμμα"
 
-#: aira/forms.py:56
+#: aira/forms.py:57
 msgid "Irrigation efficiency"
 msgstr "Συντελεστής αρδευτικής αποδοτικότητας"
 
-#: aira/forms.py:57 aira/templates/aira/advice.html:40
+#: aira/forms.py:58 aira/templates/aira/advice.html:40
 msgid "Field Capacity"
 msgstr "Υδατοϊκανότητα"
 
-#: aira/forms.py:58 aira/templates/aira/advice.html:41
+#: aira/forms.py:59 aira/templates/aira/advice.html:41
 msgid "Soil moisture at saturation"
 msgstr "Εδαφική Υγρασία στον κορεσμό"
 
-#: aira/forms.py:59 aira/templates/aira/advice.html:42
+#: aira/forms.py:60 aira/templates/aira/advice.html:42
 msgid "Permanent Wilting Point"
 msgstr "Σημείο Μόνιμης Μάρανσης"
 
-#: aira/forms.py:67
+#: aira/forms.py:68
 msgid "You must select if field is virtual or not"
 msgstr "Πρέπει να καταχωρήσεις αν το αγροτεμάχιο είναι εικονικό ή όχι"
 
-#: aira/forms.py:77
+#: aira/forms.py:78
 msgid "Datetime (Y-M-D h:m:s) "
 msgstr "Ημερομηνία και ώρα (Y-M-D h:m:s)"
 
-#: aira/forms.py:78
+#: aira/forms.py:79
 msgid "Applied Irrigation Water"
 msgstr "Δόση άρδευσης"
 
-#: aira/forms.py:87
+#: aira/forms.py:88
 msgid "Are you human?"
 msgstr "Ελέγχος χρήστη"
 
@@ -132,47 +136,47 @@ msgstr "Ελέγχος χρήστη"
 msgid "Irrigation water is estimated using system's default parameters."
 msgstr "Η Δόση Άρδευσης βασίζεται στο προκαθορισμένο σύνολο δεδομένων"
 
-#: aira/management/commands/send_notifications.py:60
+#: aira/management/commands/send_notifications.py:64
 msgid "Irrigation status for "
 msgstr "Κατάσταση Αρδεύσεων για"
 
-#: aira/models.py:24
+#: aira/models.py:25
 msgid "Day"
 msgstr "Ημέρα"
 
-#: aira/models.py:25
+#: aira/models.py:26
 msgid "2 Days"
 msgstr "2 Ημέρες"
 
-#: aira/models.py:26
+#: aira/models.py:27
 msgid "3 Days"
 msgstr "3 Ημέρες"
 
-#: aira/models.py:27
+#: aira/models.py:28
 msgid "4 Days"
 msgstr "4 Ημέρες"
 
-#: aira/models.py:28
+#: aira/models.py:29
 msgid "5 Days"
 msgstr "5 Ημέρες"
 
-#: aira/models.py:29
+#: aira/models.py:30
 msgid "Week"
 msgstr "Εβδομάδα"
 
-#: aira/models.py:30
+#: aira/models.py:31
 msgid "10 Day"
 msgstr "10 Ημέρες"
 
-#: aira/models.py:31
+#: aira/models.py:32
 msgid "Month"
 msgstr "Μήνα"
 
-#: aira/models.py:36 aira/models.py:41
+#: aira/models.py:37 aira/models.py:42
 msgid "Yes"
 msgstr "Ναι"
 
-#: aira/models.py:37 aira/models.py:42
+#: aira/models.py:38 aira/models.py:43
 msgid "No"
 msgstr "Όχι"
 
@@ -771,7 +775,7 @@ msgstr "Διαγραφή Λογαριασμού"
 msgid "Notification Setup"
 msgstr "Ρυθμίσεις Ειδοποιήσεων"
 
-#: aira/templates/aira/profile_form.html:40
+#: aira/templates/aira/profile_form.html:41
 msgid "Supervision"
 msgstr "Επιτήρηση"
 
@@ -797,7 +801,7 @@ msgstr "Έκταση"
 msgid "Irrigation water amount"
 msgstr "Δόση Άρδευσης"
 
-#: aira/templates/aira/tools.html:75
+#: aira/templates/aira/tools.html:75 aira/templates/aira/tools.html.py:152
 msgid "Irrigation duration"
 msgstr "Διάρκεια άρδευσης"
 
@@ -808,6 +812,14 @@ msgstr "Παροχή ζώνης"
 #: aira/templates/aira/tools.html:136
 msgid "Desired irrigation duration"
 msgstr "Επιθυμητή διάρκεια άρδευσης"
+
+#: aira/templates/aira/tools.html:160
+msgid "Number of emitters"
+msgstr "Αριθμός εξόδων"
+
+#: aira/templates/aira/tools.html:167
+msgid "Emitter discharge"
+msgstr "Παροχή εξόδου"
 
 #: aira/templates/base-default.html:8
 msgid "Welcome"
@@ -977,8 +989,10 @@ msgstr "Έχετε ήδη εγγραφεί;"
 msgid "Not Available"
 msgstr "Δεν είναι διαθέσιμο"
 
-#~ msgid "English"
-#~ msgstr "Αγγλικά"
+#: aira_project/settings/base.py:62
+msgid "English"
+msgstr "Αγγλικά"
 
-#~ msgid "Greek"
-#~ msgstr "Ελληνικά"
+#: aira_project/settings/base.py:63
+msgid "Greek"
+msgstr "Ελληνικά"

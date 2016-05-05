@@ -19,6 +19,7 @@ class ProfileForm(forms.ModelForm):
             'last_name': _('Last Name'),
             'address': _('Address'),
             'notification': _('Email notification per'),
+            'email_language': _('Email notification language'),
             'supervisor': _('Supervisor'),
             'supervision_question': _('Consider me as supervisor for other accounts')
         }
