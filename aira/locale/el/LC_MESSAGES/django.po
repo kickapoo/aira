@@ -138,7 +138,7 @@ msgstr "Η Δόση Άρδευσης βασίζεται στο προκαθορ�
 
 #: aira/management/commands/send_notifications.py:65
 msgid "Irrigation status for "
-msgstr "Κατάσταση Αρδεύσεων για"
+msgstr "Κατάσταση Αρδεύσεων για "
 
 #: aira/models.py:25
 msgid "Day"
