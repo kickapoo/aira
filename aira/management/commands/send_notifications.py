@@ -56,7 +56,7 @@ class Command(BaseCommand):
 
     def notify_user(self, user, agrifields, owner):
         # Clear agrifields from the ones outside the study_area
-        translation.activate(owner.profile.email_language)
+        translation.activate(user.profile.email_language)
         agrifields = [f for f in agrifields if agripoint_in_raster(f)]
         if len(agrifields) > 0:
             msg_html = render_to_string('aira/email_notification.html',
