@@ -452,7 +452,7 @@ msgstr "έχει ανάγκη άρδευση με"
 
 #: aira/templates/aira/email_notification.html:392
 msgid "does not need to be irrigated"
-msgstr "Δεν υπάρχει ανάγκη άρδευσης από"
+msgstr "Δεν υπάρχει ανάγκη άρδευσης"
 
 #: aira/templates/aira/email_notification.txt:4
 msgid "You must irrigate."
@@ -996,3 +996,6 @@ msgstr "Αγγλικά"
 #: aira_project/settings/base.py:63
 msgid "Greek"
 msgstr "Ελληνικά"
+
+msgid "at"
+msgstr "στις"
