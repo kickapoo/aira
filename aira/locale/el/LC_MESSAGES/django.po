@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-05 18:38+0300\n"
+"POT-Creation-Date: 2016-05-11 11:27+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -447,12 +447,21 @@ msgid "Irrigation Actions"
 msgstr "Προγραμματισμός αρδεύσεων"
 
 #: aira/templates/aira/email_notification.html:385
+#: aira/templates/aira/email_notification.html:392
+msgid "The field"
+msgstr "Το αγρομετάχιο"
+
+#: aira/templates/aira/email_notification.html:385
 msgid "needs to be irrigated with "
 msgstr "έχει ανάγκη άρδευση με"
 
+#: aira/templates/aira/email_notification.html:387
+msgid "at"
+msgstr "στις"
+
 #: aira/templates/aira/email_notification.html:392
 msgid "does not need to be irrigated"
-msgstr "Δεν υπάρχει ανάγκη άρδευσης"
+msgstr "δεν έχει ανάγκη άρδευσης."
 
 #: aira/templates/aira/email_notification.txt:4
 msgid "You must irrigate."
@@ -996,6 +1005,3 @@ msgstr "Αγγλικά"
 #: aira_project/settings/base.py:63
 msgid "Greek"
 msgstr "Ελληνικά"
-
-msgid "at"
-msgstr "στις"
