@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-11 11:27+0300\n"
+"POT-Creation-Date: 2016-05-12 11:53+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -277,8 +277,8 @@ msgid "Irrigate"
 msgstr "Άρδευση"
 
 #: aira/templates/aira/advice.html:93 aira/templates/aira/home.html:124
-msgid "Ks"
-msgstr ""
+msgid "Water stress factor"
+msgstr "Δείκτης υδατικής καταπόνησης"
 
 #: aira/templates/aira/advice.html:94 aira/templates/aira/home.html:125
 msgid "Irrigation Water Amount"
