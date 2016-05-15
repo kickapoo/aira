@@ -453,7 +453,7 @@ msgstr "Το αγρομετάχιο"
 
 #: aira/templates/aira/email_notification.html:385
 msgid "needs to be irrigated with "
-msgstr "έχει ανάγκη άρδευση με"
+msgstr "έχει ανάγκη άρδευσης με"
 
 #: aira/templates/aira/email_notification.html:387
 msgid "at"
