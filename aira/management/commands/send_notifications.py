@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from datetime import date, datetime
+import logging
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -59,6 +60,8 @@ class Command(BaseCommand):
         agrifields = [f for f in agrifields if agripoint_in_raster(f)]
         if not agrifields:
             return
+        logging.info('Notifying user {} about the agrifields of user {}'
+                     .format(user, owner))
         translation.activate(user.profile.email_language)
         msg_html = render_to_string('aira/email_notification.html',
                                     self.get_email_context(agrifields,
