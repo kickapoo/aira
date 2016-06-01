@@ -169,12 +169,5 @@ def model_results(agrifield, Inet_in_forecast):
     return cache.get('model_run_{}_{}'.format(agrifield.id, Inet_in_forecast))
 
 
-def email_users_response_data(agrifield):
-    """
-    SoilWaterBalance model runs for email_notifications mamagement command
-    """
-    return model_results(agrifield, "YES")
-
-
 def get_performance_chart(agrifield):
     return cache.get('performance_chart_{}'.format(agrifield.id))

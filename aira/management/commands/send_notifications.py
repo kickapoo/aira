@@ -13,7 +13,7 @@ from django.template.loader import get_template, render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
-from aira.irma.main import agripoint_in_raster, email_users_response_data
+from aira.irma.main import agripoint_in_raster, model_results
 from aira.models import notification_options, Profile
 
 
@@ -46,7 +46,7 @@ class Command(BaseCommand):
     def get_email_context(self, agrifields, user, owner):
         context = Context()
         for f in agrifields:
-            f.results = email_users_response_data(f)
+            f.results = model_results(f, "YES")
         context['owner'] = owner
         context['sd'] = agrifields[0].results.sd
         context['ed'] = agrifields[0].results.ed
