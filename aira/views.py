@@ -160,6 +160,14 @@ class CreateProfile(CreateView):
     form_class = ProfileForm
     success_url = "/home"
 
+    def get_form(self, form_class):
+        form = super(CreateProfile, self).get_form(form_class)
+        if self.request.user in form.fields['supervisor'].queryset:
+            form.fields['supervisor'].queryset = \
+                        form.fields['supervisor'].queryset.exclude(
+                        pk=self.request.user.id)
+        return form
+
     def form_valid(self, form):
         form.instance.farmer = self.request.user
         return super(CreateProfile, self).form_valid(form)
@@ -169,6 +177,14 @@ class UpdateProfile(UpdateView):
     model = Profile
     form_class = ProfileForm
     success_url = "/home"
+
+    def get_form(self, form_class):
+        form = super(UpdateProfile, self).get_form(form_class)
+        if self.request.user in form.fields['supervisor'].queryset:
+            form.fields['supervisor'].queryset = \
+                        form.fields['supervisor'].queryset.exclude(
+                        pk=self.request.user.id)
+        return form
 
     def get_context_data(self, **kwargs):
         context = super(UpdateProfile, self).get_context_data(**kwargs)
