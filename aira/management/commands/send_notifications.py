@@ -47,6 +47,12 @@ class Command(BaseCommand):
         context = Context()
         for f in agrifields:
             f.results = model_results(f, "YES")
+        if agrifields[0].results is None:
+            logging.error(
+                ('Internal error: No results for agrifield {} of user {}; '
+                 'omitting notification for that user').format(
+                     agrifields[0].name, user))
+            return None
         context['owner'] = owner
         context['sd'] = agrifields[0].results.sd
         context['ed'] = agrifields[0].results.ed
@@ -63,9 +69,10 @@ class Command(BaseCommand):
         logging.info('Notifying user {} about the agrifields of user {}'
                      .format(user, owner))
         translation.activate(user.profile.email_language)
-        msg_html = render_to_string('aira/email_notification.html',
-                                    self.get_email_context(agrifields,
-                                                           user, owner))
+        context = self.get_email_context(agrifields, user, owner)
+        if context is None:
+            return
+        msg_html = render_to_string('aira/email_notification.html', context)
         send_mail(_("Irrigation status for ") + unicode(owner),
                   '',
                   settings.DEFAULT_FROM_EMAIL,
