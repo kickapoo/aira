@@ -9,7 +9,7 @@ from aira.views import (IndexPageView, HomePageView, AdvicePageView,
                         DeleteIrrigationLog,
                         TryPageView, AlbedoMapsPageView,
                         ConversionTools, IrrigationPerformance,
-                        performance_csv)
+                        performance_csv, remove_supervised_user_from_user_list)
 
 urlpatterns = patterns(
     '',
@@ -67,5 +67,8 @@ urlpatterns = patterns(
     url(r'^irrigation-performance-chart/(?P<pk_a>\d+)/$', IrrigationPerformance.as_view(),
         name="irrigation-chart"),
     url(r'^download-irrigation-performance/(?P<pk>\d+)/$', performance_csv,
-        name='performance_csv')
+        name='performance_csv'),
+    url(r'^supervised_user/remove/$',
+        login_required(remove_supervised_user_from_user_list),
+        name="supervised_user_remove"),
 )

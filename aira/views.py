@@ -1,11 +1,12 @@
 import csv
 from datetime import date, timedelta
 import os
+import json
 
 from django.utils import timezone
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
@@ -321,3 +322,19 @@ class DeleteIrrigationLog(DeleteView):
     def get_success_url(self):
         field = Agrifield.objects.get(pk=self.kwargs['pk_a'])
         return reverse('home', kwargs={'username': field.owner})
+
+
+def remove_supervised_user_from_user_list(request):
+    # Called in templates:aira:home
+    if request.is_ajax() and request.POST:
+        supervised_profile = Profile.objects.get(
+                                     pk=int(request.POST.get('supervised_id')))
+        supervised_profile.supervisor = None
+        supervised_profile.save()
+        response_data = {
+            "message": "Success!!!",
+        }
+        return HttpResponse(
+                json.dumps(response_data),
+                content_type='application/json')
+    raise Http404

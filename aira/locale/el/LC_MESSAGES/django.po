@@ -1015,3 +1015,6 @@ msgstr "Αγγλικά"
 #: aira_project/settings/base.py:63
 msgid "Greek"
 msgstr "Ελληνικά"
+
+msgid "Remove Supervised User"
+msgstr "Διαγραφή χρήστη από επιτηρούμενο"

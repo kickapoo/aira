@@ -42,16 +42,21 @@
         {% if supervising_users %}
         <div class="col-md-7">
               <strong>{% trans "The following users have set you as their supervisor" %}</strong>: <br>
-              {% for user in  supervising_users %}
-                  <a href="{% url 'home' user.farmer %}">
-                  {{ user.farmer }}{% if user.farmer.profile %}
-                  ({{ user.farmer.profile.first_name }} {{ user.farmer.profile.last_name }})
-                  {% endif %}</a>,&nbsp;
+              {% for supervised_user in  supervising_users %}
+                  <form id="delete-supervised-frm-{{ supervised_user.id }}" style="float:left" method="post" class="form-inline" action="#">
+                    {% csrf_token %}
+                      <a style="float:left" href="{% url 'home' supervised_user.farmer %}"> {{ supervised_user.farmer }}
+                          {% if supervised_user.farmer.profile %}({{ supervised_user.farmer.profile.first_name }} {{ supervised_user.farmer.profile.last_name }}){% endif %}
+                        </a>
+                      <input  type="button"
+                              value="x"
+                              data-toggle="tooltip" data-placement="bottom" title="{% trans 'Remove Supervised User' %}"
+                              class="btn btn-xs btn-danger"
+                              onClick='submitRemoveSupervisedUserForm({{ supervised_user.id }})' />,&nbsp;&nbsp;
+                  </form>
               {% endfor %}
         </div>
         {% else %}
-
-
         {% endif %}
     </div>
 </div>
@@ -159,10 +164,27 @@
       </div>
     {% endfor %}
 {% endif %}
+
 {% endblock %}
 
 {% block extrajs %}
+<script type="text/javascript" src="{% static 'js/aira.js' %}"></script>
 <script>
+      // Remove Superived user
+      function submitRemoveSupervisedUserForm(supervised_id) {
+        $.ajax({
+          type: "POST",
+          url: "{% url 'supervised_user_remove' %}",
+          dataType: "json",
+          data: {
+            'supervised_id': supervised_id,
+          },
+          success: function(response) {
+              $("#delete-supervised-frm-"+supervised_id).hide();
+          }
+        });
+      }
+
       function make_coords(coord) {
                   return parseFloat(coord.replace(",","."));
                 };
