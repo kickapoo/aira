@@ -55,5 +55,5 @@ docs/_build/
 target/
 
 # Local stuff
-aira_project/settings/local.py
+# aira_project/settings/local.py
 aira_project/aira.db

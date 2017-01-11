@@ -13,7 +13,7 @@ from django.template.loader import get_template, render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
-from aira.irma.main import agripoint_in_raster, model_results
+from aira.irma_utils import agripoint_in_raster, model_results
 from aira.models import notification_options, Profile
 
 

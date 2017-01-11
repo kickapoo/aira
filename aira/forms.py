@@ -4,11 +4,15 @@ from django.utils.translation import ugettext_lazy as _
 from captcha.fields import CaptchaField
 from registration.forms import RegistrationForm
 from django.contrib.auth.models import User
+from .models import Agrifield
+
+from .irma_utils import coordinates_in_raster
 
 
 class ProfileForm(forms.ModelForm):
-    supervisor = forms.ModelChoiceField(queryset=User.objects.filter(profile__supervision_question=True),
-                                        required=False)
+    supervisor = forms.ModelChoiceField(
+            queryset=User.objects.filter(profile__supervision_question=True),
+            required=False)
 
     class Meta:
         model = Profile
@@ -31,7 +35,7 @@ class AgrifieldForm(forms.ModelForm):
         model = Agrifield
         exclude = ('owner',)
         fields = ['name', 'area', 'longitude', 'latitude', 'crop_type',
-                  'irrigation_type','is_virtual',
+                  'irrigation_type', 'is_virtual',
                   'use_custom_parameters', 'custom_irrigation_optimizer',
                   'custom_kc',
                   'custom_root_depth_max', 'custom_root_depth_min',
@@ -47,7 +51,6 @@ class AgrifieldForm(forms.ModelForm):
             'longitude': _('Longitude (WGS84)'),
             'crop_type': _('Crop Type'),
             'irrigation_type': _('Irrigation Type'),
-            'area': _('Irrigated Field Area (m<sup>2</sup>)'),
             'use_custom_parameters': _("Use Custom Parameters"),
             'custom_irrigation_optimizer': _("Irrigation Optimizer"),
             'custom_kc': _("Kc"),
@@ -63,10 +66,24 @@ class AgrifieldForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(AgrifieldForm, self).clean()
         is_virtual = cleaned_data.get("is_virtual")
+        name = cleaned_data.get("name")
+
+        if Agrifield.objects.filter(name=name).count() > 1:
+            msg = _("Field already exists with that name")
+            self.add_error('name', msg)
 
         if is_virtual is None:
             msg = _("You must select if field is virtual or not")
             self.add_error('is_virtual', msg)
+
+        temp_agrifield = {
+            "latitude": cleaned_data.get("latitude"),
+            "longitude": cleaned_data.get("longitude"),
+        }
+        if not coordinates_in_raster(temp_agrifield):
+            msg = _("Your field coordinates are outside study area")
+            self.add_error('latitude', msg)
+            self.add_error('longitude', msg)
 
 
 class IrrigationlogForm(forms.ModelForm):

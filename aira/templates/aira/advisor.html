@@ -1,0 +1,512 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load aira_extras %}
+{% load bootstrap3 %}
+
+{% block title %} {% trans "Irrigation Logs" %} {% endblock %}
+
+{% block content %}
+    {% menu request.user request.resolver_match.kwargs request.resolver_match.url_name %} <br>
+    {% leaflet_map %}
+<hr>
+<!-- Agrifield -->
+<div id="card-{{ agrifield.pk }}" class="card">
+
+    <div class="card-header">
+        <br>
+
+        <img style="float:left;padding-right:10px;" height="25" width="35" src="{% static 'img/irrigation-must.png' %}" alt="">
+        {% if agrifield.is_virtual %}<span><img  data-toggle="tooltip" title="{% trans 'Virtual Field' %}" style="float:left;padding-right:10px" height="25" width="35" src="{% static 'img/rocket.png' %}" alt=""></span>{% endif %}
+
+        <h5 class="card-title">
+            {{ agrifield.name }} - {{ agrifield.pk }}
+            {% if  agrifield.agroparameters.custom_parms %}
+                    <br>
+                  <span class="text-success" style="font-size:12px">{% trans "using custom parameters" %}</span>
+            {% endif %}
+            <span id="search_minus" style="padding-right:10px;" class="pull-right"><a class="aira-nav-link" href="#" onclick="helperSelectedAgrifieldCircle({{ agrifield.latitude }}, {{ agrifield.longitude }}, 'card-{{ agrifield.pk }}', 'map', {{ agrifield.get_radius }} )"><i class="fa fa-search-minus"></i></a></span>
+            <span id="search_plus" style="padding-right:10px;" class="pull-right"><a class="aira-nav-link" href="#" onclick="aira.LeafletMap.selectedAgrifield({{ agrifield.pk }}, '{{ agrifield.name }}', {{ agrifield.latitude }}, {{ agrifield.longitude }}, '{{ agrifield.is_virtual }}', 'card-{{ agrifield.pk }}', 'map', {{ agrifield.get_radius }} )"><i class="fa fa-search-plus" aria-hidden="true"></i></a></span>
+        </h5>
+        <br>
+
+        <h6 class="card-subtitle mb-2 text-muted">
+            <div class="row">
+                <div class="col-md-5">{{ agrifield.crop_type }}</div>
+                <div class="col-md-5">{{ agrifield.irrigation_type }}</div>
+                <div class="col-md-2"><button class="btn btn-outline btn-sm pull-right" id="toogle_parameters"><i data-toggle="tooltip" title="{% trans 'View Parameters' %}" class="fa fa-chevron-down" aria-hidden="true"></i></button></div>
+            </div>
+        </h6>
+
+        <div id="agrifield_parameters" class="card-block" style="display:none">
+            <div class="row">
+                <div class="col-md-6">
+                    {% trans "Estimated root depth (max)" %}: <b>{{ agrifield.agroparameters.rd }}</b> m <br>
+                    {% trans "Kc" %}: <b>{{ agrifield.agroparameters.kc }}</b><br>
+                    {% trans "Maximum Allowable Depletion" %}: <b>{{ agrifield.agroparameters.mad }}</b>%<br>
+                    {% trans "Field Capacity" %}: <b>{{ agrifield.agroparameters.fc }}</b>%<br>
+                    {% trans "Soil moisture at saturation" %} (Θ<sub>s</sub>): <b>{{ agrifield.agroparameters.thetaS }}</b>%<br>
+                    {% trans "Permanent Wilting Point" %}: <b>{{ agrifield.agroparameters.wp  }}</b>% <br>
+                </div>
+                <div class="col-md-6">
+                    {% trans "Irrigation efficiency factor" %}: <b>{{ agrifield.agroparameters.irr_eff }}</b> <br>
+                    {% trans "Irrigation Optimizer" %}: <b>{{ agrifield.agroparameters.IRT }}</b> <br>
+                    {% if agrifield.last_irrigation %}
+                        {% trans "Last Irrigation" %}: <b>{{ agrifield.last_irrigation.time }}</b><br>
+                        {% trans "Last Applied Water" %}: <b>{{ agrifield.last_irrigation.applied_water }}</b> m³
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ul class="list-group list-group-flush">
+        {% if not agrifield.has_irrigation %}
+            <li style="font-size:12px;" class="list-group-item bg-warning">
+                <i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i>
+                {% trans "You haven't entered any irrigation event." %}
+                {% trans "Irrigation Advice is estimated using system's default datasets" %}.
+            </li>
+        {% endif %}
+        {% if not agrifield.in_raster %}
+            <li style="font-size:12px;" class="list-group-item bg-warning">
+                <i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i>
+                {% trans "Your field location is outside Arta's plain field" %}.
+            </li>
+        {% endif %}
+    </ul>
+
+    <div id="stats-card-body">
+
+        <!-- chart -->
+        <div class="card-block">
+            <div class="row">
+                <div class="col-md-4">
+                    <i id="meteo_data_spin" class="fa fa-cog fa-spin fa-3x fa-fw"></i>
+                    <div class="ct-chart1 ct-perfect-fourth"></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ct-chart2 ct-perfect-fourth"></div>
+                </div>
+                <div class="col-md-4">
+                    <i id="meteo_forecast_data_spin" class="fa fa-cog fa-spin fa-3x fa-fw"></i>
+                    <div class="ct-chart3 ct-perfect-fourth"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="card-block">
+            <div class="row">
+                <div class="col-md-3 hidden-sm-down">
+                    <div class="card-block">
+                        <h5 id="annual-applied-water" class="card-title"></h4>
+                        <h6 class="card-subtitle text-muted">{% trans "Annual" %}</h6>
+                    </div>
+                </div>
+                <div class="col-md-3 hidden-sm-down">
+                    <div class="card-block">
+                        <h5 id="month-applied-water" class="card-title"></h4>
+                        <h6 class="card-subtitle text-muted">{% trans "Monthly" %}</h6>
+                    </div>
+                </div>
+                <div class="col-md-3 hidden-sm-down">
+                    <div class="card-block">
+                        <h5 id="last7days-applied-water" class="card-title"></h4>
+                        <h6 class="card-subtitle text-muted">{% trans "Last 7 Days" %}</h6>
+                    </div>
+                </div>
+                <div class="col-md-3 hidden-sm-down">
+                    <div class="card-block">
+                        <h5 id="last3days-applied-water" class="card-title"></h4>
+                        <h6 class="card-subtitle text-muted">{% trans "Last 3 Days" %}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="card-block text-xs-center">
+            <hr>
+            {% if agrifield.in_raster %}
+                <span style="padding-right:10px;padding-top:2px" class="pull-right">
+                    <a class="aira-nav-link" href="{% url 'edit-agrifield' agrifield.owner agrifield.slug %}">
+                        <i data-toggle="tooltip" title="{% trans 'Edit' %}" class="fa fa-edit"></i>
+                    </a>
+                </span>
+            {% endif %}
+            <span style="padding-right:20px;" class="align-middle">
+                <a class="btn btn-outline btn-sm pull-left" id="toogle_form_table">
+                    <i data-toggle="tooltip" title="{% trans 'Irrigation Log' %}" class="fa fa-folder fa-2x" aria-hidden="true"></i>
+                </a>
+            </span>
+            <span style="padding-right:20px;" class="align-middle">
+                <a id="{{ agrifield.pk }}" class="aira-nav-link" href="#">
+                    <i data-toggle="tooltip" title="{% trans 'Irrigation Report' %}" class="fa fa-files-o" aria-hidden="true"></i>
+                </a>
+            </span>
+
+        </div>
+    </div>
+
+</div>
+
+<hr>
+
+<div id="irrigation-log-form" style="display:none" class="card">
+    <!-- Form -->
+    <div class="card-header">
+        <form id="irrigationlog-form"  class="form-inline" method="post" role="form">
+            {% csrf_token %}
+            <div class="form-group">
+                <div id="datepicker" class="input-group date" data-provide="datepicker">
+                    <input class="form-control" value="{{ today|date:'d/m/y' }}" id="id_time" name="time" required="required" title="" type="text">
+                    <div class="input-group-addon"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></div>
+                </div>
+           </div>
+           <div class="form-group">
+              <div class="input-group clockpicker">
+                  <input type="text" class="form-control" name="timestamp" value="{{ now }}">
+                  <span class="input-group-addon"><span class="fa fa-clock-o"></span></span>
+              </div>
+          </div>
+          <div class="form-group">
+              <div class="input-group">
+                  <input class="form-control" id="id_applied_water" name="applied_water" placeholder="m³" step="any" title="" required="required" type="number">
+              </div>
+          </div>
+          <input type="submit" value="Add" class="btn btn-success pull-right">
+        </form>
+    </div>
+
+    <br>
+    <!-- List of Logs -->
+    {% if object_list %}
+    <div class="row">
+        <div class="col-md-12">
+            <div  class="card-block">
+                <table id="log-table" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Log" %}</th>
+                            <th>{% trans "Water Ammount" %}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for l in object_list  %}
+                        <tr>
+                            <td>{{ l.time }}</td>
+                            <td align="center">{{l.applied_water}} m³</td>
+                            <td align="center">
+                                <span style="padding-right:20px;"><a id="{{ l.pk }}" class="aira-nav-link trash" href="#"><i data-toggle="tooltip" title="{% trans 'Remove' %}" class="fa fa-trash"></i></a></span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <nav aria-label="">
+                    <ul class="pagination justify-content-end">
+                        {% if object_list.has_previous %}
+                            <li class="page-item"><a class="page-link"href="?page={{ object_list.previous_page_number }}">Previous</a></li>
+                        {% endif %}
+
+                        {% for i in object_list.paginator.page_range %}
+                            <li class="page-item {% if object_list.number == i %}active{% endif %}">
+                                <a class="page-link"href="?page={{i}}">{{i}}</a>
+                            </li>
+                        {% endfor %}
+
+                        {% if object_list.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ object_list.next_page_number }}">Next</a>
+                            </li>
+
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript" src="{% static 'js/aira.js' %}"></script>
+  <script type="text/javascript">
+
+      $(document).ready(function(){
+          $('#datepicker').datepicker({
+              format: "dd/mm/yy",
+              startDate: "01/01/2015",
+              todayBtn: true,
+          });
+
+          $('.clockpicker').clockpicker({donetext: 'Done'});
+      });
+
+      // Toggle Agrifield Parameter
+      $(document).on("click", "#toogle_parameters", function(){
+          $("#agrifield_parameters").toggle();
+          $("i", this).toggleClass("fa fa-chevron-up fa fa-chevron-down");
+      });
+
+      // Toggle IrrigationLog Form and Table
+      $(document).on("click", "#toogle_form_table", function(){
+          $("#irrigation-log-form").toggle();
+          $("i", this).toggleClass("fa fa-folder fa fa-folder-open");
+      });
+
+
+    function monthlyBarPlot() {
+        $.ajax({
+            url : "{% url 'monthly-irrigationlog-plot' %}",
+            type : "GET",
+            data : {
+                    agrifield_id: "{{ agrifield.pk }}",
+                   },
+            success : function(response) {
+                    console.log(response)
+
+                var data = {
+                  labels: response.labels,
+                  series: [response.values]
+                };
+
+                var options = {
+                  low: 0,
+                  seriesBarDistance: 12,
+                  axisX: {
+                    labelInterpolationFnc: function(value, index) {
+                      return index % 3 === 0 ? value : null;
+                    }
+                  }
+                };
+
+                new Chartist.Bar('.ct-chart2', data, options);
+
+            },
+            error : function(xhr,errmsg,err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    };
+    //
+    monthlyBarPlot()
+
+    function meteoPlot() {
+        $.ajax({
+            url : "{% url 'meteo-irrigationlog-plot' %}",
+            type : "GET",
+            data : {
+                    agrifield_id: "{{ agrifield.pk }}",
+                   },
+            success : function(response) {
+                    $('#meteo_data_spin').hide()
+                    console.log(response.rain)
+                    for (var i = 0; i < response.rain.length; i++) {
+                        response.rain[i].x = new Date(response.rain[i].x )
+                    }
+                    for (var i = 0; i < response.evap.length; i++) {
+                        response.evap[i].x = new Date(response.evap[i].x )
+                    }
+                    console.log(response.rain)
+                    var chart = new Chartist.Line('.ct-chart1', {
+                      series: [
+                        {
+                          name: 'series-1',
+                          data: response.rain
+                        },
+                        {
+                          name: 'series-2',
+                          data: response.evap
+                        },
+                      ]
+                    }, {
+                      showArea: true,
+                      showLine: true,
+                      showPoint: false,
+                      axisX: {
+                        type: Chartist.FixedScaleAxis,
+                        divisor: 5,
+                        labelInterpolationFnc: function(value) {
+                          return moment(value).format('MMM D');
+                        }
+                      }
+                    });
+
+            },
+            error : function(xhr,errmsg,err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    };
+    //
+    meteoPlot()
+
+
+    function meteoForecastPlot() {
+        $.ajax({
+            url : "{% url 'meteo-forecast-irrigationlog-plot' %}",
+            type : "GET",
+            data : {
+                    agrifield_id: "{{ agrifield.pk }}",
+                   },
+            success : function(response) {
+                    $('#meteo_forecast_data_spin').hide()
+                    console.log(response.rain)
+                    for (var i = 0; i < response.rain.length; i++) {
+                        response.rain[i].x = new Date(response.rain[i].x )
+                    }
+                    for (var i = 0; i < response.evap.length; i++) {
+                        response.evap[i].x = new Date(response.evap[i].x )
+                    }
+                    console.log(response.rain)
+                    var chart = new Chartist.Line('.ct-chart3', {
+                      series: [
+                        {
+                          name: 'series-1',
+                          data: response.rain
+                        },
+                        {
+                          name: 'series-2',
+                          data: response.evap
+                        },
+                      ]
+                    }, {
+                        showArea: true,
+                       showLine: true,
+                       showPoint: false,
+                       fullWidth: true,
+                      axisX: {
+                        showLabel: true,
+                        type: Chartist.FixedScaleAxis,
+                        divisor: 5,
+                        labelInterpolationFnc: function(value) {
+                          return moment(value).format('MMM D');
+                        }
+                      }
+                    });
+
+            },
+            error : function(xhr,errmsg,err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    };
+    //
+    meteoForecastPlot()
+
+
+    function updateAppliedWaterStats() {
+        $.ajax({
+            url : "{% url 'update-irrigationlog-stats' %}",
+            type : "GET",
+            data : {
+                    agrifield_id: "{{ agrifield.pk }}",
+                   },
+            success : function(response) {
+                console.log(response)
+                $('#annual-applied-water').html(response.annual+' m³')
+                $('#month-applied-water').html(response.month+' m³')
+                $('#last3days-applied-water').html(response.last3days+' m³')
+                $('#last7days-applied-water').html(response.last3days+' m³')
+            },
+            error : function(xhr,errmsg,err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    };
+    // Current request applied water summary
+    updateAppliedWaterStats()
+
+    function helperSelectedAgrifieldCircle(lat, lng, div, mapid, radius){
+          var circle = [lat, lng]
+          aira.LeafletMap.selectedAgrifieldCircle([{{ agrifield.as_json|safe }}], div,
+                                                  mapid, [39.15,20.98],
+                                                  circle, radius)
+      }
+
+    // A map that has a single point An agrifield
+    aira.LeafletMap.createMap('map', [{{ agrifield.as_json|safe }}], [39.15,20.98],
+                            10, false, [], null);
+
+
+    // Submitting a  irrifation log form
+    $(document).on("submit", '#irrigationlog-form', function(e){
+        e.preventDefault();
+        var form_data = $( this ).serializeArray();
+        $.ajax({
+            url : "{% url 'create-irrigationlog' %}",
+            type : "POST",
+            data : {
+                    agrifield_id: "{{ agrifield.pk }}",
+                    date: form_data[1].value,
+                    time: form_data[2].value,
+                    aw: form_data[3].value
+                   },
+            success : function(response) {
+                console.log(response)
+                // render template table row
+                $("#log-table").append(
+                    "<tr>"
+                      +"<td>"+ response.time +"</td>"
+                      +"<td align='center'>"+ response.aw +" m³</td>"
+                      +"<td align='center'>"
+                              +"<a style='padding-right:20px;' id="+ response.id + ' class="aira-nav-link trash" href="#">'
+                                  +'<i data-toggle="tooltip" title="{% trans "Remove" %}" class="fa fa-trash"></i>'
+                              +'</a>'
+                      +"</td>"
+                    +"</tr>"
+
+                )
+                updateAppliedWaterStats()
+                monthlyBarPlot()
+            },
+            error : function(xhr,errmsg,err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    });
+
+    // Trash an object with a  conform pop up
+    $(document).on("click", ".trash", function(e) {
+         var log_id = ($(this).attr('id'));
+         var table_row = $(this).closest('tr')
+         bootbox.confirm({
+             title: "{% trans 'aira message' %}",
+             message: "<h3 style='padding-left:70px'>{% trans 'Do you want delete this log?' %}</h3>",
+             buttons: {
+                 confirm: {
+                     label: "{% trans  'Yes' %}",
+                     className: 'btn btn-success pull-left'
+                 },
+                 cancel: {
+                     label: "{% trans  'No' %}",
+                     className: 'btn btn-danger'
+                 }
+             },
+             callback:function(result){
+                if (result) {
+                    $.ajax({
+                        url : "/delete/log/",
+                        type : "POST",
+                        data : { log_id: log_id },
+                        success : function(response) {
+                            table_row.remove()
+                            // location.reload();
+                            updateAppliedWaterStats()
+                            monthlyBarPlot()
+                        },
+                        error : function(xhr,errmsg,err) {
+                            console.log(xhr.status + ": " + xhr.responseText);
+                        }
+                    });
+                }
+            }
+         })
+    })
+
+  </script>
+{% endblock %}

@@ -6,41 +6,31 @@
 
 {% block content %}
 <div class="container">
-  <div class="row">
-    <div class="col-sm-offset-1 col-sm-10">
-      <h1>{% trans "Login" %}</h1>
-      <p>{% trans "Not yet registered?" %}
-        <a href="{% url 'registration_register' %}">{% trans "Register here" %}</a></p>
-      <p>{% trans "Trouble signing in?" %}
-        <a href="{% url 'django.contrib.auth.views.password_reset' %}">{% trans "Reset password" %}</a></p>
-    </div>
-  </div>
-  {% if form.errors %}
-  <div class="row">
-    <div class="alert alert-danger col-sm-offset-2 col-sm-6">
-      <p><strong>{% trans "Login failed. Try again..." %}</strong></p>
-    </div>
-  </div>
-  {% endif %}
-  <div class="col-md-6">
-    <form action="{% url 'django.contrib.auth.views.login' %}"
-        method="post"
-        role="form"
-        class="form-horizontal">
-      {% csrf_token %}
-      {% bootstrap_field form.username layout='horizontal' %}
-      {% bootstrap_field form.password layout='horizontal' %}
-      {% if next %}
-        <input type="hidden" name="next" value="{{ next }}" />
-      {% else %}
-      <!-- Need to add Login Redirect Url -->
-        <input type="hidden" name="next" value= "{% url 'home' %}" />
-      {% endif %}
-      {% buttons %}
-      <div class="col-sm-offset-3 col-sm-10">
-        <button type="submit" class="btn btn-primary">{% trans "Login" %}</button>
-      </div>
-      {% endbuttons %}
-    </form>
-  </div>
+	<div class="row">
+		<div class="col-md-offset-4">
+			<div class="panel panel-default login">
+				<br><br>
+				<div class="panel-heading hidden-xs-down"><i class="pull-left fa fa-user-circle-o fa-5x"></i></div>
+				<div class="panel-body">
+					<form role="form" method="post"  action="{% url 'django.contrib.auth.views.login' %}">
+						<fieldset >
+							{% csrf_token %}
+							{% bootstrap_form form show_label=False %}
+							{% if next %}
+								<input type="hidden" name="next" value="{{ next }}" />
+							{% else %}
+								<input type="hidden" name="next" value= "{% url 'home' %}" />
+							{% endif %}
+								<button type="submit" class="btn btn-success btn-block">{% trans "Login" %}</button>
+							<br>
+							<p>{% trans "New Member?" %}<a href="{% url 'registration_register' %}"> {% trans "Sign up" %}</a></p>
+							<p>{% trans "Trouble signing in?" %}<a href="{% url 'django.contrib.auth.views.password_reset' %}"> {% trans "Reset password" %}</a></p>
+						</fieldset>
+						<br><br>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}

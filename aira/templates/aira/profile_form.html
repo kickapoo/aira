@@ -1,49 +1,133 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load i18n %}
 
 {% load bootstrap3 %}
 {% block title %} {% trans "Account Settings" %} {% endblock %}
 
 {% block content %}
-{% if user.is_demo %}
- <div class="alert alert-info">
-    <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <i class="fa fa-info-circle fa-2x"></i>&nbsp; <span style="font-size:32px">{% trans "demo" %}</span>
-</div>
-{% endif %}
-  <form method="post" role="form" >
-    {% csrf_token %}
-    <div class='row'>
-          <div class='col-sm-5'>
-          <h4 class="lead">{% trans "Update" %} {% trans "Profile" %}</h4>
-            <div class='form-group'>
-              {% bootstrap_field form.first_name %}
-              {% bootstrap_field form.last_name %}
-              {% bootstrap_field form.address %}
-              {% bootstrap_field form.supervision_question %}
-              {% if not user.is_demo %}
-                    <button type="submit" class="btn  btn-sm btn-primary">{% trans "Update" %}</button>
-                    <a class="btn btn-sm btn-primary"href="{% url 'django.contrib.auth.views.password_reset' %}">{% trans "Reset password" %}</a>
-                {% if user.profile.id %}
-                  <a class="btn btn-sm btn-danger" href="{% url 'delete_profile' user.profile.id %}"> {% trans "Delete account" %}</a>
-                {% endif %}
-              {% endif %}
+<br>
+<div class="container">
+    <form method="post" role="form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success btn-sm pull-right">{% trans "Update" %}</button>
+        <br><br>
+        <ul class="nav nav-tabs">
+            <li class="nav-item"><a data-toggle="tab" class="nav-link active" href="#basic">{% trans "Profile" %}</a></li>
+            <li id='notification-nav'class="nav-item"><a data-toggle="tab" class="nav-link" href="#notification">{% trans "Notification Setup" %}</a></li>
+            <li id='supervisor-nav' class="nav-item"><a data-toggle="tab" class="nav-link" href="#supervisor">{% trans "Supervision" %}</a></li>
+        </ul>
+        <!-- Tab panes -->
+        <br>
+        <div class="tab-content">
+            <br>
+            <div class="tab-pane fade in active" id="basic">
+                <div class="row">
+                    <div class="col-md-6">
+                        {% bootstrap_field form.first_name %}
+                        {% bootstrap_field form.last_name %}
+                    </div>
+                    <div class="col-md-6">
+                        {% bootstrap_field form.supervision_question %}
+                        {% bootstrap_field form.address %}
+                    </div>
+                </div>
+                <hr>
+                <a class="btn btn-sm btn-primary update-password" href="#">{% trans "Reset password" %}</a>
+                <a class="btn btn-sm btn-danger delete-account" href="#"> {% trans "Delete account" %}</a>
             </div>
-          </div>
-          <div class="col-sm-4">
-            <h4 class="lead">{% trans "Notification Setup" %}</h4>
-             <div class="form-group">
+            <div class="tab-pane fade" id="notification">
                 {% bootstrap_field form.notification %}
                 {% bootstrap_field form.email_language %}
-             </div>
-          </div>
-          <div class="col-sm-3">
-            <h4 class="lead">{% trans "Supervision" %}</h4>
-             <div class="form-group">
+            </div>
+            <div class="tab-pane fade" id="supervisor">
                 {% bootstrap_field form.supervisor %}
-             </div>
-          </div>
-    </div>
+            </div>
+        </div>
+        <br>
 
-  </form>
-{% endblock%}
+   </form>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript" src="{% static 'js/aira.js' %}"></script>
+<script>
+
+    // Delete User from the database
+    $(document).on("click", ".delete-account", function(e) {
+         bootbox.confirm({
+             title: "{% trans 'aira message' %}",
+             message: "<h3 style='padding-left:70px'>{% trans 'Do you want delete your account?' %}</h3>",
+             buttons: {
+                 confirm: {
+                     label: "{% trans  'Yes' %}",
+                     className: 'btn btn-success pull-left'
+                 },
+                 cancel: {
+                     label: "{% trans  'No' %}",
+                     className: 'btn btn-danger'
+                 }
+             },
+             callback:function(result){
+                if (result) {
+                    $.ajax({
+                        url : "{% url 'delete_account' %}",
+                        type : "POST",
+                        data : { 'message': 'Delete account'},
+                        success : function(response) {
+                            console.log(response)
+                            var dialog = bootbox.dialog({
+                                message: "{% trans ':( We will miss you' %}",
+                                closeButton: false
+                            });
+                            setTimeout(function(){
+                                // do something in the background
+                                dialog.modal('hide');
+                                window.location = "{% url 'welcome' %}"
+                            }, 2000);
+                        },
+                        error : function(xhr,errmsg,err) {
+                            console.log(xhr.status + ": " + xhr.responseText);
+                        }
+                    });
+                }
+            }
+         })
+    })
+
+    // Update password user
+    // TODO: It should have 2 field for password validation
+    $(document).on("click", ".update-password", function(e){
+       bootbox.prompt({
+           title: "{% trans 'Set New Password' %}",
+           inputType: 'password',
+           callback: function (result) {
+               if (result){
+                   console.log(result)
+                   $.ajax({
+                       url : "{% url 'set_password' %}",
+                       type : "POST",
+                       data : { 'password': result },
+                       success : function(response) {
+                           console.log(response)
+                           var dialog = bootbox.dialog({
+                               message: "{% trans 'Changed' %}",
+                               closeButton: false
+                           });
+                           setTimeout(function(){
+                               // do something in the background
+                               dialog.modal('hide');
+                           }, 2000);
+                       },
+                       error : function(xhr,errmsg,err) {
+                           console.log(xhr.status + ": " + xhr.responseText);
+                       }
+                   });
+               }
+           }
+       });
+    });
+
+</script>
+{% endblock %}

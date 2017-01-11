@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load aira_extras %}
+
+
+{% load bootstrap3 %}
+
+{% block title %} {% trans "Add Agrifield" %} - {{user}} {% endblock %}
+
+{% block content %}
+
+{% menu request.user request.resolver_match.kwargs request.resolver_match.url_name %} <br>
+
+{% leaflet_map %}
+
+<hr>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-block">
+                <form method="post" role="form" action=".">
+                    {% csrf_token %}
+                    <div class='col-md-6'>
+                        <div class='form-group'>
+                            {% bootstrap_field form.name %}
+                            {% bootstrap_field form.area %}
+                            {% bootstrap_field form.latitude %}
+                            {% bootstrap_field form.longitude %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {% bootstrap_field form.crop_type %}
+                            {% bootstrap_field form.irrigation_type %}
+                            {% bootstrap_field form.is_virtual%}
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-success btn-xs">{% trans "Add" %}</button>
+                    </div>
+                </form>
+                {% if object_list %}
+                    <button class="btn btn-xs btn-default pull-right" id="manage-agrifields"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="agrifields-list-table" class="card-block" {% if not 'page' in request.get_full_path %} style="display:None;"{% endif %}>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>{% trans "Agrifield" %}</th>
+                                            <th>{% trans "Crop Type" %} / {% trans "Irrigation Type" %}</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for agrifield in object_list  %}
+                                        <tr>
+                                            <td>{% if agrifield.is_virtual %}<span><img  data-toggle="tooltip" title="{% trans 'Virtual Field' %}" style="float:left;padding-right:10px" height="25" width="35" src="{% static 'img/rocket.png' %}" alt=""></span>{% endif %}</td>
+                                            <td>{{ agrifield.name }}</td>
+                                            <td><span>{{ agrifield.crop_type.name}}<br>{{ agrifield.irrigation_type.name }}</span></td>
+                                            <td>
+                                                <span style="padding-right:20px;" class="align-middle"><a id="{{ agrifield.pk }}" class="aira-nav-link" href="{% url 'edit-agrifield' agrifield.owner agrifield.slug %}"><i data-toggle="tooltip" title="{% trans 'Edit' %}" class="fa fa-pencil" aria-hidden="true"></i></a></span>
+                                                <span style="padding-right:20px;" class="align-middle"><a id="{{ agrifield.pk }}" class="aira-nav-link" href="{% url 'add-irrigationlog' agrifield.slug %}"><i data-toggle="tooltip" title="{% trans 'Irrigation Logs' %}" class="fa fa-list-ol" aria-hidden="true"></i></a></span>
+                                                <span style="padding-right:20px;" class="pull-left"><a id="{{ agrifield.pk }}" class="aira-nav-link trash" href="#"><i data-toggle="tooltip" title="{% trans 'Remove' %}" class="fa fa-trash"></i></a></span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                <nav aria-label="">
+                                    <ul class="pagination justify-content-end">
+                                        {% if object_list.has_previous %}
+                                            <li class="page-item"><a class="page-link"href="?page={{ object_list.previous_page_number }}">Previous</a></li>
+                                        {% endif %}
+
+                                        {% for i in object_list.paginator.page_range %}
+                                            <li class="page-item {% if object_list.number == i %}active{% endif %}">
+                                                <a class="page-link"href="?page={{i}}">{{i}}</a>
+                                            </li>
+                                        {% endfor %}
+
+                                        {% if object_list.has_next %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ object_list.next_page_number }}">Next</a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript" src="{% static 'js/aira.js' %}"></script>
+
+<script type="text/javascript">
+    // Create a map can capture user click on map to form input lat, long
+    aira.LeafletMap.createMap('map',[], [39.15,20.98], 10, true, [], null);
+
+    $(document).ready(function(){
+        //TODO: Find a better way
+        $('#id_area').attr('placeholder',"m²");
+    });
+
+    // Toggle Irrigation log Table
+    $(document).on("click", "#manage-agrifields", function(){
+        $("#agrifields-list-table").toggle();
+        $("i", this).toggleClass("fa fa-chevron-up fa fa-chevron-down");
+    });
+
+    // Trash an object with a  conform pop up
+    $(document).on("click", ".trash", function(e) {
+         var agrifield_id = ($(this).attr('id'));
+         var table_row = $(this).closest('tr')
+         bootbox.confirm({
+             title: "{% trans 'aira message' %}",
+             message: "<h3 style='padding-left:70px'>{% trans 'Do you want delete this field?' %}</h3>",
+             buttons: {
+                 confirm: {
+                     label: "{% trans  'Yes' %}",
+                     className: 'btn btn-success pull-left'
+                 },
+                 cancel: {
+                     label: "{% trans  'No' %}",
+                     className: 'btn btn-danger'
+                 }
+             },
+             callback:function(result){
+                if (result) {
+                    $.ajax({
+                        url : "/delete/agrifield/",
+                        type : "POST",
+                        data : { agrifield_pk: agrifield_id },
+                        success : function(response) {
+                             table_row.remove()
+                             $.notify("{% trans  'Agrifield deleted' %}");
+                        },
+                        error : function(xhr,errmsg,err) {
+                            console.log(xhr.status + ": " + xhr.responseText);
+                        }
+                    });
+                }
+            }
+         })
+    })
+</script>
+{% endblock %}

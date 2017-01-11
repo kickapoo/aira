@@ -11,6 +11,7 @@ urlpatterns = patterns(
         name='registration_register'),
     (r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^django-rq/', include('django_rq.urls')),
     url(r'^accounts/', include('registration.backends.default.urls')),
     #   http://stackoverflow.com/questions/19985103/
     url(r'^password/change/$', auth_views.password_change,

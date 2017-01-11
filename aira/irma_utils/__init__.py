@@ -77,42 +77,27 @@ def raster2point(lat, long, file):
     return extract_point_from_raster(point, f)
 
 
-def get_default_db_value(afield_obj):
-    """
-       doc str is missing
-    """
-    kc = afield_obj.crop_type.kc
-    irr_eff = afield_obj.irrigation_type.efficiency
-    mad = afield_obj.crop_type.max_allow_depletion
-    rd_max = afield_obj.crop_type.root_depth_max
-    rd_min = afield_obj.crop_type.root_depth_min
-    IRT = afield_obj.irrigation_optimizer
-    fc = raster2point(afield_obj.latitude, afield_obj.longitude, FC_FILE)
-    wp = raster2point(afield_obj.latitude, afield_obj.longitude, PWP_FILE)
-    thetaS = raster2point(afield_obj.latitude, afield_obj.longitude,
-                          THETA_S_FILE)
-    return locals()
-
-
 def get_parameters(afield_obj):
     """
         For url:advice, populate  afield_obj
         information table
     """
     # For url 'advice' templates use
-    fc = afield_obj.get_field_capacity
-    wp = afield_obj.get_wilting_point
-    rd = (float(afield_obj.get_root_depth_min) +
-          float(afield_obj.get_root_depth_max)) / 2
-    kc = float(afield_obj.get_kc)
+    agroparameters = afield_obj.agroparameters()
+
+    fc = agroparameters['fc']
+    wp = agroparameters['wp']
+    rd = agroparameters['rd']
+    kc = agroparameters['kc']
     # FAO table 22 , page 163
-    p = float(afield_obj.get_mad)
+    p = agroparameters['mad']
     peff = 0.8  # Effective rainfall coeff 0.8 * Precip
-    irr_eff = float(afield_obj.get_efficiency)
-    theta_s = afield_obj.get_thetaS
+    irr_eff = agroparameters['irr_eff']
+    theta_s = agroparameters['thetaS']
     rd_factor = 1000  # Static for mm
-    IRT = afield_obj.get_irrigation_optimizer
-    custom_parameters = afield_obj.use_custom_parameters
+    IRT = agroparameters['IRT']
+    custom_parameters = agroparameters['custom_parms']
+
     last_irrigate = None
     if afield_obj.irrigationlog_set.exists():
         last_irrigate = afield_obj.irrigationlog_set.latest()
@@ -126,13 +111,26 @@ def get_parameters(afield_obj):
             fc_mm = fc * rd * rd_factor
             wp_mm = wp * rd * rd_factor
             taw_mm = fc_mm - wp_mm
-            p = float(afield_obj.get_mad)
+            p = agroparameters['mad']
             raw_mm = p * taw_mm
             last_irrigate.applied_water = (raw_mm * afield_obj.area) / 1000
             last_irrigate.message = _(
                 "Irrigation water is estimated using "
                 "system's default parameters.")
     return locals()
+
+
+def coordinates_in_raster(coordinates, mask=FC_FILE):
+        """
+            Check if a set of coordinates are
+                within 'mask' raster file
+        """
+        try:
+            tmp_check = raster2point(coordinates['latitude'],
+                                     coordinates['longitude'], mask)
+        except (RuntimeError, ValueError):
+            tmp_check = float('nan')
+        return not math.isnan(tmp_check)
 
 
 def agripoint_in_raster(obj, mask=FC_FILE):
@@ -165,9 +163,9 @@ class Results():
         pass
 
 
-def model_results(agrifield, Inet_in_forecast):
-    return cache.get('model_run_{}_{}'.format(agrifield.id, Inet_in_forecast))
-
-
-def get_performance_chart(agrifield):
-    return cache.get('performance_chart_{}'.format(agrifield.id))
+# def model_results(agrifield, Inet_in_forecast):
+#     return cache.get('model_run_{}_{}'.format(agrifield.id, Inet_in_forecast))
+#
+#
+# def get_performance_chart(agrifield):
+#     return cache.get('performance_chart_{}'.format(agrifield.id))

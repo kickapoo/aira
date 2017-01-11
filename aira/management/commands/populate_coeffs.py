@@ -19,6 +19,7 @@ class Command(BaseCommand):
             with open(irrt_csv) as f:
                 reader = csv.reader(f)
                 for row in reader:
+                    print(row)
                     _, created = IrrigationType.objects.get_or_create(name=row[0],
                                                                       efficiency=float(row[1]))
             with open(croptype_csv) as f:
