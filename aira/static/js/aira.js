@@ -176,8 +176,11 @@ aira.toogleIndexMapsUI = (function namespace() {
                  });
 
         //Base layer
-        var openCycleMap = new OpenLayers.Layer.OSM.CycleMap(
+        var openCycleMap = new OpenLayers.Layer.OSM(
                   "Open Cycle Map",
+                  ["https://a.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement,
+                   "https://b.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement,
+                   "https://c.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement],
                   {isBaseLayer: true,
                    projection: 'EPSG:3857'});
         map.addLayer(openCycleMap);
