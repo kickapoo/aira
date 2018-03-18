@@ -12,71 +12,89 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            demo, created = User.objects.get_or_create(username="demo")
+            demo, created = User.objects.get_or_create(
+                                username="demo",
+                                email="demo@aira.com"
+                            )
             demo.set_password('demo')
             demo.is_active = True
             demo.save()
-            p, created = Profile.objects.get_or_create(farmer=demo,
-                                                       first_name="Aira Demo",
-                                                       last_name="Aira Demo",
-                                                       address="Arta")
+            p, created = Profile.objects.get_or_create(
+                farmer=demo,
+                first_name="Aira Demo",
+                last_name="Aira Demo",
+                address="Arta",
+            )
             p.save()
 
-            kiwi = CropType.objects.filter(name="Kiwi").first()
-            drip = IrrigationType.objects.filter(name="Drip irrigation").first()
+            crop = CropType.objects.all()[6]
+            drip = IrrigationType.objects.all()[2]
 
             # Agrifield with location outside raster
-            f, created = Agrifield.objects.get_or_create(owner=demo,
-                                                         name="OUTSIDE ARTA RASTER",
-                                                         latitude=38,
-                                                         longitude=19,
-                                                         crop_type=kiwi,
-                                                         irrigation_type=drip,
-                                                         area=10000.00,
-                                                         use_custom_parameters=False)
+            f, created = Agrifield.objects.get_or_create(
+                owner=demo,
+                name="OUTSIDE ARTA RASTER",
+                latitude=38,
+                longitude=19,
+                crop_type=crop,
+                irrigation_type=drip,
+                area=10000.00,
+                use_custom_parameters=False,
+            )
             f.save()
 
             # Agrifield with at least on irrigation log within datasample period
-            f, created = Agrifield.objects.get_or_create(owner=demo,
-                                                         name="Field with irrigation log",
-                                                         latitude=39.15,
-                                                         longitude=20.98,
-                                                         crop_type=kiwi,
-                                                         irrigation_type=drip,
-                                                         area=10000.00,
-                                                         use_custom_parameters=False)
+            f, created = Agrifield.objects.get_or_create(
+                owner=demo,
+                name="Field with irrigation log",
+                latitude=39.15,
+                longitude=20.98,
+                crop_type=crop,
+                irrigation_type=drip,
+                area=10000.00,
+                use_custom_parameters=False,
+            )
             f.save()
-            l, created = IrrigationLog.objects.get_or_create(agrifield=f,
-                                                             time="2015-01-03 00:00",
-                                                             applied_water=23.00)
+            l, created = IrrigationLog.objects.get_or_create(
+                agrifield=f,
+                time="2015-02-15 00:00",
+                applied_water=23.00,
+            )
             l.save()
 
             # Agrifield with no irrigation log
-            f, created = Agrifield.objects.get_or_create(owner=demo,
-                                                         name="Field with no irrigation log",
-                                                         latitude=39.10,
-                                                         longitude=20.92,
-                                                         crop_type=kiwi,
-                                                         irrigation_type=drip,
-                                                         area=10000.00,
-                                                         use_custom_parameters=False)
+            f, created = Agrifield.objects.get_or_create(
+                owner=demo,
+                name="Field with no irrigation log",
+                latitude=39.10,
+                longitude=20.92,
+                crop_type=crop,
+                irrigation_type=drip,
+                area=10000.00,
+                use_custom_parameters=False,
+            )
             f.save()
 
             # Agrifield with irrigation log outside datasample period
             # Datasample: full December of 2014
-            f, created = Agrifield.objects.get_or_create(owner=demo,
-                                                         name="Field with log outside dataset",
-                                                         latitude=39.12,
-                                                         longitude=20.94,
-                                                         crop_type=kiwi,
-                                                         irrigation_type=drip,
-                                                         area=10000.00,
-                                                         use_custom_parameters=False)
+            f, created = Agrifield.objects.get_or_create(
+                owner=demo,
+                name="Field with log outside dataset",
+                latitude=39.12,
+                longitude=20.94,
+                crop_type=crop,
+                irrigation_type=drip,
+                area=10000.00,
+                use_custom_parameters=False,
+             )
             f.save()
-            l, created = IrrigationLog.objects.get_or_create(agrifield=f,
-                                                             time="2015-02-15 00:00",
-                                                             applied_water=23.00)
+            l, created = IrrigationLog.objects.get_or_create(
+                agrifield=f,
+                time="2014-02-15 00:00",
+                applied_water=23.00,
+            )
             l.save()
-        except:
-            raise CommandError("Use 'python manage.py populate.coeffs' first")
-        self.stdout.write('Demo User Added')
+            self.stdout.write('Aira Demo user import: Success')
+        except Exception as e:
+            print(e)
+            raise CommandError("Error during importing Demo user in database")

@@ -19,20 +19,23 @@ class Command(BaseCommand):
             with open(irrt_csv) as f:
                 reader = csv.reader(f)
                 for row in reader:
-                    _, created = IrrigationType.objects.get_or_create(name=row[0],
-                                                                      efficiency=float(row[1]))
+                    _, created = IrrigationType.objects.get_or_create(
+                                    name=row[0],
+                                    efficiency=float(row[1]),
+                                )
             with open(croptype_csv) as f:
                 reader = csv.reader(f)
-                reader.next()
+                next(reader)
                 for row in reader:
-                    _, created = CropType.objects.get_or_create(name=str(row[0]),
-                                                                root_depth_min=float(row[1]),
-                                                                root_depth_max=float(row[2]),
-                                                                max_allow_depletion=float(row[3]),
-                                                                kc=float(row[4]),
-                                                                fek_category=int(row[5]),
-                                                                )
-        except:
-            raise CommandError("Use 'makemigrations aira' to create aira tables")
-
-        self.stdout.write('Aira database is successfully updated')
+                    _, created = CropType.objects.get_or_create(
+                                    name=str(row[0]),
+                                    root_depth_min=float(row[1]),
+                                    root_depth_max=float(row[2]),
+                                    max_allow_depletion=float(row[3]),
+                                    kc=float(row[4]),
+                                    fek_category=int(row[5]),
+                                )
+            self.stdout.write('Aira Coefficients Eng Vr import: Success')
+        except Exception as e:
+            print(e)
+            raise CommandError("Error during updating database")
