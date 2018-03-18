@@ -10,13 +10,15 @@ How to run a development instance:
   1. Copy or symlink `aira_project/settings/local-example.py` to
      `aira_project/settings/local.py`.
 
-  2. Execute `python manage.py syncdb`.
-  
-  3. Execute `python manage.py populate_coeffs`.
-  
-  4. Execute `python manage.py demo_user`.
-  
-  5. Execute `python manage.py runserver`.
+  2. Set `DJANGO_SETTINGS_MODULE=aira_project.settings.local`
+
+  3. Execute `python manage.py migrate`.
+
+  4. Execute `python manage.py populate_coeffs`.
+
+  5. Execute `python manage.py demo_user`.
+
+  6. Execute `python manage.py runserver`.
 
 Copyright (C) 2014-2015 TEI of Epirus
 
