@@ -29,18 +29,18 @@ class Command(BaseCommand):
 
             with open(croptype_csv) as f:
                 reader = csv.reader(f)
-                reader.next()
+                next(reader)
                 for row in reader:
                     crop = "{} ({})".format(row[1], row[0])
                     _, created = CropType.objects.get_or_create(
-                                 name=crop,
-                                 root_depth_min=float(row[2]),
-                                 root_depth_max=float(row[3]),
-                                 max_allow_depletion=float(row[4]),
-                                 kc=float(row[5]),
-                                 fek_category=int(row[6]),)
-        except:
-            raise CommandError(
-                "Use 'makemigrations aira' to create aira tables")
-
-        self.stdout.write('Aira database is successfully updated')
+                                    name=crop,
+                                    root_depth_min=float(row[2]),
+                                    root_depth_max=float(row[3]),
+                                    max_allow_depletion=float(row[4]),
+                                    kc=float(row[5]),
+                                    fek_category=int(row[6]),
+                                )
+            self.stdout.write('Aira Coefficients Greek Vr import: Success')
+        except Exception as e:
+            print(e)
+            raise CommandError("Error during updating database")
