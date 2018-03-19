@@ -21,11 +21,15 @@ class IrrigationLogAdmin(admin.ModelAdmin):
 
 
 class CropTypeAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('name', 'fek_category', 'max_allow_depletion', 'kc')
+    search_fields = ('name', 'fek_category')
+    list_filter = ('fek_category',)
 
 
 class IrrigationTypeAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('name', 'efficiency')
+    search_fields = ('name', 'efficiency')
+    list_filter = ('efficiency',)
 
 
 admin.site.register(Profile, ProfileAdmin)
