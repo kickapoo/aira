@@ -2,9 +2,11 @@
 from collections import OrderedDict
 
 from django.db import models
+from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.dispatch import receiver
 from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 
@@ -44,9 +46,9 @@ YES_OR_NO_OR_NULL = (
     (None,'-')
 )
 
-EMAIL_LANGUAGE_CHOISES = (
+EMAIL_LANGUAGE_CHOICES = (
      ('en', 'English'),
-     ('el', 'Ελληνικά')
+     ('el', 'Ελληνικά'),
 )
 
 
@@ -58,19 +60,44 @@ class Profile(models.Model):
     notification = models.CharField(
         max_length=3, blank=True, default='',
         choices=[(x, notification_options[x][0])
-                 for x in notification_options])
-    email_language = models.CharField(max_length=3,
-         default=EMAIL_LANGUAGE_CHOISES[0][0], choices=EMAIL_LANGUAGE_CHOISES)
-    supervisor = models.ForeignKey(User, related_name='supervisor', null=True,
-                                   blank=True)
-    supervision_question = models.BooleanField(choices=YES_OR_NO,
-                                               default=False)
+                 for x in notification_options],
+    )
+    email_language = models.CharField(
+        max_length=3,
+        default=EMAIL_LANGUAGE_CHOICES[0][0],
+        choices=EMAIL_LANGUAGE_CHOICES,
+    )
+    supervisor = models.ForeignKey(
+        User,
+        related_name='supervisor',
+        null=True,
+        blank=True,
+    )
+    supervision_question = models.BooleanField(
+        choices=YES_OR_NO,
+        default=False,
+    )
 
     class Meta:
         verbose_name_plural = "Profiles"
 
+    def get_supervised(self):
+        "Get users profiles that have set current user (farmer) as supervisor"
+        return Profile.objects.filter(supervisor=self.farmer)
+
     def __unicode__(self):
         return u"UserProfile: {}".format(self.farmer)
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(farmer=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
 
 
 class CropType(models.Model):
