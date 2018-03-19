@@ -19,13 +19,10 @@ class Command(BaseCommand):
             demo.set_password('demo')
             demo.is_active = True
             demo.save()
-            p, created = Profile.objects.get_or_create(
-                farmer=demo,
-                first_name="Aira Demo",
-                last_name="Aira Demo",
-                address="Arta",
-            )
-            p.save()
+            demo.profile.first_name = "Aira Demo"
+            demo.profile.last_name = "Aira Demo"
+            demo.profile.address = "Aira"
+            demo.save()
 
             crop = CropType.objects.all()[6]
             drip = IrrigationType.objects.all()[2]

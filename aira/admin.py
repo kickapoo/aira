@@ -5,6 +5,10 @@ from .models import (Agrifield, Profile, IrrigationLog,
 
 class ProfileAdmin(admin.ModelAdmin):
     exclude = ('farmer',)
+    list_display = ('farmer', 'first_name', 'last_name', 'notification',
+                    'supervisor', 'supervision_question')
+    search_fields = ('first_name', 'last_name', 'notification')
+    list_filter = ('supervision_question',)
 
     def save_model(self, request, obj, form, change):
         if not change:
