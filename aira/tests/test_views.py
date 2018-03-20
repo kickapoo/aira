@@ -1,6 +1,8 @@
+import os
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.core import mail
+from captcha.models import CaptchaStore
 
 
 class TestIndexPageView(TestCase):
@@ -47,18 +49,24 @@ class TestHomePageView(TestCase):
 
 class TestRegistrationView(TestCase):
 
+    def test_captcha_table_empty(self):
+        captcha_count = CaptchaStore.objects.count()
+        self.failUnlessEqual(captcha_count, 0)
+
     def test_registration_form_view(self):
         resp = self.client.get('/accounts/register/')
         self.assertContains(resp, 'action="/accounts/register/')
         self.assertTemplateUsed(resp, 'registration/registration_form.html')
 
     def test_registration_form_success_redirect_and_sent_mail(self):
+        captcha = CaptchaStore.objects.get(hashkey=CaptchaStore.generate_key())
         resp = self.client.post('/accounts/register/',
                                 {'username': 'testregistser',
                                  'email': 'testregister@example.com',
                                  'password1': 'topsecret',
-                                 'password2': 'topsecret'})
-
+                                 'password2': 'topsecret',
+                                 'captcha_0': captcha.hashkey,
+                                 'captcha_1': captcha.response})
         self.assertRedirects(resp, '/accounts/register/complete/')
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
