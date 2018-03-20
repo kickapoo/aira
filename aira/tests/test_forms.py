@@ -10,8 +10,8 @@ class TestRegistrationForm(TestCase):
                                             password='topsecret')
         testuser.is_active = True
         testuser.save()
-        resp = self.client.post('/accounts/register/', {'usename': 'testuser',
-                                                        'password': 'topsecret'})
+        post_data = {'usename': 'testuser', 'password': 'topsecret'}
+        resp = self.client.post('/accounts/register/', post_data)
         self.assertEqual(resp.status_code, 200)
 
     def test_registation_form_fails_blank_submission(self):
