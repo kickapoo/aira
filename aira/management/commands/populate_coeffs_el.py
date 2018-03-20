@@ -19,7 +19,7 @@ class Command(BaseCommand):
             irrt_csv = os.path.join(settings.AIRA_PARAMETERS_FILE_DIR,
                                     'irr_eff_el.csv')
 
-            with open(irrt_csv) as f:
+            with open(irrt_csv, encoding='utf-8') as f:
                 reader = csv.reader(f)
                 for row in reader:
                     irr_type = "{} ({})".format(row[1], row[0])
@@ -27,7 +27,7 @@ class Command(BaseCommand):
                                                 name=irr_type,
                                                 efficiency=float(row[2]))
 
-            with open(croptype_csv) as f:
+            with open(croptype_csv, encoding='utf-8') as f:
                 reader = csv.reader(f)
                 next(reader)
                 for row in reader:
