@@ -14,28 +14,24 @@ SITE_ID = 1
 
 ALLOWED_HOSTS = []
 
-# DJANGO APPS
-DJANGO_APPS = ('django.contrib.admin',
-               'django.contrib.auth',
-               'django.contrib.contenttypes',
-               'django.contrib.sessions',
-               'django.contrib.messages',
-               'django.contrib.staticfiles',
-               'django.contrib.sites',
-               'django.contrib.flatpages')
 
-# THIRD_PARTY_APPS
-THIRD_PARTY_APPS = ('bootstrap3',
-                    'registration',
-                    'mathfilters',
-                    'captcha',
-                    'kombu.transport.django',
-                    )
+INSTALLED_APPS = [
+    'aira',
+    'registration',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django.contrib.flatpages',
+    'bootstrap3',
+    'mathfilters',
+    'captcha',
+    'kombu.transport.django',
+]
 
-# LOCAL APPS
-LOCAL_APPS = ('aira',)
-
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -72,15 +68,25 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-TEMPLATE_CONTEXT_PROCESSORS = [
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages",
-    "aira.context_processors.map",
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                "django.contrib.auth.context_processors.auth",
+                "django.core.context_processors.debug",
+                "django.core.context_processors.i18n",
+                "django.core.context_processors.media",
+                "django.core.context_processors.static",
+                "django.core.context_processors.tz",
+                "django.contrib.messages.context_processors.messages",
+                "aira.context_processors.map",
+            ]
+        },
+    },
 ]
 
 ACCOUNT_ACTIVATION_DAYS = 3
