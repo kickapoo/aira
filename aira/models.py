@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 from collections import OrderedDict
 
 from django.db import models
@@ -302,6 +303,24 @@ class Agrifield(models.Model):
     @property
     def status(self):
         return cache.get('agrifield_{}_status'.format(self.id))
+
+
+class AdviceLog(models.Model):
+    agrifield = models.ForeignKey(Agrifield)
+    inet = models.CharField(max_length=10)
+    advice = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return "Agr:{}|Created:{}|Inet:{}".format(
+                    self.agrifield.id,
+                    self.created_at,
+                    self.inet
+                )
+
+    @property
+    def advice(self):
+        return json.dumps(self.advice)
 
 
 class IrrigationLog(models.Model):
