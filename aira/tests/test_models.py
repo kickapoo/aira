@@ -1,19 +1,18 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from aira.models import Profile
+from model_mommy import mommy
 
 
 class UserTestCase(TestCase):
 
     def setUp(self):
         self.assertEqual(Profile.objects.count(), 0)
-        registered_user_data = {
-            'username': 'batman',
-            'email': 'batman@cave.com',
-            'password': 'thegoatandthesheep',
-            'is_active': True
-        }
-        self.user = User.objects.create(**registered_user_data)
+        self.user = mommy.make(
+            User,
+            username='batman',
+            is_active=True,
+        )
 
     def test_create_user_profile_receiver(self):
         self.assertEqual(hasattr(self.user, 'profile'), True)
