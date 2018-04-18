@@ -279,8 +279,8 @@ class Agrifield(models.Model):
         ordering = ('name', 'area')
         verbose_name_plural = 'Agrifields'
 
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return self.name
 
     def save(self, *args, **kwargs):
         super(Agrifield, self).save(*args, **kwargs)
