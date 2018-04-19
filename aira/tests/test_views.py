@@ -1,6 +1,7 @@
-from django.test import TestCase
 from django.contrib.auth.models import User
 from django.core import mail
+from django.test import TestCase
+
 from captcha.models import CaptchaStore
 from model_mommy import mommy
 

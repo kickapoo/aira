@@ -1,24 +1,22 @@
 import csv
 from datetime import date, timedelta
-import os
 import json
+import os
 
-from django.utils import timezone
 from django.contrib.auth import authenticate, login
-from django.shortcuts import redirect
-from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
-from django.http import Http404
+from django.http import HttpResponse, Http404
+from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
-
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-
 from django.contrib.auth.models import User
-from .models import Profile, Agrifield, IrrigationLog
-from .forms import ProfileForm, AgrifieldForm, IrrigationlogForm
 
-from .irma.main import *
+from .forms import ProfileForm, AgrifieldForm, IrrigationlogForm
+from .irma.main import (agripoint_in_raster, get_default_db_value,
+                        get_parameters, get_performance_chart,
+                        load_meteodata_file_paths, model_results)
+from .models import Profile, Agrifield, IrrigationLog
 
 
 class IrrigationPerformance(TemplateView):
@@ -38,20 +36,22 @@ class IrrigationPerformance(TemplateView):
             if f.chart.sum_ifinal != 0.0:
                 f.chart.percentage_diff = round(
                     ((f.chart.sum_applied_water - f.chart.sum_ifinal) /
-                    f.chart.sum_ifinal)*100 or 0.0)
+                     f.chart.sum_ifinal)*100 or 0.0)
         context['f'] = f
         return context
 
 
-def performance_csv(request, pk ):
+def performance_csv(request, pk):
     f = Agrifield.objects.get(pk=pk)
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="{}-performance.csv"'.format(f.id)
+    response['Content-Disposition'] = \
+        'attachment; filename="{}-performance.csv"'.format(f.id)
     f.can_edit(request.user)
     results = get_performance_chart(f)
     writer = csv.writer(response)
     writer.writerow(['Date', 'Estimated Irrigation Water Amount',
-                     'Applied Irrigation Water Amount', 'Effective precipitation'])
+                     'Applied Irrigation Water Amount',
+                     'Effective precipitation'])
     writer.writerow(['', 'amount (mm)', 'amount (mm)', 'amount (mm)'])
     for row in zip(results.chart_dates, results.chart_ifinal,
                    results.applied_water, results.chart_peff):
@@ -101,7 +101,7 @@ class HomePageView(TemplateView):
         # Load data paths
         url_username = kwargs.get('username')
         context['url_username'] = kwargs.get('username')
-        if kwargs.get('username') == None:
+        if kwargs.get('username') is None:
             url_username = self.request.user
             context['url_username'] = self.request.user
         # User is url_slug <username>
@@ -125,7 +125,6 @@ class HomePageView(TemplateView):
                     supervisor=self.request.user)
                 context['supervising_users'] = supervising_users
 
-
             for f in agrifields:
                 if not agripoint_in_raster(f):
                     f.outside_arta_raster = True
@@ -144,7 +143,6 @@ class AdvicePageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(AdvicePageView, self).get_context_data(**kwargs)
         # Load data paths
-        Inet_in = "NO"
         f = Agrifield.objects.get(pk=self.kwargs['pk'])
         f.can_edit(self.request.user)
         context['f'] = f
@@ -194,6 +192,7 @@ class UpdateProfile(UpdateView):
             raise Http404
         return context
 
+
 class DeleteProfile(DeleteView):
     model = Profile
 
@@ -203,6 +202,7 @@ class DeleteProfile(DeleteView):
         # Delete all user data using bult in cascade delete
         user.delete()
         return reverse('welcome')
+
 
 # Agrifield Create/Update/Delete
 class CreateAgrifield(CreateView):
