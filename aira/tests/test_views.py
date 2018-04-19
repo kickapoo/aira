@@ -1,3 +1,5 @@
+from unittest import mock
+
 from django.contrib.auth.models import User
 from django.core import mail
 from django.test import TestCase
@@ -6,6 +8,11 @@ from captcha.models import CaptchaStore
 from model_mommy import mommy
 
 
+@mock.patch('aira.views.load_meteodata_file_paths',
+            return_value=(['temperature-2018-04-19.tif'],
+                          ['temperature-2018-04-19.tif'],
+                          ['temperature-2018-04-19.tif'],
+                          ['temperature-2018-04-19.tif']))
 class TestIndexPageView(TestCase):
 
     def setUp(self):
@@ -18,15 +25,15 @@ class TestIndexPageView(TestCase):
         self.user.set_password('thegoatandthesheep')
         self.user.save()
 
-    def test_index_view(self):
+    def test_index_view(self, mocked):
         resp = self.client.get('/')
         self.assertEqual(resp.status_code, 200)
 
-    def test_registration_link_when_anonymous_on_index_view(self):
+    def test_registration_link_when_anonymous_on_index_view(self, mocked):
         resp = self.client.get('/')
         self.assertContains(resp, 'Register')
 
-    def test_no_registration_link_when_logged_on_index_view(self):
+    def test_no_registration_link_when_logged_on_index_view(self, mocked):
         resp = self.client.login(username='batman',
                                  password='thegoatandthesheep')
         self.assertTrue(resp)
