@@ -1,0 +1,1194 @@
+[
+   {
+      "pk" : 1,
+      "fields" : {
+         "fek_category" : 4,
+         "kc" : 0.7,
+         "root_depth_max" : 0.6,
+         "root_depth_min" : 0.4,
+         "name" : "Broccoli",
+         "max_allow_depletion" : "0.45"
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "pk" : 2,
+      "fields" : {
+         "max_allow_depletion" : "0.45",
+         "root_depth_min" : 0.4,
+         "name" : "Brussel Sprouts",
+         "kc" : 0.7,
+         "root_depth_max" : 0.6,
+         "fek_category" : 4
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "fields" : {
+         "max_allow_depletion" : "0.45",
+         "name" : "Cabbage",
+         "root_depth_min" : 0.5,
+         "root_depth_max" : 0.8,
+         "kc" : 0.7,
+         "fek_category" : 4
+      },
+      "model" : "aira.croptype",
+      "pk" : 3
+   },
+   {
+      "fields" : {
+         "max_allow_depletion" : "0.35",
+         "name" : "Carrots",
+         "root_depth_min" : 0.5,
+         "root_depth_max" : 1,
+         "kc" : 0.7,
+         "fek_category" : 4
+      },
+      "model" : "aira.croptype",
+      "pk" : 4
+   },
+   {
+      "pk" : 5,
+      "model" : "aira.croptype",
+      "fields" : {
+         "max_allow_depletion" : "0.45",
+         "name" : "Cauliflower",
+         "root_depth_min" : 0.4,
+         "root_depth_max" : 0.7,
+         "kc" : 0.7,
+         "fek_category" : 4
+      }
+   },
+   {
+      "pk" : 6,
+      "fields" : {
+         "root_depth_max" : 0.5,
+         "kc" : 0.7,
+         "fek_category" : 4,
+         "max_allow_depletion" : "0.20",
+         "name" : "Celery",
+         "root_depth_min" : 0.3
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "max_allow_depletion" : "0.30",
+         "name" : "Garlic",
+         "root_depth_min" : 0.3,
+         "kc" : 0.7,
+         "root_depth_max" : 0.5,
+         "fek_category" : 4
+      },
+      "pk" : 7
+   },
+   {
+      "fields" : {
+         "fek_category" : 4,
+         "kc" : 0.7,
+         "root_depth_max" : 0.5,
+         "name" : "Lettuce",
+         "root_depth_min" : 0.3,
+         "max_allow_depletion" : "0.30"
+      },
+      "model" : "aira.croptype",
+      "pk" : 8
+   },
+   {
+      "pk" : 9,
+      "fields" : {
+         "max_allow_depletion" : "0.35",
+         "root_depth_min" : 0.3,
+         "name" : "Onions- dry",
+         "kc" : 0.7,
+         "root_depth_max" : 0.6,
+         "fek_category" : 4
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "max_allow_depletion" : "0.20",
+         "root_depth_min" : 0.3,
+         "name" : "Onions-green",
+         "root_depth_max" : 0.6,
+         "kc" : 0.7,
+         "fek_category" : 4
+      },
+      "pk" : 10
+   },
+   {
+      "pk" : 11,
+      "fields" : {
+         "root_depth_min" : 0.3,
+         "name" : "Onions-seed",
+         "max_allow_depletion" : "0.30",
+         "fek_category" : 4,
+         "kc" : 0.7,
+         "root_depth_max" : 0.6
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "root_depth_min" : 0.3,
+         "name" : "Spinach",
+         "max_allow_depletion" : "0.45",
+         "fek_category" : 4,
+         "kc" : 0.7,
+         "root_depth_max" : 0.5
+      },
+      "pk" : 12
+   },
+   {
+      "pk" : 13,
+      "model" : "aira.croptype",
+      "fields" : {
+         "max_allow_depletion" : "0.30",
+         "name" : "Radishes",
+         "root_depth_min" : 0.3,
+         "kc" : 0.7,
+         "root_depth_max" : 0.5,
+         "fek_category" : 4
+      }
+   },
+   {
+      "fields" : {
+         "kc" : 0.7,
+         "root_depth_max" : 1.2,
+         "fek_category" : 4,
+         "max_allow_depletion" : "0.45",
+         "root_depth_min" : 0.7,
+         "name" : "Egg Plant"
+      },
+      "model" : "aira.croptype",
+      "pk" : 14
+   },
+   {
+      "pk" : 15,
+      "model" : "aira.croptype",
+      "fields" : {
+         "fek_category" : 4,
+         "kc" : 0.7,
+         "root_depth_max" : 1,
+         "name" : "Sweet Peppers (bell)",
+         "root_depth_min" : 0.5,
+         "max_allow_depletion" : "0.30"
+      }
+   },
+   {
+      "fields" : {
+         "max_allow_depletion" : "0.40",
+         "name" : "Tomato",
+         "root_depth_min" : 0.7,
+         "kc" : 0.7,
+         "root_depth_max" : 1.5,
+         "fek_category" : 4
+      },
+      "model" : "aira.croptype",
+      "pk" : 16
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "root_depth_max" : 1.5,
+         "kc" : 0.7,
+         "fek_category" : 4,
+         "max_allow_depletion" : "0.45",
+         "name" : "Cantaloupe",
+         "root_depth_min" : 0.9
+      },
+      "pk" : 17
+   },
+   {
+      "pk" : 18,
+      "fields" : {
+         "fek_category" : 4,
+         "root_depth_max" : 1.2,
+         "kc" : 0.7,
+         "root_depth_min" : 0.7,
+         "name" : "Cucumber - Fresh Market",
+         "max_allow_depletion" : "0.50"
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "pk" : 19,
+      "model" : "aira.croptype",
+      "fields" : {
+         "root_depth_max" : 1.2,
+         "kc" : 0.7,
+         "fek_category" : 4,
+         "max_allow_depletion" : "0.50",
+         "name" : "Cucumber - Machine Harvest",
+         "root_depth_min" : 0.7
+      }
+   },
+   {
+      "pk" : 20,
+      "fields" : {
+         "kc" : 0.7,
+         "root_depth_max" : 1.5,
+         "fek_category" : 4,
+         "max_allow_depletion" : "0.35",
+         "root_depth_min" : 1,
+         "name" : "Pumpkin, Winter Squash"
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "fields" : {
+         "max_allow_depletion" : "0.50",
+         "name" : "Squash, Zucchini",
+         "root_depth_min" : 0.6,
+         "root_depth_max" : 1,
+         "kc" : 0.7,
+         "fek_category" : 4
+      },
+      "model" : "aira.croptype",
+      "pk" : 21
+   },
+   {
+      "fields" : {
+         "root_depth_max" : 1.5,
+         "kc" : 0.7,
+         "fek_category" : 4,
+         "max_allow_depletion" : "0.40",
+         "name" : "Sweet Melons",
+         "root_depth_min" : 0.8
+      },
+      "model" : "aira.croptype",
+      "pk" : 22
+   },
+   {
+      "fields" : {
+         "name" : "Watermelon",
+         "root_depth_min" : 0.8,
+         "max_allow_depletion" : "0.40",
+         "fek_category" : 4,
+         "root_depth_max" : 1.5,
+         "kc" : 0.7
+      },
+      "model" : "aira.croptype",
+      "pk" : 23
+   },
+   {
+      "pk" : 24,
+      "model" : "aira.croptype",
+      "fields" : {
+         "max_allow_depletion" : "0.50",
+         "root_depth_min" : 0.6,
+         "name" : "Beets, table",
+         "kc" : 0.7,
+         "root_depth_max" : 1,
+         "fek_category" : 4
+      }
+   },
+   {
+      "pk" : 25,
+      "fields" : {
+         "kc" : 0.7,
+         "root_depth_max" : 0.8,
+         "fek_category" : 4,
+         "max_allow_depletion" : "0.35",
+         "root_depth_min" : 0.5,
+         "name" : "Cassava - year 1"
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "pk" : 26,
+      "model" : "aira.croptype",
+      "fields" : {
+         "root_depth_max" : 1,
+         "kc" : 0.7,
+         "fek_category" : 4,
+         "max_allow_depletion" : "0.40",
+         "name" : "Cassava - year 2",
+         "root_depth_min" : 0.7
+      }
+   },
+   {
+      "fields" : {
+         "max_allow_depletion" : "0.40",
+         "name" : "Parsnip",
+         "root_depth_min" : 0.5,
+         "kc" : 0.7,
+         "root_depth_max" : 1,
+         "fek_category" : 4
+      },
+      "model" : "aira.croptype",
+      "pk" : 27
+   },
+   {
+      "fields" : {
+         "fek_category" : 4,
+         "kc" : 0.7,
+         "root_depth_max" : 0.6,
+         "name" : "Potato",
+         "root_depth_min" : 0.4,
+         "max_allow_depletion" : "0.35"
+      },
+      "model" : "aira.croptype",
+      "pk" : 28
+   },
+   {
+      "pk" : 29,
+      "model" : "aira.croptype",
+      "fields" : {
+         "root_depth_min" : 1,
+         "name" : "Sweet Potato",
+         "max_allow_depletion" : "0.65",
+         "fek_category" : 4,
+         "root_depth_max" : 1.5,
+         "kc" : 0.7
+      }
+   },
+   {
+      "pk" : 30,
+      "fields" : {
+         "root_depth_max" : 1,
+         "kc" : 0.7,
+         "fek_category" : 4,
+         "max_allow_depletion" : "0.50",
+         "root_depth_min" : 0.5,
+         "name" : "Turnip (and Rutabaga)"
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "pk" : 31,
+      "model" : "aira.croptype",
+      "fields" : {
+         "kc" : 0.7,
+         "root_depth_max" : 1.2,
+         "fek_category" : 4,
+         "max_allow_depletion" : "0.55",
+         "name" : "Sugar Beet",
+         "root_depth_min" : 0.7
+      }
+   },
+   {
+      "pk" : 32,
+      "fields" : {
+         "max_allow_depletion" : "0.45",
+         "name" : "Beans, green",
+         "root_depth_min" : 0.5,
+         "kc" : 0.65,
+         "root_depth_max" : 0.7,
+         "fek_category" : 3
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "pk" : 33,
+      "fields" : {
+         "kc" : 0.65,
+         "root_depth_max" : 0.9,
+         "fek_category" : 3,
+         "max_allow_depletion" : "0.45",
+         "name" : "Beans, dry and Pulses",
+         "root_depth_min" : 0.6
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "pk" : 34,
+      "fields" : {
+         "name" : "Beans, lima, large vines",
+         "root_depth_min" : 0.8,
+         "max_allow_depletion" : "0.45",
+         "fek_category" : 3,
+         "kc" : 0.65,
+         "root_depth_max" : 1.2
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "pk" : 35,
+      "fields" : {
+         "root_depth_max" : 1,
+         "kc" : 0.65,
+         "fek_category" : 3,
+         "max_allow_depletion" : "0.50",
+         "root_depth_min" : 0.6,
+         "name" : "Chick pea"
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "pk" : 36,
+      "fields" : {
+         "root_depth_max" : 0.7,
+         "kc" : 0.65,
+         "fek_category" : 3,
+         "max_allow_depletion" : "0.45",
+         "name" : "Fababean (broad bean) - Fresh",
+         "root_depth_min" : 0.5
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "root_depth_max" : 0.7,
+         "kc" : 0.65,
+         "fek_category" : 3,
+         "max_allow_depletion" : "0.45",
+         "root_depth_min" : 0.5,
+         "name" : "Fababean (broad bean) - Dry/Seed"
+      },
+      "pk" : 37
+   },
+   {
+      "fields" : {
+         "root_depth_max" : 1,
+         "kc" : 0.65,
+         "fek_category" : 3,
+         "max_allow_depletion" : "0.45",
+         "name" : "Grabanzo",
+         "root_depth_min" : 0.6
+      },
+      "model" : "aira.croptype",
+      "pk" : 38
+   },
+   {
+      "pk" : 39,
+      "model" : "aira.croptype",
+      "fields" : {
+         "kc" : 0.65,
+         "root_depth_max" : 1,
+         "fek_category" : 3,
+         "max_allow_depletion" : "0.45",
+         "root_depth_min" : 0.6,
+         "name" : "Green Gram and Cowpeas"
+      }
+   },
+   {
+      "fields" : {
+         "kc" : 0.7,
+         "root_depth_max" : 1,
+         "fek_category" : 4,
+         "max_allow_depletion" : "0.50",
+         "root_depth_min" : 0.5,
+         "name" : "Groundnut (Peanut)"
+      },
+      "model" : "aira.croptype",
+      "pk" : 40
+   },
+   {
+      "pk" : 41,
+      "fields" : {
+         "root_depth_min" : 0.6,
+         "name" : "Lentil",
+         "max_allow_depletion" : "0.50",
+         "fek_category" : 3,
+         "kc" : 0.65,
+         "root_depth_max" : 0.8
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "max_allow_depletion" : "0.35",
+         "name" : "Peas - Freash",
+         "root_depth_min" : 0.6,
+         "root_depth_max" : 1,
+         "kc" : 0.65,
+         "fek_category" : 3
+      },
+      "pk" : 42
+   },
+   {
+      "fields" : {
+         "max_allow_depletion" : "0.40",
+         "root_depth_min" : 0.6,
+         "name" : "Peas - Dry/Seed",
+         "kc" : 0.65,
+         "root_depth_max" : 1,
+         "fek_category" : 3
+      },
+      "model" : "aira.croptype",
+      "pk" : 43
+   },
+   {
+      "pk" : 44,
+      "model" : "aira.croptype",
+      "fields" : {
+         "kc" : 0.65,
+         "root_depth_max" : 1.3,
+         "fek_category" : 3,
+         "max_allow_depletion" : "0.50",
+         "root_depth_min" : 0.6,
+         "name" : "Soybeans"
+      }
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "max_allow_depletion" : "0.45",
+         "root_depth_min" : 0.6,
+         "name" : "Artichokes",
+         "kc" : 0.65,
+         "root_depth_max" : 0.9,
+         "fek_category" : 3
+      },
+      "pk" : 45
+   },
+   {
+      "fields" : {
+         "kc" : 0.65,
+         "root_depth_max" : 1.8,
+         "fek_category" : 3,
+         "max_allow_depletion" : "0.45",
+         "root_depth_min" : 1.2,
+         "name" : "Asparagus"
+      },
+      "model" : "aira.croptype",
+      "pk" : 46
+   },
+   {
+      "pk" : 47,
+      "model" : "aira.croptype",
+      "fields" : {
+         "name" : "Mint",
+         "root_depth_min" : 0.4,
+         "max_allow_depletion" : "0.40",
+         "fek_category" : 3,
+         "kc" : 0.65,
+         "root_depth_max" : 0.8
+      }
+   },
+   {
+      "pk" : 48,
+      "fields" : {
+         "root_depth_min" : 0.2,
+         "name" : "Strawberries",
+         "max_allow_depletion" : "0.20",
+         "fek_category" : 3,
+         "kc" : 0.65,
+         "root_depth_max" : 0.3
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "pk" : 49,
+      "model" : "aira.croptype",
+      "fields" : {
+         "root_depth_max" : 1.7,
+         "kc" : 0.65,
+         "fek_category" : 3,
+         "max_allow_depletion" : "0.65",
+         "root_depth_min" : 1,
+         "name" : "Cotton"
+      }
+   },
+   {
+      "pk" : 50,
+      "fields" : {
+         "fek_category" : 3,
+         "root_depth_max" : 1.5,
+         "kc" : 0.65,
+         "name" : "Flax",
+         "root_depth_min" : 1,
+         "max_allow_depletion" : "0.50"
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "pk" : 51,
+      "model" : "aira.croptype",
+      "fields" : {
+         "fek_category" : 3,
+         "root_depth_max" : 1,
+         "kc" : 0.65,
+         "root_depth_min" : 0.5,
+         "name" : "Sisal",
+         "max_allow_depletion" : "0.80"
+      }
+   },
+   {
+      "fields" : {
+         "max_allow_depletion" : "0.50",
+         "root_depth_min" : 1,
+         "name" : "Castorbean (Ricinus)",
+         "kc" : 0.65,
+         "root_depth_max" : 2,
+         "fek_category" : 3
+      },
+      "model" : "aira.croptype",
+      "pk" : 52
+   },
+   {
+      "fields" : {
+         "max_allow_depletion" : "0.60",
+         "name" : "Rapeseed, Canola",
+         "root_depth_min" : 1,
+         "root_depth_max" : 1.5,
+         "kc" : 0.65,
+         "fek_category" : 3
+      },
+      "model" : "aira.croptype",
+      "pk" : 53
+   },
+   {
+      "pk" : 54,
+      "fields" : {
+         "name" : "Safflower",
+         "root_depth_min" : 1,
+         "max_allow_depletion" : "0.60",
+         "fek_category" : 3,
+         "root_depth_max" : 2,
+         "kc" : 0.65
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "pk" : 55,
+      "fields" : {
+         "name" : "Sesame",
+         "root_depth_min" : 1,
+         "max_allow_depletion" : "0.60",
+         "fek_category" : 3,
+         "root_depth_max" : 1.5,
+         "kc" : 0.65
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "max_allow_depletion" : "0.45",
+         "name" : "Sunflower",
+         "root_depth_min" : 0.8,
+         "kc" : 0.7,
+         "root_depth_max" : 1.5,
+         "fek_category" : 4
+      },
+      "pk" : 56
+   },
+   {
+      "fields" : {
+         "kc" : 0.75,
+         "root_depth_max" : 1.5,
+         "fek_category" : 5,
+         "max_allow_depletion" : "0.55",
+         "root_depth_min" : 1,
+         "name" : "Barley"
+      },
+      "model" : "aira.croptype",
+      "pk" : 57
+   },
+   {
+      "pk" : 58,
+      "model" : "aira.croptype",
+      "fields" : {
+         "max_allow_depletion" : "0.55",
+         "name" : "Oats",
+         "root_depth_min" : 1,
+         "root_depth_max" : 1.5,
+         "kc" : 0.75,
+         "fek_category" : 5
+      }
+   },
+   {
+      "fields" : {
+         "max_allow_depletion" : "0.55",
+         "root_depth_min" : 1,
+         "name" : "Spring Wheat",
+         "kc" : 0.75,
+         "root_depth_max" : 1.5,
+         "fek_category" : 5
+      },
+      "model" : "aira.croptype",
+      "pk" : 59
+   },
+   {
+      "fields" : {
+         "fek_category" : 5,
+         "kc" : 0.75,
+         "root_depth_max" : 1.8,
+         "root_depth_min" : 1,
+         "name" : "Winter Wheat",
+         "max_allow_depletion" : "0.55"
+      },
+      "model" : "aira.croptype",
+      "pk" : 60
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "fek_category" : 5,
+         "root_depth_max" : 1.7,
+         "kc" : 0.75,
+         "root_depth_min" : 1,
+         "name" : "Maize, Field (grain) (field corn)",
+         "max_allow_depletion" : "0.55"
+      },
+      "pk" : 61
+   },
+   {
+      "fields" : {
+         "root_depth_max" : 1.2,
+         "kc" : 0.75,
+         "fek_category" : 5,
+         "max_allow_depletion" : "0.50",
+         "name" : "Maize, Sweet (sweet corn)",
+         "root_depth_min" : 0.8
+      },
+      "model" : "aira.croptype",
+      "pk" : 62
+   },
+   {
+      "pk" : 63,
+      "model" : "aira.croptype",
+      "fields" : {
+         "fek_category" : 5,
+         "kc" : 0.75,
+         "root_depth_max" : 2,
+         "name" : "Millet",
+         "root_depth_min" : 1,
+         "max_allow_depletion" : "0.55"
+      }
+   },
+   {
+      "pk" : 64,
+      "fields" : {
+         "fek_category" : 5,
+         "kc" : 0.75,
+         "root_depth_max" : 2,
+         "name" : "Sorghum - grain",
+         "root_depth_min" : 1,
+         "max_allow_depletion" : "0.55"
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "pk" : 65,
+      "fields" : {
+         "kc" : 0.75,
+         "root_depth_max" : 2,
+         "fek_category" : 5,
+         "max_allow_depletion" : "0.50",
+         "root_depth_min" : 1,
+         "name" : "Sorghum - sweet"
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "fields" : {
+         "kc" : 1.2,
+         "root_depth_max" : 1,
+         "fek_category" : 8,
+         "max_allow_depletion" : "0.20",
+         "name" : "Rice",
+         "root_depth_min" : 0.5
+      },
+      "model" : "aira.croptype",
+      "pk" : 66
+   },
+   {
+      "pk" : 67,
+      "fields" : {
+         "root_depth_min" : 1,
+         "name" : "Alfalfa - for hay",
+         "max_allow_depletion" : "0.55",
+         "fek_category" : 1,
+         "root_depth_max" : 2,
+         "kc" : 0.55
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "fields" : {
+         "root_depth_min" : 1,
+         "name" : "Alfalfa - for seed",
+         "max_allow_depletion" : "0.60",
+         "fek_category" : 2,
+         "root_depth_max" : 3,
+         "kc" : 0.6
+      },
+      "model" : "aira.croptype",
+      "pk" : 68
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "fek_category" : 1,
+         "root_depth_max" : 1.5,
+         "kc" : 0.55,
+         "name" : "Bermuda - for hay",
+         "root_depth_min" : 1,
+         "max_allow_depletion" : "0.55"
+      },
+      "pk" : 69
+   },
+   {
+      "fields" : {
+         "max_allow_depletion" : "0.60",
+         "root_depth_min" : 1,
+         "name" : "Bermuda - Spring crop for seed",
+         "root_depth_max" : 1.5,
+         "kc" : 0.6,
+         "fek_category" : 2
+      },
+      "model" : "aira.croptype",
+      "pk" : 70
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "fek_category" : 1,
+         "kc" : 0.55,
+         "root_depth_max" : 0.9,
+         "name" : "Clover hay, Berseem",
+         "root_depth_min" : 0.6,
+         "max_allow_depletion" : "0.50"
+      },
+      "pk" : 71
+   },
+   {
+      "pk" : 72,
+      "fields" : {
+         "fek_category" : 1,
+         "kc" : 0.55,
+         "root_depth_max" : 1,
+         "root_depth_min" : 0.6,
+         "name" : "Rye Grass hay",
+         "max_allow_depletion" : "0.60"
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "pk" : 73,
+      "fields" : {
+         "kc" : 0.55,
+         "root_depth_max" : 1.5,
+         "fek_category" : 1,
+         "max_allow_depletion" : "0.55",
+         "name" : "Sudan Grass hay (annual)",
+         "root_depth_min" : 1
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "max_allow_depletion" : "0.60",
+         "name" : "Grazing Pasture - Rotated Grazing",
+         "root_depth_min" : 0.5,
+         "root_depth_max" : 1.5,
+         "kc" : 0.8,
+         "fek_category" : 6
+      },
+      "pk" : 74
+   },
+   {
+      "fields" : {
+         "root_depth_min" : 0.5,
+         "name" : "Grazing Pasture - Extensive Grazing ",
+         "max_allow_depletion" : "0.60",
+         "fek_category" : 6,
+         "kc" : 0.8,
+         "root_depth_max" : 1.5
+      },
+      "model" : "aira.croptype",
+      "pk" : 75
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "root_depth_min" : 0.5,
+         "name" : "Turf grass - cool season",
+         "max_allow_depletion" : "0.40",
+         "fek_category" : 6,
+         "kc" : 0.95,
+         "root_depth_max" : 1
+      },
+      "pk" : 76
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "max_allow_depletion" : "0.50",
+         "root_depth_min" : 0.5,
+         "name" : "Turf grass - warm session ",
+         "kc" : 0.85,
+         "root_depth_max" : 1,
+         "fek_category" : 6
+      },
+      "pk" : 77
+   },
+   {
+      "fields" : {
+         "max_allow_depletion" : "0.65",
+         "name" : "Sugar Cane",
+         "root_depth_min" : 1.2,
+         "kc" : 0.8,
+         "root_depth_max" : 2,
+         "fek_category" : 6
+      },
+      "model" : "aira.croptype",
+      "pk" : 78
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "root_depth_min" : 0.6,
+         "name" : "Berries (bushes)",
+         "max_allow_depletion" : "0.50",
+         "fek_category" : 1,
+         "kc" : 0.55,
+         "root_depth_max" : 1.2
+      },
+      "pk" : 79
+   },
+   {
+      "fields" : {
+         "max_allow_depletion" : "0.45",
+         "name" : "Grapes - Table or Raisin",
+         "root_depth_min" : 1,
+         "kc" : 0.55,
+         "root_depth_max" : 2,
+         "fek_category" : 1
+      },
+      "model" : "aira.croptype",
+      "pk" : 80
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "name" : "Hops",
+         "root_depth_min" : 1,
+         "max_allow_depletion" : "0.50",
+         "fek_category" : 1,
+         "root_depth_max" : 1.2,
+         "kc" : 0.55
+      },
+      "pk" : 81
+   },
+   {
+      "pk" : 82,
+      "fields" : {
+         "max_allow_depletion" : "0.40",
+         "root_depth_min" : 1,
+         "name" : "Almonds",
+         "root_depth_max" : 2,
+         "kc" : 0.65,
+         "fek_category" : 3
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "model" : "aira.croptype",
+      "fields" : {
+         "max_allow_depletion" : "0.50",
+         "root_depth_min" : 1,
+         "name" : "Apples, Cherries, Pears",
+         "root_depth_max" : 2,
+         "kc" : 0.65,
+         "fek_category" : 3
+      },
+      "pk" : 83
+   },
+   {
+      "fields" : {
+         "root_depth_min" : 1,
+         "name" : "Apricots, Peaches, Stone Fruit",
+         "max_allow_depletion" : "0.50",
+         "fek_category" : 3,
+         "kc" : 0.65,
+         "root_depth_max" : 2
+      },
+      "model" : "aira.croptype",
+      "pk" : 84
+   },
+   {
+      "pk" : 85,
+      "fields" : {
+         "root_depth_min" : 0.5,
+         "name" : "Avocado",
+         "max_allow_depletion" : "0.70",
+         "fek_category" : 3,
+         "root_depth_max" : 1,
+         "kc" : 0.65
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "fields" : {
+         "name" : "Citrus - 70% Capony",
+         "root_depth_min" : 1.2,
+         "max_allow_depletion" : "0.50",
+         "fek_category" : 1,
+         "root_depth_max" : 1.5,
+         "kc" : 0.55
+      },
+      "model" : "aira.croptype",
+      "pk" : 86
+   },
+   {
+      "pk" : 87,
+      "fields" : {
+         "max_allow_depletion" : "0.50",
+         "name" : "Citrus - 50% Capony",
+         "root_depth_min" : 1.1,
+         "root_depth_max" : 1.5,
+         "kc" : 0.55,
+         "fek_category" : 1
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "pk" : 88,
+      "model" : "aira.croptype",
+      "fields" : {
+         "max_allow_depletion" : "0.50",
+         "root_depth_min" : 0.8,
+         "name" : "Citrus - 20% Capony",
+         "kc" : 0.55,
+         "root_depth_max" : 1.1,
+         "fek_category" : 1
+      }
+   },
+   {
+      "pk" : 89,
+      "fields" : {
+         "kc" : 0.65,
+         "root_depth_max" : 1.5,
+         "fek_category" : 3,
+         "max_allow_depletion" : "0.70",
+         "root_depth_min" : 1,
+         "name" : "Conifer Trees"
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "pk" : 90,
+      "model" : "aira.croptype",
+      "fields" : {
+         "fek_category" : 6,
+         "root_depth_max" : 1.3,
+         "kc" : 0.8,
+         "root_depth_min" : 0.7,
+         "name" : "Kiwi",
+         "max_allow_depletion" : "0.35"
+      }
+   },
+   {
+      "pk" : 91,
+      "fields" : {
+         "max_allow_depletion" : "0.65",
+         "name" : "Olives (40 to 60% ground coverage by canopy)",
+         "root_depth_min" : 1.2,
+         "kc" : 0.55,
+         "root_depth_max" : 1.7,
+         "fek_category" : 1
+      },
+      "model" : "aira.croptype"
+   },
+   {
+      "fields" : {
+         "name" : "Pistachios",
+         "root_depth_min" : 1,
+         "max_allow_depletion" : "0.40",
+         "fek_category" : 3,
+         "kc" : 0.65,
+         "root_depth_max" : 1.5
+      },
+      "model" : "aira.croptype",
+      "pk" : 92
+   },
+   {
+      "pk" : 93,
+      "model" : "aira.croptype",
+      "fields" : {
+         "fek_category" : 3,
+         "root_depth_max" : 2.4,
+         "kc" : 0.65,
+         "name" : "Walnut Orchard",
+         "root_depth_min" : 1.7,
+         "max_allow_depletion" : "0.50"
+      }
+   },
+   {
+      "fields" : {
+         "root_depth_max" : 0.15,
+         "kc" : 0.7,
+         "fek_category" : 4,
+         "max_allow_depletion" : "0.40",
+         "name" : "Other Leafy Vegetables",
+         "root_depth_min" : 0.15
+      },
+      "model" : "aira.croptype",
+      "pk" : 94
+   },
+   {
+      "pk" : 95,
+      "model" : "aira.croptype",
+      "fields" : {
+         "fek_category" : 5,
+         "kc" : 0.75,
+         "root_depth_max" : 0.3,
+         "name" : "Other Large Crop Plants",
+         "root_depth_min" : 0.3,
+         "max_allow_depletion" : "0.55"
+      }
+   },
+   {
+      "fields" : {
+         "root_depth_min" : 0.3,
+         "name" : "Other Tree Crops",
+         "max_allow_depletion" : "0.52",
+         "fek_category" : 3,
+         "kc" : 0.65,
+         "root_depth_max" : 0.3
+      },
+      "model" : "aira.croptype",
+      "pk" : 96
+   },
+   {
+      "pk" : 1,
+      "fields" : {
+         "name" : "Surface irrigation",
+         "efficiency" : 0.6
+      },
+      "model" : "aira.irrigationtype"
+   },
+   {
+      "fields" : {
+         "efficiency" : 0.75,
+         "name" : "Sprinkler irrigation"
+      },
+      "model" : "aira.irrigationtype",
+      "pk" : 2
+   },
+   {
+      "pk" : 3,
+      "fields" : {
+         "efficiency" : 0.9,
+         "name" : "Drip irrigation"
+      },
+      "model" : "aira.irrigationtype"
+   },
+   {
+      "fields" : {
+         "name" : "Subsurface drip irrigation",
+         "efficiency" : 0.95
+      },
+      "model" : "aira.irrigationtype",
+      "pk" : 4
+   },
+   {
+      "pk" : 5,
+      "model" : "aira.irrigationtype",
+      "fields" : {
+         "efficiency" : 0.8,
+         "name" : "Micro sprinklers"
+      }
+   }
+]

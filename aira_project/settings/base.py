@@ -95,8 +95,6 @@ LOGIN_REDIRECT_URL = "/home"
 # Celery
 BROKER_URL = 'django://'
 
-AIRA_PARAMETERS_FILE_DIR = os.path.join(PROJECT_ROOT, 'airadb_coeffs')
-
 AIRA_DATA_HISTORICAL = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                     "../../../rasters_historical"))
 

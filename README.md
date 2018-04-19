@@ -14,7 +14,7 @@ How to run a development instance:
 
   3. Execute `python manage.py migrate`.
 
-  4. Execute `python manage.py populate_coeffs`.
+  4. Execute `python manage.py loaddata en.json`.
 
   5. Execute `python manage.py demo_user`.
 
