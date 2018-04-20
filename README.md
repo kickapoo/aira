@@ -9,9 +9,7 @@ Aira: An Irrigation Advisor
 [codecov]: https://codecov.io/gh/openmeteo/aira
 
 Aira is a web application that calculates soil water balance in order
-to provide the users with irrigation advice. Its input should be
-prepared with [pthelma](http://pthelma.readthedocs.org/). It is under
-heavy development.
+to provide the users with irrigation advice.
 
 How to run a development instance:
 
@@ -28,7 +26,7 @@ How to run a development instance:
 
   6. Execute `python manage.py runserver`.
 
-Copyright (C) 2014-2015 TEI of Epirus
+Copyright (C) 2014-2018 TEI of Epirus
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
