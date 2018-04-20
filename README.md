@@ -1,5 +1,13 @@
 Aira: An Irrigation Advisor
 
+[![Build Status][travis-button]][travis]
+[![Coverage Status][codecov-button]][codecov]
+
+[travis-button]: http://img.shields.io/travis/openmeteo/aira.svg
+[travis]: https://travis-ci.org/openmeteo/aira
+[codecov-button]: https://codecov.io/gh/openmeteo/aira/branch/master/graph/badge.svg
+[codecov]: https://codecov.io/gh/openmeteo/aira
+
 Aira is a web application that calculates soil water balance in order
 to provide the users with irrigation advice. Its input should be
 prepared with [pthelma](http://pthelma.readthedocs.org/). It is under
