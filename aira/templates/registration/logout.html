@@ -5,7 +5,16 @@
 {% block title %}{% trans "Login" %}{% endblock %}
 {% block content %}
 <div class="container">
-  <h1>{% trans "Logout" %}</h1>
-  <p class="lead">{% trans "You are now logged out" %}.</p>
+	<div class="row">
+		<div class="col-md-offset-4">
+			<div class="panel panel-default login">
+				<div class="panel-heading hidden-xs-down"><i class="pull-left fa fa-user-circle-o fa-5x"></i></div>
+				<div class="panel-body">
+                    <br>
+					<p class="lead">{% trans "You are now logged out" %}.</p>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 {% endblock %}

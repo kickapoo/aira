@@ -1,0 +1,17 @@
+{% if user.profile.get_supervised %}
+    <div class="card">
+        {% for supervised in user.profile.get_supervised %}
+            {% if forloop.first %}<div class="row">{% endif %}
+                {% if viewing_user.profile != supervised %}
+                <div class="col-md-4">
+                    <div style="padding:10px" class="supervised">
+                        <a href="{% url 'home-username-supervisor' user.username supervised.farmer.username %}">{{ supervised.farmer }}</a>
+                        {% if supervised.farmer.profile %}({{ supervised.farmer.profile.first_name }} {{ supervised.farmer.profile.last_name }}){% endif %}
+                    </div>
+                </div>
+               {% endif %}
+        {% if forloop.counter|divisibleby:3 %}</div><div class="row">{% endif %}
+        {% if forloop.last %}</div>{% endif %}
+        {% endfor %}
+    </div>
+{% endif %}

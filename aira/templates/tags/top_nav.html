@@ -1,0 +1,26 @@
+{% load i18n %}
+
+<div class="row">
+    <div class="col-md-4">
+
+        {% if option == 'add' %}
+            {% if viewing_user.username != user.username %}
+                <a href="{% url 'home-username' user.username %}" class="btn btn-secondary btn-sm"><i class="fa fa-chevron-left" aria-hidden="true"></i> {% trans "Back" %}</a>
+            {% endif %}
+                <a href="{% url 'add-agrifield' viewing_user.username %}" class="btn btn-secondary btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> {% trans "Agrifield" %}</a>
+        {% endif %}
+
+        {% if option == 'edit' %}
+            <a href="{% url 'home-username-supervisor' user.username viewing_user.username %}" class="btn btn-secondary btn-sm"><i class="fa fa-chevron-left" aria-hidden="true"></i> {% trans "Back" %}</a>
+        {% endif %}
+
+    </div>
+    <div class="col-md-6">
+        <div class="hidden-md-up hidden-lg-up hidden-xl-up"><br></div>
+        <span class="lead text-primary" style="font-size:23px;padding:10px 10px">
+            {{ viewing_user.username }}
+            {% if viewing_user.profile %}({{ viewing_user.profile.first_name }} {{ viewing_user.profile.last_name }}){% endif %}
+        </span>
+    </div>
+    <div class="col-md-2"></div>
+</div>

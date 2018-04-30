@@ -1,0 +1,26 @@
+{% load i18n %}
+
+<hr>
+{% if user.profile.get_supervised %}
+
+        {% for supervised in user.profile.get_supervised %}
+            {% if forloop.first %}<div class="row">{% endif %}
+                <div class="col-md-4">
+                    <div style="padding:10px" class="supervised">
+                        <div>
+                            <div class="card {% if supervised.farmer.username == request_to_view_user_field %} card-outline-primary {% endif %} text-center">
+                                <div class="card-block" style="cursor: pointer" onclick="location.href='{% url 'home-username' supervised.farmer.username %}'">
+                                    <span style="color: #42bdae">{{ supervised.farmer }}</span> <br>
+                                    {% if supervised.farmer.profile %}
+                                        {{ supervised.farmer.profile.first_name }} {{ supervised.farmer.profile.last_name }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% if forloop.counter|divisibleby:3 %}</div><div class="row">{% endif %}
+            {% if forloop.last %}</div>{% endif %}
+        {% endfor %}
+<hr>
+{% endif %}

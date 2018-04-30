@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'django_rq',
     'bootstrap3',
     'mathfilters',
     'captcha',
@@ -48,6 +49,20 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     },
 }
+
+RQ_QUEUES = {
+    'execute_model': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+    },
+    'sent_emails': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+    },
+}
+
 
 ROOT_URLCONF = 'aira_project.urls'
 WSGI_APPLICATION = 'aira_project.wsgi.application'
@@ -83,6 +98,7 @@ TEMPLATES = [
                 "django.core.context_processors.static",
                 "django.core.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+                "django.core.context_processors.request",
                 "aira.context_processors.map",
             ]
         },
@@ -92,14 +108,6 @@ TEMPLATES = [
 ACCOUNT_ACTIVATION_DAYS = 3
 LOGIN_REDIRECT_URL = "/home"
 
-# Celery
-BROKER_URL = 'django://'
-
-AIRA_DATA_HISTORICAL = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                    "../../../rasters_historical"))
-
-AIRA_DATA_FORECAST = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                  "../../../rasters_forecast"))
-
-AIRA_COEFFS_RASTERS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                              "../../../coeffs_data"))
+AIRA_DATA_HISTORICAL = os.path.abspath('/vagrant/rasters_historical')
+AIRA_DATA_FORECAST = os.path.abspath('/vagrant/rasters_forecast')
+AIRA_COEFFS_RASTERS_DIR = os.path.abspath('/vagrant/coeffs_data')

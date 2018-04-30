@@ -1,281 +1,76 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load aira_extras %}
 
-{% load bootstrap3 %}
 
 {% block title %} {% trans "Home" %} - {{user}} {% endblock %}
 
 {% block content %}
-{% if user.is_demo %}
- <div class="alert alert-info">
-    <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <i class="fa fa-info-circle fa-2x"></i>&nbsp; <span style="font-size:32px">{% trans "demo" %}</span>
-</div>
-{% endif %}
-{% if not profile %}
-  <div class="alert alert-warning">
-    <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-hand-o-right"></i> &nbsp; {% trans "Please update your personal information" %}<a href="{% url 'create_profile' %}"> {% trans "here" %} </a>
-  </div>
-{% endif %}
-<!-- context['map'] -->
-
-<div class="panel panel-default">
-  <div class="panel-heading"></div>
-    <div class="panel-body">
-      <div id="open_map" class="map"></div>
-    </div>
-</div>
-
-{% if profile %}
-<div class="panel panel-default">
-  <div class="panel-heading"> <a href="{% url 'update_profile' profile.id %}">{% trans "Account Information" %}</a></div>
-    <div class="panel-body">
-        <div class="col-md-5">
-              <strong>{% trans "Full Name" %}: </strong><a href="{% url 'update_profile' profile.id %}">{{ user.profile.first_name}} {{ user.profile.last_name }},</a> <br>
-               <strong>{% trans "Address" %}: </strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.address }}</a> <br>
-               <strong>{% trans "Supervisor" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.get_supervision_question_display }} </a><br>
-               {% trans "Not Set" as not_set %}
-               <strong>{% trans "Notifications per" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.get_notification_display|default:not_set }}</a> <br>
-               <strong>{% trans "Your account supervisor" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.supervisor|default:not_set }}</a>
-        </div>
-        {% if supervising_users %}
-        <div class="col-md-7">
-              <strong>{% trans "The following users have set you as their supervisor" %}</strong>: <br>
-              {% for supervised_user in  supervising_users %}
-                  <form id="delete-supervised-frm-{{ supervised_user.id }}" style="float:left" method="post" class="form-inline" action="#">
-                    {% csrf_token %}
-                      <a style="float:left" href="{% url 'home' supervised_user.farmer %}"> {{ supervised_user.farmer }}
-                          {% if supervised_user.farmer.profile %}({{ supervised_user.farmer.profile.first_name }} {{ supervised_user.farmer.profile.last_name }}){% endif %}
-                        </a>
-                      <input  type="button"
-                              value="x"
-                              data-toggle="tooltip" data-placement="bottom" title="{% trans 'Remove Supervised User' %}"
-                              class="btn btn-xs btn-danger"
-                              onClick='submitRemoveSupervisedUserForm({{ supervised_user.id }})' />,&nbsp;&nbsp;
-                  </form>
-              {% endfor %}
-        </div>
-        {% else %}
-        {% endif %}
-    </div>
-</div>
-{% endif %}
-
-
-{% if not agrifields %}
-  <div class="alert alert-warning">
-    <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <i class="fa fa-exclamation-triangle"></i> &nbsp; {% trans "It seems you haven't any fields, Add at least one" %} <a href={% url 'create_agrifield' url_username %}> {% trans "here" %} </a>
-  </div>
-{% else %}
-  <div class="panel panel-default">
-    <div class="panel-heading">
-       <b>{% trans "Field Owner" %}:</b>  {{ url_username }}
-    </div>
-    <div class="panel-heading">
-      <a class="btn btn-success btn-xs" href="{% url 'create_agrifield' url_username %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; {% trans "Fields" %}</a>
-    </div>
-    {% for f in agrifields %}
-      <hr>
-      <div class="panel-body">
-        <p>
-        <b>{% if f.is_virtual %}<span class="text-warning">{% trans "Virtual" %}</span>{% endif %} {% trans "Field Info" %}:</b> &nbsp;
-        <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> {% trans "is growing" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.crop_type.name }}</a> {% trans "using" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.irrigation_type.name}}</a>. </p>
-
-        {% if f.status != 'done' %}
-            <p class="alert alert-warning">{% trans "This field is being (re)calculated. Reload the page some time later to view the updated results. The calculation usually takes from a few seconds to a few minutes." %}</p>
-        {% endif %}
-        {% if f.outside_arta_raster %}
-        <div class="alert alert-danger">
-            <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-danger"><i class="fa fa-exclamation-triangle">&nbsp; {% trans "Warning" %}</i></span> &nbsp;
-            {% trans "Your field location is outside Arta's plain field" %}. <br>
-            {% trans "Update you field location" %} <a href="{% url 'update_agrifield' f.id %}">{% trans "here" %}</a>.
-        </div>
-        {% else %}
-        {% if f.results %}
-            {% if f.results.irrigation_log_not_exists  %}
-                <div class="alert alert-warning">
-                <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i></span>  &nbsp;
-                {% trans "You haven't entered any irrigation event. Add  your irrigation log" %} <a href="{% url 'create_irrlog' f.id %}">{% trans "here" %}</a>.<br>
-                {% trans "Irrigation Advice is estimated using system's default datasets" %}.
-                </div>
-            {% endif %}
-            {% if f.results.irrigation_log_outside_time_period %}
-                <div class="alert alert-warning">
-                <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i></span>  &nbsp;
-                {% trans "Your latest irrigation event is outside our dataset period. Update your irrigation log" %} <a href="{% url 'create_irrlog' f.id %}">{% trans "here" %}</a>.<br>
-                {% trans "Irrigation Advice is estimated using system's default datasets" %}.
-                </div>
-            {% endif %}
-            {% if f.results.adv %}
-                <img style="display:block;float:left;"src="{% static 'img/warning.png' %}" alt="" height="20" width="20">&nbsp;
-                <b>{% trans "Irrigation Advice" %}</b>: <br><br>
-                {% if f.results.last_irr_date %}
-                {% trans "Since the last recorded irrigation" %} (<span class="text-warning">{{f.results.last_irr_date|date:"d/m/Y"}}</span>) {% trans "up to" %} <span class="text-warning">{{ f.results.edh|date:"d/m/Y" }}</span>, {% trans "there is need of" %}  <span class="text-success">{{ f.results.ifinal|floatformat:"2" }} mm ({{f.results.ifinal_m3 |floatformat:"2"}} m³) </span> {% trans "additional water" %}.
-                    <br>
-                {% endif %}
-                {% trans "Based on the available information" %}, {% trans "from" %}
-                <span <class class="text-warning">{{ f.results.sd|date:"d/m/Y" }}</span> {% trans "to" %} <span <class class="text-warning">{{ f.results.ed|date:"d/m/Y" }}</span>, {% trans "irrigation should be applied according to the following table" %}:
-                <br><br>
-                <button onclick="togl('{{f.id}}')"class="btn btn-success btn-xs" id="show_results"> {% trans "Show / Hide Table" %}</button>
-                <div class="row" style="display:none" id="{{f.id}}">
-                    <div class="col-md-12">
-                    <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                            <th align="left" >{% trans "Date" %} </th>
-                            <th align="left" >{% trans "Water stress factor" %}</th>
-                            <th align="left" >{% trans "Irrigation Water Amount" %} </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for irr_date, values in f.results.adv_sorted  %}
-                                <tr>
-                                <td align="left">{{ irr_date |date:"d/m/Y H:00" }}</td>
-                                <td align="left">{{ values.1 |floatformat:"2" }} </td>
-                                <td align="left">{{ values.0.0 |floatformat:"2" }} mm
-                                                ({{ values.0.1 |floatformat:"2"}} m³)
-                                </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                        </table>
-                    </div>
-                    </div>
-                </div>
-                <br><br>
-                {% trans "For more options, refer to the irrigation report" %}.
-            {% else %}
-                    <img style="display:block;float:left;"src="{% static 'img/cool.png' %}" alt="" height="20" width="20">&nbsp;
-                    <b>{% trans "Irrigation Advice" %}</b>: <br><br>
-                    {% trans "No need to irrigate from" %} <span class="text-warning">{{ f.results.sd|date:"d/m/Y" }}</span> {% trans "to" %}  <span class="text-warning">{{ f.results.ed|date:"d/m/Y" }}</span>.
-                {% endif %}
-                </p><sub>
-                <div>
-                <a  class="btn btn-success btn-xs" href="{% url 'create_irrlog' f.id %}"><i class="fa fa-plus-square-o"></i>&nbsp;<i class="fa fa-minus-square-o"></i>&nbsp; {% trans "Irrigation Events" %}</a>
-                <a class="btn btn-success btn-xs" href="{% url 'advice' f.id %}" ></i>&nbsp;<i class="fa fa-calendar"></i>&nbsp;{% trans "Irrigation Report" %}</a>
-                <a class="btn btn-success btn-xs" href="{% url 'irrigation-chart' f.id %}"><i class="fa fa-line-chart"></i>&nbsp; {% trans "Irrigation Performance" %}</a>
-                </div>
-                </sub></p>
-            {% endif %}
-        {% endif %}
-      </div>
-    {% endfor %}
-{% endif %}
-
+    {% menu request.user request.resolver_match.kwargs  request.resolver_match.url_name %} <br>
+    {% leaflet_map %}
+    {% supervised_users_list request.user  request.resolver_match.kwargs.username %}
+    {% agrifields_as_cards object_list %}
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript" src="{% static 'js/aira.js' %}"></script>
-<script>
-      // Remove Superived user
-      function submitRemoveSupervisedUserForm(supervised_id) {
-        $.ajax({
-          type: "POST",
-          url: "{% url 'supervised_user_remove' %}",
-          dataType: "json",
-          data: {
-            'supervised_id': supervised_id,
-          },
-          success: function(response) {
-              $("#delete-supervised-frm-"+supervised_id).hide();
-          }
-        });
-      }
 
-      function make_coords(coord) {
-                  return parseFloat(coord.replace(",","."));
-                };
-        map = new OpenLayers.Map('open_map',
-                  {units: 'm',
-                   displayProjection: 'EPSG:4326',
-                   controls: [new OpenLayers.Control.LayerSwitcher(),
-                              new OpenLayers.Control.Zoom(),
-                              new OpenLayers.Control.Navigation(),
-                              new OpenLayers.Control.MousePosition(),
-                              new OpenLayers.Control.ScaleLine()]
-                   });
-        // Open Cycle
-        var cycle = new OpenLayers.Layer.OSM(
-                  "Open Cycle Map",
-                  ["https://a.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement,
-                   "https://b.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement,
-                   "https://c.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement],
-                  {isBaseLayer: true,
-                   projection: 'EPSG:3857'});
-        map.addLayer(cycle);
+<script type="text/javascript">
 
-        // Study area
-        var kml = new OpenLayers.Layer.Vector("{% trans 'IRMA area' %}",
-                  {strategies: [new OpenLayers.Strategy.Fixed()],
-                    visibility: true,
-                  protocol: new OpenLayers.Protocol.HTTP(
-                           {url: "{% static 'kml/study_area.kml' %}",
-                           format: new OpenLayers.Format.KML()})})
-        map.addLayer(kml);
-        // Kthmatologio
-        var ktimatologio = new OpenLayers.Layer.WMS("Hellenic Cadastre",
-                       "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
-                         {   layers: 'KTBASEMAP', transparent: false},
-                         {   isBaseLayer: true,
-                             numZoomLevels: 24,
-                             projection: new OpenLayers.Projection("EPSG:900913"),
-                             iformat: 'image/png'});
-        map.addLayer(ktimatologio);
-        var arta = new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857');
-        map.setCenter(new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 10);
-
-        var vectorLayer = new OpenLayers.Layer.Vector("{{ user }} Fields");
-        {% for f in agrifields %}
-        // Define markers as "features" of the vector layer:
-        var feature = new OpenLayers.Feature.Vector(
-                new OpenLayers.Geometry.Point(make_coords("{{f.longitude}}"), make_coords("{{f.latitude}}")).transform('EPSG:4326', 'EPSG:3857'),
-                {description:'{% trans 'Field Name' %}: <a target="_blank" href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a>'},
-                {externalGraphic: 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/img/marker.png', graphicHeight: 25, graphicWidth: 21, graphicXOffset:-12, graphicYOffset:-25  }
-            );
-        vectorLayer.addFeatures(feature);
-        map.addLayer(vectorLayer);
-        {% empty %}
-        var feature = new OpenLayers.Feature.Vector(
-                new OpenLayers.Geometry.Point(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'),
-                {description: "{% trans "It seems you haven't any fields, Add at least one" %}" } ,
-                {externalGraphic: 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/img/marker.png', graphicHeight: 25, graphicWidth: 21, graphicXOffset:-12, graphicYOffset:-25  }
-            );
-        vectorLayer.addFeatures(feature);
-        map.addLayer(vectorLayer);
-
+    var agrifields_list = [
+        // queryset list to js array with objects
+        {% for agrifield in object_list %}
+            {{ agrifield.as_json|safe }} {% if not forloop.last %},{% endif %}
         {% endfor %}
-        //Add a selector control to the vectorLayer with popup functions
-        var controls = {
-          selector: new OpenLayers.Control.SelectFeature(vectorLayer, { onSelect: createPopup, onUnselect: destroyPopup })
-        };
+    ]
 
-        function createPopup(feature) {
-          feature.popup = new OpenLayers.Popup.FramedCloud("pop",
-              feature.geometry.getBounds().getCenterLonLat(),
-              null,
-              '<div class="markerContent">'+feature.attributes.description+'</div>',
-              null,
-              true,
-              function() { controls['selector'].unselectAll(); }
-          );
-          //feature.popup.closeOnMove = true;
-          map.addPopup(feature.popup);
-        }
+    function helperSelectedAgrifieldCircle(lat, lng, div, mapid, radius){
+        // Minor helper function that behaves as constractor for map
+        // call in leaflet_map tag
+        var circle = [lat, lng]
+        aira.LeafletMap.selectedAgrifieldCircle(
+                agrifields_list, div, mapid, [39.15,20.98],
+                circle, radius
+        );
+    };
 
-        function destroyPopup(feature) {
-          feature.popup.destroy();
-          feature.popup = null;
-        }
+    // Create a map with user agrifields list
+    aira.LeafletMap.createMap('map', agrifields_list, [39.15,20.98], 10, false,[], null);
 
-        map.addControl(controls['selector']);
-        controls['selector'].activate();
-
-
-        function togl(id) {
-            $("#"+ id).stop().toggle()
-        }
+    // Trash an object with a  conform pop up
+    // Class selector
+    $(document).on("click", ".trash", function(e) {
+         var agrifield_id = ($(this).attr('id'));
+         bootbox.confirm({
+             title: "{% trans 'aira message' %}",
+             message: "<h3 style='padding-left:70px'>{% trans 'Do you want delete this field?' %}</h3>",
+             buttons: {
+                 confirm: {
+                     label: "{% trans  'Yes' %}",
+                     className: 'btn btn-success pull-left'
+                 },
+                 cancel: {
+                     label: "{% trans  'No' %}",
+                     className: 'btn btn-danger'
+                 }
+             },
+             callback:function(result){
+                if (result) {
+                    $.ajax({
+                        url : "/delete/agrifield/",
+                        type : "POST",
+                        data : { agrifield_pk: agrifield_id },
+                        success : function(response) {
+                            $('#card-' + agrifield_id).hide()
+                            $.notify("{% trans 'Agrifield deleted' %}");
+                        },
+                        error : function(xhr,errmsg,err) {
+                            console.log(xhr.status + ": " + xhr.responseText);
+                        }
+                    });
+                }
+            }
+         })
+    })
 </script>
 {% endblock %}

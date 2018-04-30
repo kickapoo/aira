@@ -1,0 +1,69 @@
+{% load static %}
+{% load i18n %}
+
+<div id="list-of-agrifields" {% if object_list|length > 4 %} style="overflow-y: scroll; overflow-x:hidden;height:500px;"  {% endif %}>
+    <!-- List of Agrifields -->
+    {% for agrifield in object_list %}
+        {% if forloop.first %}<div class="row">{% endif %}
+        <div  class="col-md-6">
+            <div id="card-{{ agrifield.pk }}" class="card">
+                <div class="card-header">
+                    <img style="float:left;padding-right:10px;" height="25" width="35" src="{% static 'img/irrigation-must.png' %}" alt="">
+                    {% if agrifield.is_virtual %}<span><img  data-toggle="tooltip" title="{% trans 'Virtual Field' %}" style="float:left;padding-right:10px" height="25" width="35" src="{% static 'img/rocket.png' %}" alt=""></span>{% endif %}
+                    <h5 class="card-title">
+                        {{ agrifield.name }} - {{ agrifield.pk }}
+                        <span id="search_minus" style="padding-right:10px;" class="pull-right"><a class="aira-nav-link" href="#" onclick="helperSelectedAgrifieldCircle({{ agrifield.latitude }}, {{ agrifield.longitude }}, 'card-{{ agrifield.pk }}', 'map', {{ agrifield.get_radius }} )"><i class="fa fa-search-minus"></i></a></span>
+                        <span id="search_plus" style="padding-right:10px;" class="pull-right"><a class="aira-nav-link" href="#" onclick="aira.LeafletMap.selectedAgrifield({{ agrifield.pk }}, '{{ agrifield.name }}', {{ agrifield.latitude }}, {{ agrifield.longitude }}, '{{ agrifield.is_virtual }}', 'card-{{ agrifield.pk }}', 'map', {{ agrifield.get_radius }} )"><i class="fa fa-search-plus" aria-hidden="true"></i></a></span>
+                    </h5>
+                    <hr>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ agrifield.crop_type }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ agrifield.irrigation_type }}
+                            </div>
+                        </div>
+                    </h6>
+                </div>
+
+                <ul class="list-group list-group-flush">
+                   {% if not agrifield.has_irrigation %}
+                    <li style="font-size:12px;" class="list-group-item bg-warning">
+                        <i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i>
+                        {% trans "You haven't entered any irrigation event." %}
+                        {% trans "Irrigation Advice is estimated using system's default datasets" %}.
+                    </li>
+                  {% endif %}
+               </ul>
+
+                <div class="card-block text-xs-center">
+                    <span style="padding-right:20px;" class="pull-left"><a id="{{ agrifield.pk }}" class="aira-nav-link trash" href="#"><i data-toggle="tooltip" title="{% trans 'Remove' %}" class="fa fa-trash"></i></a></span>
+                   {% if agrifield.in_raster %}
+                        <span style="padding-right:10px;padding-top:2px" class="pull-right"><a class="aira-nav-link" href="{% url 'edit-agrifield' agrifield.owner agrifield.slug %}"><i data-toggle="tooltip" title="{% trans 'Edit' %}" class="fa fa-edit"></i></a></span>
+                   {% endif %}
+                   <span style="padding-right:20px;" class="align-middle"><a id="{{ agrifield.pk }}" class="aira-nav-link" href=""><i data-toggle="tooltip" title="{% trans 'Advisor' %}"  class="fa fa-superpowers fa-2x" aria-hidden="true"></i></a></span>
+               </div>
+            </div>
+        </div>
+        {% if forloop.counter|divisibleby:2 %}</div><div class="row">{% endif %}
+        {% if forloop.last %}</div>{% endif %}
+    {% empty %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header"></div>
+                    <div class="card-block">
+                        <h4 class="card-title">No agrifields yet.</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% block extrajs %}
+<script type="text/javascript" src="{% static 'js/aira.js' %}"></script>
+
+{% endblock %}

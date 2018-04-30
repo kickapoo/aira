@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<div class="row">
+    <div class="col-md-4">
+         {% if 'home' in url_name %}
+            <a href="{% url 'add-agrifield' user.username %}" class="btn btn-secondary btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> {% trans "Agrifield" %}</a>
+         {% else %}
+            <a href="{% url 'home-username' user.username %}" class="btn btn-secondary btn-sm"><i class="fa fa-chevron-left" aria-hidden="true"></i> {% trans "Back" %}</a>
+         {% endif %}
+    </div>
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <div class="pull-right">
+            {% if supervised %}
+                {{ user.username }} <i data-toggle="tooltip" title="{% trans 'Supervisor mode' %}" class="fa fa-user-secret fa-1x" aria-hidden="true"></i>
+            {% endif %}
+        </div>
+    </div>
+</div>

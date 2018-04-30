@@ -1,19 +1,23 @@
 # -*- coding: utf-8 -*-
 from collections import OrderedDict
+import json
+import django_rq
 
 from django.db import models
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.exceptions import ValidationError
 from django.dispatch import receiver
 from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
+from django.template.defaultfilters import slugify
 
-from aira.irma.main import FC_FILE as fc_raster
-from aira.irma.main import PWP_FILE as pwp_raster
-from aira.irma.main import THETA_S_FILE as thetaS_raster
-from aira.irma.main import raster2point
+from aira.swb.utils import (FC_FILE as fc_raster, PWP_FILE as pwp_raster,
+                            THETA_S_FILE as thetaS_raster)
+from aira.swb.utils import raster2point
+from aira.swb.model_run import execute_model
 
 # notification_options is the list of options the user can select for
 # notifications, e.g. be notified every day, every two days, every week, and so
@@ -43,7 +47,7 @@ YES_OR_NO = (
 YES_OR_NO_OR_NULL = (
     (True, _('Yes')),
     (False, _('No')),
-    (None,'-')
+    (None, '-')
 )
 
 EMAIL_LANGUAGE_CHOICES = (
@@ -112,8 +116,8 @@ class CropType(models.Model):
         ordering = ('name',)
         verbose_name_plural = 'Crop Types'
 
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return self.name
 
 
 class IrrigationType(models.Model):
@@ -124,14 +128,13 @@ class IrrigationType(models.Model):
         ordering = ('name',)
         verbose_name_plural = 'Irrigation Types'
 
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return self.name
 
 
 class Agrifield(models.Model):
     owner = models.ForeignKey(User)
-    name = models.CharField(max_length=255,
-                            default='i.e. MyField1')
+    name = models.CharField(max_length=255)
     is_virtual = models.NullBooleanField(choices=YES_OR_NO_OR_NULL, null=True,
                                          default=None)
     # Latitude / Longitude are crucial locations parameters
@@ -190,118 +193,150 @@ class Agrifield(models.Model):
                                                  MinValueValidator(0.00)
                                              ])
 
-    @property
-    def get_wilting_point(self):
-        if self.use_custom_parameters:
-            if self.custom_wilting_point in [None, '']:
-                return raster2point(self.latitude, self.longitude, pwp_raster)
-            return self.custom_wilting_point
-        else:
-            return raster2point(self.latitude, self.longitude, pwp_raster)
+    class Meta:
+        ordering = ('name', 'area')
+        verbose_name_plural = 'Agrifields'
 
-    @property
-    def get_thetaS(self):
-        if self.use_custom_parameters:
-            if self.custom_thetaS in [None, '']:
-                return raster2point(self.latitude, self.longitude,
-                                    thetaS_raster)
-            return self.custom_thetaS
-        else:
-            return raster2point(self.latitude, self.longitude, thetaS_raster)
+    def _get_parameter_value(self, parameter, raster=None):
+        """
+            Get the value of parameter based if custom parameters as True/False
+        """
+        if not isinstance(parameter, str):
+            raise ValidationError(
+               _('Got {}, excepted string').format(str(type(parameter)))
+            )
 
-    @property
-    def get_field_capacity(self):
-        if self.use_custom_parameters and self.custom_field_capacity:
-            return self.custom_field_capacity
-        else:
-            return raster2point(self.latitude, self.longitude, fc_raster)
+        if self.use_custom_parameters and getattr(self, 'custom_' + parameter):
+            return float(round(getattr(self, 'custom_' + parameter), 2))
 
-    @property
-    def get_efficiency(self):
-        if self.use_custom_parameters:
-            if self.custom_efficiency in [None, '']:
-                return self.irrigation_type.efficiency
-            return self.custom_efficiency
-        else:
-            return self.irrigation_type.efficiency
+        raster_options = ['wilting_point', 'thetaS', 'field_capacity']
+        if raster and (parameter in raster_options):
+            return float(round(raster2point(self.latitude,
+                                            self.longitude, raster), 2))
 
-    @property
-    def get_mad(self):
-        if self.use_custom_parameters:
-            if self.custom_max_allow_depletion in [None, '']:
-                return self.crop_type.max_allow_depletion
-            return self.custom_max_allow_depletion
-        else:
-            return self.crop_type.max_allow_depletion
+        if parameter in ['efficiency']:
+            return float(round(getattr(self.irrigation_type, parameter), 2))
 
-    @property
-    def get_kc(self):
-        if self.use_custom_parameters:
-            if self.custom_kc in [None, '']:
-                return self.crop_type.kc
-            return self.custom_kc
+        if parameter in ['max_allow_depletion', 'kc', 'root_depth_max',
+                         'root_depth_min', 'root_depth_min']:
+            return float(round(getattr(self.crop_type, parameter), 2))
         else:
-            return self.crop_type.kc
+            return float(round(getattr(self, parameter), 2))
 
-    @property
-    def get_root_depth_max(self):
-        if self.use_custom_parameters:
-            if self.custom_root_depth_max in [None, '']:
-                return self.crop_type.root_depth_max
-            return self.custom_root_depth_max
-        else:
-            return self.crop_type.root_depth_max
+    def agroparameters(self):
+        """ Get Agrifield parameters"""
+        return {
+            'wp': self._get_parameter_value('wilting_point', pwp_raster),
+            'thetaS': self._get_parameter_value('thetaS', thetaS_raster),
+            'fc': self._get_parameter_value('field_capacity', fc_raster),
+            'irr_eff': self._get_parameter_value('efficiency'),
+            'mad': self._get_parameter_value('max_allow_depletion'),
+            'kc': self._get_parameter_value('kc'),
+            'root_depth_max': self._get_parameter_value('root_depth_max'),
+            'root_depth_min': self._get_parameter_value('root_depth_min'),
+            'IRT': self._get_parameter_value('irrigation_optimizer'),
+            'rd': (self._get_parameter_value('root_depth_max') +
+                   self._get_parameter_value('root_depth_min')) / 2,
+            'custom_parms': self.use_custom_parameters
+        }
 
-    @property
-    def get_root_depth_min(self):
-        if self.use_custom_parameters:
-            if self.custom_root_depth_min in [None, '']:
-                return self.crop_type.root_depth_min
-            return self.custom_root_depth_min
-        else:
-            return self.crop_type.root_depth_min
+    def db_default_agroparameters(self):
+        """
+            Get Agrifield parameters without custom values, db values
+        """
+        return {
+            'wp': round(raster2point(self.latitude, self.longitude,
+                                     pwp_raster), 2),
+            'thetaS': round(raster2point(self.latitude, self.longitude,
+                                         thetaS_raster), 2),
+            'fc': round(raster2point(self.latitude, self.longitude,
+                                     fc_raster), 2),
+            'irr_eff': round(self.irrigation_type.efficiency, 2),
+            'mad': round(self.crop_type.max_allow_depletion, 2),
+            'kc': round(self.crop_type.kc, 2),
+            'rd_max': round(self.crop_type.root_depth_max, 2),
+            'rd_min': round(self.crop_type.root_depth_min, 2),
+            'IRT': round(self.irrigation_optimizer, 2)
+        }
 
-    @property
-    def get_irrigation_optimizer(self):
-        if self.use_custom_parameters:
-            if self.custom_irrigation_optimizer in [None, '']:
-                return self.irrigation_optimizer
-            return self.custom_irrigation_optimizer
-        else:
-            return self.irrigation_optimizer
+    def has_irrigation(self):
+        """If has at least one irrigationlog_set. Affects SWB model runs"""
+        if self.irrigationlog_set.exists():
+            return True
+        return False
+
+    def has_irrigation_in_period(self, sdd, edd):
+        """If has at least one irrigationlog_set and that is the common period
+          Affects SWB model runs"""
+        if self.has_irrigation():
+            last_irrigation = self.irrigationlog_set.latest()
+            lower_end = (last_irrigation.time.date() < sdd)
+            upper_end = (last_irrigation.time.date() > edd)
+            if lower_end or upper_end:
+                return True
+        return False
+
+    def last_irrigation(self):
+        if self.has_irrigation():
+            return self.irrigationlog_set.latest()
+        return None
+
+    def execute_swb(self, INET, save_advice=False):
+        results = execute_model(self, INET)
+        if save_advice:
+            AdviceLog.objects.create(agrifield=self,
+                                     advice=json.dumps(results),
+                                     inet=INET)
+        return results
+
+    def async_execute_swb(self, INET, save_advice=False):
+        queue = django_rq.get_queue('execute_model')
+        job = queue.enqueue(self.execute_swb, INET, save_advice)
+        return job._id
+
+    @staticmethod
+    def get_async_swb_results(job_hash_id):
+        from rq.job import Job
+        redis_conn = django_rq.get_connection('execute_model')
+        job = Job.fetch(job_hash_id, connection=redis_conn)
+
+        if job.__dict__['_status'] not in ['finished']:
+            return job.__dict__['_status'], None
+        return job.__dict__['_status'], job.__dict__['_result']
 
     def can_edit(self, user):
         if (user == self.owner) or (user == self.owner.profile.supervisor):
             return True
         raise Http404
 
-    class Meta:
-        ordering = ('name', 'area')
-        verbose_name_plural = 'Agrifields'
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.name)
+        super(Agrifield, self).save(*args, **kwargs)
+        # self.execute_model()
+
+    def to_json(self):
+        return json.dumps({
+            'name': self.name,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'virtual': self.is_virtual,
+            'owner': self.owner.username,
+            'id': self.pk,
+        })
 
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        super(Agrifield, self).save(*args, **kwargs)
-        self.execute_model()
 
-    def execute_model(self):
-        from aira import tasks
+class AdviceLog(models.Model):
+    agrifield = models.ForeignKey(Agrifield)
+    inet = models.CharField(max_length=10)
+    advice = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
-        cache_key = 'agrifield_{}_status'.format(self.id)
-
-        # If the agrifield is already in the Celery queue for calculation,
-        # return without doing anything.
-        if cache.get(cache_key) == 'queued':
-            return
-
-        tasks.calculate_agrifield.delay(self)
-        cache.set(cache_key, 'queued', None)
-
-    @property
-    def status(self):
-        return cache.get('agrifield_{}_status'.format(self.id))
+    def __str__(self):
+        return self.agrifield
 
 
 class IrrigationLog(models.Model):
@@ -322,13 +357,13 @@ class IrrigationLog(models.Model):
         ordering = ('-time',)
         verbose_name_plural = 'Irrigation Logs'
 
-    def __unicode__(self):
-        return unicode(self.time)
+    def __str__(self):
+        return str(self.time)
 
     def save(self, *args, **kwargs):
         super(IrrigationLog, self).save(*args, **kwargs)
-        self.agrifield.execute_model()
+        #self.agrifield.execute_model()
 
     def delete(self, *args, **kwargs):
         super(IrrigationLog, self).delete(*args, **kwargs)
-        self.agrifield.execute_model()
+        #self.agrifield.execute_model()
