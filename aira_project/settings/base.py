@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     # 'mathfilters',
     # 'captcha',
     # 'kombu.transport.django',
+    'aira2'
+
 ]
 
 
@@ -58,9 +60,9 @@ LANGUAGES = (
     ('en', _('English')),
     ('el', _('Greek')),
 )
-LOCALE_PATHS = (
-    os.path.join(PROJECT_ROOT, '../aira/locale'),
-)
+# LOCALE_PATHS = (
+#     os.path.join(PROJECT_ROOT, '../aira/locale'),
+# )
 TIME_ZONE = 'Europe/Athens'
 USE_I18N = True
 USE_L10N = True
@@ -89,17 +91,17 @@ TEMPLATES = [
     },
 ]
 
-ACCOUNT_ACTIVATION_DAYS = 3
-LOGIN_REDIRECT_URL = "/home"
-
-# Celery
-BROKER_URL = 'django://'
-
-AIRA_DATA_HISTORICAL = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                    "../../../rasters_historical"))
-
-AIRA_DATA_FORECAST = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                  "../../../rasters_forecast"))
-
-AIRA_COEFFS_RASTERS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                              "../../../coeffs_data"))
+# ACCOUNT_ACTIVATION_DAYS = 3
+# LOGIN_REDIRECT_URL = "/home"
+#
+# # Celery
+# BROKER_URL = 'django://'
+#
+# AIRA_DATA_HISTORICAL = os.path.abspath(os.path.join(os.path.dirname(__file__),
+#                                                     "../../../rasters_historical"))
+#
+# AIRA_DATA_FORECAST = os.path.abspath(os.path.join(os.path.dirname(__file__),
+#                                                   "../../../rasters_forecast"))
+#
+# AIRA_COEFFS_RASTERS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
+#                                               "../../../coeffs_data"))
