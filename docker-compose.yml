@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    build:
+      context: .
+      dockerfile: dockerfiles/database
+    environment:
+      POSTGRES_USER: aira
+      POSTGRES_PASSWORD: aira
+      POSTGRES_DB: airadb
+      PGDATA: /tmp/pgdata
+    volumes:
+      - pg_data:/tmp/pgdata
+  aira:
+    container_name: web-aira
+    restart: always
+    environment:
+      AIRA_DATA_HISTORICAL: ''
+      AIRA_DATA_FORECAST: ''
+      AIRA_COEFFS_RASTERS_DIR: ''
+    build:
+      context: .
+      dockerfile: dockerfiles/aira
+    ports:
+      - "8080:8000"
+    command: python3 /code/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+volumes:
+  pg_data:

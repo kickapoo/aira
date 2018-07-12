@@ -16,8 +16,6 @@ ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
-    # 'aira',
-    # 'registration',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -26,30 +24,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
-    # 'bootstrap3',
-    # 'mathfilters',
-    # 'captcha',
-    # 'kombu.transport.django',
     'aira2'
-
 ]
 
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    },
-}
+]
 
 ROOT_URLCONF = 'aira_project.urls'
 WSGI_APPLICATION = 'aira_project.wsgi.application'
@@ -70,7 +57,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -78,18 +64,34 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                "django.contrib.auth.context_processors.auth",
-                "django.core.context_processors.debug",
-                "django.core.context_processors.i18n",
-                "django.core.context_processors.media",
-                "django.core.context_processors.static",
-                "django.core.context_processors.tz",
-                "django.contrib.messages.context_processors.messages",
-                "aira.context_processors.map",
-            ]
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
         },
-    },
+    }
 ]
+
+# TEMPLATES = [
+#     {
+#         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+#         'DIRS': [],
+#         'APP_DIRS': True,
+#         'OPTIONS': {
+#             'context_processors': [
+#                 "django.contrib.auth.context_processors.auth",
+#                 "django.core.context_processors.debug",
+#                 "django.core.context_processors.i18n",
+#                 "django.core.context_processors.media",
+#                 "django.core.context_processors.static",
+#                 "django.core.context_processors.tz",
+#                 "django.contrib.messages.context_processors.messages",
+#                 "aira.context_processors.map",
+#             ]
+#         },
+#     },
+# ]
 
 # ACCOUNT_ACTIVATION_DAYS = 3
 # LOGIN_REDIRECT_URL = "/home"

@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pthelma = ">=0.10.6,<2"
+Django = ">=2.0"
+model_mommy = "<1.6,>=1.5.1"
+
+[dev-packages]
+"psycopg2-binary" = "*"
+"psycopg2" = "*"
+
+[requires]
+python_version = "3.6"
