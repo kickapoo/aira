@@ -175,7 +175,7 @@ aira.toogleIndexMapsUI = (function namespace() {
                             new OpenLayers.Control.ScaleLine()]
                  });
 
-        //Base layer
+        //Base layers
         var openCycleMap = new OpenLayers.Layer.OSM(
                   "Open Cycle Map",
                   ["https://a.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement,
@@ -184,7 +184,6 @@ aira.toogleIndexMapsUI = (function namespace() {
                   {isBaseLayer: true,
                    projection: 'EPSG:3857'});
         map.addLayer(openCycleMap);
-        // Loop to add WMS layers
         var ktimatologioMap = new OpenLayers.Layer.WMS("Hellenic Cadastre",
                    "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
                      {   layers: 'KTBASEMAP', transparent: false},
@@ -192,7 +191,12 @@ aira.toogleIndexMapsUI = (function namespace() {
                          projection: new OpenLayers.Projection("EPSG:900913"),
                          iformat: 'image/png'});
         map.addLayer(ktimatologioMap);
+        var googleMaps = new OpenLayers.Layer.Google(
+            "Google Satellite", {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
+        );
+        map.addLayer(googleMaps);
 
+        // Meteo layer
         var meteoVarWMS = new OpenLayers.Layer.WMS(
                   meteoVar + date,
                   urlToRequest,
