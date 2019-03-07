@@ -128,6 +128,10 @@
                                numZoomLevels: 24,
                                projection: new OpenLayers.Projection("EPSG:900913"),
                                iformat: 'image/png'});
+                var googleMaps = new OpenLayers.Layer.Google(
+                    "Google Satellite", {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
+                );
+                map.addLayer(googleMaps);
                 map.addLayer(ktimatologio);
                 map.addLayer(cycle);
                 map.addLayer(kml);
