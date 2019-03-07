@@ -308,7 +308,7 @@ aira.toogleIndexMapsUI = (function namespace() {
         } else {
             addTimestamp = 'month';
         }
-        $('#current').html(aira.transToggleTimestampMap.betweenDatesViewing + ' ' + moment(date, dateFormat).format(dateFormat));
+        $('#current').html(moment(date, dateFormat).format(dateFormat));
         var plusOneDate = moment(date, dateFormat).add(1, addTimestamp);
         var minusOneDate = moment(date, dateFormat).subtract(1, addTimestamp);
         $('#next').html(plusOneDate.format(dateFormat) + "&nbsp;<i class='fa fa-chevron-right'></i>&nbsp;");
