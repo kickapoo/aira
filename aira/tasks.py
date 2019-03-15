@@ -7,10 +7,15 @@ from django.conf import settings
 
 from pthelma.swb import SoilWaterBalance
 
+from swb import calculate_soil_water
+
+import pandas as pd
+
 from aira.celery import app
 from aira.irma.main import (agripoint_in_raster, common_period_dates,
                             load_meteodata_file_paths, raster2point,
                             rasters2point)
+from aira.irma.main import DRAINTIME_A_RASTER, DRAINTIME_B_RASTER
 from aira.models import IrrigationLog
 
 
@@ -18,7 +23,64 @@ class Results():
     pass
 
 
-def execute_model(agrifield, Inet_in_forecast):
+def extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles):
+    """
+        Given a Agrifield extract Timeseries from raster files and
+        convert to pd.DataFrame.
+    """
+    EFFECTIVE_PRECIP_FACTOR = 0.8
+    lat, long, kc = agrifield.latitude, agrifield.longitude, agrifield.get_kc
+
+    _r = rasters2point(lat, long, HRFiles)
+    _e = rasters2point(lat, long, HEFiles)
+    _rf = rasters2point(lat, long, FRFiles)
+    _ef = rasters2point(lat, long, FEFiles)
+    start, end  = common_period_dates(_r, _e)
+    fstart, fend = common_period_dates(_rf, _ef)
+
+    dateIndex = pd.date_range(start=start.date(), end=fend.date(), freq='D')
+    data = {
+        "effective_precipitation": [
+            v[1] * EFFECTIVE_PRECIP_FACTOR
+            for v in _r.items() if v[0] >= start and v[0] <= end
+        ] + [
+            v[1] * EFFECTIVE_PRECIP_FACTOR
+            for v in _rf.items() if v[0] >= fstart and v[0] < fend
+        ],
+        "actual_net_irrigation": False, # Set as default False
+        "crop_evapotranspiration":[
+            v[1] * float(kc) for v in _e.items()
+            if v[0] >= start and v[0] <= end
+        ] + [
+            v[1] * float(kc) for v in _ef.items()
+            if v[0] >= start and v[0] < fend
+        ],
+    }
+    df = pd.DataFrame(data, index=dateIndex)
+
+    # Update dates with irrigations events
+    logs = agrifield.irrigationlog_set.filter(time__range=(start, end))
+    for log in logs:
+        try:
+            date = log.time.date()
+            row = df.loc[date]
+            df.at[date, "actual_net_irrigation"] = log.applied_water
+        except:
+            # Insanity check, date does not exist in our original date
+            pass
+
+    return {
+        "timeseries": df,
+        "start": start,
+        "end": end,
+        "fstart": fstart,
+        "fend": fend,
+        "draintime_A": raster2point(lat, long, DRAINTIME_A_RASTER),
+        "draintime_B": raster2point(lat, long, DRAINTIME_B_RASTER),
+    }
+
+
+def execute_model(agrifield):
     """
     Run pthelma.SoilWaterBalance model on agrifield
     """
@@ -30,52 +92,13 @@ def execute_model(agrifield, Inet_in_forecast):
         return results
 
     # Retrieve precipitation and evaporation time series at the agrifield
-    daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = \
-        load_meteodata_file_paths()
-    precip_daily = rasters2point(agrifield.latitude, agrifield.longitude,
-                                 daily_r_fps)
-    precip_daily.time_step.length_minutes = 1440
-    evap_daily = rasters2point(agrifield.latitude, agrifield.longitude,
-                               daily_e_fps)
-    evap_daily.time_step.length_minutes = 1440
-    precip_hourly = rasters2point(agrifield.latitude, agrifield.longitude,
-                                  hourly_r_fps)
-    precip_hourly.time_step.length_minutes = 60
-    evap_hourly = rasters2point(agrifield.latitude, agrifield.longitude,
-                                hourly_e_fps)
-    evap_hourly.time_step.length_minutes = 60
+    HRFiles, HEFiles, FRFiles, FEFiles = load_meteodata_file_paths()
 
-    # Start and end dates of common data period
-    start_date_daily, end_date_daily = common_period_dates(precip_daily,
-                                                           evap_daily)
-    start_date_daily = start_date_daily.date()
-    end_date_daily = end_date_daily.date()
-    start_date_hourly, end_date_hourly = common_period_dates(precip_hourly,
-                                                             evap_hourly)
+    # Extract data from files withe pd.DataFrame and end, start dates
+    dTimeseries = extractSWBTimeseries(agrifield, HRFiles, HEFiles,
+                                       FRFiles, FEFiles)
 
-    # Agrifield parameters
-    fc = agrifield.get_field_capacity
-    wp = agrifield.get_wilting_point
-    rd = (float(agrifield.get_root_depth_min) +
-          float(agrifield.get_root_depth_max)) / 2
-    kc = float(agrifield.get_kc)
-    p = float(agrifield.get_mad)
-    peff = 0.8  # Effective rainfall is 0.8 * Precip
-    irr_eff = float(agrifield.get_efficiency)
-    thetaS = float(agrifield.get_thetaS)
-    IRT = agrifield.get_irrigation_optimizer
-    area = agrifield.area
-    rd_factor = 1000
-
-    # Create SoilWaterBalance Object for daily and hourly data
-    swb_daily = SoilWaterBalance(fc, wp, rd, kc, p, peff, irr_eff, thetaS,
-                                 precip_daily, evap_daily, rd_factor)
-    swb_last_day_ifinal = SoilWaterBalance(fc, wp, rd, kc, p, peff, irr_eff,
-                                 thetaS, precip_daily, evap_daily, rd_factor)
-    swb_hourly = SoilWaterBalance(fc, wp, rd, kc, p, peff, irr_eff, thetaS,
-                                  precip_hourly, evap_hourly, rd_factor)
-
-    # Template messages
+    ####  Template messages
     if not agrifield.irrigationlog_set.exists():
         results.irrigation_log_not_exists = True
 
@@ -83,72 +106,74 @@ def execute_model(agrifield, Inet_in_forecast):
     last_irrigation = (agrifield.irrigationlog_set.latest()
                        if agrifield.irrigationlog_set.exists() else None)
 
+    start_date_daily = dTimeseries['start'].date()
+    end_date_daily = dTimeseries['end'].date()
+    f_start_date_daily = dTimeseries['fstart'].date()
+    f_end_date_daily = dTimeseries['fend'].date()
     if last_irrigation and ((last_irrigation.time.date() < start_date_daily) or
                             (last_irrigation.time.date() > end_date_daily)):
         last_irrigation = None
         # Template messages
         results.irrigation_log_outside_time_period = True
 
-    # Determine Dr0, theta_init, and run_start_date
-    if last_irrigation:
-        results.last_irr_date = last_irrigation.time.date()
-        applied_water = last_irrigation.applied_water
-        if applied_water is None:
-            theta_init = swb_daily.raw_mm + swb_daily.lowlim_theta_mm
-            Dr0 = theta_init - swb_daily.fc_mm
-        else:
-            theta_init = applied_water / agrifield.area * rd_factor * \
-                float(agrifield.get_efficiency) + swb_daily.fc_mm - \
-                IRT * swb_daily.raw_mm
-            Dr0 = swb_daily.fc_mm - theta_init
-        run_start_date = results.last_irr_date
-    else:
-        start_date_daily = end_date_daily - timedelta(days=1)
-        theta_init = swb_daily.fc_mm - IRT * swb_daily.raw_mm
-        if start_date_daily.month in [10, 11, 12, 1, 2, 3]:
-            theta_init = swb_daily.fc_mm
-        run_start_date = start_date_daily
-        Dr0 = None
 
-    # Run the model
-    depl_daily = swb_daily.water_balance(
-        theta_init, [], datetime.combine(run_start_date, datetime.min.time()),
-        datetime.combine(end_date_daily, datetime.min.time()),
-        agrifield.get_irrigation_optimizer, Dr0, "NO")
-    swb_last_day_ifinal.water_balance(
-        theta_init, [], datetime.combine(run_start_date, datetime.min.time()),
-        datetime.combine(end_date_daily, datetime.min.time()),
-        agrifield.get_irrigation_optimizer, None, "NO")
-    swb_hourly.water_balance(0, [], start_date_hourly.replace(tzinfo=None),
-                             end_date_hourly.replace(tzinfo=None),
-                             agrifield.get_irrigation_optimizer, depl_daily,
-                             Inet_in_forecast)
+    # Agrifield parameters
+    area = agrifield.area
+    theta_fc = agrifield.get_field_capacity
+    zr = (float(agrifield.get_root_depth_min) +
+          float(agrifield.get_root_depth_max)) / 2
+    kc = float(agrifield.get_kc)
+    zr_factor = 1000
+    irr_eff = float(agrifield.get_efficiency)
+    a = dTimeseries['draintime_A']
+    b = dTimeseries['draintime_B']
 
-    # Store results
-    last_day_ifinal = [i['Ifinal'] for i in swb_last_day_ifinal.wbm_report
-                       if i['date'] == datetime.combine(end_date_daily,
-                                            datetime.min.time()) ] or [0.0]
-    irr_dates = [i['date'] for i in swb_hourly.wbm_report
-                 if i['irrigate'] >= 1]
-    irr_amount = [(i['Ifinal'], i['Ifinal']/1000 * area)
-                  for i in swb_hourly.wbm_report
-                  if i['irrigate'] >= 1]
-    irr_Ks = [i['Ks'] for i in swb_hourly.wbm_report if i['irrigate'] >= 1]
-    irr_values = zip(irr_amount, irr_Ks)
-    advice = dict(zip(irr_dates, irr_values))
-    results.sd = start_date_hourly  # Starting date of forecast data
-    results.ed = end_date_hourly  # Finish date of forecast  data
-    results.adv = advice  # Advice based on model
-    results.sdh = start_date_daily  # Starting date of historical data
-    results.edh = end_date_daily  # Finish data of historical data
-    results.ifinal = last_day_ifinal[0]  # Model run / last date Water Amount
-    results.ifinal_m3 = (results.ifinal/1000) * area
-    results.adv_sorted = sorted(advice.iteritems())  # Sorted advice dates
-    results.swb_report = swb_hourly.wbm_report
+    # 16 mar to 16 mart
+    theta_init = theta_fc * zr * zr_factor
 
+    model_params = dict(
+        theta_s=float(agrifield.get_thetaS),
+        theta_fc=theta_fc,
+        theta_wp=agrifield.get_wilting_point,
+        zr=zr,
+        zr_factor=zr_factor,
+        p=float(agrifield.get_mad),
+        draintime=round(a * zr ** b),
+        theta_init=theta_init,
+        mif=1,
+        timeseries= dTimeseries['timeseries']
+    )
+
+    dresults = calculate_soil_water(**model_params)
+    df = dresults['timeseries']
+    raw = dresults['raw']
+    df['advice'] = df.apply(lambda x: x.dr > raw , axis=1)
+    df['ifinal'] = df.apply(lambda x: x.recommended_net_irrigation / irr_eff, axis=1)
+    df['ifinal_m3'] = df.apply(lambda x: (x.ifinal / 1000) * area, axis=1)
+
+    results.last_irr_date = last_irrigation.time.date() if last_irrigation else None
+    results.sd = dTimeseries['start'].date()  # Starting date of forecast data
+    results.ed = dTimeseries['end'].date()   # Finish date of forecast  data
+    results.adv = any(df['advice'].tolist())
+    results.sdh = f_start_date_daily
+    results.edh = f_end_date_daily
+    results.ifinal = df.ix[-1, "ifinal"]
+    results.ifinal_m3 = (results.ifinal / 1000) * area
+    # Keep naming as its due to template rendering
+    results.adv_sorted =  [
+        [date.date(), row.ks, row.ifinal, row.ifinal_m3]
+        for date, row in df.loc[df['advice'] == True].iterrows()
+        if date >= pd.Timestamp(results.sdh)
+    ]
+    # For advice page
+    results.swb_report =  [
+        [date.date(), row.effective_precipitation, row.dr, row.theta , row.advice, row.ks,  row.ifinal ]
+        for date, row in df.iterrows()
+        if date >=  pd.Timestamp(results.sdh)
+    ]
     # Save results to cache
-    cache.set('model_run_{}_{}'.format(agrifield.id, Inet_in_forecast),
-              results, None)
+    cache.set('model_run_{}'.format(agrifield.id), results, None)
+    return results
 
 
 def calculate_performance_chart(agrifield):
@@ -156,96 +181,60 @@ def calculate_performance_chart(agrifield):
 
     # Verify that the agrifield is in study area
     if not agripoint_in_raster(agrifield):
-        results.outside_arta_raster = True
         return results
 
-    daily_r_fps, daily_e_fps, hourly_r_fps, hourly_e_fps = \
-        load_meteodata_file_paths()
-    precip_daily = rasters2point(agrifield.latitude, agrifield.longitude,
-                                 daily_r_fps)
-    evap_daily = rasters2point(agrifield.latitude, agrifield.longitude,
-                               daily_e_fps)
-    precip_daily.time_step.length_minutes = 1440
-    evap_daily.time_step.length_minutes = 1440
-    # precip_daily
-    fc = agrifield.get_field_capacity
-    wp = agrifield.get_wilting_point
-    rd = (float(agrifield.get_root_depth_min) +
+    # Retrieve precipitation and evaporation time series at the agrifield
+    HRFiles, HEFiles, FRFiles, FEFiles = load_meteodata_file_paths()
+
+    # Extract data from files withe pd.DataFrame and end, start dates
+    dTimeseries = extractSWBTimeseries(agrifield, HRFiles, HEFiles,
+                                       FRFiles, FEFiles)
+
+    # Agrifield parameters
+    area = agrifield.area
+    theta_fc = agrifield.get_field_capacity
+    zr = (float(agrifield.get_root_depth_min) +
           float(agrifield.get_root_depth_max)) / 2
     kc = float(agrifield.get_kc)
-    p = float(agrifield.get_mad)
-    peff = 0.8  # Effective rainfall coeff 0.8 * Precip
+    zr_factor = 1000
     irr_eff = float(agrifield.get_efficiency)
-    # ThetaS from raster file
-    thetaS = float(agrifield.get_thetaS)
-    rd_factor = 1000  # Unit convertor for mm
 
-    # Create SoilWaterBalance Object for daily and hourly data
-    # daily swb
-    swb_obj = SoilWaterBalance(fc, wp, rd, kc, p, peff, irr_eff, thetaS,
-                               precip_daily, evap_daily, rd_factor)
-    # Default Greek irrigation period
-    sd, fd = common_period_dates(precip_daily, evap_daily)
-    non_irr_period_finish_date = datetime(datetime.now().year, 3, 15)
-    irr_period_start_date = datetime(datetime.now().year, 3, 16)
-    # Dont run performance_chart if finish date is inside non irrigation period
-    if fd <= non_irr_period_finish_date:
-        results.chart_dates = []
-        results.chart_ifinal = []
-        results.chart_peff = []
-        results.chart_irr_period_peff_cumulative = []
-        results.applied_water = []
-        results.inside_non_irrigation_period = True
-        cache.set('performance_chart_{}'.format(agrifield.id), results, None)
-        return
+    # 16 mar to 16 mart
+    theta_init = theta_fc * zr * zr_factor
 
-    # Non irrigation season
-    dr_non_irr_period = swb_obj.water_balance(
-        swb_obj.fc_mm, [], sd, non_irr_period_finish_date,
-        agrifield.get_irrigation_optimizer, None, "NO")
+    model_params = dict(
+        theta_s=float(agrifield.get_thetaS),
+        theta_fc=theta_fc,
+        theta_wp=agrifield.get_wilting_point,
+        zr=zr,
+        zr_factor=zr_factor,
+        p=float(agrifield.get_mad),
+        draintime=1,
+        theta_init=theta_init,
+        mif=1,
+        timeseries= dTimeseries['timeseries']
+    )
 
-    # Irrigation season
-    swb_obj.wbm_report = []  # make sure is empty
+    dresults = calculate_soil_water(**model_params)
+    df = dresults['timeseries']
+    df['ifinal'] = df.apply(lambda x: x.recommended_net_irrigation / irr_eff, axis=1)
 
-    # Check if finish date in over current year September
-    # if fd > datetime(datetime.now().year, 9, 30):
-    #     fd = datetime(datetime.now().year, 9, 30)
+    results.chart_dates = [date.date() for date, row  in df.iterrows()]
+    results.chart_ifinal = [
+        row.ifinal
+        for date, row in df.iterrows()
+    ]
+    results.chart_peff = [
+        row.effective_precipitation
+        for date, row in df.iterrows()
+    ]
+    results.chart_irr_period_peff_cumulative =  sum(results.chart_peff)
 
-    # theta_init is zero because Dr_Historical exists
-    swb_obj.water_balance(
-        0, [], irr_period_start_date, fd, agrifield.get_irrigation_optimizer,
-        dr_non_irr_period, "YES")
-    irr_period_dates = [i['date'].date() for i in swb_obj.wbm_report]
-    irr_period_ifinal = [round(i['Ifinal'], 1) for i in swb_obj.wbm_report]
-    irr_period_peff = [round(i['Peff'], 1) for i in swb_obj.wbm_report]
-    irr_period_peff_cumulative = sum(irr_period_peff)
-
-    # Concat the data
-    chart_dates = irr_period_dates
-    chart_ifinal = irr_period_ifinal
-    chart_peff = irr_period_peff
-    chart_irr_period_peff_cumulative = irr_period_peff_cumulative
-    # Get agrifields irrigations log if they exists
-    applied_water = [0.0] * len(chart_dates)
-    if agrifield.irrigationlog_set.exists():
-        irr_events_objs = IrrigationLog.objects.filter(agrifield=agrifield
-                                                       ).all()
-        unique_dates = list(set([obj.time.date() for obj in irr_events_objs]))
-        for date in unique_dates:
-            # 0.0 exist because we can have irrigationlog without any amount
-            sum_water = [obj.applied_water or 0.0 for obj
-                         in IrrigationLog.objects.filter(
-                             agrifield=agrifield, time__contains=date)] or 0.0
-            daily_applied_water = round(sum(sum_water) / agrifield.area * 1000, 1)
-            if date in chart_dates:
-                idx = chart_dates.index(date)
-                applied_water[idx] = daily_applied_water
-    results.chart_dates = chart_dates
-    results.chart_ifinal = chart_ifinal
-    results.chart_peff = chart_peff
-    results.chart_irr_period_peff_cumulative = chart_irr_period_peff_cumulative
-    results.applied_water = applied_water
-
+    results.applied_water  = []
+    results.applied_water  = [
+        row.actual_net_irrigation if row.actual_net_irrigation else 0
+        for date, row in df.iterrows()
+    ]
     cache.set('performance_chart_{}'.format(agrifield.id), results, None)
 
 
@@ -254,8 +243,7 @@ def calculate_agrifield(agrifield):
     cache_key = 'agrifield_{}_status'.format(agrifield.id)
     cache.set(cache_key, 'being processed', None)
     try:
-        execute_model(agrifield, 'YES')
-        execute_model(agrifield, 'NO')
+        execute_model(agrifield)
         calculate_performance_chart(agrifield)
     except:
         # Oops! We failed. We should probably do something smart here, such as

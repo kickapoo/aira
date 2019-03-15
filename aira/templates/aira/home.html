@@ -82,7 +82,6 @@
         <p>
         <b>{% if f.is_virtual %}<span class="text-warning">{% trans "Virtual" %}</span>{% endif %} {% trans "Field Info" %}:</b> &nbsp;
         <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a> {% trans "is growing" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.crop_type.name }}</a> {% trans "using" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.irrigation_type.name}}</a>. </p>
-
         {% if f.status != 'done' %}
             <p class="alert alert-warning">{% trans "This field is being (re)calculated. Reload the page some time later to view the updated results. The calculation usually takes from a few seconds to a few minutes." %}</p>
         {% endif %}
@@ -131,12 +130,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for irr_date, values in f.results.adv_sorted  %}
+                            {% for data in f.results.adv_sorted  %}
                                 <tr>
-                                <td align="left">{{ irr_date |date:"d/m/Y H:00" }}</td>
-                                <td align="left">{{ values.1 |floatformat:"2" }} </td>
-                                <td align="left">{{ values.0.0 |floatformat:"2" }} mm
-                                                ({{ values.0.1 |floatformat:"2"}} m³)
+                                <td align="left">{{ data.0 }}</td>
+                                <td align="left">{{ data.1 |floatformat:"2" }} </td>
+                                <td align="left">{{ data.2 |floatformat:"2" }} mm
+                                                ({{ data.3|floatformat:"2"}} m³)
                                 </td>
                                 </tr>
                             {% endfor %}

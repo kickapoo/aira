@@ -30,24 +30,31 @@ THETA_S_FILE = os.path.join(
     'theta_s.tif')
 
 
+# DRAINTIME
+DRAINTIME_A_RASTER = os.path.join(
+    settings.AIRA_DRAINTIME_DIR,
+    'a_1d.tif')
+
+DRAINTIME_B_RASTER = os.path.join(
+    settings.AIRA_DRAINTIME_DIR,
+    'b.tif')
+
+
 def load_meteodata_file_paths():
     """
         Load meteorological data paths from settings.AIRA_DATA_*
     """
     # Daily
-    d_rain_fps = glob(
+    HRFiles = glob(
         os.path.join(settings.AIRA_DATA_HISTORICAL, 'daily_rain*.tif'))
-    d_evap_fps = glob(
+    HEFiles = glob(
         os.path.join(settings.AIRA_DATA_HISTORICAL, 'daily_evaporation*.tif'))
 
     # Contains current day + forecast
-    h_rain_fps = glob(os.path.join(settings.AIRA_DATA_HISTORICAL, 'hourly_rain*.tif')) +  \
-        glob(os.path.join(settings.AIRA_DATA_FORECAST, 'hourly_rain*.tif'))
+    FRFiles = glob(os.path.join(settings.AIRA_DATA_FORECAST, 'daily_rain*.tif'))
 
-    h_evap_fps = glob(os.path.join(settings.AIRA_DATA_HISTORICAL, 'hourly_evaporation*.tif')) +  \
-        glob(os.path.join(settings.AIRA_DATA_FORECAST,
-                          'hourly_evaporation*.tif'))
-    return d_rain_fps, d_evap_fps, h_rain_fps, h_evap_fps
+    FEFiles = glob(os.path.join(settings.AIRA_DATA_FORECAST, 'daily_evaporation*.tif'))
+    return HRFiles, HEFiles, FRFiles, FEFiles
 
 
 def rasters2point(lat, long, files):
@@ -165,8 +172,8 @@ class Results():
         pass
 
 
-def model_results(agrifield, Inet_in_forecast):
-    return cache.get('model_run_{}_{}'.format(agrifield.id, Inet_in_forecast))
+def model_results(agrifield):
+    return cache.get('model_run_{}'.format(agrifield.id))
 
 
 def get_performance_chart(agrifield):

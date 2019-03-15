@@ -78,15 +78,14 @@
             {% endif %}
             {% if f.results %}
                 {% trans "Detailed Calculations for" %}
-                {% trans "Forecast Period" %}: <span <class class="text-warning">{{ f.results.sd|date:"d/m/Y" }}</span> {% trans "to" %} <span <class class="text-warning">{{ f.results.ed|date:"d/m/Y" }}</span>        </div>
+                {% trans "Forecast Period" %}: <span <class class="text-warning">{{ f.results.sdh|date:"d/m/Y" }}</span> {% trans "to" %} <span <class class="text-warning">{{ f.results.edh|date:"d/m/Y" }}</span>        </div>
                 <div class="panel-body">
                 <div id="results" class="table-responsive">
                     <table class="table">
                         <thead>
                         <tr>
                             <th align="left">{% trans "Date" %}<br> </th>
-                            <th align="left">{% trans "Precipitation" %} <br>(mm)</th>
-                            <th align="left">{% trans "ETc adj" %} <br> (mm)</th>
+                            <th align="left">{% trans "Effective Precipitation" %} <br>(mm)</th>
                             <th align="left">{% trans "Depletion" %} <br> (mm)</th>
                             <th align="left">{% trans "Soil moisture" %} <br>(%)</th>
                             <th align="left">{% trans "Irrigate" %} ?</th>
@@ -100,23 +99,22 @@
                         </thead>
                         <tbody>
                             {% for result in f.results.swb_report  %}
-                            {% if result.irrigate > 0 %}
+                            {% if  result.4 %}
                             <tr class="success">
                             {% else %}
                             <tr class="active">
                             {% endif %}
-                                <td align="left">{{ result.date |date:"d/m/Y H:00"}}</td>
-                                <td align="left">{{ result.P|floatformat:"2" }}</td>
-                                <td align="left"> {{ result.ETc|floatformat:"2" }} </td>
-                                <td align="left">{{ result.Dr_i|floatformat:"2"}}</td>
-                                <td align="left"> {{ result.Theta_p|mul:100|floatformat:"1" }}</td>
-                                {% if result.irrigate > 0 %}
-                                <td align="left"> {% trans "YES" %} </td>
+                                <td align="left">{{ result.0 }}</td>
+                                <td align="left">{{ result.1 |floatformat:"2"}}</td>
+                                <td align="left">{{ result.2|floatformat:"2"}}</td>
+                                <td align="left"> {{ result.3|mul:100|floatformat:"1" }}</td>
+                                {% if result.4 %}
+                                <td align="left"> {% trans "YES" %} {{ result.5 }}</td>
                                 {% else %}
                                 <td align="left"> {% trans "NO" %} </td>
                                 {% endif %}
-                                <td align="left"> {{ result.Ks|floatformat:"2" }}</td>
-                                <td align="left"> {{ result.Ifinal|floatformat:"2" }}</td>
+                                <td align="left"> {{ result.5|floatformat:"2" }}</td>
+                                <td align="left"> {{ result.6|floatformat:"2" }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>

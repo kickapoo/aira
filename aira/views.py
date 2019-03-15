@@ -124,7 +124,7 @@ class HomePageView(TemplateView):
             for f in agrifields:
                 if not agripoint_in_raster(f):
                     f.outside_arta_raster = True
-                f.results = model_results(f, "YES")
+                f.results = model_results(f)
 
             context['agrifields'] = agrifields
             context['fields_count'] = len(agrifields)
@@ -145,7 +145,7 @@ class AdvicePageView(TemplateView):
         if not agripoint_in_raster(f):
             return context
         context['fpars'] = get_parameters(f)
-        f.results = model_results(f, "NO")
+        f.results = model_results(f)
         return context
 
 

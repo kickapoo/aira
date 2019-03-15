@@ -46,7 +46,7 @@ class Command(BaseCommand):
     def get_email_context(self, agrifields, user, owner):
         context = Context()
         for f in agrifields:
-            f.results = model_results(f, "YES")
+            f.results = model_results(f)
         if agrifields[0].results is None:
             logging.error(
                 ('Internal error: No results for agrifield {} of user {}; '
