@@ -38,14 +38,17 @@ def extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles):
     start, end  = common_period_dates(_r, _e)
     fstart, fend = common_period_dates(_rf, _ef)
 
+    dateIndexH = pd.date_range(start=start.date(), end=end.date(), freq='D')
     dateIndex = pd.date_range(start=start.date(), end=fend.date(), freq='D')
+
     data = {
         "effective_precipitation": [
             v[1] * EFFECTIVE_PRECIP_FACTOR
             for v in _r.items() if v[0] >= start and v[0] <= end
         ] + [
             v[1] * EFFECTIVE_PRECIP_FACTOR
-            for v in _rf.items() if v[0] >= fstart and v[0] < fend
+            for v in _rf.items() if v[0] >= fstart and v[0] <= fend
+                and v[0] not in dateIndexH
         ],
         "actual_net_irrigation": False, # Set as default False
         "crop_evapotranspiration":[
@@ -53,7 +56,8 @@ def extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles):
             if v[0] >= start and v[0] <= end
         ] + [
             v[1] * float(kc) for v in _ef.items()
-            if v[0] >= start and v[0] < fend
+            if v[0] >= start and v[0] <= fend
+                and v[0] not in dateIndexH
         ],
     }
     df = pd.DataFrame(data, index=dateIndex)
