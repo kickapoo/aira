@@ -106,7 +106,7 @@
                             {% endif %}
                                 <td align="left">{{ result.0 }}</td>
                                 <td align="left">{{ result.1 |floatformat:"2"}}</td>
-                                <td align="left">{{ result.2|floatformat:"2"}}</td>
+                                <td align="left">{{ result.2|floatformat:"0"}}</td>
                                 <td align="left"> {{ result.3|mul:100|floatformat:"1" }}</td>
                                 {% if result.4 %}
                                 <td align="left"> {% trans "YES" %} {{ result.5 }}</td>
