@@ -128,9 +128,8 @@ def execute_model(agrifield):
     a = dTimeseries['draintime_A']
     b = dTimeseries['draintime_B']
 
-    # 16 mar to 16 mart
-    theta_init = theta_fc * zr * zr_factor
-
+    theta_init = theta_fc
+    
     model_params = dict(
         theta_s=float(agrifield.get_thetaS),
         theta_fc=theta_fc,
