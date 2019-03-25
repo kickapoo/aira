@@ -202,8 +202,7 @@ def calculate_performance_chart(agrifield):
     zr_factor = 1000
     irr_eff = float(agrifield.get_efficiency)
 
-    # 16 mar to 16 mart
-    theta_init = theta_fc * zr * zr_factor
+    theta_init = theta_fc
 
     model_params = dict(
         theta_s=float(agrifield.get_thetaS),
