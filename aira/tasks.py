@@ -133,7 +133,7 @@ def execute_model(agrifield):
     b = dTimeseries['draintime_B']
 
     theta_init = theta_fc
-    
+
     model_params = dict(
         theta_s=float(agrifield.get_thetaS),
         theta_fc=theta_fc,
@@ -157,9 +157,13 @@ def execute_model(agrifield):
     results.last_irr_date = last_irrigation.time.date() if last_irrigation else None
     results.sd = dTimeseries['start'].date()  # Starting date of forecast data
     results.ed = dTimeseries['end'].date()   # Finish date of forecast  data
-    results.adv = any(df['advice'].tolist())
     results.sdh = f_start_date_daily
     results.edh = f_end_date_daily
+    results.adv = any([
+        row.advice
+        for date, row in df.iterrows()
+        if date >= pd.Timestamp(results.sdh)
+    ])
     results.ifinal = df.ix[-1, "ifinal"]
     results.ifinal_m3 = (results.ifinal / 1000) * area
     # Keep naming as its due to template rendering
