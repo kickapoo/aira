@@ -50,7 +50,7 @@ def extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles):
             for v in _rf.items() if v[0] >= fstart and v[0] <= fend
                 and v[0] not in dateIndexH
         ],
-        "actual_net_irrigation": False, # Set as default False
+        "actual_net_irrigation": 0,  # Zero is the default
         "crop_evapotranspiration":[
             v[1] * float(kc) for v in _e.items()
             if v[0] >= start and v[0] <= end
@@ -68,7 +68,15 @@ def extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles):
         try:
             date = log.time.date()
             row = df.loc[date]
-            df.at[date, "actual_net_irrigation"] = log.applied_water
+            if log.applied_water is None:
+                # When an irrigation event has been logged but we don't know how
+                # much, we assume we reached field capacity. At that point we use
+                # "True" instead of a number, which signals to
+                # swb.calculate_soil_water() to assume we irrigated with the recommended
+                # amount.
+                df.at[date, "actual_net_irrigation"] = True
+            else:
+                df.at[date, "actual_net_irrigation"] = log.applied_water
         except:
             # Insanity check, date does not exist in our original date
             pass
