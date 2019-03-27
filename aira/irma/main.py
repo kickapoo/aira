@@ -1,4 +1,6 @@
 from __future__ import division
+
+import datetime as dt
 import os
 import math
 from glob import glob
@@ -40,11 +42,24 @@ DRAINTIME_B_RASTER = os.path.join(
     'b.tif')
 
 
+def discard_files_older_than(files, adate):
+    result = []
+    adatestr = adate.isoformat()
+    for filename in files:
+        i = filename.find(str(adate.year))
+        if i < 0:
+            continue
+        filedate = filename[i : i + 10]
+        if filedate >= adatestr:
+            result.append(filename)
+    return result
+
+
 def load_meteodata_file_paths():
     """
         Load meteorological data paths from settings.AIRA_DATA_*
     """
-    # Daily
+    # Historical
     HRFiles = glob(
         os.path.join(settings.AIRA_DATA_HISTORICAL, 'daily_rain*.tif'))
     HEFiles = glob(
@@ -54,6 +69,15 @@ def load_meteodata_file_paths():
     FRFiles = glob(os.path.join(settings.AIRA_DATA_FORECAST, 'daily_rain*.tif'))
 
     FEFiles = glob(os.path.join(settings.AIRA_DATA_FORECAST, 'daily_evaporation*.tif'))
+
+    # Discard files older than the start of irrigation season
+    current_year = dt.date.today().year
+    start_of_season = dt.date(current_year, 3, 15)
+    HRFiles = discard_files_older_than(HRFiles, start_of_season)
+    HEFiles = discard_files_older_than(HEFiles, start_of_season)
+    FRFiles = discard_files_older_than(FRFiles, start_of_season)
+    FEFiles = discard_files_older_than(FEFiles, start_of_season)
+
     return HRFiles, HEFiles, FRFiles, FEFiles
 
 
