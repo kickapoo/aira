@@ -76,7 +76,7 @@ def extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles):
                 # amount.
                 df.at[date, "actual_net_irrigation"] = True
             else:
-                applied_water = float(log.applied_water / agrifield.area)
+                applied_water = float(log.applied_water / agrifield.area * 1000)
                 df.at[date, "actual_net_irrigation"] = applied_water
         except:
             # Insanity check, date does not exist in our original date
