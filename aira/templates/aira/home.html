@@ -114,8 +114,7 @@
                 {% trans "Since the last recorded irrigation" %} (<span class="text-warning">{{f.results.last_irr_date|date:"d/m/Y"}}</span>) {% trans "up to" %} <span class="text-warning">{{ f.results.edh|date:"d/m/Y" }}</span>, {% trans "there is need of" %}  <span class="text-success">{{ f.results.ifinal|floatformat:"2" }} mm ({{f.results.ifinal_m3 |floatformat:"2"}} m³) </span> {% trans "additional water" %}.
                     <br>
                 {% endif %}
-                {% trans "Based on the available information" %}, {% trans "from" %}
-                <span <class class="text-warning">{{ f.results.sd|date:"d/m/Y" }}</span> {% trans "to" %} <span <class class="text-warning">{{ f.results.ed|date:"d/m/Y" }}</span>, {% trans "irrigation should be applied according to the following table" %}:
+                {% trans "Based on the available information, irrigation should be applied according to the following table:" %}
                 <br><br>
                 <button onclick="togl('{{f.id}}')"class="btn btn-success btn-xs" id="show_results"> {% trans "Show / Hide Table" %}</button>
                 <div class="row" style="display:none" id="{{f.id}}">
@@ -149,7 +148,7 @@
             {% else %}
                     <img style="display:block;float:left;"src="{% static 'img/cool.png' %}" alt="" height="20" width="20">&nbsp;
                     <b>{% trans "Irrigation Advice" %}</b>: <br><br>
-                    {% trans "No need to irrigate from" %} <span class="text-warning">{{ f.results.sd|date:"d/m/Y" }}</span> {% trans "to" %}  <span class="text-warning">{{ f.results.ed|date:"d/m/Y" }}</span>.
+                    {% trans "No need to irrigate" %}
                 {% endif %}
                 </p><sub>
                 <div>
