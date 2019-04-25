@@ -211,6 +211,11 @@ def calculate_performance_chart(agrifield):
 
     theta_init = theta_fc
 
+    # We want the model to run ignoring the actual net irrigation, and instead assume
+    # that the actual irrigation equals recommended irrigation.
+    saved_actual_net_irrigation = dTimeseries["timeseries"]["actual_net_irrigation"]
+    dTimeseries["timeseries"]["actual_net_irrigation"] = True
+
     model_params = dict(
         theta_s=float(agrifield.get_thetaS),
         theta_fc=theta_fc,
@@ -227,6 +232,10 @@ def calculate_performance_chart(agrifield):
     dresults = calculate_soil_water(**model_params)
     df = dresults['timeseries']
     df['ifinal'] = df.apply(lambda x: x.recommended_net_irrigation / irr_eff, axis=1)
+
+    # We restore the actual net irrigation, which we had ignored for the moment,
+    # so that the chart can show it.
+    df["actual_net_irrigation"] = saved_actual_net_irrigation
 
     results.chart_dates = [date.date() for date, row in df.iterrows()]
     results.chart_ifinal = [
