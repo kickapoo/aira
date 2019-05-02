@@ -379,11 +379,11 @@ footer p {
               <li class="{% if  f.results.adv %} in {% else %} out {% endif %}">
                 <ul class="irrigate">
                     {% if f.results.adv %}
-                      {% for irr_date, values in f.results.adv_sorted  %}
+                      {% for irr_date, ks, ifinal, ifinal_m3 in f.results.adv_sorted  %}
                       <li class="empty">
                         {% trans 'The field' %} <a href="http://{{ site.domain }}/home/{{ owner }}/">{{ f.name }}</a> {% trans "needs to be irrigated with " %}
-                        <b>{{ values.0.0 |floatformat:"2" }} </b> mm ({{ values.0.1 |floatformat:"2" }} m³)
-                        {% trans 'at' %} <b>{{ irr_date |date:"d/m/Y H:00:s" }} </b>.
+                        <b>{{ ifinal |floatformat:"2" }} </b> mm ({{ ifinal_m3 |floatformat:"2" }} m³)
+                        {% trans 'at' %} <b>{{ irr_date |date:"d/m/Y" }}</b>.
                       </li>
                       {% endfor %}
                     {% else %}
