@@ -142,7 +142,7 @@ def execute_model(agrifield):
         p=float(agrifield.get_mad),
         draintime=round(a * zr ** b),
         theta_init=theta_init,
-        mif=1,
+        mif=agrifield.get_irrigation_optimizer,
         timeseries=dTimeseries['timeseries']
     )
 
@@ -227,7 +227,7 @@ def calculate_performance_chart(agrifield):
         p=float(agrifield.get_mad),
         draintime=round(a * zr ** b),
         theta_init=theta_init,
-        mif=1,
+        mif=agrifield.get_irrigation_optimizer,
         timeseries=dTimeseries['timeseries']
     )
 
