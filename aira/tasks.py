@@ -208,6 +208,8 @@ def calculate_performance_chart(agrifield):
           float(agrifield.get_root_depth_max)) / 2
     zr_factor = 1000
     irr_eff = float(agrifield.get_efficiency)
+    a = dTimeseries['draintime_A']
+    b = dTimeseries['draintime_B']
 
     theta_init = theta_fc
 
@@ -223,7 +225,7 @@ def calculate_performance_chart(agrifield):
         zr=zr,
         zr_factor=zr_factor,
         p=float(agrifield.get_mad),
-        draintime=1,
+        draintime=round(a * zr ** b),
         theta_init=theta_init,
         mif=1,
         timeseries=dTimeseries['timeseries']
