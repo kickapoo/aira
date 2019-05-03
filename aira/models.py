@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime as dt
 from collections import OrderedDict
 
 from django.db import models
@@ -105,7 +106,14 @@ class CropType(models.Model):
     root_depth_max = models.FloatField()
     root_depth_min = models.FloatField()
     max_allow_depletion = models.DecimalField(max_digits=6, decimal_places=2)
-    kc = models.FloatField()
+    kc_init = models.FloatField()
+    kc_mid = models.FloatField()
+    kc_end = models.FloatField()
+    days_kc_init = models.PositiveSmallIntegerField()
+    days_kc_dev = models.PositiveSmallIntegerField()
+    days_kc_mid = models.PositiveSmallIntegerField()
+    days_kc_late = models.PositiveSmallIntegerField()
+    planting_date = models.DateField()
     fek_category = models.IntegerField()
 
     class Meta:
@@ -114,6 +122,14 @@ class CropType(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
+
+    @property
+    def most_recent_planting_date(self):
+        today = dt.date.today()
+        result = self.planting_date.replace(year=today.year)
+        if result <= today:
+            return result
+        return result.replace(year=today.year - 1)
 
 
 class IrrigationType(models.Model):
@@ -233,15 +249,6 @@ class Agrifield(models.Model):
             return self.custom_max_allow_depletion
         else:
             return self.crop_type.max_allow_depletion
-
-    @property
-    def get_kc(self):
-        if self.use_custom_parameters:
-            if self.custom_kc in [None, '']:
-                return self.crop_type.kc
-            return self.custom_kc
-        else:
-            return self.crop_type.kc
 
     @property
     def get_root_depth_max(self):

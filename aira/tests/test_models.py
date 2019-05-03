@@ -1,3 +1,9 @@
+import datetime as dt
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
 from django.contrib.auth.models import User
 from django.http.response import Http404
 from django.test import TestCase
@@ -45,7 +51,6 @@ class AgrifieldTestCase(TestCase):
             root_depth_max=0.7,
             root_depth_min=1.2,
             max_allow_depletion=0.5,
-            kc=0.7,
             fek_category=4,
         )
         self.irrigation_type = mommy.make(
@@ -108,3 +113,24 @@ class AgrifieldTestCase(TestCase):
 
     def test_agrifield_use_custom_parameters_default_value(self):
         self.assertFalse(self.agrifield.use_custom_parameters)
+
+
+class CropTypeMostRecentPlantingDateTestCase(TestCase):
+    def setUp(self):
+        self.crop_type = mommy.make(CropType, planting_date=dt.datetime(1971, 3, 15))
+
+    @mock.patch("aira.models.dt.date")
+    def test_result_when_it_has_appeared_this_year(self, m):
+        m.today.return_value = dt.datetime(2019, 3, 20)
+        m.side_effect = lambda *args, **kwargs: dt.date(*args, **kwargs)
+        self.assertEqual(
+            self.crop_type.most_recent_planting_date, dt.datetime(2019, 3, 15)
+        )
+
+    @mock.patch("aira.models.dt.date")
+    def test_result_when_it_has_not_appeared_this_year_yet(self, m):
+        m.today.return_value = dt.datetime(2019, 3, 10)
+        m.side_effect = lambda *args, **kwargs: dt.date(*args, **kwargs)
+        self.assertEqual(
+            self.crop_type.most_recent_planting_date, dt.datetime(2018, 3, 15)
+        )

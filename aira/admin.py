@@ -25,7 +25,9 @@ class IrrigationLogAdmin(admin.ModelAdmin):
 
 
 class CropTypeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'fek_category', 'max_allow_depletion', 'kc')
+    list_display = (
+        'name', 'fek_category', 'max_allow_depletion', 'kc_init', 'kc_mid', 'kc_end'
+    )
     search_fields = ('name', 'fek_category')
     list_filter = ('fek_category',)
 

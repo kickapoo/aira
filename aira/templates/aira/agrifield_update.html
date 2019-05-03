@@ -60,8 +60,6 @@
               </fieldset>
               <fieldset class="well well-sm">
                   <legend>{% trans "Crop" %}</legend>
-                      {% bootstrap_field form.custom_kc %}
-                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.kc }}</b></span></sup>
                       {% bootstrap_field form.custom_max_allow_depletion %}
                       <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.mad }}</b></span></sup>
                       {% bootstrap_field form.custom_root_depth_max %}
@@ -163,8 +161,6 @@ $(document).ready(function(){
      $('#id_area').attr('placeholder',"m²");
      $('#id_custom_irrigation_optimizer').attr('placeholder','0.10 - 1.00');
       $('#id_custom_irrigation_optimizer').attr("step", 0.01);
-     $('#id_custom_kc').attr('placeholder','0.10 - 1.50');
-      $('#id_custom_kc').attr("step", 0.01);
      $('#id_custom_root_depth_max').attr('placeholder','0.2 - 4.0 m');
       $('#id_custom_root_depth_max').attr("step", 0.1);
      $('#id_custom_root_depth_min').attr('placeholder','0.1 - 2.0 m');

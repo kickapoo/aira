@@ -35,7 +35,6 @@
           </div>
           <div class="panel-body">
             <b>{% trans "Estimated root depth (max)" %}:</b> {{ fpars.rd }} m <br>
-            <b>{% trans "Kc" %}:</b> {{ fpars.kc }}<br>
             <b>{% trans "Maximum Allowable Depletion" %}:</b> {{ fpars.p|mul:100|floatformat:"1" }}%<br>
             <b>{% trans "Field Capacity" %}:</b> {{ fpars.fc|mul:100|floatformat:"1"}}%<br>
             <b>{% trans "Soil moisture at saturation" %} (Θ<sub>s</sub>):</b> {{ fpars.theta_s |mul:100|floatformat:"1" }}%<br>

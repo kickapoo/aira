@@ -112,7 +112,6 @@ def get_default_db_value(afield_obj):
     """
        doc str is missing
     """
-    kc = afield_obj.crop_type.kc
     irr_eff = afield_obj.irrigation_type.efficiency
     mad = afield_obj.crop_type.max_allow_depletion
     rd_max = afield_obj.crop_type.root_depth_max
@@ -135,7 +134,6 @@ def get_parameters(afield_obj):
     wp = afield_obj.get_wilting_point
     rd = (float(afield_obj.get_root_depth_min) +
           float(afield_obj.get_root_depth_max)) / 2
-    kc = float(afield_obj.get_kc)
     # FAO table 22 , page 163
     p = float(afield_obj.get_mad)
     peff = 0.8  # Effective rainfall coeff 0.8 * Precip

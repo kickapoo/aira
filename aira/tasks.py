@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from django.core.cache import cache
 
-from swb import calculate_soil_water
+from swb import calculate_crop_evapotranspiration, calculate_soil_water
 
 import pandas as pd
 
@@ -23,7 +23,7 @@ def extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles):
         convert to pd.DataFrame.
     """
     EFFECTIVE_PRECIP_FACTOR = 0.8
-    lat, long, kc = agrifield.latitude, agrifield.longitude, agrifield.get_kc
+    lat, long = agrifield.latitude, agrifield.longitude
 
     _r = rasters2point(lat, long, HRFiles)
     _e = rasters2point(lat, long, HEFiles)
@@ -45,15 +45,26 @@ def extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles):
             if v[0] >= fstart and v[0] <= fend and v[0] not in dateIndexH
         ],
         "actual_net_irrigation": 0,  # Zero is the default
-        "crop_evapotranspiration": [
-            v[1] * float(kc) for v in _e.items()
-            if v[0] >= start and v[0] <= end
+        "ref_evapotranspiration": [
+            v[1] for v in _e.items() if v[0] >= start and v[0] <= end
         ] + [
-            v[1] * float(kc) for v in _ef.items()
+            v[1] for v in _ef.items()
             if v[0] >= start and v[0] <= fend and v[0] not in dateIndexH
         ],
     }
     df = pd.DataFrame(data, index=dateIndex)
+    calculate_crop_evapotranspiration(
+        timeseries=df,
+        planting_date=agrifield.crop_type.most_recent_planting_date,
+        kc_unplanted=agrifield.crop_type.kc_init,
+        kc_ini=agrifield.crop_type.kc_init,
+        kc_mid=agrifield.crop_type.kc_mid,
+        kc_end=agrifield.crop_type.kc_end,
+        init=agrifield.crop_type.days_kc_init,
+        dev=agrifield.crop_type.days_kc_dev,
+        mid=agrifield.crop_type.days_kc_mid,
+        late=agrifield.crop_type.days_kc_late,
+    )
 
     # Update dates with irrigations events
     logs = agrifield.irrigationlog_set.filter(time__range=(start, end))
