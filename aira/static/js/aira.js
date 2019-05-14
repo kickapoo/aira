@@ -124,7 +124,7 @@ aira.toogleIndexMapsUI = (function namespace() {
         switch (timestamp) {
             case 'daily':
                 meteoVar = $('#dailyMeteoVar').val();
-                url = 'http://arta.irrigation-management.eu/mapserver/historical/';
+                url = 'http://arta.interregir2ma.eu/mapserver/historical/';
                 dateFormat = 'YYYY-MM-DD';
                 if (moment(date, 'YYYY-MM', true).isValid()) {
                     date = window.keepLastDailyValue;
@@ -133,7 +133,7 @@ aira.toogleIndexMapsUI = (function namespace() {
                 break;
             case 'monthly':
                 meteoVar = $('#monthlyMeteoVar').val();
-                url = 'http://arta.irrigation-management.eu/mapserver/historical/monthly/';
+                url = 'http://arta.interregir2ma.eu/mapserver/historical/monthly/';
                 dateFormat = 'YYYY-MM';
                 createRasterMap(moment(date, dateFormat).format(dateFormat), meteoVar, url, dateFormat, timestamp);
                 break;
@@ -332,14 +332,14 @@ aira.toogleIndexMapsUI = (function namespace() {
         if (timestamp === 'daily') {
             createRasterMap($('#next').val(),
                             $('#dailyMeteoVar').val(),
-                            'http://arta.irrigation-management.eu/mapserver/historical/',
+                            'http://arta.interregir2ma.eu/mapserver/historical/',
                             'YYYY-MM-DD',
                             'daily');
         }
         if (timestamp === 'monthly') {
             createRasterMap($('#next').val(),
                             $('#monthlyMeteoVar').val(),
-                            'http://arta.irrigation-management.eu/mapserver/historical/monthly',
+                            'http://arta.interregir2ma.eu/mapserver/historical/monthly',
                             'YYYY-MM',
                             'monthly');
         }
@@ -350,14 +350,14 @@ aira.toogleIndexMapsUI = (function namespace() {
         if (timestamp === 'daily') {
             createRasterMap($('#previous').val(),
                             $('#dailyMeteoVar').val(),
-                            'http://arta.irrigation-management.eu/mapserver/historical/',
+                            'http://arta.interregir2ma.eu/mapserver/historical/',
                             'YYYY-MM-DD',
                             'daily');
         }
         if (timestamp === 'monthly') {
             createRasterMap($('#previous').val(),
                             $('#monthlyMeteoVar').val(),
-                            'http://arta.irrigation-management.eu/mapserver/historical/monthly',
+                            'http://arta.interregir2ma.eu/mapserver/historical/monthly',
                             'YYYY-MM',
                             'monthly');
         }
