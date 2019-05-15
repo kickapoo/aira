@@ -54,7 +54,7 @@ class Command(BaseCommand):
             f.save()
             l, created = IrrigationLog.objects.get_or_create(
                 agrifield=f,
-                time="2015-02-15 00:00",
+                time="2015-02-15 00:00Z",
                 applied_water=23.00,
             )
             l.save()
@@ -87,7 +87,7 @@ class Command(BaseCommand):
             f.save()
             l, created = IrrigationLog.objects.get_or_create(
                 agrifield=f,
-                time="2014-02-15 00:00",
+                time="2014-02-15 00:00Z",
                 applied_water=23.00,
             )
             l.save()
