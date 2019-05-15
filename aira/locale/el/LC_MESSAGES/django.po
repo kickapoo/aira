@@ -256,8 +256,6 @@ msgid "Date"
 msgstr "Ημερομηνία"
 
 #: aira/templates/aira/advice.html:88
-#, fuzzy
-#| msgid "Effective precipitation"
 msgid "Effective Precipitation"
 msgstr "Ενεργός βροχόπτωση"
 
