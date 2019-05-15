@@ -155,7 +155,7 @@ class CreateProfile(CreateView):
     form_class = ProfileForm
     success_url = "/home"
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=None):
         form = super(CreateProfile, self).get_form(form_class)
         if self.request.user in form.fields['supervisor'].queryset:
             form.fields['supervisor'].queryset = \
@@ -173,7 +173,7 @@ class UpdateProfile(UpdateView):
     form_class = ProfileForm
     success_url = "/home"
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=None):
         form = super(UpdateProfile, self).get_form(form_class)
         if self.request.user in form.fields['supervisor'].queryset:
             form.fields['supervisor'].queryset = \

@@ -1,7 +1,7 @@
-Django>=1.8.19,<1.9
+Django>=1.11,<2
 pthelma>=0.10.6,<2
 Jinja2>=2.6,<3
-django-bootstrap3>=5,<6
+django-bootstrap3>=11,<12
 django-registration-redux>=1.1,<2
 django-simple-captcha>0.4,<1
 django-mathfilters==0.3.0,<2

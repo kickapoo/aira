@@ -8,7 +8,6 @@ PROJECT_ROOT = os.path.abspath(PROJECT_PATH)
 
 SECRET_KEY = os.urandom(24)
 DEBUG = False
-TEMPLATE_DEBUG = DEBUG
 SITE_ID = 1
 
 
@@ -16,6 +15,7 @@ ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
+    'registration',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -25,7 +25,6 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.flatpages',
     'aira',
-    'registration',
     'bootstrap3',
     'mathfilters',
     'captcha',
@@ -77,11 +76,11 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 "django.contrib.auth.context_processors.auth",
-                "django.core.context_processors.debug",
-                "django.core.context_processors.i18n",
-                "django.core.context_processors.media",
-                "django.core.context_processors.static",
-                "django.core.context_processors.tz",
+                "django.template.context_processors.debug",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "aira.context_processors.map",
             ]

@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 
 
@@ -11,8 +11,7 @@ from aira.views import (IndexPageView, HomePageView, AdvicePageView,
                         ConversionTools, IrrigationPerformance,
                         performance_csv, remove_supervised_user_from_user_list)
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^$', IndexPageView.as_view(), name='welcome'),
     # Home
 
@@ -69,4 +68,4 @@ urlpatterns = patterns(
     url(r'^supervised_user/remove/$',
         login_required(remove_supervised_user_from_user_list),
         name="supervised_user_remove"),
-)
+]
