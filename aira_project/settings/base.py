@@ -16,8 +16,6 @@ ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
-    'aira',
-    'registration',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -26,6 +24,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'aira',
+    'registration',
     'bootstrap3',
     'mathfilters',
     'captcha',
