@@ -7,8 +7,6 @@ class DemoUserTest(TestCase):
 
     def setUp(self):
         self.out = StringIO()
-        # Need to populate coeffs before testing demo_user
-        call_command("loaddata", "en.json")
         call_command("demo_user", stdout=self.out)
 
     def test_command_output(self):

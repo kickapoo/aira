@@ -5,7 +5,7 @@ Crop types and irrigation types had been created by fixtures, which were a pain 
 creating problems, so we have abolished them.
 
 However, new installations (including dev installations and unit testing), need these
-crop types and irrigation types to be created, so we create them in this fixture, only
+crop types and irrigation types to be created, so we create them in this migration, only
 if they do not already exist.
 
 At the same time, we remove crop types that had been created by the fixtures and which
