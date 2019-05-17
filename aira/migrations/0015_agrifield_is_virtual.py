@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='agrifield',
             name='is_virtual',
-            field=models.NullBooleanField(default=None, choices=[(True, 'Yes'), (False, 'No'), (None, b'-')]),
+            field=models.NullBooleanField(default=None, choices=[(True, 'Yes'), (False, 'No'), (None, '-')]),
             preserve_default=True,
         ),
     ]

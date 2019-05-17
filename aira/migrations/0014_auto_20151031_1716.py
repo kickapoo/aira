@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='profile',
             name='notification',
-            field=models.CharField(default=b'', max_length=3, blank=True, choices=[(b'D', 'Day'), (b'2D', '2 Days'), (b'3D', '3 Days'), (b'4D', '4 Days'), (b'5D', '5 Days'), (b'7D', 'Week'), (b'10D', '10 Day'), (b'30D', 'Month')]),
+            field=models.CharField(default='', max_length=3, blank=True, choices=[('D', 'Day'), ('2D', '2 Days'), ('3D', '3 Days'), ('4D', '4 Days'), ('5D', '5 Days'), ('7D', 'Week'), ('10D', '10 Day'), ('30D', 'Month')]),
             preserve_default=True,
         ),
     ]

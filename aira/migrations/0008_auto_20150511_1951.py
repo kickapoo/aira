@@ -16,12 +16,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='profile',
             name='supervisor',
-            field=models.ForeignKey(related_name=b'supervisor', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(related_name='supervisor', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='profile',
             name='notification',
-            field=models.CharField(max_length=2, null=True, choices=[(b'D', 'Day'), (b'2D', '2 Days'), (b'3D', '3 Days'), (b'4D', '4 Days'), (b'5D', '5 Days'), (b'7D', 'Week'), (b'10D', '10 Day'), (b'30D', 'Month')]),
+            field=models.CharField(max_length=2, null=True, choices=[('D', 'Day'), ('2D', '2 Days'), ('3D', '3 Days'), ('4D', '4 Days'), ('5D', '5 Days'), ('7D', 'Week'), ('10D', '10 Day'), ('30D', 'Month')]),
         ),
     ]

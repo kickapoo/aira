@@ -16,11 +16,11 @@ class Migration(migrations.Migration):
             name='Agrifield',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(default=b'i.e. MyField1', max_length=255)),
+                ('name', models.CharField(default='i.e. MyField1', max_length=255)),
                 ('latitude', models.FloatField()),
                 ('longitude', models.FloatField()),
                 ('area', models.FloatField(null=True, blank=True)),
-                ('irrigation_optimizer', models.FloatField(default=1.0, choices=[(0.5, b'IRT (50% Inet)'), (0.75, b'IRT (75% Inet)'), (1.0, b'IRT (100% Inet)')])),
+                ('irrigation_optimizer', models.FloatField(default=1.0, choices=[(0.5, 'IRT (50% Inet)'), (0.75, 'IRT (75% Inet)'), (1.0, 'IRT (100% Inet)')])),
                 ('use_custom_parameters', models.BooleanField(default=False)),
                 ('custom_kc', models.FloatField(null=True, blank=True)),
                 ('custom_root_depth_max', models.FloatField(null=True, blank=True)),
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('time', models.DateTimeField()),
                 ('applied_water', models.IntegerField()),
-                ('agrifield', models.ForeignKey(to='aira.Agrifield')),
+                ('agrifield', models.ForeignKey(to='aira.Agrifield', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('time',),
@@ -87,7 +87,7 @@ class Migration(migrations.Migration):
                 ('first_name', models.CharField(max_length=255)),
                 ('last_name', models.CharField(max_length=255)),
                 ('address', models.CharField(max_length=255, blank=True)),
-                ('farmer', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('farmer', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'Profiles',
@@ -97,19 +97,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='agrifield',
             name='crop_type',
-            field=models.ForeignKey(to='aira.CropType'),
+            field=models.ForeignKey(to='aira.CropType', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='agrifield',
             name='irrigation_type',
-            field=models.ForeignKey(to='aira.IrrigationType'),
+            field=models.ForeignKey(to='aira.IrrigationType', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='agrifield',
             name='owner',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

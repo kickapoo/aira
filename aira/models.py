@@ -54,7 +54,7 @@ EMAIL_LANGUAGE_CHOICES = (
 
 
 class Profile(models.Model):
-    farmer = models.OneToOneField(User)
+    farmer = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     address = models.CharField(max_length=255, blank=True)
@@ -73,6 +73,7 @@ class Profile(models.Model):
         related_name='supervisor',
         null=True,
         blank=True,
+        on_delete=models.CASCADE,
     )
     supervision_question = models.BooleanField(
         choices=YES_OR_NO,
@@ -145,7 +146,7 @@ class IrrigationType(models.Model):
 
 
 class Agrifield(models.Model):
-    owner = models.ForeignKey(User)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255,
                             default='i.e. MyField1')
     is_virtual = models.NullBooleanField(choices=YES_OR_NO_OR_NULL, null=True,
@@ -154,8 +155,8 @@ class Agrifield(models.Model):
     # Keeping their long names is more clear for developers/users
     latitude = models.FloatField()
     longitude = models.FloatField()
-    crop_type = models.ForeignKey(CropType)
-    irrigation_type = models.ForeignKey(IrrigationType)
+    crop_type = models.ForeignKey(CropType, on_delete=models.CASCADE)
+    irrigation_type = models.ForeignKey(IrrigationType, on_delete=models.CASCADE)
     area = models.FloatField()
     irrigation_optimizer = models.FloatField(default=0.5)
     use_custom_parameters = models.BooleanField(default=False)
@@ -312,7 +313,7 @@ class Agrifield(models.Model):
 
 
 class IrrigationLog(models.Model):
-    agrifield = models.ForeignKey(Agrifield)
+    agrifield = models.ForeignKey(Agrifield, on_delete=models.CASCADE)
     time = models.DateTimeField()
     applied_water = models.FloatField(null=True, blank=True,
                                       validators=[
