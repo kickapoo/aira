@@ -7,12 +7,12 @@ SECRET_KEY = os.urandom(24)
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(PROJECT_ROOT, 'aira.db'),
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'aira',
         'USER': 'aira',
-        'PASSWORD': '',
-        'HOST': '',  # Set to empty string for localhost.
-        'PORT': '',  # Set to empty string for default.
+        'PASSWORD': 'topsecret',
+        'HOST': 'localhost',
+        'PORT': 5432,
         'CONN_MAX_AGE': 600,
     }
 }
