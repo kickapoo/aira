@@ -28,7 +28,6 @@ INSTALLED_APPS = [
     'bootstrap3',
     'mathfilters',
     'captcha',
-    'kombu.transport.django',
 ]
 
 
@@ -92,8 +91,6 @@ ACCOUNT_ACTIVATION_DAYS = 3
 LOGIN_REDIRECT_URL = "/home"
 
 # Celery
-BROKER_URL = 'django://'
-
 AIRA_DATA_HISTORICAL = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                     "../../../rasters_historical"))
 
