@@ -35,7 +35,7 @@ install:
  - cp aira_project/settings/travis.py aira_project/settings/local.py
 
 script:
- - coverage run --include="./*" --omit="*/tests/*","*/tests.py" manage.py test -v2
+ - coverage run --include="./*" --omit="*/tests/*","*/tests.py","*/migrations/*","./aira_project/*" manage.py test -v2
 
 after_success:
  - codecov
