@@ -10,9 +10,9 @@ from django.core.cache import cache
 from django.utils.translation import ugettext_lazy as _
 
 
+from hspatial import (extract_point_from_raster,
+                      extract_point_timeseries_from_rasters)
 from osgeo import gdal, ogr, osr
-from pthelma.spatial import (extract_point_from_raster,
-                             extract_point_timeseries_from_rasters)
 
 
 # Raster Static Files with afield_obj parameters values
@@ -84,7 +84,7 @@ def load_meteodata_file_paths():
 def rasters2point(lat, long, files):
     """
         Convert a series of raster files to single
-        point pthelma.timeseries obj
+        point timeseries obj
     """
     point = ogr.Geometry(ogr.wkbPoint)
     sr = osr.SpatialReference()
@@ -97,7 +97,7 @@ def rasters2point(lat, long, files):
 def raster2point(lat, long, file):
     """
         Convert a single raster file to single
-        point pthelma.timeseries obj
+        point timeseries obj
     """
     point = ogr.Geometry(ogr.wkbPoint)
     sr = osr.SpatialReference()

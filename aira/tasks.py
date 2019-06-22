@@ -98,7 +98,7 @@ def extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles):
 
 def execute_model(agrifield):
     """
-    Run pthelma.SoilWaterBalance model on agrifield
+    Run SoilWaterBalance model on agrifield
     """
 
     results = Results()
