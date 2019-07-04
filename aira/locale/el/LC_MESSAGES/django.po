@@ -552,7 +552,7 @@ msgstr ""
 "Δεν έχετε καταχωρήσει κάποια άρδευση. Ενημερώστε το ημερολόγιο αρδεύσεων"
 
 #: aira/templates/aira/home.html:100 aira/templates/aira/home.html:107
-msgid "Irrigation Advice is estimated using system's default datasets"
+msgid "Irrigation recommendation is estimated using system's default datasets"
 msgstr "Η συμβουλή άρδευσης βασίζεται στο προκαθορισμένο σύνολο δεδομένων"
 
 #: aira/templates/aira/home.html:106
@@ -564,7 +564,7 @@ msgstr ""
 "συστήματος. Ενημερώστε το ημερολόγιο αρδεύσεων"
 
 #: aira/templates/aira/home.html:112 aira/templates/aira/home.html:147
-msgid "Irrigation Advice"
+msgid "Irrigation recommendation"
 msgstr "Συμβουλή άρδευσης"
 
 #: aira/templates/aira/home.html:113

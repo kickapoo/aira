@@ -97,19 +97,19 @@
                 <div class="alert alert-warning">
                 <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i></span>  &nbsp;
                 {% trans "You haven't entered any irrigation event. Add  your irrigation log" %} <a href="{% url 'create_irrlog' f.id %}">{% trans "here" %}</a>.<br>
-                {% trans "Irrigation Advice is estimated using system's default datasets" %}.
+                {% trans "Irrigation recommendation is estimated using system's default datasets" %}.
                 </div>
             {% endif %}
             {% if f.results.irrigation_log_outside_time_period %}
                 <div class="alert alert-warning">
                 <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i></span>  &nbsp;
                 {% trans "Your latest irrigation event is outside our dataset period. Update your irrigation log" %} <a href="{% url 'create_irrlog' f.id %}">{% trans "here" %}</a>.<br>
-                {% trans "Irrigation Advice is estimated using system's default datasets" %}.
+                {% trans "Irrigation recommendation is estimated using system's default datasets" %}.
                 </div>
             {% endif %}
             {% if f.results.adv %}
                 <img style="display:block;float:left;"src="{% static 'img/warning.png' %}" alt="" height="20" width="20">&nbsp;
-                <b>{% trans "Irrigation Advice" %}</b>: <br><br>
+                <b>{% trans "Irrigation recommendation" %}</b><br><br>
                 {% trans "Apply one of these alternatives:" %}
                 <br><br>
                 <div class="row" id="{{f.id}}">
@@ -144,7 +144,7 @@
                 {% trans "For more options, refer to the irrigation report" %}.
             {% else %}
                     <img style="display:block;float:left;"src="{% static 'img/cool.png' %}" alt="" height="20" width="20">&nbsp;
-                    <b>{% trans "Irrigation Advice" %}</b>: <br><br>
+                    <b>{% trans "Irrigation recommendation" %}</b><br><br>
                     {% trans "No need to irrigate" %}
                 {% endif %}
                 </p><sub>

@@ -9,7 +9,7 @@ Aira: An Irrigation Advisor
 [codecov]: https://codecov.io/gh/openmeteo/aira
 
 Aira is a web application that calculates soil water balance in order
-to provide the users with irrigation advice.
+to provide the users with irrigation recommendation.
 
 How to run a development instance:
 
