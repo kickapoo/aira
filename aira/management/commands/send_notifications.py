@@ -18,7 +18,7 @@ from aira.models import notification_options, Profile
 
 
 class Command(BaseCommand):
-    help = "Emails irrigation advice notifications to users."
+    help = "Emails irrigation recommendation notifications to users."
 
     def handle(self, *args, **options):
         self.template = get_template('aira/email_notification.html')
