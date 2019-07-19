@@ -176,7 +176,7 @@ def execute_model(agrifield):
         for date, row in df.iterrows()
         if date >= pd.Timestamp(results.sdh)
     ])
-    results.ifinal = df.loc[-1, "ifinal"]
+    results.ifinal = df.ix[-1, "ifinal"]
     results.ifinal_m3 = (results.ifinal / 1000) * area
     # Keep naming as its due to template rendering
     results.adv_sorted = [
