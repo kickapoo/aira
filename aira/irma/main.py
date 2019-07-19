@@ -182,10 +182,10 @@ def common_period_dates(precip, evap):
         precipitation and evaporation
         pthlema.timeseries
     """
-    pstart = precip.bounding_dates()[0]
-    estart = evap.bounding_dates()[0]
-    pend = precip.bounding_dates()[1]
-    eend = evap.bounding_dates()[1]
+    pstart = precip.data.index[0]
+    estart = evap.data.index[0]
+    pend = precip.data.index[-1]
+    eend = evap.data.index[-1]
 
     return max(pstart, estart), min(pend, eend)
 

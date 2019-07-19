@@ -35,22 +35,24 @@ def extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles):
     dateIndexH = pd.date_range(start=start.date(), end=end.date(), freq='D')
     dateIndex = pd.date_range(start=start.date(), end=fend.date(), freq='D')
 
+    _rfdatapart = _rf.data.loc[fstart:fend]
+    _efdatapart = _ef.data.loc[fstart:fend]
     data = {
-        "effective_precipitation": [
-            v[1] * EFFECTIVE_PRECIP_FACTOR
-            for v in _r.items() if v[0] >= start and v[0] <= end
-        ] + [
-            v[1] * EFFECTIVE_PRECIP_FACTOR
-            for v in _rf.items()
-            if v[0] >= fstart and v[0] <= fend and v[0] not in dateIndexH
-        ],
+        "effective_precipitation": (
+            (_r.data.loc[start:end, "value"] * EFFECTIVE_PRECIP_FACTOR).tolist()
+            + (
+                _rfdatapart[~_rfdatapart.index.isin(dateIndexH)]["value"]
+                * EFFECTIVE_PRECIP_FACTOR
+            ).tolist()
+        ),
         "actual_net_irrigation": 0,  # Zero is the default
-        "ref_evapotranspiration": [
-            v[1] for v in _e.items() if v[0] >= start and v[0] <= end
-        ] + [
-            v[1] for v in _ef.items()
-            if v[0] >= start and v[0] <= fend and v[0] not in dateIndexH
-        ],
+        "ref_evapotranspiration": (
+            (_e.data.loc[start:end, "value"] * EFFECTIVE_PRECIP_FACTOR).tolist()
+            + (
+                _efdatapart[~_efdatapart.index.isin(dateIndexH)]["value"]
+                * EFFECTIVE_PRECIP_FACTOR
+            ).tolist()
+        ),
     }
     df = pd.DataFrame(data, index=dateIndex)
     calculate_crop_evapotranspiration(
@@ -174,7 +176,7 @@ def execute_model(agrifield):
         for date, row in df.iterrows()
         if date >= pd.Timestamp(results.sdh)
     ])
-    results.ifinal = df.ix[-1, "ifinal"]
+    results.ifinal = df.loc[-1, "ifinal"]
     results.ifinal_m3 = (results.ifinal / 1000) * area
     # Keep naming as its due to template rendering
     results.adv_sorted = [
