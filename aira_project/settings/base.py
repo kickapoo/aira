@@ -90,7 +90,6 @@ TEMPLATES = [
 ACCOUNT_ACTIVATION_DAYS = 3
 LOGIN_REDIRECT_URL = "/home"
 
-# Celery
 AIRA_DATA_HISTORICAL = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                     "../../../rasters_historical"))
 
@@ -102,3 +101,6 @@ AIRA_COEFFS_RASTERS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)
 
 AIRA_DRAINTIME_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                               "../../../draintime"))
+
+CELERY_TASK_SERIALIZER = "pickle"
+CELERY_ACCEPT_CONTENT = ["pickle"]
