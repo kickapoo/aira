@@ -8,7 +8,6 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.core.management.base import BaseCommand
-from django.template import Context
 from django.template.loader import get_template, render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
@@ -44,7 +43,7 @@ class Command(BaseCommand):
             return False
 
     def get_email_context(self, agrifields, user, owner):
-        context = Context()
+        context = {}
         for f in agrifields:
             f.results = model_results(f)
         if agrifields[0].results is None:
@@ -73,7 +72,7 @@ class Command(BaseCommand):
         if context is None:
             return
         msg_html = render_to_string('aira/email_notification.html', context)
-        send_mail(_("Irrigation status for ") + unicode(owner),
+        send_mail(_("Irrigation status for ") + str(owner),
                   '',
                   settings.DEFAULT_FROM_EMAIL,
                   [user.email, ],
