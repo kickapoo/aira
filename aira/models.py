@@ -87,7 +87,7 @@ class Profile(models.Model):
         "Get users profiles that have set current user (farmer) as supervisor"
         return Profile.objects.filter(supervisor=self.farmer)
 
-    def __unicode__(self):
+    def __str__(self):
         return u"UserProfile: {}".format(self.farmer)
 
 
@@ -121,8 +121,8 @@ class CropType(models.Model):
         ordering = ('name',)
         verbose_name_plural = 'Crop Types'
 
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return str(self.name)
 
     @property
     def most_recent_planting_date(self):
@@ -141,8 +141,8 @@ class IrrigationType(models.Model):
         ordering = ('name',)
         verbose_name_plural = 'Irrigation Types'
 
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return str(self.name)
 
 
 class Agrifield(models.Model):
@@ -330,8 +330,8 @@ class IrrigationLog(models.Model):
         ordering = ('-time',)
         verbose_name_plural = 'Irrigation Logs'
 
-    def __unicode__(self):
-        return unicode(self.time)
+    def __str__(self):
+        return str(self.time)
 
     def save(self, *args, **kwargs):
         super(IrrigationLog, self).save(*args, **kwargs)
