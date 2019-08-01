@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import User
-from aira.models import (Profile, Agrifield, IrrigationLog,
-                         CropType, IrrigationType)
+from aira.models import Profile, Agrifield, IrrigationLog, CropType, IrrigationType
 
 
 class Command(BaseCommand):
@@ -13,10 +12,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             demo, created = User.objects.get_or_create(
-                                username="demo",
-                                email="demo@aira.com"
-                            )
-            demo.set_password('demo')
+                username="demo", email="demo@aira.com"
+            )
+            demo.set_password("demo")
             demo.is_active = True
             demo.save()
             demo.profile.first_name = "Aira Demo"
@@ -53,9 +51,7 @@ class Command(BaseCommand):
             )
             f.save()
             l, created = IrrigationLog.objects.get_or_create(
-                agrifield=f,
-                time="2015-02-15 00:00Z",
-                applied_water=23.00,
+                agrifield=f, time="2015-02-15 00:00Z", applied_water=23.00
             )
             l.save()
 
@@ -83,15 +79,13 @@ class Command(BaseCommand):
                 irrigation_type=drip,
                 area=10000.00,
                 use_custom_parameters=False,
-             )
+            )
             f.save()
             l, created = IrrigationLog.objects.get_or_create(
-                agrifield=f,
-                time="2014-02-15 00:00Z",
-                applied_water=23.00,
+                agrifield=f, time="2014-02-15 00:00Z", applied_water=23.00
             )
             l.save()
-            self.stdout.write('Aira Demo user import: Success')
+            self.stdout.write("Aira Demo user import: Success")
         except Exception as e:
             print(e)
             raise CommandError("Error during importing Demo user in database")

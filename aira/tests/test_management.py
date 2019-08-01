@@ -5,7 +5,6 @@ from django.test import TestCase
 
 
 class DemoUserTest(TestCase):
-
     def setUp(self):
         self.out = StringIO()
         call_command("demo_user", stdout=self.out)

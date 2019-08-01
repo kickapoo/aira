@@ -1,14 +1,19 @@
 from django.contrib import admin
-from .models import (Agrifield, Profile, IrrigationLog,
-                     CropType, IrrigationType)
+from .models import Agrifield, Profile, IrrigationLog, CropType, IrrigationType
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    exclude = ('farmer',)
-    list_display = ('farmer', 'first_name', 'last_name', 'notification',
-                    'supervisor', 'supervision_question')
-    search_fields = ('first_name', 'last_name', 'notification')
-    list_filter = ('supervision_question',)
+    exclude = ("farmer",)
+    list_display = (
+        "farmer",
+        "first_name",
+        "last_name",
+        "notification",
+        "supervisor",
+        "supervision_question",
+    )
+    search_fields = ("first_name", "last_name", "notification")
+    list_filter = ("supervision_question",)
 
     def save_model(self, request, obj, form, change):
         if not change:
@@ -26,16 +31,21 @@ class IrrigationLogAdmin(admin.ModelAdmin):
 
 class CropTypeAdmin(admin.ModelAdmin):
     list_display = (
-        'name', 'fek_category', 'max_allow_depletion', 'kc_init', 'kc_mid', 'kc_end'
+        "name",
+        "fek_category",
+        "max_allow_depletion",
+        "kc_init",
+        "kc_mid",
+        "kc_end",
     )
-    search_fields = ('name', 'fek_category')
-    list_filter = ('fek_category',)
+    search_fields = ("name", "fek_category")
+    list_filter = ("fek_category",)
 
 
 class IrrigationTypeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'efficiency')
-    search_fields = ('name', 'efficiency')
-    list_filter = ('efficiency',)
+    list_display = ("name", "efficiency")
+    search_fields = ("name", "efficiency")
+    list_filter = ("efficiency",)
 
 
 admin.site.register(Profile, ProfileAdmin)

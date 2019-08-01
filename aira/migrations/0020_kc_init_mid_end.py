@@ -103,57 +103,55 @@ def set_parameter_values(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('aira', '0019_data'),
-    ]
+    dependencies = [("aira", "0019_data")]
 
     operations = [
-        migrations.RemoveField(model_name='croptype', name='kc'),
+        migrations.RemoveField(model_name="croptype", name="kc"),
         migrations.AddField(
-            model_name='croptype',
-            name='days_kc_dev',
+            model_name="croptype",
+            name="days_kc_dev",
             field=models.PositiveSmallIntegerField(default=1),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='croptype',
-            name='days_kc_late',
+            model_name="croptype",
+            name="days_kc_late",
             field=models.PositiveSmallIntegerField(default=1),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='croptype',
-            name='days_kc_init',
+            model_name="croptype",
+            name="days_kc_init",
             field=models.PositiveSmallIntegerField(default=1),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='croptype',
-            name='days_kc_mid',
+            model_name="croptype",
+            name="days_kc_mid",
             field=models.PositiveSmallIntegerField(default=1),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='croptype',
-            name='kc_end',
+            model_name="croptype",
+            name="kc_end",
             field=models.FloatField(default=1),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='croptype',
-            name='kc_init',
+            model_name="croptype",
+            name="kc_init",
             field=models.FloatField(default=1),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='croptype',
-            name='kc_mid',
+            model_name="croptype",
+            name="kc_mid",
             field=models.FloatField(default=1),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='croptype',
-            name='planting_date',
+            model_name="croptype",
+            name="planting_date",
             field=models.DateField(default=dt.date(1970, 1, 1)),
             preserve_default=False,
         ),

@@ -1,4 +1,5 @@
 import datetime as dt
+
 try:
     from unittest import mock
 except ImportError:
@@ -14,17 +15,12 @@ from aira.models import Agrifield, CropType, IrrigationType, Profile
 
 
 class UserTestCase(TestCase):
-
     def setUp(self):
         self.assertEqual(Profile.objects.count(), 0)
-        self.user = mommy.make(
-            User,
-            username='batman',
-            is_active=True,
-        )
+        self.user = mommy.make(User, username="batman", is_active=True)
 
     def test_create_user_profile_receiver(self):
-        self.assertEqual(hasattr(self.user, 'profile'), True)
+        self.assertEqual(hasattr(self.user, "profile"), True)
 
     def test_created_user_same_profile_FK(self):
         profile = Profile.objects.get(farmer_id=self.user.id)
@@ -42,31 +38,24 @@ class UserTestCase(TestCase):
 
 
 class AgrifieldTestCase(TestCase):
-
     def setUp(self):
 
         self.crop_type = mommy.make(
             CropType,
-            name='Grass',
+            name="Grass",
             root_depth_max=0.7,
             root_depth_min=1.2,
             max_allow_depletion=0.5,
             fek_category=4,
         )
         self.irrigation_type = mommy.make(
-            IrrigationType,
-            name='Surface irrigation',
-            efficiency=0.60,
+            IrrigationType, name="Surface irrigation", efficiency=0.60
         )
-        self.user = mommy.make(
-            User,
-            username='batman',
-            is_active=True,
-        )
+        self.user = mommy.make(User, username="batman", is_active=True)
         self.agrifield = mommy.make(
             Agrifield,
             owner=self.user,
-            name='A field',
+            name="A field",
             crop_type=self.crop_type,
             irrigation_type=self.irrigation_type,
             latitude=23.00,
@@ -77,7 +66,7 @@ class AgrifieldTestCase(TestCase):
     def test_agrifield_creation(self):
         agrifield = Agrifield.objects.create(
             owner=self.user,
-            name='A field',
+            name="A field",
             crop_type=self.crop_type,
             irrigation_type=self.irrigation_type,
             latitude=23.00,
@@ -88,9 +77,9 @@ class AgrifieldTestCase(TestCase):
         self.assertEqual(agrifield.__str__(), agrifield.name)
 
     def test_agrifield_update(self):
-        self.agrifield.name = 'This another field name'
+        self.agrifield.name = "This another field name"
         self.agrifield.save()
-        self.assertEqual(self.agrifield.__str__(), 'This another field name')
+        self.assertEqual(self.agrifield.__str__(), "This another field name")
 
     def test_agrifield_delete(self):
         self.agrifield.delete()
@@ -100,11 +89,7 @@ class AgrifieldTestCase(TestCase):
         self.assertTrue(self.agrifield.can_edit(self.user))
 
     def test_invalid_user_cannot_edit(self):
-        joker = mommy.make(
-            User,
-            username='joker',
-            is_active=True,
-        )
+        joker = mommy.make(User, username="joker", is_active=True)
         with self.assertRaises(Http404):
             self.agrifield.can_edit(joker)
 

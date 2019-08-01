@@ -7,13 +7,17 @@ from swb import calculate_crop_evapotranspiration, calculate_soil_water
 import pandas as pd
 
 from aira.celery import app
-from aira.irma.main import (agripoint_in_raster, common_period_dates,
-                            load_meteodata_file_paths, raster2point,
-                            rasters2point)
+from aira.irma.main import (
+    agripoint_in_raster,
+    common_period_dates,
+    load_meteodata_file_paths,
+    raster2point,
+    rasters2point,
+)
 from aira.irma.main import DRAINTIME_A_RASTER, DRAINTIME_B_RASTER
 
 
-class Results():
+class Results:
     pass
 
 
@@ -32,8 +36,8 @@ def extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles):
     start, end = common_period_dates(_r, _e)
     fstart, fend = common_period_dates(_rf, _ef)
 
-    dateIndexH = pd.date_range(start=start.date(), end=end.date(), freq='D')
-    dateIndex = pd.date_range(start=start.date(), end=fend.date(), freq='D')
+    dateIndexH = pd.date_range(start=start.date(), end=end.date(), freq="D")
+    dateIndex = pd.date_range(start=start.date(), end=fend.date(), freq="D")
 
     _rfdatapart = _rf.data.loc[fstart:fend]
     _efdatapart = _ef.data.loc[fstart:fend]
@@ -113,23 +117,27 @@ def execute_model(agrifield):
     HRFiles, HEFiles, FRFiles, FEFiles = load_meteodata_file_paths()
 
     # Extract data from files withe pd.DataFrame and end, start dates
-    dTimeseries = extractSWBTimeseries(agrifield, HRFiles, HEFiles,
-                                       FRFiles, FEFiles)
+    dTimeseries = extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles)
 
     # Template messages
     if not agrifield.irrigationlog_set.exists():
         results.irrigation_log_not_exists = True
 
     # Determine last irrigation, if applicable
-    last_irrigation = (agrifield.irrigationlog_set.latest()
-                       if agrifield.irrigationlog_set.exists() else None)
+    last_irrigation = (
+        agrifield.irrigationlog_set.latest()
+        if agrifield.irrigationlog_set.exists()
+        else None
+    )
 
-    start_date_daily = dTimeseries['start'].date()
-    end_date_daily = dTimeseries['end'].date()
-    f_start_date_daily = dTimeseries['fstart'].date()
-    f_end_date_daily = dTimeseries['fend'].date()
-    if last_irrigation and ((last_irrigation.time.date() < start_date_daily) or
-                            (last_irrigation.time.date() > end_date_daily)):
+    start_date_daily = dTimeseries["start"].date()
+    end_date_daily = dTimeseries["end"].date()
+    f_start_date_daily = dTimeseries["fstart"].date()
+    f_end_date_daily = dTimeseries["fend"].date()
+    if last_irrigation and (
+        (last_irrigation.time.date() < start_date_daily)
+        or (last_irrigation.time.date() > end_date_daily)
+    ):
         last_irrigation = None
         # Template messages
         results.irrigation_log_outside_time_period = True
@@ -137,12 +145,11 @@ def execute_model(agrifield):
     # Agrifield parameters
     area = agrifield.area
     theta_fc = agrifield.get_field_capacity
-    zr = (float(agrifield.get_root_depth_min) +
-          float(agrifield.get_root_depth_max)) / 2
+    zr = (float(agrifield.get_root_depth_min) + float(agrifield.get_root_depth_max)) / 2
     zr_factor = 1000
     irr_eff = float(agrifield.get_efficiency)
-    a = dTimeseries['draintime_A']
-    b = dTimeseries['draintime_B']
+    a = dTimeseries["draintime_A"]
+    b = dTimeseries["draintime_B"]
 
     theta_init = theta_fc
 
@@ -156,32 +163,30 @@ def execute_model(agrifield):
         draintime=round(a * zr ** b),
         theta_init=theta_init,
         mif=agrifield.get_irrigation_optimizer,
-        timeseries=dTimeseries['timeseries']
+        timeseries=dTimeseries["timeseries"],
     )
 
     dresults = calculate_soil_water(**model_params)
-    df = dresults['timeseries']
-    raw = dresults['raw']
-    df['advice'] = df.apply(lambda x: x.dr > raw, axis=1)
-    df['ifinal'] = df.apply(lambda x: x.recommended_net_irrigation / irr_eff, axis=1)
-    df['ifinal_m3'] = df.apply(lambda x: (x.ifinal / 1000) * area, axis=1)
+    df = dresults["timeseries"]
+    raw = dresults["raw"]
+    df["advice"] = df.apply(lambda x: x.dr > raw, axis=1)
+    df["ifinal"] = df.apply(lambda x: x.recommended_net_irrigation / irr_eff, axis=1)
+    df["ifinal_m3"] = df.apply(lambda x: (x.ifinal / 1000) * area, axis=1)
 
     results.last_irr_date = last_irrigation.time.date() if last_irrigation else None
-    results.sd = dTimeseries['start'].date()  # Starting date of forecast data
-    results.ed = dTimeseries['end'].date()   # Finish date of forecast  data
+    results.sd = dTimeseries["start"].date()  # Starting date of forecast data
+    results.ed = dTimeseries["end"].date()  # Finish date of forecast  data
     results.sdh = f_start_date_daily
     results.edh = f_end_date_daily
-    results.adv = any([
-        row.advice
-        for date, row in df.iterrows()
-        if date >= pd.Timestamp(results.sdh)
-    ])
+    results.adv = any(
+        [row.advice for date, row in df.iterrows() if date >= pd.Timestamp(results.sdh)]
+    )
     results.ifinal = df.ix[-1, "ifinal"]
     results.ifinal_m3 = (results.ifinal / 1000) * area
     # Keep naming as its due to template rendering
     results.adv_sorted = [
         [date.date(), row.ks, row.ifinal, row.ifinal_m3]
-        for date, row in df.loc[df['advice'] == True].iterrows()
+        for date, row in df.loc[df["advice"] == True].iterrows()
         if date >= pd.Timestamp(results.sdh)
     ]
     # For advice page
@@ -189,7 +194,8 @@ def execute_model(agrifield):
         [
             date.date(),
             row.effective_precipitation,
-            row.dr, row.theta,
+            row.dr,
+            row.theta,
             row.advice,
             row.ks,
             row.ifinal,
@@ -198,7 +204,7 @@ def execute_model(agrifield):
         if date >= pd.Timestamp(results.sdh)
     ]
     # Save results to cache
-    cache.set('model_run_{}'.format(agrifield.id), results, None)
+    cache.set("model_run_{}".format(agrifield.id), results, None)
     return results
 
 
@@ -217,12 +223,11 @@ def calculate_performance_chart(agrifield):
 
     # Agrifield parameters
     theta_fc = agrifield.get_field_capacity
-    zr = (float(agrifield.get_root_depth_min) +
-          float(agrifield.get_root_depth_max)) / 2
+    zr = (float(agrifield.get_root_depth_min) + float(agrifield.get_root_depth_max)) / 2
     zr_factor = 1000
     irr_eff = float(agrifield.get_efficiency)
-    a = dTimeseries['draintime_A']
-    b = dTimeseries['draintime_B']
+    a = dTimeseries["draintime_A"]
+    b = dTimeseries["draintime_B"]
 
     theta_init = theta_fc
 
@@ -241,26 +246,20 @@ def calculate_performance_chart(agrifield):
         draintime=round(a * zr ** b),
         theta_init=theta_init,
         mif=agrifield.get_irrigation_optimizer,
-        timeseries=dTimeseries['timeseries']
+        timeseries=dTimeseries["timeseries"],
     )
 
     dresults = calculate_soil_water(**model_params)
-    df = dresults['timeseries']
-    df['ifinal'] = df.apply(lambda x: x.recommended_net_irrigation / irr_eff, axis=1)
+    df = dresults["timeseries"]
+    df["ifinal"] = df.apply(lambda x: x.recommended_net_irrigation / irr_eff, axis=1)
 
     # We restore the actual net irrigation, which we had ignored for the moment,
     # so that the chart can show it.
     df["actual_net_irrigation"] = saved_actual_net_irrigation
 
     results.chart_dates = [date.date() for date, row in df.iterrows()]
-    results.chart_ifinal = [
-        row.ifinal
-        for date, row in df.iterrows()
-    ]
-    results.chart_peff = [
-        row.effective_precipitation
-        for date, row in df.iterrows()
-    ]
+    results.chart_ifinal = [row.ifinal for date, row in df.iterrows()]
+    results.chart_peff = [row.effective_precipitation for date, row in df.iterrows()]
     results.chart_irr_period_peff_cumulative = sum(results.chart_peff)
 
     results.applied_water = []
@@ -268,13 +267,13 @@ def calculate_performance_chart(agrifield):
         row.actual_net_irrigation if row.actual_net_irrigation else 0
         for date, row in df.iterrows()
     ]
-    cache.set('performance_chart_{}'.format(agrifield.id), results, None)
+    cache.set("performance_chart_{}".format(agrifield.id), results, None)
 
 
 @app.task
 def calculate_agrifield(agrifield):
-    cache_key = 'agrifield_{}_status'.format(agrifield.id)
-    cache.set(cache_key, 'being processed', None)
+    cache_key = "agrifield_{}_status".format(agrifield.id)
+    cache.set(cache_key, "being processed", None)
     try:
         execute_model(agrifield)
         calculate_performance_chart(agrifield)
@@ -286,4 +285,4 @@ def calculate_agrifield(agrifield):
         # never be calculated and the user will eventually ask the admins
         # what the heck is going on.
         raise
-    cache.set(cache_key, 'done', None)
+    cache.set(cache_key, "done", None)
