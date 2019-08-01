@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Agrifield, Profile, IrrigationLog, CropType, IrrigationType
+
+from .models import Agrifield, CropType, IrrigationLog, IrrigationType, Profile
 
 
 class ProfileAdmin(admin.ModelAdmin):

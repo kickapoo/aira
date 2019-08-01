@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
 import datetime as dt
 from collections import OrderedDict
 
-from django.db import models
-from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.http import Http404
 from django.utils.translation import ugettext_lazy as _

@@ -1,18 +1,14 @@
-from __future__ import division
-
 import datetime as dt
-import os
 import math
+import os
 from glob import glob
 
 from django.conf import settings
 from django.core.cache import cache
 from django.utils.translation import ugettext_lazy as _
 
-
 from hspatial import extract_point_from_raster, extract_point_timeseries_from_rasters
 from osgeo import gdal, ogr, osr
-
 
 # Raster Static Files with afield_obj parameters values
 # FIELD CAPACITY RASTER

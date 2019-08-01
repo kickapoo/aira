@@ -1,9 +1,11 @@
 from django import forms
-from .models import Agrifield, Profile, IrrigationLog
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+
 from captcha.fields import CaptchaField
 from registration.forms import RegistrationForm
-from django.contrib.auth.models import User
+
+from .models import Agrifield, IrrigationLog, Profile
 
 
 class ProfileForm(forms.ModelForm):

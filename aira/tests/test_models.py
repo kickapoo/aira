@@ -1,9 +1,5 @@
 import datetime as dt
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
 
 from django.contrib.auth.models import User
 from django.http.response import Http404

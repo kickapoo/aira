@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from aira.models import Agrifield
 from aira.irma.main import agripoint_in_raster
+from aira.models import Agrifield
 
 
 class Command(BaseCommand):

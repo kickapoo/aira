@@ -1,7 +1,5 @@
-from __future__ import unicode_literals
-
-from datetime import date, datetime
 import logging
+from datetime import date, datetime
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -13,7 +11,7 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 from aira.irma.main import agripoint_in_raster, model_results
-from aira.models import notification_options, Profile
+from aira.models import Profile, notification_options
 
 
 class Command(BaseCommand):

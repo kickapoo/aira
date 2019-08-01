@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Create (and delete) crop types and irrigation types.
 
 Crop types and irrigation types had been created by fixtures, which were a pain and were
@@ -11,14 +10,11 @@ if they do not already exist.
 At the same time, we remove crop types that had been created by the fixtures and which
 we no longer use.
 """
-from __future__ import unicode_literals
-
 import os
 from io import StringIO
 
 from django.core.management import call_command
 from django.db import connection, migrations
-
 
 crop_types = [
     {

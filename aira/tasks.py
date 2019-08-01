@@ -2,19 +2,19 @@ from __future__ import absolute_import
 
 from django.core.cache import cache
 
-from swb import calculate_crop_evapotranspiration, calculate_soil_water
-
 import pandas as pd
+from swb import calculate_crop_evapotranspiration, calculate_soil_water
 
 from aira.celery import app
 from aira.irma.main import (
+    DRAINTIME_A_RASTER,
+    DRAINTIME_B_RASTER,
     agripoint_in_raster,
     common_period_dates,
     load_meteodata_file_paths,
     raster2point,
     rasters2point,
 )
-from aira.irma.main import DRAINTIME_A_RASTER, DRAINTIME_B_RASTER
 
 
 class Results:
@@ -186,7 +186,7 @@ def execute_model(agrifield):
     # Keep naming as its due to template rendering
     results.adv_sorted = [
         [date.date(), row.ks, row.ifinal, row.ifinal_m3]
-        for date, row in df.loc[df["advice"] == True].iterrows()
+        for date, row in df.loc[df["advice"] is True].iterrows()
         if date >= pd.Timestamp(results.sdh)
     ]
     # For advice page

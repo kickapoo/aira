@@ -1,11 +1,10 @@
-from django.urls import include, path
 from django.contrib import admin
 from django.contrib.flatpages.views import flatpage
+from django.urls import include, path
 
 from registration.backends.default.views import RegistrationView
 
 from aira.forms import MyRegistrationForm
-
 
 urlpatterns = [
     path(

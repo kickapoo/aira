@@ -1,18 +1,18 @@
 import csv
-from datetime import date, timedelta
+import datetime as dt
 import json
 import os
 
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponse, Http404
+from django.contrib.auth.models import User
+from django.http import Http404, HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.contrib.auth.models import User
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from .forms import ProfileForm, AgrifieldForm, IrrigationlogForm
+from .forms import AgrifieldForm, IrrigationlogForm, ProfileForm
 from .irma.main import (
     agripoint_in_raster,
     get_default_db_value,
@@ -21,7 +21,7 @@ from .irma.main import (
     load_meteodata_file_paths,
     model_results,
 )
-from .models import Profile, Agrifield, IrrigationLog
+from .models import Agrifield, IrrigationLog, Profile
 
 
 class IrrigationPerformance(TemplateView):
@@ -104,8 +104,8 @@ class IndexPageView(TemplateView):
         common_dates = [x for x in dates_r if x in dates_e]
         y1, m1, d1 = (int(x) for x in common_dates[0].split("-"))
         y2, m2, d2 = (int(x) for x in common_dates[-1].split("-"))
-        context["start_date"] = date(y1, m1, d1)
-        context["end_date"] = date(y2, m2, d2) - timedelta(days=1)
+        context["start_date"] = dt.date(y1, m1, d1)
+        context["end_date"] = dt.date(y2, m2, d2) - dt.timedelta(days=1)
         return context
 
 
