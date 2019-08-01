@@ -34,7 +34,8 @@ def discard_files_older_than(files, adate):
         i = filename.find(str(adate.year))
         if i < 0:
             continue
-        filedate = filename[i : i + 10]
+        j = i + 10
+        filedate = filename[i:j]
         if filedate >= adatestr:
             result.append(filename)
     return result

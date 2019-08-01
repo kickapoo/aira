@@ -1,13 +1,8 @@
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
 
 from django.contrib.auth.models import User
-from django.core import mail
 from django.test import TestCase
 
-from captcha.models import CaptchaStore
 from model_mommy import mommy
 
 

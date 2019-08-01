@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
 
-from aira.models import Agrifield, CropType, IrrigationLog, IrrigationType, Profile
+from aira.models import Agrifield, CropType, IrrigationLog, IrrigationType
 
 
 class Command(BaseCommand):
