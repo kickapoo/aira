@@ -10,22 +10,6 @@ from django.utils.translation import ugettext_lazy as _
 from hspatial import extract_point_from_raster, extract_point_timeseries_from_rasters
 from osgeo import gdal, ogr, osr
 
-# Raster Static Files with afield_obj parameters values
-# FIELD CAPACITY RASTER
-FC_FILE = os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif")
-
-# WILTING POINT RASTER
-PWP_FILE = os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif")
-
-# THETA_S RASTER
-THETA_S_FILE = os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "theta_s.tif")
-
-
-# DRAINTIME
-DRAINTIME_A_RASTER = os.path.join(settings.AIRA_DRAINTIME_DIR, "a_1d.tif")
-
-DRAINTIME_B_RASTER = os.path.join(settings.AIRA_DRAINTIME_DIR, "b.tif")
-
 
 def discard_files_older_than(files, adate):
     result = []
@@ -103,9 +87,21 @@ def get_default_db_value(afield_obj):
     rd_max = afield_obj.crop_type.root_depth_max
     rd_min = afield_obj.crop_type.root_depth_min
     IRT = afield_obj.irrigation_optimizer
-    fc = raster2point(afield_obj.latitude, afield_obj.longitude, FC_FILE)
-    wp = raster2point(afield_obj.latitude, afield_obj.longitude, PWP_FILE)
-    thetaS = raster2point(afield_obj.latitude, afield_obj.longitude, THETA_S_FILE)
+    fc = raster2point(
+        afield_obj.latitude,
+        afield_obj.longitude,
+        os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif"),
+    )
+    wp = raster2point(
+        afield_obj.latitude,
+        afield_obj.longitude,
+        os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif"),
+    )
+    thetaS = raster2point(
+        afield_obj.latitude,
+        afield_obj.longitude,
+        os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "theta_s.tif"),
+    )
     return locals()
 
 
@@ -134,8 +130,16 @@ def get_parameters(afield_obj):
         if last_irrigate.applied_water is None:
             rd_factor = 1000
             if not custom_parameters:
-                fc = raster2point(afield_obj.latitude, afield_obj.longitude, FC_FILE)
-                wp = raster2point(afield_obj.latitude, afield_obj.longitude, PWP_FILE)
+                fc = raster2point(
+                    afield_obj.latitude,
+                    afield_obj.longitude,
+                    os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif"),
+                )
+                wp = raster2point(
+                    afield_obj.latitude,
+                    afield_obj.longitude,
+                    os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif"),
+                )
             fc_mm = fc * rd * rd_factor
             wp_mm = wp * rd * rd_factor
             taw_mm = fc_mm - wp_mm
@@ -148,11 +152,13 @@ def get_parameters(afield_obj):
     return locals()
 
 
-def agripoint_in_raster(obj, mask=FC_FILE):
+def agripoint_in_raster(obj, mask=None):
     """
         Check if a afield_obj location is
             within 'mask' raster file
     """
+    if mask is None:
+        mask = os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif")
     try:
         tmp_check = raster2point(obj.latitude, obj.longitude, mask)
     except (RuntimeError, ValueError):

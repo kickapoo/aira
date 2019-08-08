@@ -5,6 +5,5 @@ django-registration-redux>=2.6,<3
 django-simple-captcha>0.4,<1
 django-mathfilters==0.3.0,<2
 celery>=4.3,<5
-model-mommy>=1.5.1,<1.6
 swb>=0.3.2, <1.0
 hspatial

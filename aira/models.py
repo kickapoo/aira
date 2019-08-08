@@ -1,6 +1,8 @@
 import datetime as dt
+import os
 from collections import OrderedDict
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -10,9 +12,6 @@ from django.dispatch import receiver
 from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 
-from aira.irma.main import FC_FILE as fc_raster
-from aira.irma.main import PWP_FILE as pwp_raster
-from aira.irma.main import THETA_S_FILE as thetaS_raster
 from aira.irma.main import raster2point
 
 # notification_options is the list of options the user can select for
@@ -195,26 +194,46 @@ class Agrifield(models.Model):
     def get_wilting_point(self):
         if self.use_custom_parameters:
             if self.custom_wilting_point in [None, ""]:
-                return raster2point(self.latitude, self.longitude, pwp_raster)
+                return raster2point(
+                    self.latitude,
+                    self.longitude,
+                    os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif"),
+                )
             return self.custom_wilting_point
         else:
-            return raster2point(self.latitude, self.longitude, pwp_raster)
+            return raster2point(
+                self.latitude,
+                self.longitude,
+                os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif"),
+            )
 
     @property
     def get_thetaS(self):
         if self.use_custom_parameters:
             if self.custom_thetaS in [None, ""]:
-                return raster2point(self.latitude, self.longitude, thetaS_raster)
+                return raster2point(
+                    self.latitude,
+                    self.longitude,
+                    os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "theta_s.tif"),
+                )
             return self.custom_thetaS
         else:
-            return raster2point(self.latitude, self.longitude, thetaS_raster)
+            return raster2point(
+                self.latitude,
+                self.longitude,
+                os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "theta_s.tif"),
+            )
 
     @property
     def get_field_capacity(self):
         if self.use_custom_parameters and self.custom_field_capacity:
             return self.custom_field_capacity
         else:
-            return raster2point(self.latitude, self.longitude, fc_raster)
+            return raster2point(
+                self.latitude,
+                self.longitude,
+                os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif"),
+            )
 
     @property
     def get_efficiency(self):

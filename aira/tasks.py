@@ -1,5 +1,6 @@
-from __future__ import absolute_import
+import os
 
+from django.conf import settings
 from django.core.cache import cache
 
 import pandas as pd
@@ -7,8 +8,6 @@ from swb import calculate_crop_evapotranspiration, calculate_soil_water
 
 from aira.celery import app
 from aira.irma.main import (
-    DRAINTIME_A_RASTER,
-    DRAINTIME_B_RASTER,
     agripoint_in_raster,
     common_period_dates,
     load_meteodata_file_paths,
@@ -97,8 +96,12 @@ def extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles):
         "end": end,
         "fstart": fstart,
         "fend": fend,
-        "draintime_A": raster2point(lat, long, DRAINTIME_A_RASTER),
-        "draintime_B": raster2point(lat, long, DRAINTIME_B_RASTER),
+        "draintime_A": raster2point(
+            lat, long, os.path.join(settings.AIRA_DRAINTIME_DIR, "a_1d.tif")
+        ),
+        "draintime_B": raster2point(
+            lat, long, os.path.join(settings.AIRA_DRAINTIME_DIR, "b.tif")
+        ),
     }
 
 
@@ -113,83 +116,69 @@ def execute_model(agrifield):
     if not agripoint_in_raster(agrifield):
         return results
 
-    # Retrieve precipitation and evaporation time series at the agrifield
+    # Calculate crop evapotranspiration at the agrifield
     HRFiles, HEFiles, FRFiles, FEFiles = load_meteodata_file_paths()
-
-    # Extract data from files withe pd.DataFrame and end, start dates
     dTimeseries = extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles)
 
-    # Template messages
+    # Set some variables for the template. results.irrigation_log_not_exists is True if
+    # there's no irrigation event. Otherwise, results.irrigation_log_outside_time_period
+    # is True if, well, what the variaable name says. All this probably shouldn't be
+    # here, but in views.
     if not agrifield.irrigationlog_set.exists():
         results.irrigation_log_not_exists = True
-
-    # Determine last irrigation, if applicable
     last_irrigation = (
         agrifield.irrigationlog_set.latest()
         if agrifield.irrigationlog_set.exists()
         else None
     )
-
     start_date_daily = dTimeseries["start"].date()
     end_date_daily = dTimeseries["end"].date()
-    f_start_date_daily = dTimeseries["fstart"].date()
-    f_end_date_daily = dTimeseries["fend"].date()
     if last_irrigation and (
         (last_irrigation.time.date() < start_date_daily)
         or (last_irrigation.time.date() > end_date_daily)
     ):
         last_irrigation = None
-        # Template messages
         results.irrigation_log_outside_time_period = True
+    results.last_irr_date = last_irrigation.time.date() if last_irrigation else None
 
-    # Agrifield parameters
-    area = agrifield.area
-    theta_fc = agrifield.get_field_capacity
+    # Run swb model and calculate some simple additional columns
     zr = (float(agrifield.get_root_depth_min) + float(agrifield.get_root_depth_max)) / 2
     zr_factor = 1000
     irr_eff = float(agrifield.get_efficiency)
     a = dTimeseries["draintime_A"]
     b = dTimeseries["draintime_B"]
-
-    theta_init = theta_fc
-
-    model_params = dict(
+    dresults = calculate_soil_water(
         theta_s=float(agrifield.get_thetaS),
-        theta_fc=theta_fc,
+        theta_fc=agrifield.get_field_capacity,
         theta_wp=agrifield.get_wilting_point,
         zr=zr,
         zr_factor=zr_factor,
         p=float(agrifield.get_mad),
         draintime=round(a * zr ** b),
-        theta_init=theta_init,
+        theta_init=agrifield.get_field_capacity,
         mif=agrifield.get_irrigation_optimizer,
         timeseries=dTimeseries["timeseries"],
     )
-
-    dresults = calculate_soil_water(**model_params)
     df = dresults["timeseries"]
-    raw = dresults["raw"]
-    df["advice"] = df.apply(lambda x: x.dr > raw, axis=1)
+    df["advice"] = df.apply(lambda x: x.dr > dresults["raw"], axis=1)
     df["ifinal"] = df.apply(lambda x: x.recommended_net_irrigation / irr_eff, axis=1)
-    df["ifinal_m3"] = df.apply(lambda x: (x.ifinal / 1000) * area, axis=1)
+    df["ifinal_m3"] = df.apply(lambda x: (x.ifinal / 1000) * agrifield.area, axis=1)
 
-    results.last_irr_date = last_irrigation.time.date() if last_irrigation else None
-    results.sd = dTimeseries["start"].date()  # Starting date of forecast data
-    results.ed = dTimeseries["end"].date()  # Finish date of forecast  data
-    results.sdh = f_start_date_daily
-    results.edh = f_end_date_daily
+    # Set some variables in the "results"; these will be used by the template.
+    results.sd = dTimeseries["start"].date()
+    results.ed = dTimeseries["end"].date()
+    results.sdh = dTimeseries["fstart"].date()
+    results.edh = dTimeseries["fend"].date()
     results.adv = any(
         [row.advice for date, row in df.iterrows() if date >= pd.Timestamp(results.sdh)]
     )
     results.ifinal = df.ix[-1, "ifinal"]
-    results.ifinal_m3 = (results.ifinal / 1000) * area
-    # Keep naming as its due to template rendering
+    results.ifinal_m3 = (results.ifinal / 1000) * agrifield.area
     results.adv_sorted = [
         [date.date(), row.ks, row.ifinal, row.ifinal_m3]
-        for date, row in df.loc[df["advice"] is True].iterrows()
+        for date, row in df.loc[df["advice"]].iterrows()
         if date >= pd.Timestamp(results.sdh)
     ]
-    # For advice page
     results.swb_report = [
         [
             date.date(),
@@ -203,7 +192,8 @@ def execute_model(agrifield):
         for date, row in df.iterrows()
         if date >= pd.Timestamp(results.sdh)
     ]
-    # Save results to cache
+
+    # Save results and return them
     cache.set("model_run_{}".format(agrifield.id), results, None)
     return results
 
