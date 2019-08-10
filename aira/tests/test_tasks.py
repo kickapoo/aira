@@ -4,6 +4,7 @@ import shutil
 import tempfile
 
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.test import TestCase, override_settings
 
 import numpy as np
@@ -12,7 +13,7 @@ from model_mommy import mommy
 from osgeo import gdal, osr
 
 from aira.models import Agrifield, CropType, IrrigationLog, IrrigationType
-from aira.tasks import execute_model
+from aira.tasks import calculate_performance_chart, execute_model
 
 
 def setup_input_file(filename, value, timestamp):
@@ -157,3 +158,48 @@ class ExecuteModelTestCase(TestCase, SetupTestDataMixin):
         self.assertTrue(self.results.swb_report[0][4])
         self.assertAlmostEqual(self.results.swb_report[0][5], 0.8668036)
         self.assertAlmostEqual(self.results.swb_report[0][6], 407.3845070)
+
+
+@freeze_time("2018-03-18 13:00:01")
+class CalculatePerformanceChartTestCase(TestCase, SetupTestDataMixin):
+    def setUp(self):
+        self.tempdir = tempfile.mkdtemp()
+        os.mkdir(os.path.join(self.tempdir, "historical"))
+        os.mkdir(os.path.join(self.tempdir, "forecast"))
+        self._setup_test_data()
+        h = override_settings(
+            AIRA_DATA_HISTORICAL=os.path.join(self.tempdir, "historical")
+        )
+        f = override_settings(AIRA_DATA_FORECAST=os.path.join(self.tempdir, "forecast"))
+        r = override_settings(AIRA_COEFFS_RASTERS_DIR=self.tempdir)
+        d = override_settings(AIRA_DRAINTIME_DIR=self.tempdir)
+        c = override_settings(
+            CACHES={
+                "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
+            }
+        )
+        with h, f, r, d, c:
+            calculate_performance_chart(self.agrifield)
+            self.results = cache.get("performance_chart_{}".format(self.agrifield.id))
+
+    def tearDown(self):
+        shutil.rmtree(self.tempdir)
+
+    def test_results(self):
+        self.assertAlmostEqual(self.results.applied_water[0], 250.0)
+        self.assertAlmostEqual(self.results.applied_water[1], 0.0)
+        self.assertAlmostEqual(self.results.applied_water[2], 0.0)
+        self.assertAlmostEqual(self.results.applied_water[3], 0.0)
+        self.assertEqual(self.results.chart_dates[0], dt.date(2018, 3, 15))
+        self.assertEqual(self.results.chart_dates[1], dt.date(2018, 3, 16))
+        self.assertEqual(self.results.chart_dates[2], dt.date(2018, 3, 17))
+        self.assertEqual(self.results.chart_dates[3], dt.date(2018, 3, 18))
+        self.assertAlmostEqual(self.results.chart_ifinal[0], 396.8133333)
+        self.assertAlmostEqual(self.results.chart_ifinal[1], 400.0800002)
+        self.assertAlmostEqual(self.results.chart_ifinal[2], 400.2666667)
+        self.assertAlmostEqual(self.results.chart_ifinal[3], 400.3133335)
+        self.assertAlmostEqual(self.results.chart_irr_period_peff_cumulative, 0.96)
+        self.assertAlmostEqual(self.results.chart_peff[0], 0.0)
+        self.assertAlmostEqual(self.results.chart_peff[1], 0.4)
+        self.assertAlmostEqual(self.results.chart_peff[2], 0.32)
+        self.assertAlmostEqual(self.results.chart_peff[3], 0.24)
