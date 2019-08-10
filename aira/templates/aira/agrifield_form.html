@@ -39,8 +39,8 @@
                   {% bootstrap_field form.name %}
                   {% bootstrap_field form.is_virtual%}
                   {% bootstrap_field form.area %}
-                  {% bootstrap_field form.longitude %}
-                  {% bootstrap_field form.latitude %}
+                  {% bootstrap_field form.location.x %}
+                  {% bootstrap_field form.location.y %}
                   {% bootstrap_field form.crop_type %}
                   {% bootstrap_field form.irrigation_type %}
                   </div>
@@ -158,8 +158,8 @@
                       markers.clearMarkers();
                       markers.addMarker(marker);
                       var lonlat = map.getLonLatFromPixel(e.xy).transform('EPSG:3857', 'EPSG:4326');
-                      document.getElementById("id_latitude").value = lonlat.lat.toFixed(5);
-                      document.getElementById("id_longitude").value = lonlat.lon.toFixed(5);
+                      document.getElementById("id_location_1").value = lonlat.lat.toFixed(5);
+                      document.getElementById("id_location_0").value = lonlat.lon.toFixed(5);
           });
 
           $(document).ready(function(){

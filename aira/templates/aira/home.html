@@ -233,7 +233,7 @@
         {% for f in agrifields %}
         // Define markers as "features" of the vector layer:
         var feature = new OpenLayers.Feature.Vector(
-                new OpenLayers.Geometry.Point(make_coords("{{f.longitude}}"), make_coords("{{f.latitude}}")).transform('EPSG:4326', 'EPSG:3857'),
+                new OpenLayers.Geometry.Point(make_coords("{{f.location.x}}"), make_coords("{{f.location.y}}")).transform('EPSG:4326', 'EPSG:3857'),
                 {description:'{% trans 'Field Name' %}: <a target="_blank" href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a>'},
                 {externalGraphic: 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/img/marker.png', graphicHeight: 25, graphicWidth: 21, graphicXOffset:-12, graphicYOffset:-25  }
             );

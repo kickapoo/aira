@@ -4,15 +4,16 @@ from collections import OrderedDict
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.gis.db import models
 from django.core.cache import cache
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 
-from aira.irma.main import raster2point
+from hspatial import extract_point_from_raster
+from osgeo import gdal
 
 # notification_options is the list of options the user can select for
 # notifications, e.g. be notified every day, every two days, every week, and so
@@ -135,10 +136,7 @@ class Agrifield(models.Model):
     is_virtual = models.NullBooleanField(
         choices=YES_OR_NO_OR_NULL, null=True, default=None
     )
-    # Latitude / Longitude are crucial locations parameters
-    # Keeping their long names is more clear for developers/users
-    latitude = models.FloatField()
-    longitude = models.FloatField()
+    location = models.PointField()
     crop_type = models.ForeignKey(CropType, on_delete=models.CASCADE)
     irrigation_type = models.ForeignKey(IrrigationType, on_delete=models.CASCADE)
     area = models.FloatField()
@@ -194,34 +192,36 @@ class Agrifield(models.Model):
     def get_wilting_point(self):
         if self.use_custom_parameters:
             if self.custom_wilting_point in [None, ""]:
-                return raster2point(
-                    self.latitude,
-                    self.longitude,
-                    os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif"),
+                return extract_point_from_raster(
+                    self.location,
+                    gdal.Open(
+                        os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif")
+                    ),
                 )
             return self.custom_wilting_point
         else:
-            return raster2point(
-                self.latitude,
-                self.longitude,
-                os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif"),
+            return extract_point_from_raster(
+                self.location,
+                gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif")),
             )
 
     @property
     def get_thetaS(self):
         if self.use_custom_parameters:
             if self.custom_thetaS in [None, ""]:
-                return raster2point(
-                    self.latitude,
-                    self.longitude,
-                    os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "theta_s.tif"),
+                return extract_point_from_raster(
+                    self.location,
+                    gdal.Open(
+                        os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "theta_s.tif")
+                    ),
                 )
             return self.custom_thetaS
         else:
-            return raster2point(
-                self.latitude,
-                self.longitude,
-                os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "theta_s.tif"),
+            return extract_point_from_raster(
+                self.location,
+                gdal.Open(
+                    os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "theta_s.tif")
+                ),
             )
 
     @property
@@ -229,10 +229,9 @@ class Agrifield(models.Model):
         if self.use_custom_parameters and self.custom_field_capacity:
             return self.custom_field_capacity
         else:
-            return raster2point(
-                self.latitude,
-                self.longitude,
-                os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif"),
+            return extract_point_from_raster(
+                self.location,
+                gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif")),
             )
 
     @property

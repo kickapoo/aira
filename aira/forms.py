@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from captcha.fields import CaptchaField
+from geowidgets import LatLonField
 from registration.forms import RegistrationForm
 
 from .models import Agrifield, IrrigationLog, Profile
@@ -29,14 +30,18 @@ class ProfileForm(forms.ModelForm):
 
 
 class AgrifieldForm(forms.ModelForm):
+    location = LatLonField(
+        label=_("Co-ordinates"),
+        help_text=_("Longitude and latitude in decimal degrees"),
+    )
+
     class Meta:
         model = Agrifield
         exclude = ("owner",)
         fields = [
             "name",
             "area",
-            "longitude",
-            "latitude",
+            "location",
             "crop_type",
             "irrigation_type",
             "is_virtual",
@@ -54,8 +59,7 @@ class AgrifieldForm(forms.ModelForm):
         labels = {
             "name": _("Field Name"),
             "is_virtual": _("Is this virtual field?"),
-            "latitude": _("Latitude (WGS84)"),
-            "longitude": _("Longitude (WGS84)"),
+            "location": _("Co-ordinates"),
             "crop_type": _("Crop Type"),
             "irrigation_type": _("Irrigation Type"),
             "area": _("Irrigated Field Area (m<sup>2</sup>)"),

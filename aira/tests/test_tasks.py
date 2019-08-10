@@ -4,6 +4,7 @@ import shutil
 import tempfile
 
 from django.contrib.auth.models import User
+from django.contrib.gis.geos import Point
 from django.core.cache import cache
 from django.test import TestCase, override_settings
 
@@ -107,8 +108,7 @@ class SetupTestDataMixin:
             name="A field",
             crop_type=self.crop_type,
             irrigation_type=self.irrigation_type,
-            latitude=38.00,
-            longitude=22.00,
+            location=Point(22.0, 38.0),
             area=2000,
         )
         self.irrigation_log = mommy.make(

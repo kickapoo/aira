@@ -3,6 +3,11 @@
 {% load mathfilters %}
 {% load bootstrap3 %}
 {% load static %}
+
+{% block extrahead %}
+  {{ form.media }}
+{% endblock %}
+
 {% block title %} {{ user }}-{% trans "Update Field" %}{% endblock %}
 
 {% block content %}
@@ -32,8 +37,7 @@
                   {% bootstrap_field form.name %}
                   {% bootstrap_field form.is_virtual %}
                   {% bootstrap_field form.area %}
-                  {% bootstrap_field form.longitude %}
-                  {% bootstrap_field form.latitude %}
+                  {% bootstrap_field form.location %}
                   {% bootstrap_field form.crop_type %}
                   {% bootstrap_field form.irrigation_type %}
                   {% bootstrap_field form.use_custom_parameters %}
@@ -135,7 +139,7 @@
                 map.addLayer(kml);
 
                 //alert(parseFloat("{{ object.longitude }}".replace(",",".")));
-                var fieldloc = new OpenLayers.LonLat(make_coords("{{ object.longitude }}"),make_coords("{{ object.latitude }}")).transform('EPSG:4326', 'EPSG:3857');
+                var fieldloc = new OpenLayers.LonLat(make_coords("{{ object.location.x }}"),make_coords("{{ object.location.y }}")).transform('EPSG:4326', 'EPSG:3857');
                 var marker = new OpenLayers.Marker(fieldloc)
                 var markers = new OpenLayers.Layer.Markers( "{{ object.name }}" );
                 map.addLayer(markers);
@@ -147,8 +151,8 @@
                 markers.clearMarkers();
                 markers.addMarker(marker);
                 var lonlat = map.getLonLatFromPixel(e.xy).transform('EPSG:3857', 'EPSG:4326');
-                document.getElementById("id_latitude").value = lonlat.lat.toFixed(5);
-                document.getElementById("id_longitude").value = lonlat.lon.toFixed(5);
+                document.getElementById("id_location_1").value = lonlat.lat.toFixed(5);
+                document.getElementById("id_location_0").value = lonlat.lon.toFixed(5);
                 });
 
                 $(document).ready(function(){

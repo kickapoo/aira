@@ -7,8 +7,8 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils.translation import ugettext_lazy as _
 
-from hspatial import extract_point_from_raster, extract_point_timeseries_from_rasters
-from osgeo import gdal, ogr, osr
+from hspatial import extract_point_from_raster
+from osgeo import gdal
 
 
 def discard_files_older_than(files, adate):
@@ -51,33 +51,6 @@ def load_meteodata_file_paths():
     return HRFiles, HEFiles, FRFiles, FEFiles
 
 
-def rasters2point(lat, long, files):
-    """
-        Convert a series of raster files to single
-        point timeseries obj
-    """
-    point = ogr.Geometry(ogr.wkbPoint)
-    sr = osr.SpatialReference()
-    sr.ImportFromEPSG(4326)
-    point.AssignSpatialReference(sr)
-    point.AddPoint(long, lat)
-    return extract_point_timeseries_from_rasters(files, point)
-
-
-def raster2point(lat, long, file):
-    """
-        Convert a single raster file to single
-        point timeseries obj
-    """
-    point = ogr.Geometry(ogr.wkbPoint)
-    sr = osr.SpatialReference()
-    sr.ImportFromEPSG(4326)
-    point.AssignSpatialReference(sr)
-    point.AddPoint(long, lat)
-    f = gdal.Open(file)
-    return extract_point_from_raster(point, f)
-
-
 def get_default_db_value(afield_obj):
     """
        doc str is missing
@@ -87,20 +60,17 @@ def get_default_db_value(afield_obj):
     rd_max = afield_obj.crop_type.root_depth_max
     rd_min = afield_obj.crop_type.root_depth_min
     IRT = afield_obj.irrigation_optimizer
-    fc = raster2point(
-        afield_obj.latitude,
-        afield_obj.longitude,
-        os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif"),
+    fc = extract_point_from_raster(
+        afield_obj.location,
+        gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif")),
     )
-    wp = raster2point(
-        afield_obj.latitude,
-        afield_obj.longitude,
-        os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif"),
+    wp = extract_point_from_raster(
+        afield_obj.location,
+        gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif")),
     )
-    thetaS = raster2point(
-        afield_obj.latitude,
-        afield_obj.longitude,
-        os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "theta_s.tif"),
+    thetaS = extract_point_from_raster(
+        afield_obj.location,
+        gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "theta_s.tif")),
     )
     return locals()
 
@@ -130,15 +100,15 @@ def get_parameters(afield_obj):
         if last_irrigate.applied_water is None:
             rd_factor = 1000
             if not custom_parameters:
-                fc = raster2point(
-                    afield_obj.latitude,
-                    afield_obj.longitude,
-                    os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif"),
+                fc = extract_point_from_raster(
+                    afield_obj.location,
+                    gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif")),
                 )
-                wp = raster2point(
-                    afield_obj.latitude,
-                    afield_obj.longitude,
-                    os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif"),
+                wp = extract_point_from_raster(
+                    afield_obj.location,
+                    gdal.Open(
+                        os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif")
+                    ),
                 )
             fc_mm = fc * rd * rd_factor
             wp_mm = wp * rd * rd_factor
@@ -160,7 +130,7 @@ def agripoint_in_raster(obj, mask=None):
     if mask is None:
         mask = os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif")
     try:
-        tmp_check = raster2point(obj.latitude, obj.longitude, mask)
+        tmp_check = extract_point_from_raster(obj.location, gdal.Open(mask))
     except (RuntimeError, ValueError):
         tmp_check = float("nan")
     return not math.isnan(tmp_check)

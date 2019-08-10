@@ -7,3 +7,4 @@ django-mathfilters==0.3.0,<2
 celery>=4.3,<5
 swb>=0.3.2, <1.0
 hspatial
+django-geowidgets<1

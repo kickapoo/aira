@@ -2,6 +2,7 @@ import datetime as dt
 from unittest import mock
 
 from django.contrib.auth.models import User
+from django.contrib.gis.geos import Point
 from django.http.response import Http404
 from django.test import TestCase
 
@@ -54,8 +55,7 @@ class AgrifieldTestCase(TestCase):
             name="A field",
             crop_type=self.crop_type,
             irrigation_type=self.irrigation_type,
-            latitude=23.00,
-            longitude=18.00,
+            location=Point(18.0, 23.0),
             area=2000,
         )
 
@@ -65,8 +65,7 @@ class AgrifieldTestCase(TestCase):
             name="A field",
             crop_type=self.crop_type,
             irrigation_type=self.irrigation_type,
-            latitude=23.00,
-            longitude=18.00,
+            location=Point(18.0, 23.0),
             area=2000,
         )
         self.assertTrue(isinstance(agrifield, Agrifield))

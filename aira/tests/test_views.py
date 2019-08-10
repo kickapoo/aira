@@ -63,7 +63,7 @@ class AgrifieldEditViewTestCase(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="topsecret")
         self.agrifield = mommy.make(
-            Agrifield, name="hello", longitude=23, latitude=38, owner=self.alice
+            Agrifield, name="hello", location=Point(23, 38), owner=self.alice
         )
 
     def test_get(self):

@@ -4,6 +4,8 @@ from django.conf import settings
 from django.core.cache import cache
 
 import pandas as pd
+from hspatial import extract_point_from_raster, extract_point_timeseries_from_rasters
+from osgeo import gdal
 from swb import calculate_crop_evapotranspiration, calculate_soil_water
 
 from aira.celery import app
@@ -11,8 +13,6 @@ from aira.irma.main import (
     agripoint_in_raster,
     common_period_dates,
     load_meteodata_file_paths,
-    raster2point,
-    rasters2point,
 )
 
 
@@ -26,12 +26,11 @@ def extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles):
         convert to pd.DataFrame.
     """
     EFFECTIVE_PRECIP_FACTOR = 0.8
-    lat, long = agrifield.latitude, agrifield.longitude
 
-    _r = rasters2point(lat, long, HRFiles)
-    _e = rasters2point(lat, long, HEFiles)
-    _rf = rasters2point(lat, long, FRFiles)
-    _ef = rasters2point(lat, long, FEFiles)
+    _r = extract_point_timeseries_from_rasters(HRFiles, agrifield.location)
+    _e = extract_point_timeseries_from_rasters(HEFiles, agrifield.location)
+    _rf = extract_point_timeseries_from_rasters(FRFiles, agrifield.location)
+    _ef = extract_point_timeseries_from_rasters(FEFiles, agrifield.location)
     start, end = common_period_dates(_r, _e)
     fstart, fend = common_period_dates(_rf, _ef)
 
@@ -96,11 +95,13 @@ def extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles):
         "end": end,
         "fstart": fstart,
         "fend": fend,
-        "draintime_A": raster2point(
-            lat, long, os.path.join(settings.AIRA_DRAINTIME_DIR, "a_1d.tif")
+        "draintime_A": extract_point_from_raster(
+            agrifield.location,
+            gdal.Open(os.path.join(settings.AIRA_DRAINTIME_DIR, "a_1d.tif")),
         ),
-        "draintime_B": raster2point(
-            lat, long, os.path.join(settings.AIRA_DRAINTIME_DIR, "b.tif")
+        "draintime_B": extract_point_from_raster(
+            agrifield.location,
+            gdal.Open(os.path.join(settings.AIRA_DRAINTIME_DIR, "b.tif")),
         ),
     }
 

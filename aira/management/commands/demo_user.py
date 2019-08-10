@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand, CommandError
 
 from aira.models import Agrifield, CropType, IrrigationLog, IrrigationType
@@ -30,8 +31,7 @@ class Command(BaseCommand):
             f, created = Agrifield.objects.get_or_create(
                 owner=demo,
                 name="OUTSIDE ARTA RASTER",
-                latitude=38,
-                longitude=19,
+                location=Point(19.0, 38.0),
                 crop_type=crop,
                 irrigation_type=drip,
                 area=10000.00,
@@ -43,8 +43,7 @@ class Command(BaseCommand):
             f, created = Agrifield.objects.get_or_create(
                 owner=demo,
                 name="Field with irrigation log",
-                latitude=39.15,
-                longitude=20.98,
+                location=Point(20.98, 39.15),
                 crop_type=crop,
                 irrigation_type=drip,
                 area=10000.00,
@@ -60,8 +59,7 @@ class Command(BaseCommand):
             f, created = Agrifield.objects.get_or_create(
                 owner=demo,
                 name="Field with no irrigation log",
-                latitude=39.10,
-                longitude=20.92,
+                location=Point(20.92, 39.10),
                 crop_type=crop,
                 irrigation_type=drip,
                 area=10000.00,
@@ -74,8 +72,7 @@ class Command(BaseCommand):
             f, created = Agrifield.objects.get_or_create(
                 owner=demo,
                 name="Field with log outside dataset",
-                latitude=39.12,
-                longitude=20.94,
+                location=Point(20.94, 39.12),
                 crop_type=crop,
                 irrigation_type=drip,
                 area=10000.00,
