@@ -1,9 +1,12 @@
 from unittest import mock
 
 from django.contrib.auth.models import User
+from django.contrib.gis.geos import Point
 from django.test import TestCase
 
 from model_mommy import mommy
+
+from aira.models import Agrifield
 
 
 @mock.patch(
@@ -54,3 +57,16 @@ class TestHomePageView(TestCase):
         resp = self.client.get("/home/")
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, "aira/home.html")
+
+
+class AgrifieldEditViewTestCase(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="topsecret")
+        self.agrifield = mommy.make(
+            Agrifield, name="hello", longitude=23, latitude=38, owner=self.alice
+        )
+
+    def test_get(self):
+        self.client.login(username="alice", password="topsecret")
+        response = self.client.get("/update_agrifield/{}/".format(self.agrifield.id))
+        self.assertContains(response, "hello")
