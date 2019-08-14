@@ -1,36 +1,47 @@
+import datetime as dt
 import os
 
 from django.conf import settings
 from django.core.cache import cache
 
 import pandas as pd
-from hspatial import extract_point_from_raster, extract_point_timeseries_from_rasters
+from hspatial import PointTimeseries, extract_point_from_raster
 from osgeo import gdal
 from swb import calculate_crop_evapotranspiration, calculate_soil_water
 
 from aira.celery import app
-from aira.irma.main import (
-    agripoint_in_raster,
-    common_period_dates,
-    load_meteodata_file_paths,
-)
+from aira.irma.main import agripoint_in_raster, common_period_dates
 
 
 class Results:
     pass
 
 
-def extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles):
+def _point_timeseries(agrifield, category, varname, start_of_season):
+    return PointTimeseries(
+        agrifield.location,
+        prefix=os.path.join(
+            getattr(settings, "AIRA_DATA_" + category), "daily_" + varname
+        ),
+        start_date=start_of_season,
+    ).get()
+
+
+def extractSWBTimeseries(agrifield):
     """
         Given a Agrifield extract Timeseries from raster files and
         convert to pd.DataFrame.
     """
     EFFECTIVE_PRECIP_FACTOR = 0.8
 
-    _r = extract_point_timeseries_from_rasters(HRFiles, agrifield.location)
-    _e = extract_point_timeseries_from_rasters(HEFiles, agrifield.location)
-    _rf = extract_point_timeseries_from_rasters(FRFiles, agrifield.location)
-    _ef = extract_point_timeseries_from_rasters(FEFiles, agrifield.location)
+    current_year = dt.date.today().year
+    start_of_season = dt.datetime(current_year, 3, 15, 0, 0)
+
+    _r = _point_timeseries(agrifield, "HISTORICAL", "rain", start_of_season)
+    _e = _point_timeseries(agrifield, "HISTORICAL", "evaporation", start_of_season)
+    _rf = _point_timeseries(agrifield, "FORECAST", "rain", start_of_season)
+    _ef = _point_timeseries(agrifield, "FORECAST", "evaporation", start_of_season)
+
     start, end = common_period_dates(_r, _e)
     fstart, fend = common_period_dates(_rf, _ef)
 
@@ -118,8 +129,7 @@ def execute_model(agrifield):
         return results
 
     # Calculate crop evapotranspiration at the agrifield
-    HRFiles, HEFiles, FRFiles, FEFiles = load_meteodata_file_paths()
-    dTimeseries = extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles)
+    dTimeseries = extractSWBTimeseries(agrifield)
 
     # Set some variables for the template. results.irrigation_log_not_exists is True if
     # there's no irrigation event. Otherwise, results.irrigation_log_outside_time_period
@@ -206,11 +216,8 @@ def calculate_performance_chart(agrifield):
     if not agripoint_in_raster(agrifield):
         return results
 
-    # Retrieve precipitation and evaporation time series at the agrifield
-    HRFiles, HEFiles, FRFiles, FEFiles = load_meteodata_file_paths()
-
     # Extract data from files withe pd.DataFrame and end, start dates
-    dTimeseries = extractSWBTimeseries(agrifield, HRFiles, HEFiles, FRFiles, FEFiles)
+    dTimeseries = extractSWBTimeseries(agrifield)
 
     # Agrifield parameters
     theta_fc = agrifield.get_field_capacity

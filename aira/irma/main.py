@@ -1,7 +1,5 @@
-import datetime as dt
 import math
 import os
-from glob import glob
 
 from django.conf import settings
 from django.core.cache import cache
@@ -9,46 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from hspatial import extract_point_from_raster
 from osgeo import gdal
-
-
-def discard_files_older_than(files, adate):
-    result = []
-    adatestr = adate.isoformat()
-    for filename in files:
-        i = filename.find(str(adate.year))
-        if i < 0:
-            continue
-        j = i + 10
-        filedate = filename[i:j]
-        if filedate >= adatestr:
-            result.append(filename)
-    return result
-
-
-def load_meteodata_file_paths():
-    """
-        Load meteorological data paths from settings.AIRA_DATA_*
-    """
-    # Historical
-    HRFiles = glob(os.path.join(settings.AIRA_DATA_HISTORICAL, "daily_rain*.tif"))
-    HEFiles = glob(
-        os.path.join(settings.AIRA_DATA_HISTORICAL, "daily_evaporation*.tif")
-    )
-
-    # Contains current day + forecast
-    FRFiles = glob(os.path.join(settings.AIRA_DATA_FORECAST, "daily_rain*.tif"))
-
-    FEFiles = glob(os.path.join(settings.AIRA_DATA_FORECAST, "daily_evaporation*.tif"))
-
-    # Discard files older than the start of irrigation season
-    current_year = dt.date.today().year
-    start_of_season = dt.date(current_year, 3, 15)
-    HRFiles = discard_files_older_than(HRFiles, start_of_season)
-    HEFiles = discard_files_older_than(HEFiles, start_of_season)
-    FRFiles = discard_files_older_than(FRFiles, start_of_season)
-    FEFiles = discard_files_older_than(FEFiles, start_of_season)
-
-    return HRFiles, HEFiles, FRFiles, FEFiles
 
 
 def get_default_db_value(afield_obj):

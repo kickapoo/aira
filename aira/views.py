@@ -2,7 +2,9 @@ import csv
 import datetime as dt
 import json
 import os
+from glob import glob
 
+from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
@@ -18,7 +20,6 @@ from .irma.main import (
     get_default_db_value,
     get_parameters,
     get_performance_chart,
-    load_meteodata_file_paths,
     model_results,
 )
 from .models import Agrifield, IrrigationLog, Profile
@@ -93,20 +94,19 @@ class IndexPageView(TemplateView):
     template_name = "aira/index.html"
 
     def get_context_data(self, **kwargs):
-        context = super(IndexPageView, self).get_context_data(**kwargs)
-        daily_r_fps, daily_e_fps = load_meteodata_file_paths()[:2]
-        dates_r = sorted(
-            [os.path.basename(x).split(".")[0].partition("-")[2] for x in daily_r_fps]
+        context = super().get_context_data(**kwargs)
+        filenames = glob(
+            os.path.join(settings.AIRA_DATA_HISTORICAL, "daily_rain-*.tif")
         )
-        dates_e = sorted(
-            [os.path.basename(x).split(".")[0].partition("-")[2] for x in daily_e_fps]
-        )
-        common_dates = [x for x in dates_r if x in dates_e]
-        y1, m1, d1 = (int(x) for x in common_dates[0].split("-"))
-        y2, m2, d2 = (int(x) for x in common_dates[-1].split("-"))
-        context["start_date"] = dt.date(y1, m1, d1)
-        context["end_date"] = dt.date(y2, m2, d2) - dt.timedelta(days=1)
+        one_day = dt.timedelta(days=1)
+        context["start_date"] = self._get_date_from_filename(filenames[0])
+        context["end_date"] = self._get_date_from_filename(filenames[-1]) - one_day
         return context
+
+    def _get_date_from_filename(self, filename):
+        datestr = os.path.basename(filename).split(".")[0].partition("-")[2]
+        y, m, d = (int(x) for x in datestr.split("-"))
+        return dt.date(y, m, d)
 
 
 class HomePageView(TemplateView):
