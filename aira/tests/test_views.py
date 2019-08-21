@@ -82,3 +82,13 @@ class AgrifieldEditViewTestCase(TestCase):
         self.client.login(username="alice", password="topsecret")
         response = self.client.get("/update_agrifield/{}/".format(self.agrifield.id))
         self.assertContains(response, "hello")
+
+
+class AgrifieldCreateTestCase(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="topsecret")
+        self.client.login(username="alice", password="topsecret")
+        self.response = self.client.get("/create_agrifield/alice/")
+
+    def test_status_code(self):
+        self.assertEqual(self.response.status_code, 200)
