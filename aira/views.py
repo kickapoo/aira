@@ -7,12 +7,14 @@ from glob import glob
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from django.http import Http404, HttpResponse
-from django.shortcuts import redirect
+from django.http import FileResponse, Http404, HttpResponse
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+
+from hspatial import PointTimeseries
 
 from .forms import AgrifieldForm, IrrigationlogForm, ProfileForm
 from .irma.main import (
@@ -348,3 +350,22 @@ def remove_supervised_user_from_user_list(request):
         response_data = {"message": "Success!!!"}
         return HttpResponse(json.dumps(response_data), content_type="application/json")
     raise Http404
+
+
+class AgrifieldTimeseries(View):
+    def get(self, *args, **kwargs):
+        filename = self._get_point_timeseries(*args, **kwargs)
+        return FileResponse(
+            open(filename, "rb"), as_attachment=True, content_type="text_csv"
+        )
+
+    def _get_point_timeseries(self, *args, **kwargs):
+        agrifield = get_object_or_404(Agrifield, pk=kwargs.get("agrifield_id"))
+        variable = kwargs.get("variable")
+        prefix = os.path.join(settings.AIRA_DATA_HISTORICAL, "daily_" + variable)
+        dest = os.path.join(
+            settings.AIRA_TIMESERIES_CACHE_DIR,
+            "agrifield{}-{}.hts".format(agrifield.id, variable),
+        )
+        PointTimeseries(point=agrifield.location, prefix=prefix).get_cached(dest)
+        return dest

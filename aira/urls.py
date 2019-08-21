@@ -50,6 +50,11 @@ urlpatterns = [
         login_required(views.DeleteAgrifield.as_view()),
         name="delete_agrifield",
     ),
+    path(
+        "agrifield/<int:agrifield_id>/timeseries/<str:variable>/",
+        login_required(views.AgrifieldTimeseries.as_view()),
+        name="agrifield-timeseries",
+    ),
     # Irrigation Log
     path(
         "create_irrigationlog/<int:pk>/",
