@@ -68,7 +68,7 @@ class TestHomePageView(TestCase):
         self.client.login(username="batman", password="thegoatandthesheep")
         resp = self.client.get("/home/")
         self.assertEqual(resp.status_code, 200)
-        self.assertTemplateUsed(resp, "aira/home.html")
+        self.assertTemplateUsed(resp, "aira/home/main.html")
 
 
 class AgrifieldEditViewTestCase(TestCase):

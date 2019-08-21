@@ -1,0 +1,7 @@
+{% load i18n %}
+
+{% if f.status != 'done' %}
+  <p class="alert alert-warning">
+    {% trans "This field is being (re)calculated. Reload the page some time later to view the updated results. The calculation usually takes from a few seconds to a few minutes." %}
+  </p>
+{% endif %}

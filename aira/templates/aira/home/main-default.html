@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% load bootstrap3 %}
+
+{% block title %} {% trans "Home" %} - {{user}} {% endblock %}
+
+{% block content %}
+  {% if user.is_demo %}
+    <div class="alert alert-info">
+      <a href="#" class="close" data-dismiss="alert">&times;</a>
+      <i class="fa fa-info-circle fa-2x"></i>&nbsp; <span style="font-size:32px">{% trans "demo" %}</span>
+    </div>
+  {% endif %}
+
+  {% if not profile %}
+    <div class="alert alert-warning">
+      <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-hand-o-right"></i> &nbsp; {% trans "Please update your personal information" %}<a href="{% url 'create_profile' %}"> {% trans "here" %} </a>
+    </div>
+  {% endif %}
+
+  <div class="panel panel-default">
+    <div class="panel-heading"></div>
+      <div class="panel-body">
+        <div id="open_map" class="map"></div>
+      </div>
+  </div>
+
+  {% if profile %}
+    {% include "aira/home/profile_info.html" %}
+  {% endif %}
+
+  {% if not agrifields %}
+    <div class="alert alert-warning">
+      <a href="#" class="close" data-dismiss="alert">&times;</a>
+      <i class="fa fa-exclamation-triangle"></i> &nbsp; {% trans "It seems you haven't any fields, Add at least one" %} <a href={% url 'create_agrifield' url_username %}> {% trans "here" %} </a>
+    </div>
+  {% else %}
+    {% include "aira/home/agrifields_list/main.html" %}
+  {% endif %}
+{% endblock %}
+
+{% block extrajs %}
+  {% include "aira/home/js.html" %}
+{% endblock %}

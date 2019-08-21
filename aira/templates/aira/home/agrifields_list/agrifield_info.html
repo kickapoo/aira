@@ -1,0 +1,8 @@
+{% load i18n %}
+
+<p>
+  <b>{% if f.is_virtual %}<span class="text-warning">{% trans "Virtual" %}</span>{% endif %} {% trans "Field Info" %}:</b>
+  <a href="{% url 'update_agrifield' f.id %}">{{ f.name }}</a>
+  {% trans "is growing" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.crop_type.name }}</a>
+  {% trans "using" %} <a href="{% url 'update_agrifield' f.id %}">{{ f.irrigation_type.name}}</a>.
+</p>

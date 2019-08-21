@@ -1,0 +1,15 @@
+{% load static %}
+{% load i18n %}
+
+{% include "aira/home/agrifields_list/agrifield_results_warnings.html" %}
+{% include "aira/home/agrifields_list/agrifield_results_recommendation_heading.html" %}
+
+{% if not f.results.adv %}
+  {% trans "No need to irrigate" %}
+{% else %}
+  {% include "aira/home/agrifields_list/agrifield_results_recommendation.html" %}
+{% endif %}
+
+<div>&nbsp;</div>
+
+{% include "aira/home/agrifields_list/agrifield_results_buttons.html" %}
