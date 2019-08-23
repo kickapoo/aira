@@ -367,5 +367,7 @@ class AgrifieldTimeseries(View):
             settings.AIRA_TIMESERIES_CACHE_DIR,
             "agrifield{}-{}.hts".format(agrifield.id, variable),
         )
-        PointTimeseries(point=agrifield.location, prefix=prefix).get_cached(dest)
+        PointTimeseries(point=agrifield.location, prefix=prefix).get_cached(
+            dest, version=2
+        )
         return dest

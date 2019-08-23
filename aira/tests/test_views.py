@@ -169,5 +169,5 @@ class AgrifieldWeatherHistoryTestCase(TestCase):
 
     def test_called_get_cached(self):
         self.mock_point_timeseries.return_value.get_cached.assert_called_once_with(
-            self.dummy_result_pathname
+            self.dummy_result_pathname, version=2
         )
