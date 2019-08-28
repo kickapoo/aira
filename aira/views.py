@@ -97,8 +97,8 @@ class IndexPageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        filenames = glob(
-            os.path.join(settings.AIRA_DATA_HISTORICAL, "daily_rain-*.tif")
+        filenames = sorted(
+            glob(os.path.join(settings.AIRA_DATA_HISTORICAL, "daily_rain-*.tif"))
         )
         one_day = dt.timedelta(days=1)
         context["start_date"] = self._get_date_from_filename(filenames[0])
