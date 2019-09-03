@@ -62,7 +62,7 @@ class AgrifieldForm(forms.ModelForm):
             "location": _("Co-ordinates"),
             "crop_type": _("Crop Type"),
             "irrigation_type": _("Irrigation Type"),
-            "area": _("Irrigated Field Area (m<sup>2</sup>)"),
+            "area": _("Irrigated Field Area (m²)"),
             "use_custom_parameters": _("Use Custom Parameters"),
             "custom_irrigation_optimizer": _("Irrigation Optimizer"),
             "custom_root_depth_max": _("Estimated root depth (max)"),
