@@ -187,6 +187,7 @@ class Agrifield(models.Model):
         blank=True,
         validators=[MaxValueValidator(0.22), MinValueValidator(0.00)],
     )
+    soil_analysis = models.FileField(blank=True)
 
     @property
     def get_wilting_point(self):
