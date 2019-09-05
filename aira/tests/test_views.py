@@ -1,21 +1,23 @@
 import os
 import shutil
-from tempfile import mkdtemp
+import tempfile
 from unittest.mock import patch
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
+from django.core.files.base import ContentFile
 from django.test import TestCase, override_settings
 
 from model_mommy import mommy
 
 from aira.models import Agrifield
+from aira.tests import RandomMediaRootMixin
 
 
 class TestIndexPageView(TestCase):
     def setUp(self):
-        self.tempdir = mkdtemp()
+        self.tempdir = tempfile.mkdtemp()
         self.settings_overrider = override_settings(AIRA_DATA_HISTORICAL=self.tempdir)
         self.settings_overrider.__enter__()
         open(os.path.join(self.tempdir, "daily_rain-2018-04-19.tif"), "w").close()
@@ -110,7 +112,7 @@ class AgrifieldWeatherHistoryTestCase(TestCase):
         self._create_dummy_result_file()
 
     def _create_tempdir(self):
-        self.tempdir = mkdtemp()
+        self.tempdir = tempfile.mkdtemp()
 
     def _override_settings(self):
         self.settings_overrider = override_settings(
@@ -171,3 +173,25 @@ class AgrifieldWeatherHistoryTestCase(TestCase):
         self.mock_point_timeseries.return_value.get_cached.assert_called_once_with(
             self.dummy_result_pathname, version=2
         )
+
+
+class DownloadSoilAnalysisTestCase(TestCase, RandomMediaRootMixin):
+    def setUp(self):
+        self.override_media_root()
+        self.alice = User.objects.create_user(username="alice", password="topsecret")
+        self.agrifield = mommy.make(Agrifield, id=1, owner=self.alice)
+        self.agrifield.soil_analysis.save("somefile", ContentFile("hello world"))
+        self.client.login(username="alice", password="topsecret")
+        self.response = self.client.get("/agrifield/1/soil_analysis/")
+
+    def tearDown(self):
+        self.end_media_root_override()
+
+    def test_status_code(self):
+        self.assertEqual(self.response.status_code, 200)
+
+    def test_content(self):
+        content = b""
+        for x in self.response.streaming_content:
+            content += x
+        self.assertEqual(content, b"hello world")

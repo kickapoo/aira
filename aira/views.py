@@ -221,7 +221,6 @@ class DeleteProfile(DeleteView):
         return reverse("welcome")
 
 
-# Agrifield Create/Update/Delete
 class CreateAgrifield(CreateView):
     model = Agrifield
     form_class = AgrifieldForm
@@ -249,7 +248,6 @@ class CreateAgrifield(CreateView):
         return context
 
 
-# IrrigationLog Create/Update/Delete
 class UpdateAgrifield(UpdateView):
     model = Agrifield
     form_class = AgrifieldForm
@@ -371,3 +369,12 @@ class AgrifieldTimeseries(View):
             dest, version=2
         )
         return dest
+
+
+class DownloadSoilAnalysis(View):
+    def get(self, *args, **kwargs):
+        agrifield = get_object_or_404(Agrifield, pk=kwargs.get("agrifield_id"))
+        agrifield.can_edit(self.request.user)
+        if not agrifield.soil_analysis:
+            raise Http404
+        return FileResponse(agrifield.soil_analysis, as_attachment=True)

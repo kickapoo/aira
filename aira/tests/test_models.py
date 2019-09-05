@@ -3,12 +3,14 @@ from unittest import mock
 
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
+from django.core.files.base import ContentFile
 from django.http.response import Http404
 from django.test import TestCase
 
 from model_mommy import mommy
 
 from aira.models import Agrifield, CropType, IrrigationType, Profile
+from aira.tests import RandomMediaRootMixin
 
 
 class UserTestCase(TestCase):
@@ -93,6 +95,26 @@ class AgrifieldTestCase(TestCase):
 
     def test_agrifield_use_custom_parameters_default_value(self):
         self.assertFalse(self.agrifield.use_custom_parameters)
+
+
+class AgrifieldSoilAnalysisTestCase(TestCase, RandomMediaRootMixin):
+    def setUp(self):
+        self.override_media_root()
+        self.agrifield = mommy.make(Agrifield)
+        self.agrifield.soil_analysis.save("somefile", ContentFile("hello world"))
+
+    def tearDown(self):
+        self.end_media_root_override()
+
+    def test_file_data(self):
+        with open(self.agrifield.soil_analysis.path, "r") as f:
+            self.assertEqual(f.read(), "hello world")
+
+    def test_file_url(self):
+        self.assertEqual(
+            self.agrifield.soil_analysis.url,
+            "/agrifield/{}/soil_analysis/".format(self.agrifield.id),
+        )
 
 
 class CropTypeMostRecentPlantingDateTestCase(TestCase):

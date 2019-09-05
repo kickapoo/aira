@@ -29,7 +29,7 @@
       <sub> {% trans "Click on Map to add your Field coordinates" %}</sub>
       <hr>
       <fieldset>
-          <form method="post" role="form">
+          <form method="post" enctype="multipart/form-data" role="form">
           {% csrf_token %}
           <div class='row'>
               <div class='col-sm-6'>
@@ -40,6 +40,7 @@
                   {% bootstrap_field form.location %}
                   {% bootstrap_field form.crop_type %}
                   {% bootstrap_field form.irrigation_type %}
+                  {% bootstrap_field form.soil_analysis %}
                   {% bootstrap_field form.use_custom_parameters %}
                   </div>
                   {% buttons %}

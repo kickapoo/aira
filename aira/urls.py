@@ -55,6 +55,11 @@ urlpatterns = [
         login_required(views.AgrifieldTimeseries.as_view()),
         name="agrifield-timeseries",
     ),
+    path(
+        "agrifield/<int:agrifield_id>/soil_analysis/",
+        login_required(views.DownloadSoilAnalysis.as_view()),
+        name="agrifield-soil-analysis",
+    ),
     # Irrigation Log
     path(
         "create_irrigationlog/<int:pk>/",

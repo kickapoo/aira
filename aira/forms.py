@@ -54,6 +54,7 @@ class AgrifieldForm(forms.ModelForm):
             "custom_field_capacity",
             "custom_thetaS",
             "custom_wilting_point",
+            "soil_analysis",
         ]
 
         labels = {
@@ -72,6 +73,7 @@ class AgrifieldForm(forms.ModelForm):
             "custom_field_capacity": _("Field Capacity"),
             "custom_thetaS": _("Soil moisture at saturation"),
             "custom_wilting_point": _("Permanent Wilting Point"),
+            "soil_analysis": _("Soil analysis document"),
         }
 
     def clean(self):

@@ -6,10 +6,12 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.core.cache import cache
+from django.core.files.storage import FileSystemStorage
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.http import Http404
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from hspatial import extract_point_from_raster
@@ -130,6 +132,12 @@ class IrrigationType(models.Model):
         return str(self.name)
 
 
+class SoilAnalysisStorage(FileSystemStorage):
+    def url(self, name):
+        agrifield = Agrifield.objects.get(soil_analysis=name)
+        return reverse("agrifield-soil-analysis", kwargs={"agrifield_id": agrifield.id})
+
+
 class Agrifield(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, default="i.e. MyField1")
@@ -187,7 +195,9 @@ class Agrifield(models.Model):
         blank=True,
         validators=[MaxValueValidator(0.22), MinValueValidator(0.00)],
     )
-    soil_analysis = models.FileField(blank=True)
+    soil_analysis = models.FileField(
+        blank=True, storage=SoilAnalysisStorage(), upload_to="soil_analyses"
+    )
 
     @property
     def get_wilting_point(self):

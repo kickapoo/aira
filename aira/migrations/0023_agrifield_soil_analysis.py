@@ -2,6 +2,8 @@
 
 from django.db import migrations, models
 
+import aira.models
+
 
 class Migration(migrations.Migration):
 
@@ -11,6 +13,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="agrifield",
             name="soil_analysis",
-            field=models.FileField(blank=True, upload_to=""),
+            field=models.FileField(
+                blank=True,
+                storage=aira.models.SoilAnalysisStorage(),
+                upload_to="soil_analyses",
+            ),
         )
     ]

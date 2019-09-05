@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-04 12:47+0300\n"
+"POT-Creation-Date: 2019-09-05 07:35+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,7 @@ msgstr "Επιτηρητής"
 msgid "Consider me as supervisor for other accounts"
 msgstr "Επιθυμώ να είμαι επιτηρητής άλλων λογαριασμών"
 
-#: aira/forms.py:34 aira/forms.py:62
+#: aira/forms.py:34 aira/forms.py:63
 msgid "Co-ordinates"
 msgstr "Συντεταγμένες"
 
@@ -54,77 +54,81 @@ msgstr "Συντεταγμένες"
 msgid "Longitude and latitude in decimal degrees"
 msgstr "Γεωγραφικό μήκος και πλάτος σε μοίρες με δεκαδικά"
 
-#: aira/forms.py:60 aira/templates/aira/advice.html:19
+#: aira/forms.py:61 aira/templates/aira/advice.html:19
 #: aira/templates/aira/home/js.html:75
 msgid "Field Name"
 msgstr "Όνομα αγροτεμαχίου"
 
-#: aira/forms.py:61
+#: aira/forms.py:62
 msgid "Is this virtual field?"
 msgstr "Το αγροτεμάχιο είναι εικονικό;"
 
-#: aira/forms.py:63 aira/templates/aira/advice.html:31
+#: aira/forms.py:64 aira/templates/aira/advice.html:31
 #: aira/templates/aira/agrifield_form.html:74
 msgid "Crop Type"
 msgstr "Καλλιέργεια"
 
-#: aira/forms.py:64 aira/templates/aira/agrifield_form.html:75
+#: aira/forms.py:65 aira/templates/aira/agrifield_form.html:75
 msgid "Irrigation Type"
 msgstr "Μέθοδος άρδευσης"
 
-#: aira/forms.py:65
+#: aira/forms.py:66
 msgid "Irrigated Field Area (m²)"
 msgstr "Αρδευόμενη έκταση (m²)"
 
-#: aira/forms.py:66
+#: aira/forms.py:67
 msgid "Use Custom Parameters"
 msgstr "Χρήση προσαρμοσμένων παραμέτρων"
 
-#: aira/forms.py:67 aira/templates/aira/advice.html:55
+#: aira/forms.py:68 aira/templates/aira/advice.html:55
 msgid "Irrigation Optimizer"
 msgstr "Συντελεστής βελτιστοποίησης άρδευσης"
 
-#: aira/forms.py:68 aira/templates/aira/advice.html:37
+#: aira/forms.py:69 aira/templates/aira/advice.html:37
 msgid "Estimated root depth (max)"
 msgstr "Εκτιμώμενο μέγιστο βάθος ριζοστρώματος (m)"
 
-#: aira/forms.py:69
+#: aira/forms.py:70
 msgid "Estimated root depth (min)"
 msgstr "Εκτιμώμενο ελάχιστο βάθος ριζοστρώματος (m)"
 
-#: aira/forms.py:70 aira/templates/aira/advice.html:38
+#: aira/forms.py:71 aira/templates/aira/advice.html:38
 msgid "Maximum Allowable Depletion"
 msgstr "Μέγιστο επιτρεπόμενο υδατικό έλλειμμα"
 
-#: aira/forms.py:71
+#: aira/forms.py:72
 msgid "Irrigation efficiency"
 msgstr "Συντελεστής αρδευτικής αποδοτικότητας"
 
-#: aira/forms.py:72 aira/templates/aira/advice.html:39
+#: aira/forms.py:73 aira/templates/aira/advice.html:39
 msgid "Field Capacity"
 msgstr "Υδατοϊκανότητα"
 
-#: aira/forms.py:73 aira/templates/aira/advice.html:40
+#: aira/forms.py:74 aira/templates/aira/advice.html:40
 msgid "Soil moisture at saturation"
 msgstr "Εδαφική Υγρασία στον κορεσμό"
 
-#: aira/forms.py:74 aira/templates/aira/advice.html:41
+#: aira/forms.py:75 aira/templates/aira/advice.html:41
 msgid "Permanent Wilting Point"
 msgstr "Σημείο μόνιμης μάρανσης"
 
-#: aira/forms.py:82
+#: aira/forms.py:76
+msgid "Soil analysis document"
+msgstr "Έκθεση εδαφολογικής ανάλυσης"
+
+#: aira/forms.py:84
 msgid "You must select if field is virtual or not"
 msgstr "Πρέπει να καταχωρήσετε αν το αγροτεμάχιο είναι εικονικό ή όχι"
 
-#: aira/forms.py:91
+#: aira/forms.py:93
 msgid "Datetime (Y-M-D h:m:s) "
 msgstr "Ημερομηνία και ώρα (Y-M-D h:m:s)"
 
-#: aira/forms.py:92
+#: aira/forms.py:94
 msgid "Applied Irrigation Water"
 msgstr "Δόση άρδευσης"
 
-#: aira/forms.py:102
+#: aira/forms.py:104
 msgid "Are you human?"
 msgstr "Είστε άνθρωπος;"
 
@@ -136,43 +140,43 @@ msgstr "Η δόση άρδευσης βασίζεται στο προκαθορ�
 msgid "Irrigation status for "
 msgstr "Κατάσταση αρδεύσεων για "
 
-#: aira/models.py:28
+#: aira/models.py:30
 msgid "Day"
 msgstr "Μέρα"
 
-#: aira/models.py:29
+#: aira/models.py:31
 msgid "2 Days"
 msgstr "2 μέρες"
 
-#: aira/models.py:30
+#: aira/models.py:32
 msgid "3 Days"
 msgstr "3 μέρες"
 
-#: aira/models.py:31
+#: aira/models.py:33
 msgid "4 Days"
 msgstr "4 μέρες"
 
-#: aira/models.py:32
+#: aira/models.py:34
 msgid "5 Days"
 msgstr "5 μέρες"
 
-#: aira/models.py:33
+#: aira/models.py:35
 msgid "Week"
 msgstr "Εβδομάδα"
 
-#: aira/models.py:34
+#: aira/models.py:36
 msgid "10 Day"
 msgstr "10 μέρες"
 
-#: aira/models.py:35
+#: aira/models.py:37
 msgid "Month"
 msgstr "Μήνα"
 
-#: aira/models.py:40 aira/models.py:42
+#: aira/models.py:42 aira/models.py:44
 msgid "Yes"
 msgstr "Ναι"
 
-#: aira/models.py:40 aira/models.py:42
+#: aira/models.py:42 aira/models.py:44
 msgid "No"
 msgstr "Όχι"
 
@@ -298,7 +302,7 @@ msgstr "Όχι"
 
 #: aira/templates/aira/advice.html:156
 #: aira/templates/aira/agrifield_form.html:131
-#: aira/templates/aira/agrifield_update.html:120
+#: aira/templates/aira/agrifield_update.html:121
 #: aira/templates/aira/home/js.html:44
 msgid "IRMA area"
 msgstr "Περιοχή μελέτης IRMA"
