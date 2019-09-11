@@ -19,7 +19,6 @@ from hspatial import PointTimeseries
 from .forms import AgrifieldForm, IrrigationlogForm, ProfileForm
 from .irma.main import (
     agripoint_in_raster,
-    get_default_db_value,
     get_parameters,
     get_performance_chart,
     model_results,
@@ -258,13 +257,8 @@ class UpdateAgrifield(UpdateView):
         return reverse("home", kwargs={"username": field.owner})
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateAgrifield, self).get_context_data(**kwargs)
-        afieldobj = Agrifield.objects.get(pk=self.kwargs["pk"])
-        afieldobj.can_edit(self.request.user)
-        context["agrifield_user"] = afieldobj.owner
-        if agripoint_in_raster(afieldobj):
-            context["default_parms"] = get_default_db_value(afieldobj)
-        return context
+        self.object.can_edit(self.request.user)
+        return super().get_context_data(**kwargs)
 
 
 class DeleteAgrifield(DeleteView):

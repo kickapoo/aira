@@ -47,7 +47,7 @@
                   {% if user.username != "demo" %}
                   <button type="submit" class="btn btn-success btn-xs">{% trans "Update" %}</button>
                   {% endif %}
-                  <a class="btn btn-success btn-xs" href="{% url 'home' agrifield_user %}"> {% trans "Back" %} </a>
+                  <a class="btn btn-success btn-xs" href="{% url 'home' object.owner %}"> {% trans "Back" %} </a>
                   {% endbuttons %}
               </div>
               <div class='col-sm-6'>
@@ -59,27 +59,27 @@
               <fieldset class="well well-sm">
                   <legend>{% trans "Irrigation Management" %}</legend>
                       {% bootstrap_field form.custom_efficiency %}
-                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.irr_eff }}</b></span></sup>
+                      <sup>{% trans "Value from system's database" %}: <span id="default-irrigation-efficiency">{{ object.irrigation_type.efficiency }}</span></sup>
                       {% bootstrap_field form.custom_irrigation_optimizer%}
-                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>0.5</b></span></sup>
+                      <sup>{% trans "Value from system's database" %}: <span id="default-irrigation-optimizer">0.5</span></sup>
               </fieldset>
               <fieldset class="well well-sm">
                   <legend>{% trans "Crop" %}</legend>
                       {% bootstrap_field form.custom_max_allow_depletion %}
-                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.mad }}</b></span></sup>
+                      <sup>{% trans "Value from system's database" %}: <span id="default-max_allow_depletion">{{ object.crop_type.max_allow_depletion }}</span></sup>
                       {% bootstrap_field form.custom_root_depth_max %}
-                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.rd_max}}</b></span></sup>
+                      <sup>{% trans "Value from system's database" %}: <span id="default-root_depth_max">{{ object.crop_type.root_depth_max }}</span></sup>
                       {% bootstrap_field form.custom_root_depth_min %}
-                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.rd_min }}</b></span></sup>
+                      <sup>{% trans "Value from system's database" %}: <span id="default-root_depth_min">{{ object.crop_type.root_depth_min }}</span></sup>
               </fieldset>
               <fieldset class="well well-sm">
                   <legend>{% trans "Soil" %}</legend>
                       {% bootstrap_field form.custom_field_capacity %}
-                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.fc|floatformat:"2"  }}</b></span></sup>
+                      <sup>{% trans "Value from system's database" %}: <span id="default-field-capacity">{{ object.default_field_capacity|floatformat:"2"  }}</span></sup>
                       {% bootstrap_field form.custom_wilting_point %}
-                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.wp|floatformat:"2"  }}</b></span></sup>
+                      <sup>{% trans "Value from system's database" %}: <span id="default-wilting-point">{{ object.default_wilting_point|floatformat:"2"  }}</span></sup>
                       {% bootstrap_field form.custom_thetaS %}
-                      <sup>*{% trans "Value from system's database" %}: <span class="text-success"><b>{{ default_parms.thetaS|floatformat:"2"  }}</b></span></sup>
+                      <sup>{% trans "Value from system's database" %}: <span id="default-theta_s">{{ object.default_theta_s|floatformat:"2"  }}</span></sup>
               </fieldset>
               </div>
             </div>

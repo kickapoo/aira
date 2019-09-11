@@ -9,10 +9,50 @@ from django.contrib.gis.geos import Point
 from django.core.files.base import ContentFile
 from django.test import TestCase, override_settings
 
+import numpy as np
+from hspatial.test import setup_test_raster
 from model_mommy import mommy
 
 from aira.models import Agrifield
 from aira.tests import RandomMediaRootMixin
+
+
+class TestDataMixin:
+    def setUp(self):
+        super().setUp()
+        self.tempdir = tempfile.mkdtemp()
+        self.settings_overrider = override_settings(
+            AIRA_COEFFS_RASTERS_DIR=self.tempdir
+        )
+        self.settings_overrider.__enter__()
+        self._create_rasters()
+
+    def tearDown(self):
+        self.settings_overrider.__exit__(None, None, None)
+        shutil.rmtree(self.tempdir)
+
+    def _create_rasters(self):
+        self._create_fc()
+        self._create_pwp()
+        self._create_theta_s()
+
+    def _create_fc(self):
+        setup_test_raster(
+            os.path.join(self.tempdir, "fc.tif"),
+            np.array([[0.20, 0.23, 0.26], [0.29, 0.32, 0.35], [0.38, 0.41, 0.44]]),
+        )
+
+    def _create_pwp(self):
+        setup_test_raster(
+            os.path.join(self.tempdir, "pwp.tif"),
+            np.array([[0.06, 0.07, 0.08], [0.09, 0.10, 0.11], [0.12, 0.13, 0.14]]),
+        )
+
+    def _create_theta_s(self):
+        setup_test_raster(
+            os.path.join(self.tempdir, "theta_s.tif"),
+            np.array([[0.38, 0.39, 0.40], [0.41, 0.42, 0.43], [0.44, 0.45, 0.46]]),
+        )
 
 
 class TestIndexPageView(TestCase):
@@ -75,17 +115,79 @@ class TestHomePageView(TestCase):
         self.assertTemplateUsed(resp, "aira/home/main.html")
 
 
-class AgrifieldEditViewTestCase(TestCase):
+class AgrifieldEditViewTestCase(TestDataMixin, TestCase):
     def setUp(self):
+        super().setUp()
+        self._create_data()
+        self._make_request()
+
+    def _create_data(self):
         self.alice = User.objects.create_user(username="alice", password="topsecret")
         self.agrifield = mommy.make(
-            Agrifield, name="hello", location=Point(23, 38), owner=self.alice
+            Agrifield,
+            name="hello",
+            location=Point(22.01, 37.99),
+            owner=self.alice,
+            irrigation_type__efficiency=0.85,
+            crop_type__max_allow_depletion=0.40,
+            crop_type__root_depth_max=0.50,
+            crop_type__root_depth_min=0.30,
         )
 
-    def test_get(self):
+    def _make_request(self):
         self.client.login(username="alice", password="topsecret")
-        response = self.client.get("/update_agrifield/{}/".format(self.agrifield.id))
-        self.assertContains(response, "hello")
+        self.response = self.client.get(
+            "/update_agrifield/{}/".format(self.agrifield.id)
+        )
+
+    def test_response_contains_agrifield_name(self):
+        self.assertContains(self.response, "hello")
+
+    def test_default_irrigation_efficiency(self):
+        self.assertContains(
+            self.response,
+            '<span id="default-irrigation-efficiency">0.85</span>',
+            html=True,
+        )
+
+    def test_default_max_allow_depletion(self):
+        self.assertContains(
+            self.response,
+            '<span id="default-max_allow_depletion">0.40</span>',
+            html=True,
+        )
+
+    def test_default_root_depth_max(self):
+        self.assertContains(
+            self.response, '<span id="default-root_depth_max">0.5</span>', html=True
+        )
+
+    def test_default_root_depth_min(self):
+        self.assertContains(
+            self.response, '<span id="default-root_depth_min">0.3</span>', html=True
+        )
+
+    def test_default_irrigation_optimizer(self):
+        self.assertContains(
+            self.response,
+            '<span id="default-irrigation-optimizer">0.5</span>',
+            html=True,
+        )
+
+    def test_default_field_capacity(self):
+        self.assertContains(
+            self.response, '<span id="default-field-capacity">0.32</span>', html=True
+        )
+
+    def test_default_wilting_point(self):
+        self.assertContains(
+            self.response, '<span id="default-wilting-point">0.10</span>', html=True
+        )
+
+    def test_default_theta_s(self):
+        self.assertContains(
+            self.response, '<span id="default-theta_s">0.42</span>', html=True
+        )
 
 
 class AgrifieldCreateTestCase(TestCase):

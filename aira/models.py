@@ -200,50 +200,46 @@ class Agrifield(models.Model):
     )
 
     @property
-    def get_wilting_point(self):
-        if self.use_custom_parameters:
-            if self.custom_wilting_point in [None, ""]:
-                return extract_point_from_raster(
-                    self.location,
-                    gdal.Open(
-                        os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif")
-                    ),
-                )
+    def wilting_point(self):
+        if self.use_custom_parameters and self.custom_wilting_point:
             return self.custom_wilting_point
         else:
-            return extract_point_from_raster(
-                self.location,
-                gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif")),
-            )
+            return self.default_wilting_point
 
     @property
-    def get_thetaS(self):
-        if self.use_custom_parameters:
-            if self.custom_thetaS in [None, ""]:
-                return extract_point_from_raster(
-                    self.location,
-                    gdal.Open(
-                        os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "theta_s.tif")
-                    ),
-                )
+    def default_wilting_point(self):
+        return extract_point_from_raster(
+            self.location,
+            gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif")),
+        )
+
+    @property
+    def theta_s(self):
+        if self.use_custom_parameters and self.custom_thetaS:
             return self.custom_thetaS
         else:
-            return extract_point_from_raster(
-                self.location,
-                gdal.Open(
-                    os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "theta_s.tif")
-                ),
-            )
+            return self.default_theta_s
 
     @property
-    def get_field_capacity(self):
+    def default_theta_s(self):
+        return extract_point_from_raster(
+            self.location,
+            gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "theta_s.tif")),
+        )
+
+    @property
+    def field_capacity(self):
         if self.use_custom_parameters and self.custom_field_capacity:
             return self.custom_field_capacity
         else:
-            return extract_point_from_raster(
-                self.location,
-                gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif")),
-            )
+            return self.default_field_capacity
+
+    @property
+    def default_field_capacity(self):
+        return extract_point_from_raster(
+            self.location,
+            gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif")),
+        )
 
     @property
     def get_efficiency(self):

@@ -9,38 +9,14 @@ from hspatial import extract_point_from_raster
 from osgeo import gdal
 
 
-def get_default_db_value(afield_obj):
-    """
-       doc str is missing
-    """
-    irr_eff = afield_obj.irrigation_type.efficiency
-    mad = afield_obj.crop_type.max_allow_depletion
-    rd_max = afield_obj.crop_type.root_depth_max
-    rd_min = afield_obj.crop_type.root_depth_min
-    IRT = afield_obj.irrigation_optimizer
-    fc = extract_point_from_raster(
-        afield_obj.location,
-        gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif")),
-    )
-    wp = extract_point_from_raster(
-        afield_obj.location,
-        gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif")),
-    )
-    thetaS = extract_point_from_raster(
-        afield_obj.location,
-        gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "theta_s.tif")),
-    )
-    return locals()
-
-
 def get_parameters(afield_obj):
     """
         For url:advice, populate  afield_obj
         information table
     """
     # For url 'advice' templates use
-    fc = afield_obj.get_field_capacity
-    wp = afield_obj.get_wilting_point
+    fc = afield_obj.field_capacity
+    wp = afield_obj.wilting_point
     rd = (
         float(afield_obj.get_root_depth_min) + float(afield_obj.get_root_depth_max)
     ) / 2
@@ -48,7 +24,7 @@ def get_parameters(afield_obj):
     p = float(afield_obj.get_mad)
     peff = 0.8  # Effective rainfall coeff 0.8 * Precip
     irr_eff = float(afield_obj.get_efficiency)
-    theta_s = afield_obj.get_thetaS
+    theta_s = afield_obj.theta_s
     rd_factor = 1000  # Static for mm
     IRT = afield_obj.get_irrigation_optimizer
     custom_parameters = afield_obj.use_custom_parameters

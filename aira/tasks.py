@@ -159,14 +159,14 @@ def execute_model(agrifield):
     a = dTimeseries["draintime_A"]
     b = dTimeseries["draintime_B"]
     dresults = calculate_soil_water(
-        theta_s=float(agrifield.get_thetaS),
-        theta_fc=agrifield.get_field_capacity,
-        theta_wp=agrifield.get_wilting_point,
+        theta_s=float(agrifield.theta_s),
+        theta_fc=agrifield.field_capacity,
+        theta_wp=agrifield.wilting_point,
         zr=zr,
         zr_factor=zr_factor,
         p=float(agrifield.get_mad),
         draintime=round(a * zr ** b),
-        theta_init=agrifield.get_field_capacity,
+        theta_init=agrifield.field_capacity,
         mif=agrifield.get_irrigation_optimizer,
         timeseries=dTimeseries["timeseries"],
     )
@@ -220,7 +220,7 @@ def calculate_performance_chart(agrifield):
     dTimeseries = extractSWBTimeseries(agrifield)
 
     # Agrifield parameters
-    theta_fc = agrifield.get_field_capacity
+    theta_fc = agrifield.field_capacity
     zr = (float(agrifield.get_root_depth_min) + float(agrifield.get_root_depth_max)) / 2
     zr_factor = 1000
     irr_eff = float(agrifield.get_efficiency)
@@ -235,9 +235,9 @@ def calculate_performance_chart(agrifield):
     dTimeseries["timeseries"]["actual_net_irrigation"] = True
 
     model_params = dict(
-        theta_s=float(agrifield.get_thetaS),
+        theta_s=float(agrifield.theta_s),
         theta_fc=theta_fc,
-        theta_wp=agrifield.get_wilting_point,
+        theta_wp=agrifield.wilting_point,
         zr=zr,
         zr_factor=zr_factor,
         p=float(agrifield.get_mad),
