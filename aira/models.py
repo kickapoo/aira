@@ -148,7 +148,6 @@ class Agrifield(models.Model):
     crop_type = models.ForeignKey(CropType, on_delete=models.CASCADE)
     irrigation_type = models.ForeignKey(IrrigationType, on_delete=models.CASCADE)
     area = models.FloatField()
-    irrigation_optimizer = models.FloatField(default=0.5)
     use_custom_parameters = models.BooleanField(default=False)
     custom_kc = models.FloatField(
         null=True,
@@ -242,49 +241,61 @@ class Agrifield(models.Model):
         )
 
     @property
-    def get_efficiency(self):
-        if self.use_custom_parameters:
-            if self.custom_efficiency in [None, ""]:
-                return self.irrigation_type.efficiency
+    def irrigation_efficiency(self):
+        if self.use_custom_parameters and self.custom_efficiency:
             return self.custom_efficiency
         else:
             return self.irrigation_type.efficiency
 
     @property
-    def get_mad(self):
-        if self.use_custom_parameters:
-            if self.custom_max_allow_depletion in [None, ""]:
-                return self.crop_type.max_allow_depletion
+    def p(self):
+        if self.use_custom_parameters and self.custom_max_allow_depletion:
             return self.custom_max_allow_depletion
         else:
             return self.crop_type.max_allow_depletion
 
     @property
-    def get_root_depth_max(self):
-        if self.use_custom_parameters:
-            if self.custom_root_depth_max in [None, ""]:
-                return self.crop_type.root_depth_max
+    def root_depth_max(self):
+        if self.use_custom_parameters and self.custom_root_depth_max:
             return self.custom_root_depth_max
         else:
             return self.crop_type.root_depth_max
 
     @property
-    def get_root_depth_min(self):
-        if self.use_custom_parameters:
-            if self.custom_root_depth_min in [None, ""]:
-                return self.crop_type.root_depth_min
+    def root_depth_min(self):
+        if self.use_custom_parameters and self.custom_root_depth_min:
             return self.custom_root_depth_min
         else:
             return self.crop_type.root_depth_min
 
     @property
-    def get_irrigation_optimizer(self):
-        if self.use_custom_parameters:
-            if self.custom_irrigation_optimizer in [None, ""]:
-                return self.irrigation_optimizer
+    def root_depth(self):
+        return (self.root_depth_max + self.root_depth_min) / 2.0
+
+    @property
+    def irrigation_optimizer(self):
+        if self.use_custom_parameters and self.custom_irrigation_optimizer:
             return self.custom_irrigation_optimizer
         else:
-            return self.irrigation_optimizer
+            return 0.5
+
+    @property
+    def last_irrigation(self):
+        try:
+            result = self.irrigationlog_set.latest()
+        except IrrigationLog.DoesNotExist:
+            return None
+        if result.applied_water is None:
+            result.applied_water = (
+                float(self.p)
+                * (self.field_capacity - self.wilting_point)
+                * self.root_depth
+                * self.area
+            )
+            result.message = _(
+                "Irrigation water is estimated using system's default parameters."
+            )
+        return result
 
     def can_edit(self, user):
         if (user == self.owner) or (user == self.owner.profile.supervisor):

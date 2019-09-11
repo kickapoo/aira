@@ -1,3 +1,4 @@
+import datetime as dt
 import os
 import shutil
 import tempfile
@@ -13,7 +14,7 @@ import numpy as np
 from hspatial.test import setup_test_raster
 from model_mommy import mommy
 
-from aira.models import Agrifield
+from aira.models import Agrifield, IrrigationLog
 from aira.tests import RandomMediaRootMixin
 
 
@@ -26,6 +27,23 @@ class TestDataMixin:
         )
         self.settings_overrider.__enter__()
         self._create_rasters()
+        self._create_user()
+        self._create_agrifield()
+
+    def _create_user(self):
+        self.alice = User.objects.create_user(username="alice", password="topsecret")
+
+    def _create_agrifield(self):
+        self.agrifield = mommy.make(
+            Agrifield,
+            name="hello",
+            location=Point(22.01, 37.99),
+            owner=self.alice,
+            irrigation_type__efficiency=0.85,
+            crop_type__max_allow_depletion=0.40,
+            crop_type__root_depth_max=0.50,
+            crop_type__root_depth_min=0.30,
+        )
 
     def tearDown(self):
         self.settings_overrider.__exit__(None, None, None)
@@ -118,21 +136,7 @@ class TestHomePageView(TestCase):
 class AgrifieldEditViewTestCase(TestDataMixin, TestCase):
     def setUp(self):
         super().setUp()
-        self._create_data()
         self._make_request()
-
-    def _create_data(self):
-        self.alice = User.objects.create_user(username="alice", password="topsecret")
-        self.agrifield = mommy.make(
-            Agrifield,
-            name="hello",
-            location=Point(22.01, 37.99),
-            owner=self.alice,
-            irrigation_type__efficiency=0.85,
-            crop_type__max_allow_depletion=0.40,
-            crop_type__root_depth_max=0.50,
-            crop_type__root_depth_min=0.30,
-        )
 
     def _make_request(self):
         self.client.login(username="alice", password="topsecret")
@@ -297,3 +301,132 @@ class DownloadSoilAnalysisTestCase(TestCase, RandomMediaRootMixin):
         for x in self.response.streaming_content:
             content += x
         self.assertEqual(content, b"hello world")
+
+
+class AdviceViewTestCase(TestDataMixin, TestCase):
+    def _make_request(self):
+        self.client.login(username="alice", password="topsecret")
+        self.response = self.client.get("/advice/{}/".format(self.agrifield.id))
+
+    def _update_agrifield(self, **kwargs):
+        for key in kwargs:
+            if not hasattr(self.agrifield, key):
+                raise KeyError("Agrifield doesn't have key {}".format(key))
+            setattr(self.agrifield, key, kwargs[key])
+        self.agrifield.save()
+
+    def test_response_contains_custom_parameters_notice(self):
+        self._update_agrifield(use_custom_parameters=True)
+        self._make_request()
+        self.assertContains(self.response, "using custom parameters")
+
+    def test_response_not_contains_custom_parameters_notice(self):
+        self._update_agrifield(use_custom_parameters=False)
+        self._make_request()
+        self.assertNotContains(self.response, "using custom parameters")
+
+    def test_response_contains_default_root_depth(self):
+        self._update_agrifield(use_custom_parameters=False)
+        self._make_request()
+        self.assertContains(self.response, "<b>Estimated root depth (max):</b> 0.4 m")
+
+    def test_response_contains_custom_root_depth(self):
+        self._update_agrifield(
+            use_custom_parameters=True,
+            custom_root_depth_min=0.1,
+            custom_root_depth_max=0.3,
+        )
+        self._make_request()
+        self.assertContains(self.response, "<b>Estimated root depth (max):</b> 0.2 m")
+
+    def test_response_contains_default_field_capacity(self):
+        self._update_agrifield(use_custom_parameters=False)
+        self._make_request()
+        self.assertContains(self.response, "<b>Field Capacity:</b> 32.0%")
+
+    def test_response_contains_custom_field_capacity(self):
+        self._update_agrifield(use_custom_parameters=True, custom_field_capacity=0.321)
+        self._make_request()
+        self.assertContains(self.response, "<b>Field Capacity:</b> 32.1%")
+
+    def test_response_contains_default_theta_s(self):
+        self._update_agrifield(use_custom_parameters=False)
+        self._make_request()
+        self.assertContains(
+            self.response, "<b>Soil moisture at saturation (Θ<sub>s</sub>):</b> 42.0%"
+        )
+
+    def test_response_contains_custom_theta_s(self):
+        self._update_agrifield(use_custom_parameters=True, custom_thetaS=0.424)
+        self._make_request()
+        self.assertContains(
+            self.response, "<b>Soil moisture at saturation (Θ<sub>s</sub>):</b> 42.4%"
+        )
+
+    def test_response_contains_default_pwp(self):
+        self._update_agrifield(use_custom_parameters=False)
+        self._make_request()
+        self.assertContains(self.response, "<b>Permanent Wilting Point:</b> 10.0%")
+
+    def test_response_contains_custom_pwp(self):
+        self._update_agrifield(use_custom_parameters=True, custom_wilting_point=0.117)
+        self._make_request()
+        self.assertContains(self.response, "<b>Permanent Wilting Point:</b> 11.7%")
+
+    def test_response_contains_default_irrigation_efficiency(self):
+        self._update_agrifield(use_custom_parameters=False)
+        self._make_request()
+        self.assertContains(self.response, "<b>Irrigation efficiency factor:</b> 0.85")
+
+    def test_response_contains_custom_irrigation_efficiency(self):
+        self._update_agrifield(use_custom_parameters=True, custom_efficiency=0.88)
+        self._make_request()
+        self.assertContains(self.response, "<b>Irrigation efficiency factor:</b> 0.88")
+
+    def test_response_contains_default_irrigation_optimizer(self):
+        self._update_agrifield(use_custom_parameters=False)
+        self._make_request()
+        self.assertContains(self.response, "<b>Irrigation Optimizer:</b> 0.5")
+
+    def test_response_contains_custom_irrigation_optimizer(self):
+        self._update_agrifield(
+            use_custom_parameters=True, custom_irrigation_optimizer=0.55
+        )
+        self._make_request()
+        self.assertContains(self.response, "<b>Irrigation Optimizer:</b> 0.55")
+
+    def test_response_contains_no_last_irrigation(self):
+        self._make_request()
+        self.assertContains(self.response, "<b>Last recorded irrigation:</b> None")
+
+    def test_response_contains_last_irrigation_with_specified_applied_water(self):
+        mommy.make(
+            IrrigationLog,
+            agrifield=self.agrifield,
+            time=dt.datetime(2019, 9, 11, 17, 23),
+            applied_water=100.5,
+        )
+        self._make_request()
+        self.assertContains(
+            self.response, "<b>Last recorded irrigation:</b> 11/09/2019 17:00"
+        )
+        self.assertContains(self.response, "<b>Applied water (m³):</b> 100.5")
+
+    def test_response_contains_last_irrigation_with_unspecified_applied_water(self):
+        mommy.make(
+            IrrigationLog,
+            agrifield=self.agrifield,
+            time=dt.datetime(2019, 9, 11, 17, 23),
+            applied_water=None,
+        )
+        self._update_agrifield(area=653.7)
+        self._make_request()
+        self.assertContains(
+            self.response, "<b>Last recorded irrigation:</b> 11/09/2019 17:00 <br>"
+        )
+        self.assertContains(
+            self.response,
+            "<b>Applied water (m³):</b> 23.0 "
+            "(Irrigation water is estimated using system&#39;s "
+            "default parameters.)<br>",
+        )

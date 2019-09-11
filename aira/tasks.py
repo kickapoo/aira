@@ -153,9 +153,9 @@ def execute_model(agrifield):
     results.last_irr_date = last_irrigation.time.date() if last_irrigation else None
 
     # Run swb model and calculate some simple additional columns
-    zr = (float(agrifield.get_root_depth_min) + float(agrifield.get_root_depth_max)) / 2
+    zr = (float(agrifield.root_depth_min) + float(agrifield.root_depth_max)) / 2
     zr_factor = 1000
-    irr_eff = float(agrifield.get_efficiency)
+    irr_eff = float(agrifield.irrigation_efficiency)
     a = dTimeseries["draintime_A"]
     b = dTimeseries["draintime_B"]
     dresults = calculate_soil_water(
@@ -164,10 +164,10 @@ def execute_model(agrifield):
         theta_wp=agrifield.wilting_point,
         zr=zr,
         zr_factor=zr_factor,
-        p=float(agrifield.get_mad),
+        p=float(agrifield.p),
         draintime=round(a * zr ** b),
         theta_init=agrifield.field_capacity,
-        mif=agrifield.get_irrigation_optimizer,
+        mif=agrifield.irrigation_optimizer,
         timeseries=dTimeseries["timeseries"],
     )
     df = dresults["timeseries"]
@@ -221,9 +221,9 @@ def calculate_performance_chart(agrifield):
 
     # Agrifield parameters
     theta_fc = agrifield.field_capacity
-    zr = (float(agrifield.get_root_depth_min) + float(agrifield.get_root_depth_max)) / 2
+    zr = (float(agrifield.root_depth_min) + float(agrifield.root_depth_max)) / 2
     zr_factor = 1000
-    irr_eff = float(agrifield.get_efficiency)
+    irr_eff = float(agrifield.irrigation_efficiency)
     a = dTimeseries["draintime_A"]
     b = dTimeseries["draintime_B"]
 
@@ -240,10 +240,10 @@ def calculate_performance_chart(agrifield):
         theta_wp=agrifield.wilting_point,
         zr=zr,
         zr_factor=zr_factor,
-        p=float(agrifield.get_mad),
+        p=float(agrifield.p),
         draintime=round(a * zr ** b),
         theta_init=theta_init,
-        mif=agrifield.get_irrigation_optimizer,
+        mif=agrifield.irrigation_optimizer,
         timeseries=dTimeseries["timeseries"],
     )
 

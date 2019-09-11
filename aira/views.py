@@ -12,17 +12,13 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView, View
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from hspatial import PointTimeseries
 
 from .forms import AgrifieldForm, IrrigationlogForm, ProfileForm
-from .irma.main import (
-    agripoint_in_raster,
-    get_parameters,
-    get_performance_chart,
-    model_results,
-)
+from .irma.main import agripoint_in_raster, get_performance_chart, model_results
 from .models import Agrifield, IrrigationLog, Profile
 
 
@@ -153,19 +149,15 @@ class HomePageView(TemplateView):
         return context
 
 
-class AdvicePageView(TemplateView):
+class AdvicePageView(DetailView):
+    model = Agrifield
     template_name = "aira/advice.html"
 
     def get_context_data(self, **kwargs):
-        context = super(AdvicePageView, self).get_context_data(**kwargs)
-        # Load data paths
-        f = Agrifield.objects.get(pk=self.kwargs["pk"])
-        f.can_edit(self.request.user)
-        context["f"] = f
-        if not agripoint_in_raster(f):
-            return context
-        context["fpars"] = get_parameters(f)
-        f.results = model_results(f)
+        context = super().get_context_data(**kwargs)
+        self.object.can_edit(self.request.user)
+        if agripoint_in_raster(self.object):
+            self.object.results = model_results(self.object)
         return context
 
 
