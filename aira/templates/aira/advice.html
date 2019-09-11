@@ -6,7 +6,7 @@
 
 {% block title %} {{ f.name }} | {% trans "Report" %}{% endblock %}
 {% block content %}
-{% if user.is_demo %}
+{% if user.username == "demo" %}
  <div class="alert alert-info">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <i class="fa fa-info-circle fa-2x"></i>&nbsp; <span style="font-size:32px">{% trans "demo" %}</span>

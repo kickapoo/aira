@@ -5,7 +5,7 @@
 {% block title %} {% trans "Account Settings" %} {% endblock %}
 
 {% block content %}
-{% if user.is_demo %}
+{% if user.username == "demo" %}
  <div class="alert alert-info">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <i class="fa fa-info-circle fa-2x"></i>&nbsp; <span style="font-size:32px">{% trans "demo" %}</span>
@@ -21,7 +21,7 @@
               {% bootstrap_field form.last_name %}
               {% bootstrap_field form.address %}
               {% bootstrap_field form.supervision_question %}
-              {% if not user.is_demo %}
+              {% if user.username != "demo" %}
                     <button type="submit" class="btn  btn-sm btn-primary">{% trans "Update" %}</button>
                     <a class="btn btn-sm btn-primary"href="{% url 'auth_password_reset' %}">{% trans "Reset password" %}</a>
                 {% if user.profile.id %}

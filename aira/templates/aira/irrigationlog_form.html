@@ -6,7 +6,7 @@
 {% block title %} {% trans "Irrigation Log" %} {% endblock %}
 
 {% block content %}
-{% if user.is_demo %}
+{% if user.username == "demo" %}
  <div class="alert alert-info">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <i class="fa fa-info-circle fa-2x"></i>&nbsp; <span style="font-size:32px">{% trans "demo" %}</span>
@@ -30,7 +30,7 @@
       {% bootstrap_form form %}
       {% buttons %}
         <span class="add-on"><i class="icon-th"></i></span>
-        {% if not user.is_demo %}
+        {% if user.username != "demo" %}
         <button type="submit" class="btn btn-success btn-xs">{% trans "Add" %}</button>
         <a class="btn btn-success btn-xs" href="{% url 'home' agrifield_user %}"> {% trans "Back" %} </a>
 
@@ -60,7 +60,7 @@
               <td>{{ l.id }}</td>
               <td><a href="{% url 'update_irrlog' agrifield.id l.id %}">{{l.time}}</a></td>
               <td align="center">{{l.applied_water|floatformat:"2"}}</td>
-              {% if not user.is_demo %}
+              {% if user.username != "demo" %}
               <td><a href="{% url 'delete_irrlog' agrifield.id l.id %}">{% trans "Delete" %} </a></td>
               {% else %}
               <td -</td>
