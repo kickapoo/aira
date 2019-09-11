@@ -11,22 +11,7 @@ Aira: An Irrigation Advisor
 Aira is a web application that calculates soil water balance in order
 to provide the users with irrigation recommendation.
 
-How to run a development instance:
-
-  1. Copy or symlink `aira_project/settings/local-example.py` to
-     `aira_project/settings/local.py`.
-
-  2. Set `DJANGO_SETTINGS_MODULE=aira_project.settings.local`
-
-  3. Execute `python manage.py migrate`.
-
-  4. Execute `python manage.py loaddata en.json`.
-
-  5. Execute `python manage.py demo_user`.
-
-  6. Execute `python manage.py runserver`.
-
-Copyright (C) 2014-2018 TEI of Epirus
+Copyright (C) 2014-2019 TEI of Epirus
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
