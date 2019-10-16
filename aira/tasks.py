@@ -171,7 +171,7 @@ def execute_model(agrifield):
         timeseries=dTimeseries["timeseries"],
     )
     df = dresults["timeseries"]
-    df["advice"] = df.apply(lambda x: x.dr > dresults["raw"], axis=1)
+    df["recommendation"] = df.apply(lambda x: x.dr > dresults["raw"], axis=1)
     df["ifinal"] = df.apply(lambda x: x.recommended_net_irrigation / irr_eff, axis=1)
     df["ifinal_m3"] = df.apply(lambda x: (x.ifinal / 1000) * agrifield.area, axis=1)
 
@@ -181,13 +181,17 @@ def execute_model(agrifield):
     results.sdh = dTimeseries["fstart"].date()
     results.edh = dTimeseries["fend"].date()
     results.adv = any(
-        [row.advice for date, row in df.iterrows() if date >= pd.Timestamp(results.sdh)]
+        [
+            row.recommendation
+            for date, row in df.iterrows()
+            if date >= pd.Timestamp(results.sdh)
+        ]
     )
     results.ifinal = df.ix[-1, "ifinal"]
     results.ifinal_m3 = (results.ifinal / 1000) * agrifield.area
     results.adv_sorted = [
         [date.date(), row.ks, row.ifinal, row.ifinal_m3]
-        for date, row in df.loc[df["advice"]].iterrows()
+        for date, row in df.loc[df["recommendation"]].iterrows()
         if date >= pd.Timestamp(results.sdh)
     ]
     results.swb_report = [
@@ -196,7 +200,7 @@ def execute_model(agrifield):
             row.effective_precipitation,
             row.dr,
             row.theta,
-            row.advice,
+            row.recommendation,
             row.ks,
             row.ifinal,
         ]

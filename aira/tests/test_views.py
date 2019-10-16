@@ -306,7 +306,7 @@ class DownloadSoilAnalysisViewTestCase(TestCase, RandomMediaRootMixin):
 class RecommendationViewTestCase(TestDataMixin, TestCase):
     def _make_request(self):
         self.client.login(username="alice", password="topsecret")
-        self.response = self.client.get("/advice/{}/".format(self.agrifield.id))
+        self.response = self.client.get("/recommendation/{}/".format(self.agrifield.id))
 
     def _update_agrifield(self, **kwargs):
         for key in kwargs:

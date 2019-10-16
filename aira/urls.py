@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import path
+from django.views.generic import RedirectView
 
 from aira import views
 
@@ -15,8 +16,12 @@ urlpatterns = [
     # Recommendation
     path(
         "advice/<int:pk>/",
+        RedirectView.as_view(permanent=True, pattern_name="recommendation"),
+    ),
+    path(
+        "recommendation/<int:pk>/",
         login_required(views.RecommendationView.as_view()),
-        name="advice",
+        name="recommendation",
     ),
     # Profile
     path(
