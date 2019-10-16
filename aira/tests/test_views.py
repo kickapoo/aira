@@ -73,7 +73,7 @@ class TestDataMixin:
         )
 
 
-class TestIndexPageView(TestCase):
+class TestFrontPageView(TestCase):
     def setUp(self):
         self.tempdir = tempfile.mkdtemp()
         self.settings_overrider = override_settings(AIRA_DATA_HISTORICAL=self.tempdir)
@@ -115,7 +115,7 @@ class TestIndexPageView(TestCase):
         )
 
 
-class TestHomePageView(TestCase):
+class TestAgrifieldListView(TestCase):
     def setUp(self):
         self.user = mommy.make(User, username="batman", is_active=True)
         # mommy.make is not hashing the password
@@ -133,7 +133,7 @@ class TestHomePageView(TestCase):
         self.assertTemplateUsed(resp, "aira/home/main.html")
 
 
-class AgrifieldEditViewTestCase(TestDataMixin, TestCase):
+class UpdateAgrifieldViewTestCase(TestDataMixin, TestCase):
     def setUp(self):
         super().setUp()
         self._make_request()
@@ -194,7 +194,7 @@ class AgrifieldEditViewTestCase(TestDataMixin, TestCase):
         )
 
 
-class AgrifieldCreateTestCase(TestCase):
+class CreateAgrifieldViewTestCase(TestCase):
     def setUp(self):
         self.alice = User.objects.create_user(username="alice", password="topsecret")
         self.client.login(username="alice", password="topsecret")
@@ -204,7 +204,7 @@ class AgrifieldCreateTestCase(TestCase):
         self.assertEqual(self.response.status_code, 200)
 
 
-class AgrifieldWeatherHistoryTestCase(TestCase):
+class AgrifieldTimeseriesViewTestCase(TestCase):
     def setUp(self):
         self._create_stuff()
         self._login()
@@ -281,7 +281,7 @@ class AgrifieldWeatherHistoryTestCase(TestCase):
         )
 
 
-class DownloadSoilAnalysisTestCase(TestCase, RandomMediaRootMixin):
+class DownloadSoilAnalysisViewTestCase(TestCase, RandomMediaRootMixin):
     def setUp(self):
         self.override_media_root()
         self.alice = User.objects.create_user(username="alice", password="topsecret")
@@ -303,7 +303,7 @@ class DownloadSoilAnalysisTestCase(TestCase, RandomMediaRootMixin):
         self.assertEqual(content, b"hello world")
 
 
-class AdviceViewTestCase(TestDataMixin, TestCase):
+class RecommendationViewTestCase(TestDataMixin, TestCase):
     def _make_request(self):
         self.client.login(username="alice", password="topsecret")
         self.response = self.client.get("/advice/{}/".format(self.agrifield.id))

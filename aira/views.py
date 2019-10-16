@@ -22,11 +22,11 @@ from .irma.main import agripoint_in_raster, get_performance_chart, model_results
 from .models import Agrifield, IrrigationLog, Profile
 
 
-class IrrigationPerformance(TemplateView):
+class IrrigationPerformanceView(TemplateView):
     template_name = "aira/performance-chart.html"
 
     def get_context_data(self, **kwargs):
-        context = super(IrrigationPerformance, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         # Load data paths
         f = Agrifield.objects.get(pk=self.kwargs["pk_a"])
         f.can_edit(self.request.user)
@@ -76,18 +76,18 @@ def performance_csv(request, pk):
     return response
 
 
-class TryPageView(TemplateView):
+class DemoView(TemplateView):
     def get(self, request):
         user = authenticate(username="demo", password="demo")
         login(request, user)
         return redirect("home", user)
 
 
-class ConversionTools(TemplateView):
+class ConversionToolsView(TemplateView):
     template_name = "aira/tools.html"
 
 
-class IndexPageView(TemplateView):
+class FrontPageView(TemplateView):
     template_name = "aira/index.html"
 
     def get_context_data(self, **kwargs):
@@ -106,11 +106,11 @@ class IndexPageView(TemplateView):
         return dt.date(y, m, d)
 
 
-class HomePageView(TemplateView):
+class AgrifieldListView(TemplateView):
     template_name = "aira/home/main.html"
 
     def get_context_data(self, **kwargs):
-        context = super(HomePageView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         # Load data paths
         url_username = kwargs.get("username")
         context["url_username"] = kwargs.get("username")
@@ -149,7 +149,7 @@ class HomePageView(TemplateView):
         return context
 
 
-class AdvicePageView(DetailView):
+class RecommendationView(DetailView):
     model = Agrifield
     template_name = "aira/advice.html"
 
@@ -162,13 +162,13 @@ class AdvicePageView(DetailView):
 
 
 # Profile Create/Update
-class CreateProfile(CreateView):
+class CreateProfileView(CreateView):
     model = Profile
     form_class = ProfileForm
     success_url = "/home"
 
     def get_form(self, form_class=None):
-        form = super(CreateProfile, self).get_form(form_class)
+        form = super().get_form(form_class)
         if self.request.user in form.fields["supervisor"].queryset:
             form.fields["supervisor"].queryset = form.fields[
                 "supervisor"
@@ -177,16 +177,16 @@ class CreateProfile(CreateView):
 
     def form_valid(self, form):
         form.instance.farmer = self.request.user
-        return super(CreateProfile, self).form_valid(form)
+        return super().form_valid(form)
 
 
-class UpdateProfile(UpdateView):
+class UpdateProfileView(UpdateView):
     model = Profile
     form_class = ProfileForm
     success_url = "/home"
 
     def get_form(self, form_class=None):
-        form = super(UpdateProfile, self).get_form(form_class)
+        form = super().get_form(form_class)
         if self.request.user in form.fields["supervisor"].queryset:
             form.fields["supervisor"].queryset = form.fields[
                 "supervisor"
@@ -194,14 +194,14 @@ class UpdateProfile(UpdateView):
         return form
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateProfile, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         profile = Profile.objects.get(pk=self.kwargs["pk"])
         if not self.request.user == profile.farmer:
             raise Http404
         return context
 
 
-class DeleteProfile(DeleteView):
+class DeleteProfileView(DeleteView):
     model = Profile
 
     def get_success_url(self):
@@ -212,21 +212,21 @@ class DeleteProfile(DeleteView):
         return reverse("welcome")
 
 
-class CreateAgrifield(CreateView):
+class CreateAgrifieldView(CreateView):
     model = Agrifield
     form_class = AgrifieldForm
 
     def form_valid(self, form):
         user = User.objects.get(username=self.kwargs["username"])
         form.instance.owner = user
-        return super(CreateAgrifield, self).form_valid(form)
+        return super().form_valid(form)
 
     def get_success_url(self):
         url_username = self.kwargs["username"]
         return reverse("home", kwargs={"username": url_username})
 
     def get_context_data(self, **kwargs):
-        context = super(CreateAgrifield, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         try:
             url_username = self.kwargs["username"]
             user = User.objects.get(username=url_username)
@@ -239,7 +239,7 @@ class CreateAgrifield(CreateView):
         return context
 
 
-class UpdateAgrifield(UpdateView):
+class UpdateAgrifieldView(UpdateView):
     model = Agrifield
     form_class = AgrifieldForm
     template_name = "aira/agrifield_update.html"
@@ -253,7 +253,7 @@ class UpdateAgrifield(UpdateView):
         return super().get_context_data(**kwargs)
 
 
-class DeleteAgrifield(DeleteView):
+class DeleteAgrifieldView(DeleteView):
     model = Agrifield
     form_class = AgrifieldForm
 
@@ -262,13 +262,13 @@ class DeleteAgrifield(DeleteView):
         return reverse("home", kwargs={"username": field.owner})
 
     def get_context_data(self, **kwargs):
-        context = super(DeleteAgrifield, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         afieldobj = Agrifield.objects.get(pk=self.kwargs["pk"])
         afieldobj.can_edit(self.request.user)
         return context
 
 
-class CreateIrrigationLog(CreateView):
+class CreateIrrigationLogView(CreateView):
     model = IrrigationLog
     form_class = IrrigationlogForm
     success_url = "/home"
@@ -279,10 +279,10 @@ class CreateIrrigationLog(CreateView):
 
     def form_valid(self, form):
         form.instance.agrifield = Agrifield.objects.get(pk=self.kwargs["pk"])
-        return super(CreateIrrigationLog, self).form_valid(form)
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
-        context = super(CreateIrrigationLog, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         try:
             context["agrifield"] = Agrifield.objects.get(pk=self.kwargs["pk"])
             afieldobj = Agrifield.objects.get(pk=self.kwargs["pk"])
@@ -295,7 +295,7 @@ class CreateIrrigationLog(CreateView):
         return context
 
 
-class UpdateIrrigationLog(UpdateView):
+class UpdateIrrigationLogView(UpdateView):
     model = IrrigationLog
     form_class = IrrigationlogForm
     template_name = "aira/irrigationlog_update.html"
@@ -305,7 +305,7 @@ class UpdateIrrigationLog(UpdateView):
         return reverse("home", kwargs={"username": field.owner})
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateIrrigationLog, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         afieldobj = Agrifield.objects.get(pk=self.kwargs["pk_a"])
         afieldobj.can_edit(self.request.user)
         log = IrrigationLog.objects.get(pk=self.kwargs["pk"])
@@ -314,7 +314,7 @@ class UpdateIrrigationLog(UpdateView):
         return context
 
 
-class DeleteIrrigationLog(DeleteView):
+class DeleteIrrigationLogView(DeleteView):
     model = IrrigationLog
     form_class = IrrigationlogForm
 
@@ -336,7 +336,7 @@ def remove_supervised_user_from_user_list(request):
     raise Http404
 
 
-class AgrifieldTimeseries(View):
+class AgrifieldTimeseriesView(View):
     def get(self, *args, **kwargs):
         filename = self._get_point_timeseries(*args, **kwargs)
         return FileResponse(
@@ -357,7 +357,7 @@ class AgrifieldTimeseries(View):
         return dest
 
 
-class DownloadSoilAnalysis(View):
+class DownloadSoilAnalysisView(View):
     def get(self, *args, **kwargs):
         agrifield = get_object_or_404(Agrifield, pk=kwargs.get("agrifield_id"))
         agrifield.can_edit(self.request.user)
