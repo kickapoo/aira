@@ -1,0 +1,32 @@
+{% load i18n %}
+{% load bootstrap3 %}
+
+<fieldset>
+  <div class='form-group'>
+    {% bootstrap_field form.name %}
+    {% bootstrap_field form.is_virtual %}
+    {% bootstrap_field form.area placeholder="m²" %}
+    {% bootstrap_field form.location placeholder="" %}
+    {% bootstrap_field form.crop_type %}
+    {% bootstrap_field form.irrigation_type %}
+    {% bootstrap_field form.soil_analysis %}
+    {% if object %}
+      {% bootstrap_field form.use_custom_parameters %}
+    {% endif %}
+  </div>
+</fieldset>
+{% buttons %}
+  {% if user.username != "demo" %}
+    <button type="submit" class="btn btn-success btn-xs">
+      {% if object %}
+        {% trans "Update" %}
+      {% else %}
+        {% trans "Add" %}
+      {% endif %}
+    </button>
+    {% if object %}
+      <a class="btn btn-danger btn-xs" href="{% url "delete_agrifield" object.id %}">{% trans "Delete" %}</a>
+    {% endif %}
+  {% endif %}
+  <a class="btn btn-success btn-xs" href="{% url 'home' agrifield_owner %}"> {% trans "Back" %} </a>
+{% endbuttons %}

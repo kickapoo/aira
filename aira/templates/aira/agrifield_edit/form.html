@@ -1,0 +1,11 @@
+<form method="post" enctype="multipart/form-data" role="form">
+  {% csrf_token %}
+  <div class='row'>
+    <div class='col-sm-6'>
+      {% include "aira/agrifield_edit/form_basic_fields.html" %}
+    </div>
+    <div class='col-sm-6'>
+      {% include "aira/agrifield_edit/form_custom_parameter_fields.html" %}
+    </div>
+  </div>
+</form>

@@ -1,0 +1,7 @@
+{% load i18n %}
+
+{% if object %}
+  {% blocktrans %}Update Field {{ object.name }} {% endblocktrans %}
+{% else %}
+  {% trans "Add field" %}
+{% endif %}

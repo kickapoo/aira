@@ -215,6 +215,7 @@ class DeleteProfileView(DeleteView):
 class CreateAgrifieldView(CreateView):
     model = Agrifield
     form_class = AgrifieldForm
+    template_name = "aira/agrifield_edit/main.html"
 
     def form_valid(self, form):
         user = User.objects.get(username=self.kwargs["username"])
@@ -231,8 +232,7 @@ class CreateAgrifieldView(CreateView):
             url_username = self.kwargs["username"]
             user = User.objects.get(username=url_username)
             context["agrifields"] = Agrifield.objects.filter(owner=user).all()
-            context["fields_count"] = context["agrifields"].count()
-            context["agrifield_user"] = user
+            context["agrifield_owner"] = user
 
         except Agrifield.DoesNotExist:
             context["agrifields"] = None
@@ -242,7 +242,7 @@ class CreateAgrifieldView(CreateView):
 class UpdateAgrifieldView(UpdateView):
     model = Agrifield
     form_class = AgrifieldForm
-    template_name = "aira/agrifield_update.html"
+    template_name = "aira/agrifield_edit/main.html"
 
     def get_success_url(self):
         field = Agrifield.objects.get(pk=self.kwargs["pk"])
@@ -250,7 +250,9 @@ class UpdateAgrifieldView(UpdateView):
 
     def get_context_data(self, **kwargs):
         self.object.can_edit(self.request.user)
-        return super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+        context["agrifield_owner"] = self.object.owner
+        return context
 
 
 class DeleteAgrifieldView(DeleteView):

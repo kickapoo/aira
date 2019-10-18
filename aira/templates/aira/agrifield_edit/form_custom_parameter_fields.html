@@ -1,0 +1,30 @@
+{% load i18n %}
+{% load bootstrap3 %}
+
+<div class='form-group' style="display:{% if object.use_custom_parameters %}block{% else %}none{% endif %}" id="custom_par">
+  <fieldset class="well well-sm">
+    <legend>{% trans "Irrigation Management" %}</legend>
+    {% bootstrap_field form.custom_efficiency placeholder="0.05 – 1.00" %}
+    <sup>{% trans "Value from system's database" %}: <span id="default-irrigation-efficiency">{{ object.irrigation_type.efficiency }}</span></sup>
+    {% bootstrap_field form.custom_irrigation_optimizer placeholder="0.10 – 1.00" %}
+    <sup>{% trans "Value from system's database" %}: <span id="default-irrigation-optimizer">0.5</span></sup>
+  </fieldset>
+  <fieldset class="well well-sm">
+    <legend>{% trans "Crop" %}</legend>
+    {% bootstrap_field form.custom_max_allow_depletion placeholder="0.0 – 1.0" %}
+    <sup>{% trans "Value from system's database" %}: <span id="default-max_allow_depletion">{{ object.crop_type.max_allow_depletion }}</span></sup>
+    {% bootstrap_field form.custom_root_depth_max placeholder="0.2 – 4.0 m" %}
+    <sup>{% trans "Value from system's database" %}: <span id="default-root_depth_max">{{ object.crop_type.root_depth_max }}</span></sup>
+    {% bootstrap_field form.custom_root_depth_min placeholder="0.1 – 2.0 m" %}
+    <sup>{% trans "Value from system's database" %}: <span id="default-root_depth_min">{{ object.crop_type.root_depth_min }}</span></sup>
+  </fieldset>
+  <fieldset class="well well-sm">
+    <legend>{% trans "Soil" %}</legend>
+    {% bootstrap_field form.custom_field_capacity placeholder="0.10 – 0.45" %}
+    <sup>{% trans "Value from system's database" %}: <span id="default-field-capacity">{{ object.default_field_capacity|floatformat:"2"  }}</span></sup>
+    {% bootstrap_field form.custom_wilting_point placeholder="0.00 – 0.22" %}
+    <sup>{% trans "Value from system's database" %}: <span id="default-wilting-point">{{ object.default_wilting_point|floatformat:"2"  }}</span></sup>
+    {% bootstrap_field form.custom_thetaS placeholder="0.30 – 0.55" %}
+    <sup>{% trans "Value from system's database" %}: <span id="default-theta_s">{{ object.default_theta_s|floatformat:"2"  }}</span></sup>
+  </fieldset>
+</div>

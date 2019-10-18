@@ -1,0 +1,87 @@
+{% extends 'aira/base/main.html' %}
+{% load i18n %}
+{% load static %}
+
+
+{% block title %}
+  {% include "aira/agrifield_edit/title.html" %}
+{% endblock %}
+
+
+{% block extrahead %}
+  {{ form.media }}
+{% endblock %}
+
+
+{% block content %}
+  {% if user.username == "demo" %}
+    <div class="alert alert-info">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <i class="fa fa-info-circle fa-2x"></i>&nbsp; <span style="font-size:32px">{% trans "demo" %}</span>
+    </div>
+  {% endif %}
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4>{% include "aira/agrifield_edit/title.html" %}</h4>
+    </div>
+    <div class="panel panel-body">
+      {% include "aira/agrifield_edit/map.html" %}
+      {% include "aira/agrifield_edit/form.html" %}
+    </div>
+  </div>
+{% endblock %}
+
+
+{% block extrajs %}
+  <script type="text/javascript" src="{% static "js/aira.js" %}"></script>
+  <script type="text/javascript">
+    /* Map */
+    map = aira.mapModule.getMap('on_click_map');
+    aira.mapModule.addStudyAreaLayer(map, "{% static 'kml/study_area.kml' %}");
+
+    {% if object %}
+      function make_coords(coord) {
+          return parseFloat(coord.replace(",","."));
+      };
+      var fieldloc = new OpenLayers.LonLat(make_coords("{{ object.location.x }}"),make_coords("{{ object.location.y }}")).transform('EPSG:4326', 'EPSG:3857');
+
+      var marker = new OpenLayers.Marker(fieldloc)
+      var markers = new OpenLayers.Layer.Markers("{{ object.name }}");
+      map.addLayer(markers);
+      markers.addMarker(marker);
+      map.setCenter(fieldloc, 18);
+    {% else %}
+      var markers = new OpenLayers.Layer.Markers("Add new field");
+      map.addLayer(markers);
+
+      // Note: This has Arta hardwired
+      map.setCenter(new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 10);
+    {% endif %}
+
+    map.events.register("click", map , function(e){
+      var opx = map.getLonLatFromPixel(e.xy) ;
+      var marker = new OpenLayers.Marker(opx);
+      markers.clearMarkers();
+      markers.addMarker(marker);
+      var lonlat = map.getLonLatFromPixel(e.xy).transform('EPSG:3857', 'EPSG:4326');
+      document.getElementById("id_location_1").value = lonlat.lat.toFixed(5);
+      document.getElementById("id_location_0").value = lonlat.lon.toFixed(5);
+    });
+
+    /* Custom parameters */
+    $(document).ready(function(){
+      $("#id_use_custom_parameters").click(function(){
+        $("#custom_par").stop().toggle();
+      });
+      $('#id_custom_efficiency').attr("step", 0.05);
+      $('#id_custom_irrigation_optimizer').attr("step", 0.01);
+      $('#id_custom_root_depth_max').attr("step", 0.1);
+      $('#id_custom_root_depth_min').attr("step", 0.1);
+      $('#id_custom_max_allow_depletion').attr("step", 0.01);
+      $('#id_custom_field_capacity').attr("step", 0.01);
+      $('#id_custom_wilting_point').attr("step", 0.01);
+      $('#id_custom_thetaS').attr("step", 0.01);
+    });
+  </script>
+{% endblock %}

@@ -37,12 +37,8 @@ $(document).ready(function(){
 });
 
 
-aira.toogleIndexMapsUI = (function namespace() {
+aira.mapModule = (function namespace() {
     'use strict';
-
-    /* Handling daily and monthly raster toggle
-       for external service (arta.irrigation-management.eu)
-    */
 
     var selectTimestampView = function () {
         // Select between daily or monthly View
@@ -141,6 +137,52 @@ aira.toogleIndexMapsUI = (function namespace() {
     };
 
 
+    var getMap = function(id) {
+        var map = new OpenLayers.Map(id,
+                {units: 'm',
+                 displayProjection: 'EPSG:4326',
+                 controls: [new OpenLayers.Control.LayerSwitcher(),
+                            new OpenLayers.Control.Navigation(),
+                            new OpenLayers.Control.Zoom(),
+                            new OpenLayers.Control.MousePosition(),
+                            new OpenLayers.Control.ScaleLine()]
+                 });
+
+        var openCycleMap = new OpenLayers.Layer.OSM(
+                  "Open Cycle Map",
+                  ["https://a.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement,
+                   "https://b.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement,
+                   "https://c.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement],
+                  {isBaseLayer: true,
+                   projection: 'EPSG:3857'});
+        map.addLayer(openCycleMap);
+        var ktimatologioMap = new OpenLayers.Layer.WMS("Hellenic Cadastre",
+                   "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
+                     {   layers: 'KTBASEMAP', transparent: false},
+                     {   isBaseLayer: true,
+                         projection: new OpenLayers.Projection("EPSG:900913"),
+                         iformat: 'image/png'});
+        map.addLayer(ktimatologioMap);
+        var googleMaps = new OpenLayers.Layer.Google(
+            "Google Satellite", {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
+        );
+        map.addLayer(googleMaps);
+        
+        return map;
+    };
+
+
+    var addStudyAreaLayer = function(map, kml_url) {
+        var kml = new OpenLayers.Layer.Vector("Covered area",
+                  {strategies: [new OpenLayers.Strategy.Fixed()],
+                    visibility: true,
+                  protocol: new OpenLayers.Protocol.HTTP(
+                          {url: kml_url,
+                          format: new OpenLayers.Format.KML()})})
+        map.addLayer(kml);
+    };
+
+
     var createRasterMap = function (date, meteoVar, url, dateFormat, timestamp) {
         $('#wms_map').html('');
         $('#datetimepickerMirrorField').val(date);
@@ -164,37 +206,7 @@ aira.toogleIndexMapsUI = (function namespace() {
         // console.log("date:" + date + ';' + 'meteoVar:' + meteoVar + ';' + 'url:' + url);
 
         // Map object
-        var map;
-        map = new OpenLayers.Map('wms_map',
-                {units: 'm',
-                 displayProjection: 'EPSG:4326',
-                 controls: [new OpenLayers.Control.LayerSwitcher(),
-                            new OpenLayers.Control.Navigation(),
-                            new OpenLayers.Control.Zoom(),
-                            new OpenLayers.Control.MousePosition(),
-                            new OpenLayers.Control.ScaleLine()]
-                 });
-
-        //Base layers
-        var openCycleMap = new OpenLayers.Layer.OSM(
-                  "Open Cycle Map",
-                  ["https://a.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement,
-                   "https://b.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement,
-                   "https://c.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement],
-                  {isBaseLayer: true,
-                   projection: 'EPSG:3857'});
-        map.addLayer(openCycleMap);
-        var ktimatologioMap = new OpenLayers.Layer.WMS("Hellenic Cadastre",
-                   "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
-                     {   layers: 'KTBASEMAP', transparent: false},
-                     {   isBaseLayer: true,
-                         projection: new OpenLayers.Projection("EPSG:900913"),
-                         iformat: 'image/png'});
-        map.addLayer(ktimatologioMap);
-        var googleMaps = new OpenLayers.Layer.Google(
-            "Google Satellite", {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
-        );
-        map.addLayer(googleMaps);
+        var map = getMap('wms_map');
 
         // Meteo layer
         var meteoVarWMS = new OpenLayers.Layer.WMS(
@@ -369,6 +381,8 @@ aira.toogleIndexMapsUI = (function namespace() {
         createRasterMap: createRasterMap,
         createNextRasterMap: createNextRasterMap,
         createPreviousRasterMap: createPreviousRasterMap,
-        initTimestampView: initTimestampView
+        initTimestampView: initTimestampView,
+        getMap: getMap,
+        addStudyAreaLayer: addStudyAreaLayer
     };
 }());
