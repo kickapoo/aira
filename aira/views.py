@@ -256,6 +256,7 @@ class UpdateAgrifieldView(UpdateView):
 class DeleteAgrifieldView(DeleteView):
     model = Agrifield
     form_class = AgrifieldForm
+    template_name = "aira/agrifield_delete/confirm.html"
 
     def get_success_url(self):
         field = Agrifield.objects.get(pk=self.kwargs["pk"])
