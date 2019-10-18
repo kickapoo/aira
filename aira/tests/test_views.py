@@ -88,19 +88,19 @@ class TestFrontPageView(TestCase):
         self.settings_overrider.__exit__(None, None, None)
         shutil.rmtree(self.tempdir)
 
-    def test_index_view(self):
+    def test_front_page_view(self):
         resp = self.client.get("/")
         self.assertEqual(resp.status_code, 200)
 
-    def test_registration_link_when_anonymous_on_index_view(self):
+    def test_registration_link_when_anonymous_on_front_page_view(self):
         resp = self.client.get("/")
         self.assertContains(resp, "Register")
 
-    def test_no_registration_link_when_logged_on_index_view(self):
+    def test_no_registration_link_when_logged_on_front_page_view(self):
         resp = self.client.login(username="batman", password="thegoatandthesheep")
         self.assertTrue(resp)
         resp = self.client.get("/")
-        self.assertTemplateUsed(resp, "aira/index.html")
+        self.assertTemplateUsed(resp, "aira/frontpage/main.html")
         self.assertNotContains(resp, "Register")
 
     def test_start_and_end_dates(self):

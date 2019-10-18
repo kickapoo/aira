@@ -88,7 +88,7 @@ class ConversionToolsView(TemplateView):
 
 
 class FrontPageView(TemplateView):
-    template_name = "aira/index.html"
+    template_name = "aira/frontpage/main.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

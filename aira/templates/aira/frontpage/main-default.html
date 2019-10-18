@@ -1,0 +1,42 @@
+{% extends 'aira/base/main.html' %}
+{% load bootstrap3 %}
+{% load i18n %}
+{% load static %}
+
+
+{% block title %} {% trans "Welcome " %}{% endblock %}
+
+
+{% block main_page %}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      {% include "aira/frontpage/map_heading.html" %}
+    </div>
+    <div class="panel-body">
+      {% include "aira/frontpage/map_main.html" %}
+    </div>
+    <div class="panel-footer">
+      {% block map_footer %}
+      {% endblock %}
+    </div>
+  </div>
+{% endblock %}
+
+
+{% block extrajs %}
+  <script type="text/javascript">
+      aira.yesterday = '{{ end_date|date:"Y-m-d" }}';
+      aira.transToggleTimestampMap = {
+        toogleDaily: '{% trans "Switch to Daily" %}',
+        toogleMonthly: '{% trans "Switch to Monthly" %}',
+        mapLegendDaily: '{% trans "Click on the map to get values" %}',
+        mapLegendMonthly: '{% trans "Click on the map to get values" %}',
+      }
+  </script>
+  <script type="text/javascript" src="{% static 'js/aira.js' %}"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      aira.toogleIndexMapsUI.initTimestampView();
+    });
+  </script>
+{% endblock %}
