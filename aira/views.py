@@ -23,7 +23,7 @@ from .models import Agrifield, IrrigationLog, Profile
 
 
 class IrrigationPerformanceView(TemplateView):
-    template_name = "aira/performance-chart.html"
+    template_name = "aira/performance_chart/main.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -301,7 +301,7 @@ class CreateIrrigationLogView(CreateView):
 class UpdateIrrigationLogView(UpdateView):
     model = IrrigationLog
     form_class = IrrigationlogForm
-    template_name = "aira/irrigationlog_update.html"
+    template_name = "aira/irrigationlog_update/main.html"
 
     def get_success_url(self):
         field = Agrifield.objects.get(pk=self.kwargs["pk_a"])
