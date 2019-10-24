@@ -1,0 +1,40 @@
+{% load i18n %}
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <b>{% trans "Irrigation duration" %}</b>
+  </div>
+  <div class="panel-body">
+    <div class="col-md-6">
+      <div class="input-group">
+        <span class="input-group-addon">{% trans "Area" %}</span>
+        {% verbatim %}
+          <input type="number" ng-model="area" class="form-control" >
+        {% endverbatim %}
+        <span class="input-group-addon">m²</span>
+      </div>
+      <br>
+      <div class="input-group">
+        <span class="input-group-addon">{% trans "Irrigation water amount" %}</span>
+        {% verbatim %}
+          <input type="number" ng-model="irriwatermm" class="form-control" >
+        {% endverbatim %}
+        <span class="input-group-addon">mm</span>
+      </div>
+      <br>
+      <div class="input-group">
+        <span class="input-group-addon">{% trans "Station flow rate" %}</span>
+        {% verbatim %}
+          <input type="number" ng-model="pump"  ng-init="pump=5" class="form-control" >
+        {% endverbatim %}
+        <span class="input-group-addon">m³ / h</span>
+      </div>
+      <br>
+      <div class="well well-sm">
+        {% verbatim %}
+          = {{ irriwatermm/1000 * (area/pump)| number:1 }} h
+        {% endverbatim %}
+      </div>
+    </div>
+  </div>
+</div>

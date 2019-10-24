@@ -1,0 +1,24 @@
+{% load i18n %}
+
+<h4> m³ <i class="glyphicon glyphicon-arrow-right"></i> mm </h4>
+<div class="input-group">
+  <span class="input-group-addon">{% trans "Area" %}</span>
+  {% verbatim %}
+    <input type="number" min='0' ng-model="area" class="form-control" >
+  {% endverbatim %}
+  <span class="input-group-addon">m²</span>
+</div>
+<br>
+<div class="input-group">
+  <span class="input-group-addon">{% trans "Irrigation water amount" %}</span>
+  {% verbatim %}
+    <input type="number" min='0' ng-model="irriwaterm3" ng-init="irriwaterm3=30" class="form-control" >
+  {% endverbatim %}
+  <span class="input-group-addon">m³</span>
+</div>
+<br>
+<div class="well well-sm">
+  {% verbatim %}
+    = {{ irriwaterm3/area * 1000|number:1 }} mm
+  {% endverbatim %}
+</div>

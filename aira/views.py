@@ -84,7 +84,7 @@ class DemoView(TemplateView):
 
 
 class ConversionToolsView(TemplateView):
-    template_name = "aira/tools.html"
+    template_name = "aira/tools/main.html"
 
 
 class FrontPageView(TemplateView):

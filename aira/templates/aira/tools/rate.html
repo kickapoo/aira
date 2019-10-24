@@ -1,0 +1,17 @@
+{% load i18n %}
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <b>{% trans "Station flow rate" %}</b>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-md-6">
+        {% include "aira/tools/rate_by_area.html" %}
+      </div>
+      <div class="col-md-6">
+        {% include "aira/tools/rate_by_drippers.html" %}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+{% load i18n %}
+
+<div class="input-group">
+  <span class="input-group-addon">{% trans "Area" %}</span>
+  {% verbatim %}
+    <input type="number" ng-model="area" class="form-control" >
+  {% endverbatim %}
+  <span class="input-group-addon">m²</span>
+</div>
+<br>
+<div class="input-group">
+  <span class="input-group-addon">{% trans "Irrigation water amount" %}</span>
+  {% verbatim %}
+    <input type="number" ng-model="irriwatermm" class="form-control" >
+  {% endverbatim %}
+  <span class="input-group-addon">mm</span>
+</div>
+<br>
+<div class="input-group">
+  <span class="input-group-addon">{% trans "Desired irrigation duration" %}</span>
+  {% verbatim %}
+    <input type="number" ng-model="desired_dur" ng-init="desired_dur=12" class="form-control">
+  {% endverbatim %}
+  <span class="input-group-addon"> h</span>
+</div>
+<br>
+<div class="well well-sm" >
+  {% verbatim %}
+    = {{ irriwatermm/1000 * (area/desired_dur)| number:1}} m³ / h
+   <span ng-model='irrigation_duration'>
+  {% endverbatim %}
+</div>
