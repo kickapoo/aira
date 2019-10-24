@@ -1,0 +1,92 @@
+{% load i18n %}
+
+@charset "UTF-8";
+
+body {
+  min-width: 320px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  font-family: "Varela Round", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  vertical-align: baseline;
+  background: white;
+}
+
+section {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+h1, h2 {
+  font-size: 1.5em;
+  font-weight: 500;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: 1.1em ;
+}
+
+p {
+  font-size: 0.9em;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+ul li {
+  margin: 15px 0 0;
+  padding: 0;
+  font-size: 15px;
+  position: relative;
+}
+
+ul.irrigations {
+  margin-bottom: 20px;
+}
+
+ul.irrigations li {
+  padding-left: 40px;
+}
+
+ul.irrigations li:before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: white;
+  font-size: .5em;
+  padding: 3px 2px 2px;
+  border-radius: 2px;
+  text-align:center;
+  width: 25px;
+}
+
+ul.irrigations .in:before {
+  content: "{% trans 'YES' %}";
+  background-color: #5fcf80;
+}
+
+ul.irrigations .out {
+  color: #A7B4BF;
+}
+
+ul.irrigations .out:before {
+  content: "{% trans 'NO' %}";
+  background-color: #ed5a5a;
+}
+
+footer p {
+  color: #b2bac2;
+  font-size: 1.15em;
+  margin: 0;
+}
