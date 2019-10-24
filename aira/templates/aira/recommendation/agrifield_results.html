@@ -1,0 +1,44 @@
+{% load i18n %}
+{% load mathfilters %}
+
+<div class="panel-heading">
+  {% if object.status != 'done' %}
+    <p class="alert alert-warning">{% trans "This field is being (re)calculated. Reload the page some time later to view the updated results. The calculation usually takes from a few seconds to a few minutes." %}</p>
+  {% endif %}
+  {% if object.results %}
+    {% trans "Detailed Calculations for" %}
+    {% trans "Forecast Period" %}: <span class="text-warning">{{ object.results.sdh|date:"d/m/Y" }}</span> {% trans "to" %} <span class="text-warning">{{ object.results.edh|date:"d/m/Y" }}</span>
+    <div id="results" class="table-responsive">
+      <table class="table">
+        <thead>
+        <tr>
+          <th align="left">{% trans "Date" %}<br> </th>
+          <th align="left">{% trans "Effective Precipitation" %} <br>(mm)</th>
+          <th align="left">{% trans "Depletion" %} <br> (mm)</th>
+          <th align="left">{% trans "Soil moisture" %} <br>(%)</th>
+          <th align="left">{% trans "Irrigate" %} ?</th>
+          <th align="left">
+              {% blocktrans %}
+                Water stress <br> factor
+              {% endblocktrans %}
+          </th>
+          <th align="left">{% trans "Irrigation Water Amount" %}<br> (mm)</th>
+        </tr>
+        </thead>
+        <tbody>
+          {% for result in object.results.swb_report  %}
+            <tr class="{% if result.4 %}success{% else %}active{% endif %}">
+              <td align="left">{{ result.0 }}</td>
+              <td align="left">{{ result.1 |floatformat:"0"}}</td>
+              <td align="left">{{ result.2|floatformat:"0"}}</td>
+              <td align="left"> {{ result.3|mul:100|floatformat:"1" }}</td>
+              <td align="left">{% if result.4 %}{% trans "YES" %}{% else %}{% trans "NO" %}{% endif %}</td>
+              <td align="left"> {{ result.5|floatformat:"2" }}</td>
+              <td align="left"> {{ result.6|floatformat:"0" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>

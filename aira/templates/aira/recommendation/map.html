@@ -1,0 +1,10 @@
+{% load i18n %}
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <b>{% trans "Field Name" %}:</b> <a href="{% url 'update_agrifield' object.id %}">{{ object.name }}</a>
+  </div>
+  <div class="panel-body">
+    <div id="field_map" class="map"></div>
+  </div>
+</div>

@@ -151,7 +151,7 @@ class AgrifieldListView(TemplateView):
 
 class RecommendationView(DetailView):
     model = Agrifield
-    template_name = "aira/recommendation.html"
+    template_name = "aira/recommendation/main.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
