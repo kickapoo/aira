@@ -10,4 +10,4 @@ class DemoUserTest(TestCase):
         call_command("demo_user", stdout=self.out)
 
     def test_command_output(self):
-        self.assertIn("Aira Demo user import: Success", self.out.getvalue())
+        self.assertIn("demo user created/updated successfully", self.out.getvalue())

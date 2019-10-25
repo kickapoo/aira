@@ -41,7 +41,7 @@
         map.addLayer(cycle);
 
         // Study area
-        var kml = new OpenLayers.Layer.Vector("{% trans 'IRMA area' %}",
+        var kml = new OpenLayers.Layer.Vector("{% trans 'Covered area' %}",
                   {strategies: [new OpenLayers.Strategy.Fixed()],
                     visibility: true,
                   protocol: new OpenLayers.Protocol.HTTP(
@@ -64,8 +64,10 @@
         );
         map.addLayer(googleMaps);
 
-        var arta = new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857');
-        map.setCenter(new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 10);
+        map.setCenter(
+            new OpenLayers.LonLat(...aira.map_default_center).transform('EPSG:4326', 'EPSG:3857'),
+            aira.map_default_zoom
+        );
 
         var vectorLayer = new OpenLayers.Layer.Vector("{{ user }} Fields");
         {% for f in agrifields %}

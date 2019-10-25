@@ -55,8 +55,10 @@
       var markers = new OpenLayers.Layer.Markers("Add new field");
       map.addLayer(markers);
 
-      // Note: This has Arta hardwired
-      map.setCenter(new OpenLayers.LonLat(20.98, 39.15).transform('EPSG:4326', 'EPSG:3857'), 10);
+      map.setCenter(
+          new OpenLayers.LonLat(...aira.map_default_center).transform('EPSG:4326', 'EPSG:3857'),
+          aira.map_default_zoom
+      );
     {% endif %}
 
     map.events.register("click", map , function(e){

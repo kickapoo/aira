@@ -102,5 +102,46 @@ AIRA_TIMESERIES_CACHE_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../../../timeseries_cache")
 )
 
+AIRA_MAPSERVER_BASE_URL = "/mapserver/"
+
+AIRA_DEMO_USER_INITIAL_AGRIFIELDS = [
+    {
+        "name": "Field outside covered area",
+        "coordinates": (19.0, 38.0),
+        "crop_type_id": 4,
+        "irrigation_type_id": 1,
+        "area": 10000.0,
+        "irrigation_log": [],
+    },
+    {
+        "name": "Field with irrigation log",
+        "coordinates": (20.98, 39.15),
+        "crop_type_id": 4,
+        "irrigation_type_id": 1,
+        "area": 10000.0,
+        "irrigation_log": [{"time": "2015-02-15 00:00Z", "applied_water": 23.0}],
+    },
+    {
+        "name": "Field with no irrigation log",
+        "coordinates": (20.92, 39.10),
+        "crop_type_id": 4,
+        "irrigation_type_id": 1,
+        "area": 10000.0,
+        "irrigation_log": [],
+    },
+    {
+        "name": "Filed with log outside dataset",
+        "coordinates": (20.94, 39.12),
+        "crop_type_id": 4,
+        "irrigation_type_id": 1,
+        "area": 10000.0,
+        "irrigation_log": [{"time": "2014-02-15 00:00Z", "applied_water": 23.0}],
+    },
+]
+
+AIRA_MAP_DEFAULT_CENTER = (20.98, 39.15)
+AIRA_MAP_DEFAULT_ZOOM = 10
+
+
 CELERY_TASK_SERIALIZER = "pickle"
 CELERY_ACCEPT_CONTENT = ["pickle"]

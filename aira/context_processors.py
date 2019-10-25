@@ -6,7 +6,19 @@ def map(request):
     thunderforest_api_key = getattr(settings, "AIRA_THUNDERFOREST_API_KEY", None)
     if thunderforest_api_key:
         query_element = "apikey={}".format(thunderforest_api_key)
-    map_js = 'aira.thunderforestApiKeyQueryElement = "{}";'.format(query_element)
+    map_js = (
+        """
+        aira.thunderforestApiKeyQueryElement = "{}";
+        aira.mapserver_base_url = "{}";
+        aira.map_default_center = [{}];
+        aira.map_default_zoom = {};
+        """
+    ).format(
+        query_element,
+        settings.AIRA_MAPSERVER_BASE_URL,
+        ",".join([str(x) for x in settings.AIRA_MAP_DEFAULT_CENTER]),
+        settings.AIRA_MAP_DEFAULT_ZOOM,
+    )
     return {
         "map_js": map_js,
         "google_maps_api_key": getattr(settings, "AIRA_GOOGLE_MAPS_API_KEY", ""),

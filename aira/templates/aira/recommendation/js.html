@@ -24,7 +24,7 @@
                 projection: 'EPSG:3857'});
 
       // Study area
-      var kml = new OpenLayers.Layer.Vector("{% trans 'IRMA area' %}",
+      var kml = new OpenLayers.Layer.Vector("{% trans 'Covered area' %}",
                 {strategies: [new OpenLayers.Strategy.Fixed()],
                   visibility: true,
                 protocol: new OpenLayers.Protocol.HTTP(
