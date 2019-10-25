@@ -18,7 +18,6 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from hspatial import PointTimeseries
 
 from .forms import AgrifieldForm, IrrigationlogForm, ProfileForm
-from .irma.main import agripoint_in_raster, get_performance_chart, model_results
 from .models import Agrifield, IrrigationLog, Profile
 
 
@@ -27,10 +26,9 @@ class IrrigationPerformanceView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Load data paths
         f = Agrifield.objects.get(pk=self.kwargs["pk_a"])
         f.can_edit(self.request.user)
-        f.chart = get_performance_chart(f)
+        f.chart = f.performance_chart
         if f.chart:
             f.chart.sum_ifinal = sum(f.chart.chart_ifinal)
             f.chart.sum_applied_water = sum(f.chart.applied_water)
@@ -55,7 +53,7 @@ def performance_csv(request, pk):
         "Content-Disposition"
     ] = 'attachment; filename="{}-performance.csv"'.format(f.id)
     f.can_edit(request.user)
-    results = get_performance_chart(f)
+    results = f.performance_chart
     writer = csv.writer(response)
     writer.writerow(
         [
@@ -137,11 +135,6 @@ class AgrifieldListView(TemplateView):
                 supervising_users = Profile.objects.filter(supervisor=self.request.user)
                 context["supervising_users"] = supervising_users
 
-            for f in agrifields:
-                if not agripoint_in_raster(f):
-                    f.outside_arta_raster = True
-                f.results = model_results(f)
-
             context["agrifields"] = agrifields
             context["fields_count"] = len(agrifields)
         except Agrifield.DoesNotExist:
@@ -156,8 +149,6 @@ class RecommendationView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         self.object.can_edit(self.request.user)
-        if agripoint_in_raster(self.object):
-            self.object.results = model_results(self.object)
         return context
 
 

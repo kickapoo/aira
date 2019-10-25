@@ -5,7 +5,7 @@
   <div class="panel-body">
     {% include "aira/home/agrifields_list/agrifield_info.html" %}
     {% include "aira/home/agrifields_list/agrifield_recalculation_warning.html" %}
-    {% if f.outside_arta_raster %}
+    {% if not f.in_study_area %}
       {% include "aira/home/agrifields_list/agrifield_outside_raster.html" %}
     {% elif f.results %}
       {% include "aira/home/agrifields_list/agrifield_results.html" %}

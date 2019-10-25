@@ -10,7 +10,6 @@ from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
-from aira.irma.main import agripoint_in_raster, model_results
 from aira.models import Profile, notification_options
 
 
@@ -40,8 +39,6 @@ class Command(BaseCommand):
 
     def get_email_context(self, agrifields, user, owner):
         context = {}
-        for f in agrifields:
-            f.results = model_results(f)
         if agrifields[0].results is None:
             logging.error(
                 (
@@ -60,7 +57,7 @@ class Command(BaseCommand):
         return context
 
     def notify_user(self, user, agrifields, owner):
-        agrifields = [f for f in agrifields if agripoint_in_raster(f)]
+        agrifields = [f for f in agrifields if f.in_study_area]
         if not agrifields:
             return
         logging.info(

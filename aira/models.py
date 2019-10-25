@@ -1,4 +1,5 @@
 import datetime as dt
+import math
 import os
 from collections import OrderedDict
 
@@ -329,6 +330,29 @@ class Agrifield(models.Model):
     @property
     def status(self):
         return cache.get("agrifield_{}_status".format(self.id))
+
+    @property
+    def in_study_area(self):
+        mask = os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif")
+        try:
+            tmp_check = extract_point_from_raster(self.location, gdal.Open(mask))
+        except (RuntimeError, ValueError):
+            tmp_check = float("nan")
+        return not math.isnan(tmp_check)
+
+    @property
+    def results(self):
+        if self.in_study_area:
+            return cache.get("model_run_{}".format(self.id))
+        else:
+            return None
+
+    @property
+    def performance_chart(self):
+        if self.in_study_area:
+            return cache.get("performance_chart_{}".format(self.id))
+        else:
+            return None
 
 
 class IrrigationLog(models.Model):

@@ -10,11 +10,20 @@ from osgeo import gdal
 from swb import calculate_crop_evapotranspiration, calculate_soil_water
 
 from aira.celery import app
-from aira.irma.main import agripoint_in_raster, common_period_dates
 
 
 class Results:
     pass
+
+
+def _common_period_dates(series1, series2):
+    """Return common period of two HTimeseries objects.
+    """
+    start1 = series1.data.index[0]
+    start2 = series2.data.index[0]
+    end1 = series1.data.index[-1]
+    end2 = series2.data.index[-1]
+    return max(start1, start2), min(end1, end2)
 
 
 def _point_timeseries(agrifield, category, varname, start_of_season):
@@ -42,8 +51,8 @@ def extractSWBTimeseries(agrifield):
     _rf = _point_timeseries(agrifield, "FORECAST", "rain", start_of_season)
     _ef = _point_timeseries(agrifield, "FORECAST", "evaporation", start_of_season)
 
-    start, end = common_period_dates(_r, _e)
-    fstart, fend = common_period_dates(_rf, _ef)
+    start, end = _common_period_dates(_r, _e)
+    fstart, fend = _common_period_dates(_rf, _ef)
 
     dateIndexH = pd.date_range(start=start.date(), end=end.date(), freq="D")
     dateIndex = pd.date_range(start=start.date(), end=fend.date(), freq="D")
@@ -125,7 +134,7 @@ def execute_model(agrifield):
     results = Results()
 
     # Verify that the agrifield is in study area
-    if not agripoint_in_raster(agrifield):
+    if not agrifield.in_study_area:
         return results
 
     # Calculate crop evapotranspiration at the agrifield
@@ -217,7 +226,7 @@ def calculate_performance_chart(agrifield):
     results = Results()
 
     # Verify that the agrifield is in study area
-    if not agripoint_in_raster(agrifield):
+    if not agrifield.in_study_area:
         return results
 
     # Extract data from files withe pd.DataFrame and end, start dates
