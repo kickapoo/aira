@@ -172,7 +172,7 @@ aira.mapModule = (function namespace() {
     };
 
 
-    var addStudyAreaLayer = function(map, kml_url) {
+    var addCoveredAreaLayer = function(map, kml_url) {
         var kml = new OpenLayers.Layer.Vector("Covered area",
                   {strategies: [new OpenLayers.Strategy.Fixed()],
                     visibility: true,
@@ -383,6 +383,6 @@ aira.mapModule = (function namespace() {
         createPreviousRasterMap: createPreviousRasterMap,
         initTimestampView: initTimestampView,
         getMap: getMap,
-        addStudyAreaLayer: addStudyAreaLayer
+        addCoveredAreaLayer: addCoveredAreaLayer
     };
 }());

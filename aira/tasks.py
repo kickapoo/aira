@@ -133,8 +133,8 @@ def execute_model(agrifield):
 
     results = Results()
 
-    # Verify that the agrifield is in study area
-    if not agrifield.in_study_area:
+    # Verify that the agrifield is in the covered area
+    if not agrifield.in_covered_area:
         return results
 
     # Calculate crop evapotranspiration at the agrifield
@@ -225,8 +225,8 @@ def execute_model(agrifield):
 def calculate_performance_chart(agrifield):
     results = Results()
 
-    # Verify that the agrifield is in study area
-    if not agrifield.in_study_area:
+    # Verify that the agrifield is in covered area
+    if not agrifield.in_covered_area:
         return results
 
     # Extract data from files withe pd.DataFrame and end, start dates

@@ -40,12 +40,12 @@
                    projection: 'EPSG:3857'});
         map.addLayer(cycle);
 
-        // Study area
+        // Covered area
         var kml = new OpenLayers.Layer.Vector("{% trans 'Covered area' %}",
                   {strategies: [new OpenLayers.Strategy.Fixed()],
                     visibility: true,
                   protocol: new OpenLayers.Protocol.HTTP(
-                           {url: "{% static 'kml/study_area.kml' %}",
+                           {url: "{% static 'kml/covered_area.kml' %}",
                            format: new OpenLayers.Format.KML()})})
         map.addLayer(kml);
         // Kthmatologio

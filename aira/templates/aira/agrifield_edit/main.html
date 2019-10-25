@@ -38,7 +38,7 @@
   <script type="text/javascript">
     /* Map */
     map = aira.mapModule.getMap('on_click_map');
-    aira.mapModule.addStudyAreaLayer(map, "{% static 'kml/study_area.kml' %}");
+    aira.mapModule.addCoveredAreaLayer(map, "{% static 'kml/covered_area.kml' %}");
 
     {% if object %}
       function make_coords(coord) {

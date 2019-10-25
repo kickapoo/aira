@@ -57,7 +57,7 @@ class Command(BaseCommand):
         return context
 
     def notify_user(self, user, agrifields, owner):
-        agrifields = [f for f in agrifields if f.in_study_area]
+        agrifields = [f for f in agrifields if f.in_covered_area]
         if not agrifields:
             return
         logging.info(
