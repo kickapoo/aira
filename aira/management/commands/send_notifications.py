@@ -54,6 +54,8 @@ class Command(BaseCommand):
         context["site"] = Site.objects.get_current()
         context["user"] = user
         context["timestamp"] = datetime.now()
+        context["header"] = settings.AIRA_EMAIL_HEADER
+        context["footer"] = settings.AIRA_EMAIL_FOOTER
         return context
 
     def notify_user(self, user, agrifields, owner):
