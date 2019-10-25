@@ -40,7 +40,7 @@ class TestDataMixin:
             location=Point(22.01, 37.99),
             owner=self.alice,
             irrigation_type__efficiency=0.85,
-            crop_type__max_allow_depletion=0.40,
+            crop_type__max_allowed_depletion=0.40,
             crop_type__root_depth_max=0.50,
             crop_type__root_depth_min=0.30,
         )
@@ -154,10 +154,10 @@ class UpdateAgrifieldViewTestCase(TestDataMixin, TestCase):
             html=True,
         )
 
-    def test_default_max_allow_depletion(self):
+    def test_default_max_allowed_depletion(self):
         self.assertContains(
             self.response,
-            '<span id="default-max_allow_depletion">0.40</span>',
+            '<span id="default-max_allowed_depletion">0.40</span>',
             html=True,
         )
 

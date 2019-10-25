@@ -87,7 +87,7 @@ class SetupTestDataMixin:
             name="Grass",
             root_depth_max=0.7,
             root_depth_min=1.2,
-            max_allow_depletion=0.5,
+            max_allowed_depletion=0.5,
             fek_category=4,
             kc_init=0.7,
             kc_mid=0.7,

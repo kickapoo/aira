@@ -93,7 +93,7 @@ class CropType(models.Model):
     name = models.CharField(max_length=100)
     root_depth_max = models.FloatField()
     root_depth_min = models.FloatField()
-    max_allow_depletion = models.DecimalField(max_digits=6, decimal_places=2)
+    max_allowed_depletion = models.FloatField()
     kc_init = models.FloatField()
     kc_mid = models.FloatField()
     kc_end = models.FloatField()
@@ -164,7 +164,7 @@ class Agrifield(models.Model):
         blank=True,
         validators=[MaxValueValidator(2.00), MinValueValidator(0.1)],
     )
-    custom_max_allow_depletion = models.FloatField(
+    custom_max_allowed_depletion = models.FloatField(
         null=True,
         blank=True,
         validators=[MaxValueValidator(1.00), MinValueValidator(0.00)],
@@ -249,10 +249,10 @@ class Agrifield(models.Model):
 
     @property
     def p(self):
-        if self.use_custom_parameters and self.custom_max_allow_depletion:
-            return self.custom_max_allow_depletion
+        if self.use_custom_parameters and self.custom_max_allowed_depletion:
+            return self.custom_max_allowed_depletion
         else:
-            return self.crop_type.max_allow_depletion
+            return self.crop_type.max_allowed_depletion
 
     @property
     def root_depth_max(self):

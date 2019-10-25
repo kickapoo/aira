@@ -34,7 +34,7 @@ class CropTypeAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "fek_category",
-        "max_allow_depletion",
+        "max_allowed_depletion",
         "kc_init",
         "kc_mid",
         "kc_end",
