@@ -7,7 +7,7 @@
   {% endif %}
   {% if object.results %}
     {% trans "Detailed Calculations for" %}
-    {% trans "Forecast Period" %}: <span class="text-warning">{{ object.results.sdh|date:"d/m/Y" }}</span> {% trans "to" %} <span class="text-warning">{{ object.results.edh|date:"d/m/Y" }}</span>
+    {% trans "Forecast Period" %}: <span class="text-warning">{{ object.results.forecast_start_date|date:"d/m/Y" }}</span> {% trans "to" %} <span class="text-warning">{{ object.results.timeseries.index|last|date:"d/m/Y" }}</span>
     <div id="results" class="table-responsive">
       <table class="table">
         <thead>
@@ -26,15 +26,15 @@
         </tr>
         </thead>
         <tbody>
-          {% for result in object.results.swb_report  %}
-            <tr class="{% if result.4 %}success{% else %}active{% endif %}">
-              <td align="left">{{ result.0 }}</td>
-              <td align="left">{{ result.1 |floatformat:"0"}}</td>
-              <td align="left">{{ result.2|floatformat:"0"}}</td>
-              <td align="left"> {{ result.3|mul:100|floatformat:"1" }}</td>
-              <td align="left">{% if result.4 %}{% trans "YES" %}{% else %}{% trans "NO" %}{% endif %}</td>
-              <td align="left"> {{ result.5|floatformat:"2" }}</td>
-              <td align="left"> {{ result.6|floatformat:"0" }}</td>
+          {% for date, data in object.forecast_data.iterrows %}
+            <tr class="{% if data.recommendation %}success{% else %}active{% endif %}">
+              <td align="left">{{ date|date }}</td>
+              <td align="left">{{ data.effective_precipitation |floatformat:"0"}}</td>
+              <td align="left">{{ data.dr|floatformat:"0"}}</td>
+              <td align="left"> {{ data.theta|mul:100|floatformat:"1" }}</td>
+              <td align="left">{% if data.recommendation %}{% trans "YES" %}{% else %}{% trans "NO" %}{% endif %}</td>
+              <td align="left"> {{ data.ks|floatformat:"2" }}</td>
+              <td align="left"> {{ data.ifinal|floatformat:"0" }}</td>
             </tr>
           {% endfor %}
         </tbody>

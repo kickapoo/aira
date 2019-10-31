@@ -4,7 +4,7 @@
 {% include "aira/home/agrifields_list/agrifield_results_warnings.html" %}
 {% include "aira/home/agrifields_list/agrifield_results_recommendation_heading.html" %}
 
-{% if not f.results.adv %}
+{% if not f.needs_irrigation %}
   {% trans "No need to irrigate" %}
 {% else %}
   {% include "aira/home/agrifields_list/agrifield_results_recommendation.html" %}

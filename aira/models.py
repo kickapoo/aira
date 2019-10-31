@@ -18,6 +18,8 @@ from django.utils.translation import ugettext_lazy as _
 from hspatial import extract_point_from_raster
 from osgeo import gdal
 
+from .agrifield import AgrifieldSWBMixin, AgrifieldSWBResultsMixin
+
 # notification_options is the list of options the user can select for
 # notifications, e.g. be notified every day, every two days, every week, and so
 # on. It is a dictionary; the key is an id of the option, and the value is a
@@ -139,7 +141,7 @@ class SoilAnalysisStorage(FileSystemStorage):
         return reverse("agrifield-soil-analysis", kwargs={"agrifield_id": agrifield.id})
 
 
-class Agrifield(models.Model):
+class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, default="i.e. MyField1")
     is_virtual = models.NullBooleanField(
@@ -312,9 +314,9 @@ class Agrifield(models.Model):
 
     def save(self, *args, **kwargs):
         super(Agrifield, self).save(*args, **kwargs)
-        self.execute_model()
+        self._queue_for_calculation()
 
-    def execute_model(self):
+    def _queue_for_calculation(self):
         from aira import tasks
 
         cache_key = "agrifield_{}_status".format(self.id)
@@ -340,20 +342,6 @@ class Agrifield(models.Model):
             tmp_check = float("nan")
         return not math.isnan(tmp_check)
 
-    @property
-    def results(self):
-        if self.in_covered_area:
-            return cache.get("model_run_{}".format(self.id))
-        else:
-            return None
-
-    @property
-    def performance_chart(self):
-        if self.in_covered_area:
-            return cache.get("performance_chart_{}".format(self.id))
-        else:
-            return None
-
 
 class IrrigationLog(models.Model):
     agrifield = models.ForeignKey(Agrifield, on_delete=models.CASCADE)
@@ -361,11 +349,6 @@ class IrrigationLog(models.Model):
     applied_water = models.FloatField(
         null=True, blank=True, validators=[MinValueValidator(0.0)]
     )
-
-    def can_edit(self, agriobj):
-        if agriobj == self.agrifield:
-            return True
-        raise Http404
 
     class Meta:
         get_latest_by = "time"
@@ -377,8 +360,8 @@ class IrrigationLog(models.Model):
 
     def save(self, *args, **kwargs):
         super(IrrigationLog, self).save(*args, **kwargs)
-        self.agrifield.execute_model()
+        self.agrifield._queue_for_calculation()
 
     def delete(self, *args, **kwargs):
         super(IrrigationLog, self).delete(*args, **kwargs)
-        self.agrifield.execute_model()
+        self.agrifield._queue_for_calculation()

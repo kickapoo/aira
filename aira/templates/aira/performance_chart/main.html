@@ -1,63 +1,95 @@
 {% extends 'aira/base/main.html' %}
 {% load static %}
 {% load i18n %}
+{% load l10n %}
 
 {% load bootstrap3 %}
-{% block title %} {{ f.name}} {% endblock %}
+{% block title %} {{ object.name}} {% endblock %}
 
 {% block content  %}
-  {% if f.chart.inside_non_irrigation_period %}
-    <div class="alert alert-info">
-      <i class="fa fa-info-circle"></i>
-      {% trans "The Irrigation Performance graph is available only during irrigation period (16 March to 15 October)" %}
-    </div
-  {% endif %}
   <h4 style="text-align: center;">{% trans 'Irrigation Performance' %}</h4>
-  {% if f.status != 'done' %}
+  {% if object.status != 'done' %}
     <p class="alert alert-warning">{% trans "This field is being (re)calculated. Reload the page some time later to view the updated results. The calculation usually takes from a few seconds to a few minutes." %}</p>
   {% endif %}
   <div id="irrchart" style="width:100%; height:400px;"></div>
   <div class="container">
-    {% if f.chart %}
-      <a style="float:right"  href="{% url 'performance_csv' f.id %}"> <i class="fa fa-cloud-download"></i> {% trans "Download Chart Data" %}</a><br>
-      <b>{% trans "Total Effective Precipitation" %}</b>: {{ f.chart.chart_irr_period_peff_cumulative|floatformat:"1" }} mm <br>
+    {% if object.results %}
+      <a style="float:right"  href="{% url 'performance_csv' object.id %}"> <i class="fa fa-cloud-download"></i> {% trans "Download Chart Data" %}</a><br>
+      <b>{% trans "Total Effective Precipitation" %}</b>: {{ object.results.timeseries.effective_precipitation.sum|floatformat:0 }} mm <br>
       <hr>
-      <b>{% trans 'Total Estimated Irrigation Water Amount' %}</b>: {{ f.chart.sum_ifinal|floatformat:"1"  }} mm <br>
-      <b>{% trans "Total Applied Irrigation Water Amount" %}</b>: {{ f.chart.sum_applied_water|floatformat:"1" }} mm <br>
-      <b>{% trans "Percentage difference"%}</b>: {{ f.chart.percentage_diff }} % <br>
+      <b>{% trans 'Total Estimated Irrigation Water Amount' %}</b>: {{ object.results.timeseries.ifinal_theoretical.sum|floatformat:0  }} mm <br>
+      <b>{% trans "Total Applied Irrigation Water Amount" %}</b>: {{ sum_actual_net_irrigation|floatformat:0 }} mm <br>
+      <b>{% trans "Percentage difference"%}</b>: {{ percentage_diff }} % <br>
     {% endif %}
   </div>
   <br><br><br><br><br><br><br>
 {% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript">
-    performance = {}; //empty js object
-    performance.title = " {{ f.name }}";
-    performance.subtitle = "{{ f.crop_type}} - " + "{{ f.irrigation_type }}";
-    performance.ifinal_title = "{% trans 'Estimated Irrigation Water Amount' %}";
-    performance.applied_water_title = "{% trans 'Applied Irrigation Water Amount' %}";
-    performance.peff_title = "{% trans 'Effective precipitation' %}"
-    performance.yAxis_title =  " ";
-    {% if f.chart %}
-      performance.dates = [
-        {% for d in f.chart.chart_dates  %}
-          "{{ d | safe }}" {% if not forloop.last %},{% endif %}
-        {% endfor %}
-      ];
-      performance.ifinal = {{ f.chart.chart_ifinal }};
-      performance.applied_water = {{ f.chart.applied_water}};
-      performance.peff = {{ f.chart.chart_peff }}
-    {% else %}
-      performance.dates = [];
-      performance.ifinal = null;
-      performance.applied_water = null;
-      performance.peff = null;
-    {% endif %}
-  </script>
-
   <script src="http://code.highcharts.com/highcharts.js" type="text/javascript"></script>
   <script src="http://code.highcharts.com/modules/exporting.js" type="text/javascript"></script>
-  <script type="text/javascript" src="{% static 'js/performance-chart.js' %}"></script>
-
+  <script type="text/javascript">
+    Highcharts.chart('irrchart', {
+      chart: {type: 'column'},
+      credits: {enabled: false},
+      title: {text: "{{ object.name }}"},
+      subtitle: {text: "{{ object.crop_type }} - {{ object.irrigation_type }}"},
+      xAxis: {
+        categories: [
+          {% for date, data in object.results.timeseries.iterrows %}
+            "{{ date | date }}" {% if not forloop.last %},{% endif %}
+          {% endfor %}
+        ],
+        type: 'datetime',
+        dateTimeLabelFormats: {day: '%d-%m-%Y'},
+        crosshair: true
+      },
+      yAxis: {
+        min: 0,
+        tickInterval: 5,
+        title: {text: " "},
+        labels: {format: '{value} mm'}
+      },
+      tooltip: {
+          headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+          pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+              '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+          footerFormat: '</table>',
+          shared: true,
+          useHTML: true
+      },
+      plotOptions: {column: {pointPadding: 0.2, borderWidth: 5}},
+      series: [{
+          name: "{% trans 'Estimated Irrigation Water Amount' %}",
+          color: '#008000',
+          data: [
+            {% localize off %}
+              {% for date, row in object.results.timeseries.iterrows %}
+                {{ row.ifinal_theoretical }} {% if not forloop.last %},{% endif %}
+              {% endfor %}
+            {% endlocalize %}
+          ]
+      }, {
+          name: "{% trans 'Applied Irrigation Water Amount' %}",
+          data: [
+            {% localize off %}
+              {% for date, row in object.results.timeseries.iterrows %}
+                {{ row.actual_net_irrigation|default:0 }} {% if not forloop.last %},{% endif %}
+              {% endfor %}
+            {% endlocalize %}
+          ]
+      },
+      {
+          name: "{% trans 'Effective precipitation' %}",
+          color: '#4c4ca6',
+          data: [
+            {% localize off %}
+              {% for date, row in object.results.timeseries.iterrows %}
+                {{ row.effective_precipitation }} {% if not forloop.last %},{% endif %}
+              {% endfor %}
+            {% endlocalize %}
+          ]
+      }]
+    });
+  </script>
 {% endblock %}

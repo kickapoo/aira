@@ -1,0 +1,30 @@
+{% load i18n %}
+
+<div class="table-responsive">
+  <table class="table">
+    <h4> {% trans "List of" %} {% trans "Irrigation Events" %}, <a href="{% url 'update_agrifield' agrifield.id %}">{{ agrifield.name }}</a></h4>
+    <hr>
+    <thead>
+      <tr>
+        <th>{% trans "#id" %}</th>
+        <th>{% trans "Datetime" %}</th>
+        <th>{% trans "Applied water" %} (m³)</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in agrifield.irrigationlog_set.all  %}
+        <tr>
+          <td>{{ log.id }}</td>
+          <td><a href="{% url 'update_irrlog' log.id %}">{{log.time}}</a></td>
+          <td align="center">{{log.applied_water|floatformat:"2"}}</td>
+          {% if user.username != "demo" %}
+            <td><a href="{% url 'delete_irrlog' log.id %}">{% trans "Delete" %} </a></td>
+          {% else %}
+            <td -</td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

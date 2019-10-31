@@ -1,0 +1,55 @@
+{% extends 'aira/base/main.html' %}
+{% load i18n %}
+
+{% load bootstrap3 %}
+{% block title %} {{ user }} {% endblock %}
+
+{% block content %}
+  {% if user.username == "demo" %}
+    <div class="alert alert-info">
+      <a href="#" class="close" data-dismiss="alert">&times;</a>
+      <i class="fa fa-info-circle fa-2x"></i>&nbsp; <span style="font-size:32px">{% trans "demo" %}</span>
+    </div>
+  {% endif %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <h3>{% trans "Update" %} </h3>
+        <hr>
+        <form method="post" role="form" class="form-horizontal">
+          {% csrf_token %}
+          {% bootstrap_form form %}
+          {% buttons %}
+            {% if user.username != "demo" %}
+              <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-success btn-xs">{% trans "Update" %}</button>
+                <a class="btn btn-success btn-xs" href="{% url 'create_irrlog' pk=agrifield.id %}"> {% trans "Back" %} </a>
+              </div>
+            {% endif %}
+          {% endbuttons %}
+        </form>
+      </div>
+      <div class="col-md-1">
+      </div>
+      {% if agrifield.irrigationlog_set.exists %}
+        <div class="col-md-7">
+          {% include "aira/irrigationlog/table_of_logs.html" %}
+        </div>
+      {% endif %}
+  </div>
+{% endblock %}
+    
+{% block extrajs %}
+        <script type="text/javascript">
+          $("#id_time").datetimepicker({
+            format: "yyyy-mm-dd hh:ii",
+            autoclose: true,
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+            });
+        $(document).ready(function() {
+            var label_inner = $("label[for='id_applied_water']").html()
+            $("label[for='id_applied_water']").html(label_inner + " (m³)")
+        });
+      </script>
+{% endblock %}

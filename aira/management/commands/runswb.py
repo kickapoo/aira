@@ -9,4 +9,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for agrifield in Agrifield.objects.all():
             if agrifield.in_covered_area:
-                agrifield.execute_model()
+                agrifield._queue_for_calculation()

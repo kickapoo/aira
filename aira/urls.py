@@ -65,19 +65,18 @@ urlpatterns = [
         login_required(views.DownloadSoilAnalysisView.as_view()),
         name="agrifield-soil-analysis",
     ),
-    # Irrigation Log
     path(
         "create_irrigationlog/<int:pk>/",
         login_required(views.CreateIrrigationLogView.as_view()),
         name="create_irrlog",
     ),
     path(
-        "update_irrigationlog/<int:pk_a>/<int:pk>/",
+        "update_irrigationlog/<int:pk>/",
         login_required(views.UpdateIrrigationLogView.as_view()),
         name="update_irrlog",
     ),
     path(
-        "delete_irrigationlog/<int:pk_a>/<int:pk>/",
+        "delete_irrigationlog/<int:pk>/",
         login_required(views.DeleteIrrigationLogView.as_view()),
         name="delete_irrlog",
     ),
@@ -88,7 +87,7 @@ urlpatterns = [
     ),
     path("try/", views.DemoView.as_view(), name="try"),
     path(
-        "irrigation-performance-chart/<int:pk_a>/",
+        "irrigation-performance-chart/<int:pk>/",
         views.IrrigationPerformanceView.as_view(),
         name="irrigation-chart",
     ),

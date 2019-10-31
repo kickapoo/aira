@@ -15,34 +15,36 @@ from django.views.generic.base import TemplateView, View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
+import pandas as pd
 from hspatial import PointTimeseries
 
 from .forms import AgrifieldForm, IrrigationlogForm, ProfileForm
 from .models import Agrifield, IrrigationLog, Profile
 
 
-class IrrigationPerformanceView(TemplateView):
+class IrrigationPerformanceView(DetailView):
+    model = Agrifield
     template_name = "aira/performance_chart/main.html"
 
     def get_context_data(self, **kwargs):
+        self.object.can_edit(self.request.user)
         context = super().get_context_data(**kwargs)
-        f = Agrifield.objects.get(pk=self.kwargs["pk_a"])
-        f.can_edit(self.request.user)
-        f.chart = f.performance_chart
-        if f.chart:
-            f.chart.sum_ifinal = sum(f.chart.chart_ifinal)
-            f.chart.sum_applied_water = sum(f.chart.applied_water)
-            f.chart.percentage_diff = _("Not Available")
-            if f.chart.sum_ifinal != 0.0:
-                f.chart.percentage_diff = round(
-                    (
-                        (f.chart.sum_applied_water - f.chart.sum_ifinal)
-                        / f.chart.sum_ifinal
-                    )
-                    * 100
-                    or 0.0
-                )
-        context["f"] = f
+        results = self.object.results
+        if not results:
+            return context
+        sum_ifinal_theoretical = results["timeseries"].ifinal_theoretical.sum()
+        actual_net_irrigation = results["timeseries"].actual_net_irrigation
+        actual_net_irrigation = pd.to_numeric(actual_net_irrigation)
+        actual_net_irrigation[actual_net_irrigation.isna()] = 0
+        sum_actual_net_irrigation = actual_net_irrigation.sum()
+        context["sum_actual_net_irrigation"] = sum_actual_net_irrigation
+        context["percentage_diff"] = _("Not Available")
+        if sum_ifinal_theoretical >= 0.1:
+            context["percentage_diff"] = round(
+                (sum_actual_net_irrigation - sum_ifinal_theoretical)
+                / sum_ifinal_theoretical
+                * 100
+            )
         return context
 
 
@@ -53,7 +55,6 @@ def performance_csv(request, pk):
         "Content-Disposition"
     ] = 'attachment; filename="{}-performance.csv"'.format(f.id)
     f.can_edit(request.user)
-    results = f.performance_chart
     writer = csv.writer(response)
     writer.writerow(
         [
@@ -64,13 +65,15 @@ def performance_csv(request, pk):
         ]
     )
     writer.writerow(["", "amount (mm)", "amount (mm)", "amount (mm)"])
-    for row in zip(
-        results.chart_dates,
-        results.chart_ifinal,
-        results.applied_water,
-        results.chart_peff,
-    ):
-        writer.writerow(row)
+    for date, row in f.results["timeseries"].iterrows():
+        writer.writerow(
+            [
+                date,
+                row.ifinal_theoretical,
+                row.actual_net_irrigation if row.actual_net_irrigation else 0,
+                row.effective_precipitation,
+            ]
+        )
     return response
 
 
@@ -266,6 +269,7 @@ class CreateIrrigationLogView(CreateView):
     model = IrrigationLog
     form_class = IrrigationlogForm
     success_url = "/home"
+    template_name_suffix = "/create"
 
     def get_success_url(self):
         field = Agrifield.objects.get(pk=self.kwargs["pk"])
@@ -275,46 +279,43 @@ class CreateIrrigationLogView(CreateView):
         form.instance.agrifield = Agrifield.objects.get(pk=self.kwargs["pk"])
         return super().form_valid(form)
 
+    def dispatch(self, request, *args, **kwargs):
+        self.agrifield = get_object_or_404(Agrifield, pk=self.kwargs["pk"])
+        self.agrifield.can_edit(request.user)
+        return super().dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        try:
-            context["agrifield"] = Agrifield.objects.get(pk=self.kwargs["pk"])
-            afieldobj = Agrifield.objects.get(pk=self.kwargs["pk"])
-            afieldobj.can_edit(self.request.user)
-            context["logs"] = IrrigationLog.objects.filter(agrifield=afieldobj).all()
-            context["logs_count"] = context["logs"].count()
-            context["agrifield_user"] = afieldobj.owner
-        except Agrifield.DoesNotExist:
-            context["logs"] = None
+        context["agrifield"] = self.agrifield
         return context
 
 
 class UpdateIrrigationLogView(UpdateView):
     model = IrrigationLog
     form_class = IrrigationlogForm
-    template_name = "aira/irrigationlog_update/main.html"
+    template_name_suffix = "/update"
 
     def get_success_url(self):
-        field = Agrifield.objects.get(pk=self.kwargs["pk_a"])
-        return reverse("home", kwargs={"username": field.owner})
+        return reverse("home", kwargs={"username": self.object.agrifield.owner})
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        afieldobj = Agrifield.objects.get(pk=self.kwargs["pk_a"])
-        afieldobj.can_edit(self.request.user)
-        log = IrrigationLog.objects.get(pk=self.kwargs["pk"])
-        log.can_edit(afieldobj)
-        context["agrifield_id"] = afieldobj.id
-        return context
+    def get_object(self):
+        irrigation_log = super().get_object()
+        irrigation_log.agrifield.can_edit(self.request.user)
+        return irrigation_log
 
 
 class DeleteIrrigationLogView(DeleteView):
     model = IrrigationLog
     form_class = IrrigationlogForm
+    template_name_suffix = "/confirm_delete"
+
+    def get_object(self):
+        irrigation_log = super().get_object()
+        irrigation_log.agrifield.can_edit(self.request.user)
+        return irrigation_log
 
     def get_success_url(self):
-        field = Agrifield.objects.get(pk=self.kwargs["pk_a"])
-        return reverse("home", kwargs={"username": field.owner})
+        return reverse("home", kwargs={"username": self.object.agrifield.owner})
 
 
 def remove_supervised_user_from_user_list(request):

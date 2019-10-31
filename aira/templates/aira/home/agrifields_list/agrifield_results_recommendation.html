@@ -15,12 +15,12 @@
       </tr>
     </thead>
     <tbody>
-      {% for data in f.results.adv_sorted  %}
+      {% for date, data in f.alternative_irrigations.iterrows %}
         <tr>
           <td>{% if not forloop.first %}{% trans "or" %}{% endif %}</td>
-          <td align="left">{{ data.0 }}</td>
-          <td align="left">{{ data.1 |floatformat:"2" }} </td>
-          <td align="left">{{ data.2 |floatformat:"2" }} mm ({{ data.3|floatformat:"2"}} m³)</td>
+          <td align="left">{{ date|date }}</td>
+          <td align="left">{{ data.ks |floatformat:"2" }} </td>
+          <td align="left">{{ data.ifinal |floatformat:"2" }} mm ({{ data.3|floatformat:"2"}} m³)</td>
         </tr>
       {% endfor %}
     </tbody>

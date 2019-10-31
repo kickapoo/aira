@@ -3,7 +3,7 @@
 
 <img
   style="display:block;float:left;"
-  {% if f.results.adv %}
+  {% if f.needs_irrigation  %}
     src="{% static 'img/warning.png' %}"
   {% else %}
     src="{% static 'img/cool.png' %}"

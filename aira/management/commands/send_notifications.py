@@ -48,8 +48,6 @@ class Command(BaseCommand):
             )
             return None
         context["owner"] = owner
-        context["sd"] = agrifields[0].results.sd
-        context["ed"] = agrifields[0].results.ed
         context["agrifields"] = agrifields
         context["site"] = Site.objects.get_current()
         context["user"] = user
