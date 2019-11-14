@@ -23,9 +23,9 @@ class AgrifieldSWBMixin:
 
     @property
     def draintime(self):
-        raster_a = os.path.join(settings.AIRA_DRAINTIME_DIR, "a_1d.tif")
+        raster_a = os.path.join(settings.AIRA_DATA_SOIL, "a_1d.tif")
         a = extract_point_from_raster(self.location, gdal.Open(raster_a))
-        raster_b = os.path.join(settings.AIRA_DRAINTIME_DIR, "b.tif")
+        raster_b = os.path.join(settings.AIRA_DATA_SOIL, "b.tif")
         b = extract_point_from_raster(self.location, gdal.Open(raster_b))
         return round(a * self.root_depth ** b)
 

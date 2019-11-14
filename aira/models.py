@@ -211,8 +211,7 @@ class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
     @property
     def default_wilting_point(self):
         return extract_point_from_raster(
-            self.location,
-            gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "pwp.tif")),
+            self.location, gdal.Open(os.path.join(settings.AIRA_DATA_SOIL, "pwp.tif"))
         )
 
     @property
@@ -226,7 +225,7 @@ class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
     def default_theta_s(self):
         return extract_point_from_raster(
             self.location,
-            gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "theta_s.tif")),
+            gdal.Open(os.path.join(settings.AIRA_DATA_SOIL, "theta_s.tif")),
         )
 
     @property
@@ -239,8 +238,7 @@ class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
     @property
     def default_field_capacity(self):
         return extract_point_from_raster(
-            self.location,
-            gdal.Open(os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif")),
+            self.location, gdal.Open(os.path.join(settings.AIRA_DATA_SOIL, "fc.tif"))
         )
 
     @property
@@ -335,7 +333,7 @@ class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
 
     @property
     def in_covered_area(self):
-        mask = os.path.join(settings.AIRA_COEFFS_RASTERS_DIR, "fc.tif")
+        mask = os.path.join(settings.AIRA_DATA_SOIL, "fc.tif")
         try:
             tmp_check = extract_point_from_raster(self.location, gdal.Open(mask))
         except (RuntimeError, ValueError):

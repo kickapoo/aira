@@ -22,9 +22,7 @@ class TestDataMixin:
     def setUp(self):
         super().setUp()
         self.tempdir = tempfile.mkdtemp()
-        self.settings_overrider = override_settings(
-            AIRA_COEFFS_RASTERS_DIR=self.tempdir
-        )
+        self.settings_overrider = override_settings(AIRA_DATA_SOIL=self.tempdir)
         self.settings_overrider.__enter__()
         self._create_rasters()
         self._create_user()

@@ -139,9 +139,8 @@ class ExecuteModelTestCase(TestCase, SetupTestDataMixin):
             AIRA_DATA_HISTORICAL=os.path.join(cls.tempdir, "historical")
         )
         f = override_settings(AIRA_DATA_FORECAST=os.path.join(cls.tempdir, "forecast"))
-        r = override_settings(AIRA_COEFFS_RASTERS_DIR=cls.tempdir)
-        d = override_settings(AIRA_DRAINTIME_DIR=cls.tempdir)
-        with h, f, r, d:
+        s = override_settings(AIRA_DATA_SOIL=cls.tempdir)
+        with h, f, s:
             cls.results = cls.agrifield.execute_model()
         cls.timeseries = cls.results["timeseries"]
 

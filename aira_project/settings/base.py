@@ -90,12 +90,8 @@ AIRA_DATA_FORECAST = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../../../rasters_forecast")
 )
 
-AIRA_COEFFS_RASTERS_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../../../coeffs_data")
-)
-
-AIRA_DRAINTIME_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../../../draintime")
+AIRA_DATA_SOIL = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "../../../rasters_soil")
 )
 
 AIRA_TIMESERIES_CACHE_DIR = os.path.abspath(
