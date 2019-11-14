@@ -30,13 +30,9 @@
         <li class="{% if  f.needs_irrigation %} in {% else %} out {% endif %}">
           <ul class="irrigate">
             {% if f.needs_irrigation %}
-              {% for date, data in f.alternative_irrigations.iterrows %}
-                <li class="empty">
-                  {% trans 'The field' %} <a href="http://{{ site.domain }}/home/{{ owner }}/">{{ f.name }}</a> {% trans "needs to be irrigated with " %}
-                  <b>{{ data.ifinal |floatformat:"2" }} </b> mm ({{ data.ifinal_m3 |floatformat:"2" }} m³)
-                  {% trans 'at' %} <b>{{ date |date:"d/m/Y" }}</b>.
-                </li>
-              {% endfor %}
+              <li class="empty">
+                {% include "aira/home/agrifields_list/agrifield_results_recommendation.html" %}
+              </li>
             {% else %}
               <li class="full">
                 {% trans 'The field' %} <a href="http://{{ site.domain }}/home/{{ owner }}/"> {{ f.name }}</a> {% trans "does not need to be irrigated" %}

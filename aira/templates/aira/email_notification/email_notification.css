@@ -85,6 +85,10 @@ ul.irrigations .out:before {
   background-color: #ed5a5a;
 }
 
+th, td {
+  padding: 0 10px;
+}
+
 footer p {
   color: #b2bac2;
   font-size: 1.15em;
