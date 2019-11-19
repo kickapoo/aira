@@ -29,7 +29,9 @@ class TestDataMixin:
         self._create_agrifield()
 
     def _create_user(self):
-        self.alice = User.objects.create_user(username="alice", password="topsecret")
+        self.alice = User.objects.create_user(
+            username="alice", password="topsecret", is_active=True
+        )
 
     def _create_agrifield(self):
         self.agrifield = mommy.make(
@@ -78,7 +80,6 @@ class TestFrontPageView(TestCase):
         self.settings_overrider.__enter__()
         open(os.path.join(self.tempdir, "daily_rain-2018-04-19.tif"), "w").close()
         self.user = mommy.make(User, username="batman", is_active=True)
-        # mommy.make is not hashing the password
         self.user.set_password("thegoatandthesheep")
         self.user.save()
 
@@ -428,3 +429,68 @@ class RecommendationViewTestCase(TestDataMixin, TestCase):
             "(Irrigation water is estimated using system&#39;s "
             "default parameters.)<br>",
         )
+
+
+class RemoveSupervisedUserTestCase(TestDataMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.bob = User.objects.create_user(username="bob", password="topsecret")
+        self.bob.profile.first_name = "Bob"
+        self.bob.profile.last_name = "Brown"
+        self.bob.profile.supervisor = self.alice
+        self.bob.profile.save()
+        self.charlie = User.objects.create_user(
+            username="charlie", password="topsecret"
+        )
+
+    def test_supervised_users_list_contains_bob(self):
+        self.client.login(username="alice", password="topsecret")
+        response = self.client.get("/home/")
+        self.assertContains(
+            response,
+            '<a href="/home/bob/">bob (Bob Brown)</a>'.format(self.bob.id),
+            html=True,
+        )
+
+    def test_remove_bob_from_supervised(self):
+        assert User.objects.get(username="bob").profile.supervisor is not None
+        self.client.login(username="alice", password="topsecret")
+        response = self.client.post(
+            "/supervised_user/remove/", data={"supervised_user_id": self.bob.id}
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertIsNone(User.objects.get(username="bob").profile.supervisor)
+
+    def test_attempting_to_remove_bob_when_not_logged_in_returns_404(self):
+        response = self.client.post(
+            "/supervised_user/remove/", data={"supervised_user_id": self.bob.id}
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertIsNotNone(User.objects.get(username="bob").profile.supervisor)
+
+    def test_attempting_to_remove_bob_when_logged_in_as_charlie_returns_404(self):
+        self.client.login(username="charlie", password="topsecret")
+        response = self.client.post(
+            "/supervised_user/remove/", data={"supervised_user_id": self.bob.id}
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertIsNotNone(User.objects.get(username="bob").profile.supervisor)
+
+    def test_attempting_to_remove_when_already_removed_returns_404(self):
+        self.client.login(username="alice", password="topsecret")
+        response = self.client.post(
+            "/supervised_user/remove/", data={"supervised_user_id": self.charlie.id}
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_attempting_to_remove_garbage_id_returns_404(self):
+        self.client.login(username="alice", password="topsecret")
+        response = self.client.post(
+            "/supervised_user/remove/", data={"supervised_user_id": "garbage"}
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_posting_without_parameters_returns_404(self):
+        self.client.login(username="alice", password="topsecret")
+        response = self.client.post("/supervised_user/remove/")
+        self.assertEqual(response.status_code, 404)

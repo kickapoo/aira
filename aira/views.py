@@ -1,13 +1,12 @@
 import csv
 import datetime as dt
-import json
 import os
 from glob import glob
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from django.http import FileResponse, Http404, HttpResponse
+from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
@@ -135,7 +134,9 @@ class AgrifieldListView(TemplateView):
             # For Profile section
             # Select self.request.user user that set him supervisor
             if Profile.objects.filter(supervisor=self.request.user).exists():
-                supervising_users = Profile.objects.filter(supervisor=self.request.user)
+                supervising_users = User.objects.filter(
+                    profile__supervisor=self.request.user
+                )
                 context["supervising_users"] = supervising_users
 
             context["agrifields"] = agrifields
@@ -319,16 +320,18 @@ class DeleteIrrigationLogView(DeleteView):
 
 
 def remove_supervised_user_from_user_list(request):
-    # Called in templates:aira:home
-    if request.is_ajax() and request.POST:
-        supervised_profile = Profile.objects.get(
-            pk=int(request.POST.get("supervised_id"))
-        )
+    if request.method == "POST":
+        try:
+            supervised_profile = Profile.objects.get(
+                pk=int(request.POST.get("supervised_user_id")), supervisor=request.user
+            )
+        except (TypeError, ValueError, Profile.DoesNotExist):
+            raise Http404
         supervised_profile.supervisor = None
         supervised_profile.save()
-        response_data = {"message": "Success!!!"}
-        return HttpResponse(json.dumps(response_data), content_type="application/json")
-    raise Http404
+        return HttpResponseRedirect(reverse("home"))
+    else:
+        raise Http404
 
 
 class AgrifieldTimeseriesView(View):

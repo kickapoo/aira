@@ -98,7 +98,7 @@ urlpatterns = [
     ),
     path(
         "supervised_user/remove/",
-        login_required(views.remove_supervised_user_from_user_list),
+        views.remove_supervised_user_from_user_list,
         name="supervised_user_remove",
     ),
 ]

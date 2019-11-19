@@ -4,30 +4,32 @@
   <div class="panel-heading"> <a href="{% url 'update_profile' profile.id %}">{% trans "Account Information" %}</a></div>
     <div class="panel-body">
         <div class="col-md-5">
-              <strong>{% trans "Full Name" %}: </strong><a href="{% url 'update_profile' profile.id %}">{{ user.profile.first_name}} {{ user.profile.last_name }},</a> <br>
-               <strong>{% trans "Address" %}: </strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.address }}</a> <br>
-               <strong>{% trans "Supervisor" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.get_supervision_question_display }} </a><br>
-               {% trans "Not Set" as not_set %}
-               <strong>{% trans "Notifications per" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.get_notification_display|default:not_set }}</a> <br>
-               <strong>{% trans "Your account supervisor" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.supervisor|default:not_set }}</a>
+          <strong>{% trans "Full Name" %}: </strong><a href="{% url 'update_profile' profile.id %}">{{ user.profile.first_name}} {{ user.profile.last_name }},</a> <br>
+          <strong>{% trans "Address" %}: </strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.address }}</a> <br>
+          <strong>{% trans "Supervisor" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.get_supervision_question_display }} </a><br>
+          {% trans "Not Set" as not_set %}
+          <strong>{% trans "Notifications per" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.get_notification_display|default:not_set }}</a> <br>
+          <strong>{% trans "Your account supervisor" %}:</strong> <a href="{% url 'update_profile' profile.id %}">{{ user.profile.supervisor|default:not_set }}</a>
         </div>
         {% if supervising_users %}
-        <div class="col-md-7">
-              <strong>{% trans "The following users have set you as their supervisor" %}</strong>: <br>
-              {% for supervised_user in  supervising_users %}
-                  <form id="delete-supervised-frm-{{ supervised_user.id }}" style="float:left" method="post" class="form-inline" action="#">
-                    {% csrf_token %}
-                      <a style="float:left" href="{% url 'home' supervised_user.farmer %}"> {{ supervised_user.farmer }}
-                          {% if supervised_user.farmer.profile %}({{ supervised_user.farmer.profile.first_name }} {{ supervised_user.farmer.profile.last_name }}){% endif %}
-                        </a>
-                      <input  type="button"
-                              value="x"
-                              data-toggle="tooltip" data-placement="bottom" title="{% trans 'Remove Supervised User' %}"
-                              class="btn btn-xs btn-danger"
-                              onClick='submitRemoveSupervisedUserForm({{ supervised_user.id }})' />,&nbsp;&nbsp;
-                  </form>
-              {% endfor %}
-        </div>
+          <div class="col-md-7">
+            <strong>{% trans "The following users have set you as their supervisor" %}</strong>: <br>
+            {% for supervised_user in  supervising_users %}
+              <form method="post" class="form-inline" action="{% url "supervised_user_remove" %}">
+                {% csrf_token %}
+                <a href="{% url 'home' supervised_user %}">
+                    {{ supervised_user }}
+                    {% if supervised_user.profile %}({{ supervised_user.profile.first_name }} {{ supervised_user.profile.last_name }}){% endif %}
+                  </a>
+                <input type="hidden" name="supervised_user_id" value="{{ supervised_user.id }}">
+                <input type="submit"
+                        value="x"
+                        data-toggle="tooltip" data-placement="bottom" title="{% trans 'Remove Supervised User' %}"
+                        class="btn btn-xs btn-danger"
+                        >
+              </form>
+            {% endfor %}
+          </div>
         {% else %}
         {% endif %}
     </div>
