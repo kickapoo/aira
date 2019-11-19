@@ -50,7 +50,7 @@ EMAIL_LANGUAGE_CHOICES = (("en", "English"), ("el", "Ελληνικά"))
 
 
 class Profile(models.Model):
-    farmer = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     address = models.CharField(max_length=255, blank=True)
@@ -74,17 +74,16 @@ class Profile(models.Model):
         verbose_name_plural = "Profiles"
 
     def get_supervised(self):
-        "Get users profiles that have set current user (farmer) as supervisor"
-        return Profile.objects.filter(supervisor=self.farmer)
+        return Profile.objects.filter(supervisor=self.user)
 
     def __str__(self):
-        return u"UserProfile: {}".format(self.farmer)
+        return u"UserProfile: {}".format(self.user)
 
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        Profile.objects.create(farmer=instance)
+        Profile.objects.create(user=instance)
 
 
 @receiver(post_save, sender=User)

@@ -22,15 +22,15 @@ class UserTestCase(TestCase):
         self.assertEqual(hasattr(self.user, "profile"), True)
 
     def test_created_user_same_profile_FK(self):
-        profile = Profile.objects.get(farmer_id=self.user.id)
-        self.assertEqual(profile.farmer, self.user)
+        profile = Profile.objects.get(user_id=self.user.id)
+        self.assertEqual(profile.user, self.user)
 
     def test_save_user_profile_receiver(self):
         self.user.profile.first_name = "Bruce"
         self.user.profile.last_name = "Wayne"
         self.user.profile.address = "Gotham City"
         self.user.save()
-        profile = Profile.objects.get(farmer_id=self.user.id)
+        profile = Profile.objects.get(user_id=self.user.id)
         self.assertEqual(profile.first_name, "Bruce")
         self.assertEqual(profile.last_name, "Wayne")
         self.assertEqual(profile.address, "Gotham City")

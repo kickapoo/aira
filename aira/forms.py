@@ -16,7 +16,7 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        exclude = ("farmer",)
+        exclude = ("user",)
 
         labels = {
             "first_name": _("First Name"),

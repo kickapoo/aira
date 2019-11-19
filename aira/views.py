@@ -123,7 +123,7 @@ class AgrifieldListView(TemplateView):
 
         # Fetch models.Profile(User)
         try:
-            context["profile"] = Profile.objects.get(farmer=self.request.user)
+            context["profile"] = Profile.objects.get(user=self.request.user)
         except Profile.DoesNotExist:
             context["profile"] = None
         # Fetch models.Agrifield(User)
@@ -170,7 +170,7 @@ class CreateProfileView(CreateView):
         return form
 
     def form_valid(self, form):
-        form.instance.farmer = self.request.user
+        form.instance.user = self.request.user
         return super().form_valid(form)
 
 
@@ -190,7 +190,7 @@ class UpdateProfileView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile = Profile.objects.get(pk=self.kwargs["pk"])
-        if not self.request.user == profile.farmer:
+        if not self.request.user == profile.user:
             raise Http404
         return context
 
@@ -200,7 +200,7 @@ class DeleteProfileView(DeleteView):
 
     def get_success_url(self):
         profile = Profile.objects.get(pk=self.kwargs["pk"])
-        user = User.objects.get(pk=profile.farmer.id)
+        user = User.objects.get(pk=profile.user.id)
         # Delete all user data using bult in cascade delete
         user.delete()
         return reverse("welcome")

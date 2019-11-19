@@ -4,9 +4,9 @@ from .models import Agrifield, CropType, IrrigationLog, IrrigationType, Profile
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    exclude = ("farmer",)
+    exclude = ("user",)
     list_display = (
-        "farmer",
+        "user",
         "first_name",
         "last_name",
         "notification",
@@ -18,7 +18,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         if not change:
-            obj.farmer = request.user
+            obj.user = request.user
         obj.save()
 
 
