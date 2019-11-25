@@ -40,16 +40,7 @@
 {% endblock %}
     
 {% block extrajs %}
-        <script type="text/javascript">
-          $("#id_time").datetimepicker({
-            format: "yyyy-mm-dd hh:ii",
-            autoclose: true,
-            todayBtn: true,
-            pickerPosition: "bottom-left"
-            });
-        $(document).ready(function() {
-            var label_inner = $("label[for='id_applied_water']").html()
-            $("label[for='id_applied_water']").html(label_inner + " (m³)")
-        });
-      </script>
+  <script type="text/javascript">
+    aira.setupDateTimePickerForIrrigationLog();
+  </script>
 {% endblock %}

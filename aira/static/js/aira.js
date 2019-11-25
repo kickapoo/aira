@@ -20,6 +20,19 @@ aira.agrifield_edit_document_ready = function () {
     document.getElementById("id_custom_thetaS").step = 0.01;
 };
 
+aira.setupDateTimePickerForIrrigationLog = function () {
+    $("#id_time").datetimepicker({
+        format: "yyyy-mm-dd hh:ii",
+        autoclose: true,
+        todayBtn: true,
+        pickerPosition: "bottom-left"
+    });
+    $(document).ready(function() {
+        var label_inner = $("label[for='id_applied_water']").html()
+        $("label[for='id_applied_water']").html(label_inner + " (m³)")
+    });
+};
+
 aira.mapModule = (function namespace() {
     'use strict';
 

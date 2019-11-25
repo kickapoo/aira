@@ -34,7 +34,6 @@
 
 
 {% block extrajs %}
-  <script type="text/javascript" src="{% static "js/aira.js" %}"></script>
   <script type="text/javascript">
     map = aira.mapModule.getMap('on_click_map');
     aira.mapModule.addCoveredAreaLayer(map, "{% static 'kml/covered_area.kml' %}");

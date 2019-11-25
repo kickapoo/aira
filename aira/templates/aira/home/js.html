@@ -1,7 +1,6 @@
 {% load static %}
 {% load i18n %}
 
-<script type="text/javascript" src="{% static 'js/aira.js' %}"></script>
 <script>
     map = aira.mapModule.getMap("open_map");
     aira.mapModule.addCoveredAreaLayer(map, "{% static 'kml/covered_area.kml' %}");
