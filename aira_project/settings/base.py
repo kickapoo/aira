@@ -2,11 +2,7 @@ import os
 
 from django.utils.translation import ugettext_lazy as _
 
-BASE_DIR = os.path.dirname(__file__)
-PROJECT_PATH = os.path.join(BASE_DIR, os.pardir)
-PROJECT_ROOT = os.path.abspath(PROJECT_PATH)
-
-SECRET_KEY = os.urandom(24)
+SECRET_KEY = "topsecret"
 DEBUG = False
 SITE_ID = 1
 
@@ -50,7 +46,6 @@ WSGI_APPLICATION = "aira_project.wsgi.application"
 DATABASES = {}
 LANGUAGE_CODE = "en-us"
 LANGUAGES = (("en", _("English")), ("el", _("Greek")))
-LOCALE_PATHS = (os.path.join(PROJECT_ROOT, "../aira/locale"),)
 TIME_ZONE = "Europe/Athens"
 USE_I18N = True
 USE_L10N = True

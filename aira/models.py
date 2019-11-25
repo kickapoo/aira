@@ -77,7 +77,7 @@ class Profile(models.Model):
         return Profile.objects.filter(supervisor=self.user)
 
     def __str__(self):
-        return u"UserProfile: {}".format(self.user)
+        return "UserProfile: {}".format(self.user)
 
 
 @receiver(post_save, sender=User)
