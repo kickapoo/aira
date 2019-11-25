@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.utils.translation import gettext as _
 
 
 def map(request):
@@ -12,12 +13,14 @@ def map(request):
         aira.mapserver_base_url = "{}";
         aira.map_default_center = [{}];
         aira.map_default_zoom = {};
+        aira.strings = {{ covered_area: "{}" }};
         """
     ).format(
         query_element,
         settings.AIRA_MAPSERVER_BASE_URL,
         ",".join([str(x) for x in settings.AIRA_MAP_DEFAULT_CENTER]),
         settings.AIRA_MAP_DEFAULT_ZOOM,
+        _("Covered area"),
     )
     return {
         "map_js": map_js,

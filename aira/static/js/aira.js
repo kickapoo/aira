@@ -129,6 +129,11 @@ aira.mapModule = (function namespace() {
         );
         map.addLayer(googleMaps);
         
+        map.setCenter(
+            new OpenLayers.LonLat(...aira.map_default_center).transform('EPSG:4326', 'EPSG:3857'),
+            aira.map_default_zoom
+        );
+
         return map;
     };
 
@@ -336,6 +341,49 @@ aira.mapModule = (function namespace() {
         }
     };
 
+    var addAgrifieldsToMap = function (map, agrifields, layerName) {
+        var layer = new OpenLayers.Layer.Vector(layerName);
+        agrifields.forEach(item => {
+            var geometry = new OpenLayers.Geometry.Point(...item.coords)
+                .transform('EPSG:4326', 'EPSG:3857');
+            var attributes = {
+                description: '<a href="' + item.url + '">' + item.name + '</a>',
+            };
+            var style = {
+                externalGraphic: 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/img/marker.png',
+                graphicHeight: 25,
+                graphicWidth: 21,
+                graphicXOffset:-12,
+                graphicYOffset:-25,
+            };
+            var feature = new OpenLayers.Feature.Vector(geometry, attributes, style);
+            layer.addFeatures(feature);
+        });
+        map.addLayer(layer);
+
+        // Popup
+        var selector = new OpenLayers.Control.SelectFeature(
+            layer, { onSelect: createPopup, onUnselect: destroyPopup }
+        );
+        function createPopup(feature) {
+          feature.popup = new OpenLayers.Popup.FramedCloud("pop",
+              feature.geometry.getBounds().getCenterLonLat(),
+              null,
+              '<div class="markerContent">'+feature.attributes.description+'</div>',
+              null,
+              true,
+              function() { selector.unselectAll(); }
+          );
+          map.addPopup(feature.popup);
+        }
+        function destroyPopup(feature) {
+          feature.popup.destroy();
+          feature.popup = null;
+        }
+        map.addControl(selector);
+        selector.activate();
+    };
+
     return {
         selectRasterMap: selectRasterMap,
         selectTimestampView: selectTimestampView,
@@ -344,6 +392,7 @@ aira.mapModule = (function namespace() {
         createPreviousRasterMap: createPreviousRasterMap,
         initTimestampView: initTimestampView,
         getMap: getMap,
-        addCoveredAreaLayer: addCoveredAreaLayer
+        addCoveredAreaLayer: addCoveredAreaLayer,
+        addAgrifieldsToMap: addAgrifieldsToMap,
     };
 }());
