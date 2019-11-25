@@ -1,3 +1,25 @@
+aira.agrifield_edit_document_ready = function () {
+    document.getElementById("id_use_custom_parameters").onclick = function () {
+        var custom_par = document.getElementById("custom_par");
+        custom_par.style.display = (
+            custom_par.style.display === "none" ? "block" : "none"
+        );
+    };
+
+    /* The following should be set directly in the HTML, with the "step"
+     * attribute. However, we are generating this through django-bootstrap3's
+     * {% bootstrap_field %}; it isn't clear if and how this can be configured.
+     */
+    document.getElementById("id_custom_efficiency").step = 0.05;
+    document.getElementById("id_custom_irrigation_optimizer").step = 0.01;
+    document.getElementById("id_custom_root_depth_max").step = 0.1;
+    document.getElementById("id_custom_root_depth_min").step = 0.1;
+    document.getElementById("id_custom_max_allowed_depletion").step = 0.01;
+    document.getElementById("id_custom_field_capacity").step = 0.01;
+    document.getElementById("id_custom_wilting_point").step = 0.01;
+    document.getElementById("id_custom_thetaS").step = 0.01;
+};
+
 aira.mapModule = (function namespace() {
     'use strict';
 
@@ -361,6 +383,15 @@ aira.mapModule = (function namespace() {
         });
         map.addLayer(layer);
 
+        // Center map if only one field
+        if (agrifields.length == 1) {
+            map.setCenter(
+                new OpenLayers.LonLat(...agrifields[0].coords)
+                    .transform('EPSG:4326', 'EPSG:3857'),
+                18,
+            );
+        }
+
         // Popup
         var selector = new OpenLayers.Control.SelectFeature(
             layer, { onSelect: createPopup, onUnselect: destroyPopup }
@@ -382,6 +413,29 @@ aira.mapModule = (function namespace() {
         }
         map.addControl(selector);
         selector.activate();
+
+        return layer;
+    };
+
+    var registerClickEvent = function(map, layer) {
+        map.events.register("click", map , function(e){
+            var coords = map.getLonLatFromPixel(e.xy) ;
+            var geometry = new OpenLayers.Geometry.Point(coords.lon, coords.lat);
+            var attributes = { description: "" };
+            var style = {
+                externalGraphic: 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/img/marker.png',
+                graphicHeight: 25,
+                graphicWidth: 21,
+                graphicXOffset:-12,
+                graphicYOffset:-25,
+            };
+            var feature = new OpenLayers.Feature.Vector(geometry, attributes, style);
+            layer.removeAllFeatures();
+            layer.addFeatures(feature);
+            var lonlat = coords.transform('EPSG:3857', 'EPSG:4326');
+            document.getElementById("id_location_1").value = lonlat.lat.toFixed(5);
+            document.getElementById("id_location_0").value = lonlat.lon.toFixed(5);
+        });
     };
 
     return {
@@ -394,5 +448,6 @@ aira.mapModule = (function namespace() {
         getMap: getMap,
         addCoveredAreaLayer: addCoveredAreaLayer,
         addAgrifieldsToMap: addAgrifieldsToMap,
+        registerClickEvent: registerClickEvent,
     };
 }());

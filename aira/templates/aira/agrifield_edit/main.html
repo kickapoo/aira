@@ -36,54 +36,25 @@
 {% block extrajs %}
   <script type="text/javascript" src="{% static "js/aira.js" %}"></script>
   <script type="text/javascript">
-    /* Map */
     map = aira.mapModule.getMap('on_click_map');
     aira.mapModule.addCoveredAreaLayer(map, "{% static 'kml/covered_area.kml' %}");
-
     {% if object %}
-      function make_coords(coord) {
-          return parseFloat(coord.replace(",","."));
-      };
-      var fieldloc = new OpenLayers.LonLat(make_coords("{{ object.location.x }}"),make_coords("{{ object.location.y }}")).transform('EPSG:4326', 'EPSG:3857');
-
-      var marker = new OpenLayers.Marker(fieldloc)
-      var markers = new OpenLayers.Layer.Markers("{{ object.name }}");
-      map.addLayer(markers);
-      markers.addMarker(marker);
-      map.setCenter(fieldloc, 18);
+        aira.agrifields = [
+            {
+                name: "{{ object.name }}",
+                url: "#",
+                coords: [{{ object.location.coords|cut:"("|cut:")" }}],
+            }
+        ];
+        var agrifields_layer = aira.mapModule.addAgrifieldsToMap(
+            map, aira.agrifields, "{{ object.name }}"
+        );
     {% else %}
-      var markers = new OpenLayers.Layer.Markers("Add new field");
-      map.addLayer(markers);
-
-      map.setCenter(
-          new OpenLayers.LonLat(...aira.map_default_center).transform('EPSG:4326', 'EPSG:3857'),
-          aira.map_default_zoom
-      );
+        var agrifields_layer = aira.mapModule.addAgrifieldsToMap(
+            map, [], "Add new field"
+        );
     {% endif %}
-
-    map.events.register("click", map , function(e){
-      var opx = map.getLonLatFromPixel(e.xy) ;
-      var marker = new OpenLayers.Marker(opx);
-      markers.clearMarkers();
-      markers.addMarker(marker);
-      var lonlat = map.getLonLatFromPixel(e.xy).transform('EPSG:3857', 'EPSG:4326');
-      document.getElementById("id_location_1").value = lonlat.lat.toFixed(5);
-      document.getElementById("id_location_0").value = lonlat.lon.toFixed(5);
-    });
-
-    /* Custom parameters */
-    $(document).ready(function(){
-      $("#id_use_custom_parameters").click(function(){
-        $("#custom_par").stop().toggle();
-      });
-      $('#id_custom_efficiency').attr("step", 0.05);
-      $('#id_custom_irrigation_optimizer').attr("step", 0.01);
-      $('#id_custom_root_depth_max').attr("step", 0.1);
-      $('#id_custom_root_depth_min').attr("step", 0.1);
-      $('#id_custom_max_allowed_depletion').attr("step", 0.01);
-      $('#id_custom_field_capacity').attr("step", 0.01);
-      $('#id_custom_wilting_point').attr("step", 0.01);
-      $('#id_custom_thetaS').attr("step", 0.01);
-    });
+    aira.mapModule.registerClickEvent(map, agrifields_layer);
+    aira.agrifield_edit_document_ready();
   </script>
 {% endblock %}
