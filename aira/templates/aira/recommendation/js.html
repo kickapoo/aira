@@ -1,57 +1,18 @@
 {% load static %}
 {% load i18n %}
 
+<script type="text/javascript" src="{% static 'js/aira.js' %}"></script>
 <script type="text/javascript">
-  function make_coords(coord) {
-      return parseFloat(coord.replace(",","."));
-    };
-      map = new OpenLayers.Map('field_map',
-            {units: 'm',
-            displayProjection: 'EPSG:4326',
-            controls: [new OpenLayers.Control.LayerSwitcher(),
-                        new OpenLayers.Control.Zoom(),
-                        new OpenLayers.Control.Navigation(),
-                        new OpenLayers.Control.MousePosition(),
-                        new OpenLayers.Control.ScaleLine()]
-            });
-      // Open Cycle
-      var cycle = new OpenLayers.Layer.OSM(
-                "Open Cycle Map",
-                ["https://a.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement,
-                "https://b.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement,
-                "https://c.tile.thunderforest.com/cycle/${z}/${x}/${y}.png?" + aira.thunderforestApiKeyQueryElement],
-                {isBaseLayer: true,
-                projection: 'EPSG:3857'});
-
-      // Covered area
-      var kml = new OpenLayers.Layer.Vector("{% trans 'Covered area' %}",
-                {strategies: [new OpenLayers.Strategy.Fixed()],
-                  visibility: true,
-                protocol: new OpenLayers.Protocol.HTTP(
-                        {url: "{% static 'kml/covered_area.kml' %}",
-                        format: new OpenLayers.Format.KML()})})
-      var ktimatologio = new OpenLayers.Layer.WMS("Hellenic Cadastre",
-                  "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
-                    {   layers: 'KTBASEMAP', transparent: false},
-                    {   isBaseLayer: true,
-                        numZoomLevels: 24,
-                        projection: new OpenLayers.Projection("EPSG:900913"),
-                        iformat: 'image/png'});
-      var googleMaps = new OpenLayers.Layer.Google(
-          "Google Satellite", {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
-      );
-      map.addLayers([googleMaps, ktimatologio, cycle, kml]);
-
-      var fieldloc = new OpenLayers.LonLat(make_coords("{{ object.location.x }}"), make_coords("{{ object.location.y }}")).transform('EPSG:4326', 'EPSG:3857');
-      var marker = new OpenLayers.Marker(fieldloc)
-      var markers = new OpenLayers.Layer.Markers( "{{ object.name }}" );
-      map.addLayer(markers);
-      markers.addMarker(marker);
-      map.setCenter(fieldloc, 18);
-
-      $(document).ready(function(){
-      $("#show_results").click(function(){
-          $("#results").stop().toggle();
-      });
-  });
+    map = aira.mapModule.getMap("field_map");
+    aira.mapModule.addCoveredAreaLayer(map, "%{ static 'kml/covered_area.kml' %}");
+    aira.agrifields = [
+        {
+            name: "{{ object.name }}",
+            url: "#",
+            coords: [{{ object.location.coords|cut:"("|cut:")" }}],
+        }
+    ];
+    var agrifields_layer = aira.mapModule.addAgrifieldsToMap(
+        map, aira.agrifields, "{{ object.name }}"
+    );
 </script>
