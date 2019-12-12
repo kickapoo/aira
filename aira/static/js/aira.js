@@ -189,19 +189,16 @@ aira.mapModule = (function namespace() {
         $('#datetimepickerMirrorField').val(date);
         $('#datepickerInputSelector').val(date);
         betweenDatesBtns(date, timestamp, dateFormat);
-        var dateToRequest;
         var urlToRequest;
         var layersToRequest;
         if (timestamp === 'daily') {
             window.keepLastDailyValue = date;
-            dateToRequest = moment(date, dateFormat).add(1, 'days').format(dateFormat);
-            urlToRequest = url + dateToRequest + "/";
-            layersToRequest = meteoVar + dateToRequest;
+            urlToRequest = url + date + "/";
+            layersToRequest = meteoVar + date;
         }
         if (timestamp === 'monthly') {
-            dateToRequest = date;
             urlToRequest = url;
-            layersToRequest = meteoVar + dateToRequest;
+            layersToRequest = meteoVar + date;
         }
         // Keep this for debugging
         // console.log("date:" + date + ';' + 'meteoVar:' + meteoVar + ';' + 'url:' + url);
@@ -262,9 +259,9 @@ aira.mapModule = (function namespace() {
                         if (layers !== '') {
                             layers = layers + ',';
                         }
-                        layers = layers + 'Daily_' + s + '_' + dateToRequest;
+                        layers = layers + 'Daily_' + s + '_' + date;
                     });
-                      urlPoint = url + dateToRequest + '/';
+                      urlPoint = url + date + '/';
                   }
                   if (timestamp === 'monthly')  {
                       var layers = '';
@@ -274,7 +271,7 @@ aira.mapModule = (function namespace() {
                         if (layers !== '') {
                             layers = layers + ',';
                         }
-                        layers = layers + 'Monthly_' + s + '_' + dateToRequest;
+                        layers = layers + 'Monthly_' + s + '_' + date;
                     });
                       var urlPoint = url;
                   }

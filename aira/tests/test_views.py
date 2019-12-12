@@ -272,6 +272,7 @@ class AgrifieldTimeseriesViewTestCase(TestCase):
         self.mock_point_timeseries.assert_called_once_with(
             point=self.agrifield.location,
             prefix=os.path.join(settings.AIRA_DATA_HISTORICAL, "daily_temperature"),
+            default_time=dt.time(23, 59),
         )
 
     def test_called_get_cached(self):

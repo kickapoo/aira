@@ -36,6 +36,7 @@ class AgrifieldSWBMixin:
                 getattr(settings, "AIRA_DATA_" + category), "daily_" + varname
             ),
             start_date=self.start_of_season,
+            default_time=dt.time(23, 59),
         ).get()
 
     @property
