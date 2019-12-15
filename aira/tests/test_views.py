@@ -109,7 +109,7 @@ class TestFrontPageView(TestCase):
             response,
             (
                 'Time Period: <span class="text-success">2018-04-19</span> : '
-                '<span class="text-success">2018-04-18</span>'
+                '<span class="text-success">2018-04-19</span>'
             ),
             html=True,
         )

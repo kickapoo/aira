@@ -95,9 +95,8 @@ class FrontPageView(TemplateView):
         filenames = sorted(
             glob(os.path.join(settings.AIRA_DATA_HISTORICAL, "daily_rain-*.tif"))
         )
-        one_day = dt.timedelta(days=1)
         context["start_date"] = self._get_date_from_filename(filenames[0])
-        context["end_date"] = self._get_date_from_filename(filenames[-1]) - one_day
+        context["end_date"] = self._get_date_from_filename(filenames[-1])
         return context
 
     def _get_date_from_filename(self, filename):
