@@ -209,7 +209,8 @@ class AgrifieldSWBResultsMixin:
 
     @property
     def needs_irrigation(self):
-        return self.results["timeseries"]["ifinal"].sum() > 0
+        forecast_start_date = self.results["forecast_start_date"]
+        return self.results["timeseries"]["ifinal"][forecast_start_date:].sum() > 0
 
     @property
     def alternative_irrigations(self):
