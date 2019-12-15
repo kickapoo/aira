@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.cache import cache
 
 import pandas as pd
+import pytz
 from hspatial import PointTimeseries, extract_point_from_raster
 from osgeo import gdal
 from swb import calculate_crop_evapotranspiration, calculate_soil_water
@@ -65,10 +66,16 @@ class AgrifieldSWBMixin:
 
     def _determine_actual_net_irrigation(self):
         self.timeseries["actual_net_irrigation"] = 0  # Zero is the default
-        start = self.timeseries.index[0]
-        end = self.timeseries.index[-1]
+        self.timeseries["actual_net_irrigation"] = self.timeseries[
+            "actual_net_irrigation"
+        ].astype("object")
+        tz = pytz.timezone(settings.TIME_ZONE)
+        start = tz.localize(
+            self.timeseries.index[0] - dt.timedelta(hours=23, minutes=59)
+        )
+        end = tz.localize(self.timeseries.index[-1])
         for irrigation_log in self.irrigationlog_set.filter(time__range=(start, end)):
-            date = irrigation_log.time.date()
+            date = dt.datetime.combine(irrigation_log.time.date(), dt.time(23, 59))
             applied_water = irrigation_log.applied_water
             if applied_water is None:
                 # When an irrigation event has been logged but we don't know how

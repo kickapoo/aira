@@ -16,14 +16,14 @@ from osgeo import gdal, osr
 from aira.models import Agrifield, CropType, IrrigationLog, IrrigationType
 
 
-def setup_input_file(filename, value, timestamp):
+def setup_input_file(filename, value, timestamp_str):
     """Save value, which is an np array, to a GeoTIFF file."""
     nodata = 1e8
     value[np.isnan(value)] = nodata
     f = gdal.GetDriverByName("GTiff").Create(filename, 2, 2, 1, gdal.GDT_Float32)
     try:
-        timestamp = timestamp or dt.datetime(1970, 1, 1)
-        f.SetMetadataItem("TIMESTAMP", timestamp.isoformat())
+        timestamp_str = timestamp_str or "1970-01-01"
+        f.SetMetadataItem("TIMESTAMP", timestamp_str)
         f.SetGeoTransform((22.0, 0.01, 0, 38.0, 0, -0.01))
         wgs84 = osr.SpatialReference()
         wgs84.ImportFromEPSG(4326)
@@ -83,9 +83,7 @@ class SetupTestDataMixin:
         filename = os.path.join(
             cls.tempdir, subdir, "daily_{}-{}.tif".format(var, datestr)
         )
-        year, month, day = [int(x) for x in datestr.split("-")]
-        timestamp = dt.datetime(year, month, day)
-        setup_input_file(filename, np.array(contents), timestamp)
+        setup_input_file(filename, np.array(contents), datestr)
 
     @classmethod
     def _setup_agrifield(cls):
@@ -150,53 +148,85 @@ class ExecuteModelTestCase(TestCase, SetupTestDataMixin):
         super().tearDownClass()
 
     def test_start_date(self):
-        self.assertEqual(self.timeseries.index[0], pd.Timestamp("2018-03-15"))
+        self.assertEqual(self.timeseries.index[0], pd.Timestamp("2018-03-15 23:59"))
 
     def test_historical_end_date(self):
         self.assertEqual(
-            self.results["historical_end_date"], pd.Timestamp("2018-03-17")
+            self.results["historical_end_date"], pd.Timestamp("2018-03-17 23:59")
         )
 
     def test_forecast_start_date(self):
         self.assertEqual(
-            self.results["forecast_start_date"], pd.Timestamp("2018-03-18")
+            self.results["forecast_start_date"], pd.Timestamp("2018-03-18 23:59")
         )
 
     def test_end_date(self):
-        self.assertEqual(self.timeseries.index[-1], pd.Timestamp("2018-03-18"))
+        self.assertEqual(self.timeseries.index[-1], pd.Timestamp("2018-03-18 23:59"))
 
     def test_ks(self):
-        self.assertAlmostEqual(self.timeseries["ks"]["2018-03-18"], 0.8611415)
+        self.assertAlmostEqual(self.timeseries.at["2018-03-18 23:59", "ks"], 0.8611415)
 
     def test_ifinal(self):
-        self.assertAlmostEqual(self.timeseries["ifinal"]["2018-03-18"], 410.3407445)
+        self.assertAlmostEqual(
+            self.timeseries.at["2018-03-18 23:59", "ifinal"], 410.3407445
+        )
 
     def test_ifinal_m3(self):
-        self.assertAlmostEqual(self.timeseries["ifinal_m3"]["2018-03-18"], 820.6814889)
+        self.assertAlmostEqual(
+            self.timeseries.at["2018-03-18 23:59", "ifinal_m3"], 820.6814889
+        )
 
     def test_effective_precipitation(self):
         var = "effective_precipitation"
-        self.assertAlmostEqual(self.timeseries[var]["2018-03-15"], 0.0)
-        self.assertAlmostEqual(self.timeseries[var]["2018-03-16"], 0.4)
-        self.assertAlmostEqual(self.timeseries[var]["2018-03-17"], 0.32)
-        self.assertAlmostEqual(self.timeseries[var]["2018-03-18"], 0.24)
+        self.assertAlmostEqual(
+            self.timeseries.at[pd.Timestamp("2018-03-15 23:59"), var], 0.0
+        )
+        self.assertAlmostEqual(
+            self.timeseries.at[pd.Timestamp("2018-03-16 23:59"), var], 0.4
+        )
+        self.assertAlmostEqual(
+            self.timeseries.at[pd.Timestamp("2018-03-17 23:59"), var], 0.32
+        )
+        self.assertAlmostEqual(
+            self.timeseries.at[pd.Timestamp("2018-03-18 23:59"), var], 0.24
+        )
 
     def test_dr(self):
-        self.assertAlmostEqual(self.timeseries["dr"]["2018-03-18"], 492.4088933)
+        self.assertAlmostEqual(
+            self.timeseries.at[pd.Timestamp("2018-03-18 23:59"), "dr"], 492.4088933
+        )
 
     def test_theta(self):
-        self.assertAlmostEqual(self.timeseries["theta"]["2018-03-18"], 0.4816748)
+        self.assertAlmostEqual(
+            self.timeseries.at[pd.Timestamp("2018-03-18 23:59"), "theta"], 0.4816748
+        )
 
     def test_actual_net_irrigation(self):
         var = "actual_net_irrigation"
-        self.assertAlmostEqual(self.timeseries[var]["2018-03-15"], 250)
-        self.assertAlmostEqual(self.timeseries[var]["2018-03-16"], 0)
-        self.assertAlmostEqual(self.timeseries[var]["2018-03-17"], 0)
-        self.assertAlmostEqual(self.timeseries[var]["2018-03-18"], 0)
+        self.assertAlmostEqual(
+            self.timeseries[var].at[dt.datetime(2018, 3, 15, 23, 59)], 250
+        )
+        self.assertAlmostEqual(
+            self.timeseries.at[dt.datetime(2018, 3, 16, 23, 59), var], 0
+        )
+        self.assertAlmostEqual(
+            self.timeseries.at[dt.datetime(2018, 3, 17, 23, 59), var], 0
+        )
+        self.assertAlmostEqual(
+            self.timeseries.at[dt.datetime(2018, 3, 18, 23, 59), var], 0
+        )
 
     def test_ifinal_theoretical(self):
         var = "ifinal_theoretical"
-        self.assertAlmostEqual(self.timeseries[var]["2018-03-15"], 397.0583333)
-        self.assertAlmostEqual(self.timeseries[var]["2018-03-16"], 401.1416669)
-        self.assertAlmostEqual(self.timeseries[var]["2018-03-17"], 401.375)
-        self.assertAlmostEqual(self.timeseries[var]["2018-03-18"], 401.4333336)
+        self.assertAlmostEqual(
+            self.timeseries.at[pd.Timestamp("2018-03-15 23:59"), var], 397.0583333
+        )
+        self.assertAlmostEqual(
+            self.timeseries.at[pd.Timestamp("2018-03-16 23:59"), var], 401.1416669
+        )
+        self.assertAlmostEqual(
+            self.timeseries.at[pd.Timestamp("2018-03-17 23:59"), var], 401.375
+        )
+        self.assertAlmostEqual(
+            self.timeseries.at[pd.Timestamp("2018-03-18 23:59"), var], 401.4333336
+        )

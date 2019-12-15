@@ -11,6 +11,7 @@ from django.core.files.base import ContentFile
 from django.test import TestCase, override_settings
 
 import numpy as np
+import pytz
 from hspatial.test import setup_test_raster
 from model_mommy import mommy
 
@@ -400,10 +401,11 @@ class RecommendationViewTestCase(TestDataMixin, TestCase):
         self.assertContains(self.response, "<b>Last recorded irrigation:</b> None")
 
     def test_response_contains_last_irrigation_with_specified_applied_water(self):
+        tz = pytz.timezone(settings.TIME_ZONE)
         mommy.make(
             IrrigationLog,
             agrifield=self.agrifield,
-            time=dt.datetime(2019, 9, 11, 17, 23),
+            time=tz.localize(dt.datetime(2019, 9, 11, 17, 23)),
             applied_water=100.5,
         )
         self._make_request()
@@ -413,10 +415,11 @@ class RecommendationViewTestCase(TestDataMixin, TestCase):
         self.assertContains(self.response, "<b>Applied water (m³):</b> 100.5")
 
     def test_response_contains_last_irrigation_with_unspecified_applied_water(self):
+        tz = pytz.timezone(settings.TIME_ZONE)
         mommy.make(
             IrrigationLog,
             agrifield=self.agrifield,
-            time=dt.datetime(2019, 9, 11, 17, 23),
+            time=tz.localize(dt.datetime(2019, 9, 11, 17, 23)),
             applied_water=None,
         )
         self._update_agrifield(area=653.7)
