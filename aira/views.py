@@ -155,29 +155,11 @@ class RecommendationView(DetailView):
         return context
 
 
-# Profile Create/Update
-class CreateProfileView(CreateView):
-    model = Profile
-    form_class = ProfileForm
-    success_url = "/home"
-
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        if self.request.user in form.fields["supervisor"].queryset:
-            form.fields["supervisor"].queryset = form.fields[
-                "supervisor"
-            ].queryset.exclude(pk=self.request.user.id)
-        return form
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
-
-
 class UpdateProfileView(UpdateView):
     model = Profile
     form_class = ProfileForm
     success_url = "/home"
+    template_name_suffix = "/form"
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -197,11 +179,11 @@ class UpdateProfileView(UpdateView):
 
 class DeleteProfileView(DeleteView):
     model = Profile
+    template_name_suffix = "/confirm_delete"
 
     def get_success_url(self):
         profile = Profile.objects.get(pk=self.kwargs["pk"])
         user = User.objects.get(pk=profile.user.id)
-        # Delete all user data using bult in cascade delete
         user.delete()
         return reverse("welcome")
 

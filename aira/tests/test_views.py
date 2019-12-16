@@ -498,3 +498,25 @@ class RemoveSupervisedUserTestCase(TestDataMixin, TestCase):
         self.client.login(username="alice", password="topsecret")
         response = self.client.post("/supervised_user/remove/")
         self.assertEqual(response.status_code, 404)
+
+
+class ProfileViewsTestCase(TestCase):
+    def setUp(self):
+        self.bob = User.objects.create_user(username="bob", password="topsecret")
+        self.bob.profile.first_name = "Bob"
+        self.bob.profile.last_name = "Brown"
+        self.bob.profile.save()
+        self.client.login(username="bob", password="topsecret")
+
+    def test_get_update_view(self):
+        response = self.client.get("/update_profile/{}/".format(self.bob.id))
+        self.assertContains(response, "Bob")
+
+    def test_get_delete_confirmation(self):
+        response = self.client.get("/delete_profile/{}/".format(self.bob.id))
+        self.assertContains(response, "Bob")
+
+    def test_confirm_delete(self):
+        response = self.client.post("/delete_profile/{}/".format(self.bob.id))
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(User.objects.filter(username="bob").exists())

@@ -25,11 +25,6 @@ urlpatterns = [
     ),
     # Profile
     path(
-        "create_profile/",
-        login_required(views.CreateProfileView.as_view()),
-        name="create_profile",
-    ),
-    path(
         "update_profile/<int:pk>/",
         login_required(views.UpdateProfileView.as_view()),
         name="update_profile",

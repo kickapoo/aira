@@ -1,0 +1,29 @@
+{% extends 'aira/base/main.html' %}
+{% load i18n %}
+
+{% load bootstrap3 %}
+
+{% block title %} {{ user }} {% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h3>
+        {% blocktrans with username=object.user.username first_name=object.first_name last_name=object.last_name %}
+          Are you sure you want to delete user "{{ username }}"
+          ({{first_name}} {{last_name}}) and all his data?
+        {% endblocktrans %}
+      </h3>
+      <form method="post" role="form" class="form-horizontal">
+        {% csrf_token %}
+        {% buttons %}
+        <div class="col-sm-offset-3 col-sm-8">
+          <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
+        </div>
+        {% endbuttons %}
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
