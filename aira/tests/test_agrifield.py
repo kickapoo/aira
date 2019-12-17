@@ -38,18 +38,17 @@ def setup_input_file(filename, value, timestamp_str):
 
 class SetupTestDataMixin:
     @classmethod
-    def _setup_test_data(cls):
+    def _setup_rasters(cls):
         cls._setup_field_capacity_raster()
         cls._setup_draintime_rasters()
         cls._setup_theta_s_raster()
         cls._setup_pwp_raster()
         cls._setup_meteo_rasters()
-        cls._setup_agrifield()
 
     @classmethod
     def _setup_field_capacity_raster(cls):
         filename = os.path.join(cls.tempdir, "fc.tif")
-        setup_input_file(filename, np.array([[0.4, 0.4], [0.4, 0.4]]), None)
+        setup_input_file(filename, np.array([[0.4, 0.45], [0.50, 0.55]]), None)
 
     @classmethod
     def _setup_draintime_rasters(cls):
@@ -61,12 +60,12 @@ class SetupTestDataMixin:
     @classmethod
     def _setup_theta_s_raster(cls):
         filename = os.path.join(cls.tempdir, "theta_s.tif")
-        setup_input_file(filename, np.array([[0.5, 0.5], [0.5, 0.5]]), None)
+        setup_input_file(filename, np.array([[0.5, 0.51], [0.52, 0.53]]), None)
 
     @classmethod
     def _setup_pwp_raster(cls):
         filename = os.path.join(cls.tempdir, "pwp.tif")
-        setup_input_file(filename, np.array([[0.1, 0.1], [0.1, 0.1]]), None)
+        setup_input_file(filename, np.array([[0.1, 0.15], [0.2, 0.25]]), None)
 
     @classmethod
     def _setup_meteo_rasters(cls):
@@ -89,9 +88,20 @@ class SetupTestDataMixin:
         )
         setup_input_file(filename, np.array(contents), datestr)
 
-    @classmethod
-    def _setup_agrifield(cls):
-        cls.crop_type = mommy.make(
+    def _setup_database(self):
+        self._create_crop_type()
+        self._create_user()
+        self._create_irrigation_type()
+        self._create_agrifield()
+        self._create_applied_irrigations()
+
+    def _create_user(self):
+        self.user = User.objects.create_user(
+            id=55, username="bob", password="topsecret"
+        )
+
+    def _create_crop_type(self):
+        self.crop_type = mommy.make(
             CropType,
             name="Grass",
             root_depth_max=0.7,
@@ -107,52 +117,55 @@ class SetupTestDataMixin:
             days_kc_late=30,
             planting_date=dt.date(2018, 3, 16),
         )
-        cls.irrigation_type = mommy.make(
+
+    def _create_irrigation_type(self):
+        self.irrigation_type = mommy.make(
             IrrigationType, name="Surface irrigation", efficiency=0.60
         )
-        cls.user = User.objects.create_user(id=55, username="bob", password="topsecret")
-        cls.agrifield = mommy.make(
+
+    def _create_agrifield(self):
+        self.agrifield = mommy.make(
             Agrifield,
-            owner=cls.user,
+            id=1,
+            owner=self.user,
             name="A field",
-            crop_type=cls.crop_type,
-            irrigation_type=cls.irrigation_type,
+            crop_type=self.crop_type,
+            irrigation_type=self.irrigation_type,
             location=Point(22.0, 38.0),
             area=2000,
         )
-        cls.applied_irrigation_1 = mommy.make(
+
+    def _create_applied_irrigations(self):
+        self.applied_irrigation_1 = mommy.make(
             AppliedIrrigation,
-            agrifield=cls.agrifield,
+            agrifield=self.agrifield,
             timestamp=dt.datetime(2018, 3, 15, 7, 0, tzinfo=dt.timezone.utc),
             supplied_water_volume=500,
         )
-        cls.applied_irrigation_2 = mommy.make(
+        self.applied_irrigation_2 = mommy.make(
             AppliedIrrigation,
-            agrifield=cls.agrifield,
+            agrifield=self.agrifield,
             timestamp=dt.datetime(2018, 3, 19, 7, 0, tzinfo=dt.timezone.utc),
             supplied_water_volume=None,
         )
 
-
-class DataTestCase(TestCase, SetupTestDataMixin):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         cls.tempdir = tempfile.mkdtemp()
         os.mkdir(os.path.join(cls.tempdir, "historical"))
         os.mkdir(os.path.join(cls.tempdir, "forecast"))
-        cls._setup_test_data()
+        cls._setup_rasters()
         cls._context_managers = {
             override_settings(
                 AIRA_DATA_HISTORICAL=os.path.join(cls.tempdir, "historical")
             ),
             override_settings(AIRA_DATA_FORECAST=os.path.join(cls.tempdir, "forecast")),
             override_settings(AIRA_DATA_SOIL=cls.tempdir),
+            freeze_time("2018-03-18 13:00:01"),
         }
         for x in cls._context_managers:
             x.__enter__()
-        cls.results = cls.agrifield.execute_model()
-        cls.timeseries = cls.results["timeseries"]
 
     @classmethod
     def tearDownClass(cls):
@@ -162,8 +175,18 @@ class DataTestCase(TestCase, SetupTestDataMixin):
         super().tearDownClass()
 
 
-@freeze_time("2018-03-19 13:00:01")
+class DataTestCase(SetupTestDataMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self._setup_database()
+
+
 class ExecuteModelTestCase(DataTestCase):
+    def setUp(self):
+        super().setUp()
+        self.results = self.agrifield.execute_model()
+        self.timeseries = self.results["timeseries"]
+
     def test_start_date(self):
         self.assertEqual(self.timeseries.index[0], pd.Timestamp("2018-03-15 23:59"))
 
@@ -310,7 +333,6 @@ class NeedsIrrigationTestCase(TestCase):
         self.assertIsNone(self.agrifield.needs_irrigation)
 
 
-@freeze_time("2018-03-18 13:00:01")
 class DefaultFieldCapacityTestCase(DataTestCase):
     def test_value(self):
         with override_settings(AIRA_DATA_SOIL=self.tempdir):
@@ -322,7 +344,6 @@ class DefaultFieldCapacityTestCase(DataTestCase):
             self.assertIsNone(self.agrifield.default_field_capacity)
 
 
-@freeze_time("2018-03-18 13:00:01")
 class DefaultWiltingPointTestCase(DataTestCase):
     def test_value(self):
         with override_settings(AIRA_DATA_SOIL=self.tempdir):
@@ -334,7 +355,6 @@ class DefaultWiltingPointTestCase(DataTestCase):
             self.assertIsNone(self.agrifield.default_wilting_point)
 
 
-@freeze_time("2018-03-18 13:00:01")
 class DefaultThetaSTestCase(DataTestCase):
     def test_value(self):
         with override_settings(AIRA_DATA_SOIL=self.tempdir):
@@ -346,12 +366,12 @@ class DefaultThetaSTestCase(DataTestCase):
             self.assertIsNone(self.agrifield.default_theta_s)
 
 
-@freeze_time("2018-03-18 13:00:01")
 @override_settings(CACHES={"default": {"BACKEND": _locmemcache}})
 @patch(_in_covered_area, new_callable=PropertyMock, return_value=True)
 class LastIrrigationIsOutdatedTestCase(DataTestCase):
     def setUp(self):
         super().setUp()
+        self.results = self.agrifield.execute_model()
         cache.set("model_run_1", self.results)
 
     def test_true_if_no_irrigation(self, m):

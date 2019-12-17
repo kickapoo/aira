@@ -1,0 +1,13 @@
+{
+    "extends": "airbnb-base",
+    "env": {
+        "browser": true,
+        "jquery": true,
+    },
+    "globals": {
+        "aira": "writeable",
+        "OpenLayers": "readonly",
+        "google": "readonly",
+        "moment": "readonly",
+    }
+}
