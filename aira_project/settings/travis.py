@@ -9,3 +9,4 @@ DATABASES = {
         "PORT": 5432,
     }
 }
+CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}

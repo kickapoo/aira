@@ -7,7 +7,7 @@
     {% trans "Irrigation recommendation is estimated using system's default datasets" %}.
   </div>
 {% else %}
-  {% with last_irrigation_date=f.irrigationlog_set.latest.time|date start_date=f.results.timeseries.index.0|date end_date=f.results.timeseries.index|last|date %}
+  {% with last_irrigation_date=f.irrigationlog_set.latest.time|date:"Y-m-d" start_date=f.results.timeseries.index.0|date:"Y-m-d" end_date=f.results.timeseries.index|last|date:"Y-m-d" %}
     {% if last_irrigation_date < start_date or last_irrigation_date > end_date %}
       <div class="alert alert-warning">
         <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i></span>  &nbsp;

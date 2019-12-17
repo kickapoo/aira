@@ -7,10 +7,12 @@ from unittest.mock import patch
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
+from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.test import TestCase, override_settings
 
 import numpy as np
+import pandas as pd
 import pytz
 from hspatial.test import setup_test_raster
 from model_mommy import mommy
@@ -37,6 +39,7 @@ class TestDataMixin:
     def _create_agrifield(self):
         self.agrifield = mommy.make(
             Agrifield,
+            id=1,
             name="hello",
             location=Point(22.01, 37.99),
             owner=self.alice,
@@ -520,3 +523,50 @@ class ProfileViewsTestCase(TestCase):
         response = self.client.post("/delete_profile/{}/".format(self.bob.id))
         self.assertEqual(response.status_code, 302)
         self.assertFalse(User.objects.filter(username="bob").exists())
+
+
+class LastIrrigationOutsidePeriodWarningTestCase(TestDataMixin, TestCase):
+    message = "latest irrigation event is outside"
+
+    def setUp(self):
+        super().setUp()
+        self._create_irrigation_event()
+        self._login()
+
+    def _create_irrigation_event(self):
+        tz = pytz.timezone(settings.TIME_ZONE)
+        mommy.make(
+            IrrigationLog,
+            agrifield=self.agrifield,
+            time=tz.localize(dt.datetime(2019, 10, 25, 6, 30)),
+            applied_water=58,
+        )
+
+    def _login(self):
+        self.client.login(username="alice", password="topsecret")
+
+    def _setup_results_between(self, start_date, end_date):
+        df = pd.DataFrame(
+            data=[41, 42],
+            index=pd.DatetimeIndex([start_date, end_date]),
+            columns=["ifinal"],
+        )
+        cache.set(
+            "model_run_1",
+            {"timeseries": df, "forecast_start_date": end_date - dt.timedelta(1)},
+        )
+
+    def test_no_warning_if_no_calculations(self):
+        cache.set("model_run_1", None)
+        response = self.client.get("/home/")
+        self.assertNotContains(response, self.message)
+
+    def test_warning_if_outside_period(self):
+        self._setup_results_between(dt.datetime(2019, 3, 15), dt.datetime(2019, 9, 15))
+        response = self.client.get("/home/")
+        self.assertContains(response, self.message)
+
+    def test_no_warning_if_inside_period(self):
+        self._setup_results_between(dt.datetime(2019, 3, 15), dt.datetime(2019, 12, 15))
+        response = self.client.get("/home/")
+        self.assertNotContains(response, self.message)
