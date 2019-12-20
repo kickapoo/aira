@@ -445,13 +445,15 @@ class RecommendationViewTestCase(TestDataMixin, TestCase):
 class RemoveSupervisedUserTestCase(TestDataMixin, TestCase):
     def setUp(self):
         super().setUp()
-        self.bob = User.objects.create_user(username="bob", password="topsecret")
+        # Note: we give specific ids below to the users, to ensure the general case,
+        # that profile ids are different from user ids.
+        self.bob = User.objects.create_user(id=55, username="bob", password="topsecret")
         self.bob.profile.first_name = "Bob"
         self.bob.profile.last_name = "Brown"
         self.bob.profile.supervisor = self.alice
         self.bob.profile.save()
         self.charlie = User.objects.create_user(
-            username="charlie", password="topsecret"
+            id=56, username="charlie", password="topsecret"
         )
 
     def test_supervised_users_list_contains_bob(self):

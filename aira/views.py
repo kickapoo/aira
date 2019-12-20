@@ -308,7 +308,8 @@ def remove_supervised_user_from_user_list(request):
     if request.method == "POST":
         try:
             supervised_profile = Profile.objects.get(
-                pk=int(request.POST.get("supervised_user_id")), supervisor=request.user
+                user_id=int(request.POST.get("supervised_user_id")),
+                supervisor=request.user,
             )
         except (TypeError, ValueError, Profile.DoesNotExist):
             raise Http404
