@@ -6,6 +6,7 @@ python:
  - "3.6"
 
 addons:
+  chrome: stable
   postgresql: "9.5"
   apt:
     packages:
@@ -20,11 +21,18 @@ install:
  - pip install psycopg2==2.7.4
  - pip install isort flake8 black
  - pip install codecov
+ - wget https://chromedriver.storage.googleapis.com/LATEST_RELEASE
+ - wget https://chromedriver.storage.googleapis.com/`cat LATEST_RELEASE`/chromedriver_linux64.zip
+ - sudo unzip chromedriver_linux64.zip -d /usr/local/bin
  - pip install -r requirements.txt
  - pip install -r requirements-dev.txt
  - psql -U postgres -c "create extension postgis"
  - psql -U postgres -c "create database aira"
  - cp aira_project/settings/travis.py aira_project/settings/local.py
+
+env:
+ global:
+   - SELENIUM_WEBDRIVER=headless
 
 script:
  - python manage.py makemigrations --check

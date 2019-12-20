@@ -1,3 +1,6 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+
 from .base import *  # NOQA
 
 DATABASES = {
@@ -10,3 +13,14 @@ DATABASES = {
     }
 }
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+
+headless = ChromeOptions()
+headless.add_argument("--headless")
+
+SELENIUM_WEBDRIVERS = {
+    "headless": {
+        "callable": webdriver.Chrome,
+        "args": [],
+        "kwargs": {"options": headless},
+    },
+}

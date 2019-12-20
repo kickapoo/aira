@@ -2,6 +2,8 @@ import datetime as dt
 import os
 import shutil
 import tempfile
+from time import sleep
+from unittest import skipUnless
 from unittest.mock import patch
 
 from django.conf import settings
@@ -14,8 +16,10 @@ from django.test import TestCase, override_settings
 import numpy as np
 import pandas as pd
 import pytz
+from django_selenium_clean import PageElement, SeleniumTestCase
 from hspatial.test import setup_test_raster
 from model_mommy import mommy
+from selenium.webdriver.common.by import By
 
 from aira.models import Agrifield, IrrigationLog
 from aira.tests import RandomMediaRootMixin
@@ -570,3 +574,17 @@ class LastIrrigationOutsidePeriodWarningTestCase(TestDataMixin, TestCase):
         self._setup_results_between(dt.datetime(2019, 3, 15), dt.datetime(2019, 12, 15))
         response = self.client.get("/home/")
         self.assertNotContains(response, self.message)
+
+
+@skipUnless(getattr(settings, "SELENIUM_WEBDRIVERS", False), "Selenium is unconfigured")
+class DailyMonthlyToggleButtonTestCase(SeleniumTestCase):
+    toggle_button = PageElement(By.ID, "timestampSelectorBtn")
+
+    def test_daily_monthly_toggle(self):
+        self.selenium.get(self.live_server_url)
+        self.toggle_button.wait_until_exists()
+        self.assertEqual(self.toggle_button.text, "Switch to Monthly")
+
+        self.toggle_button.click()
+        sleep(0.1)
+        self.assertEqual(self.toggle_button.text, "Switch to Daily")

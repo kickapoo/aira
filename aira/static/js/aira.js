@@ -125,7 +125,7 @@ aira.mapModule = (function namespace() {
                 break;
             case 'monthly':
                 meteoVar = $('#monthlyMeteoVar').val();
-                url = aira.mapserver_url-base + 'historical/monthly/';
+                url = aira.mapserver_base_url + 'historical/monthly/';
                 dateFormat = 'YYYY-MM';
                 createRasterMap(moment(date, dateFormat).format(dateFormat), meteoVar, url, dateFormat, timestamp);
                 break;

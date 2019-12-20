@@ -136,3 +136,14 @@ AIRA_MAP_DEFAULT_ZOOM = 10
 
 CELERY_TASK_SERIALIZER = "pickle"
 CELERY_ACCEPT_CONTENT = ["pickle"]
+
+if os.environ.get("SELENIUM_BROWSER", False):
+    from selenium import webdriver
+
+    SELENIUM_WEBDRIVERS = {
+        "default": {
+            "callable": webdriver.__dict__[os.environ["SELENIUM_BROWSER"]],
+            "args": (),
+            "kwargs": {},
+        }
+    }
