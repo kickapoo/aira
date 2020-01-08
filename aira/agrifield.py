@@ -42,7 +42,11 @@ class AgrifieldSWBMixin:
 
     @property
     def start_of_season(self):
-        return dt.datetime(dt.date.today().year, 3, 15, 0, 0)
+        today = dt.date.today()
+        result = dt.datetime(today.year, 3, 15, 0, 0)
+        if result > dt.datetime.now():
+            result = dt.datetime(today.year - 1, 3, 15, 0, 0)
+        return result
 
     def _get_timeseries_from_rasters(self, var):
         historical = self._point_timeseries("HISTORICAL", var)

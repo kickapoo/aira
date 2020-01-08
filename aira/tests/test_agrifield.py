@@ -230,3 +230,24 @@ class ExecuteModelTestCase(TestCase, SetupTestDataMixin):
         self.assertAlmostEqual(
             self.timeseries.at[pd.Timestamp("2018-03-18 23:59"), var], 401.4333336
         )
+
+
+class StartOfSeasonTestCase(TestCase):
+    def setUp(self):
+        self.agrifield = mommy.make(Agrifield)
+
+    @freeze_time("2018-01-01 13:00:01")
+    def test_jan_1(self):
+        self.assertEqual(self.agrifield.start_of_season, dt.datetime(2017, 3, 15, 0, 0))
+
+    @freeze_time("2018-03-14 13:00:01")
+    def test_mar_14(self):
+        self.assertEqual(self.agrifield.start_of_season, dt.datetime(2017, 3, 15, 0, 0))
+
+    @freeze_time("2018-03-15 13:00:01")
+    def test_mar_15(self):
+        self.assertEqual(self.agrifield.start_of_season, dt.datetime(2018, 3, 15, 0, 0))
+
+    @freeze_time("2018-12-31 13:00:01")
+    def test_dec_31(self):
+        self.assertEqual(self.agrifield.start_of_season, dt.datetime(2018, 3, 15, 0, 0))
