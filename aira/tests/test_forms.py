@@ -3,7 +3,7 @@ from django.test import TestCase
 
 class TestRegistrationForm(TestCase):
     def test_registration_form_submission(self):
-        post_data = {"usename": "batman", "password": "thegoatandthesheep"}
+        post_data = {"usename": "bob", "password": "topsecret"}
         r = self.client.post("/accounts/register/", post_data)
         self.assertEqual(r.status_code, 200)
 

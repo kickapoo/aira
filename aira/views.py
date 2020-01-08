@@ -181,14 +181,11 @@ class UpdateProfileView(UpdateView):
         return context
 
 
-class DeleteProfileView(DeleteView):
-    model = Profile
+class DeleteUserView(DeleteView):
+    model = User
     template_name_suffix = "/confirm_delete"
 
     def get_success_url(self):
-        profile = Profile.objects.get(pk=self.kwargs["pk"])
-        user = User.objects.get(pk=profile.user.id)
-        user.delete()
         return reverse("welcome")
 
 

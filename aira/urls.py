@@ -30,9 +30,9 @@ urlpatterns = [
         name="update_profile",
     ),
     path(
-        "delete_profile/<int:pk>/",
-        login_required(views.DeleteProfileView.as_view()),
-        name="delete_profile",
+        "delete_user/<int:pk>/",
+        login_required(views.DeleteUserView.as_view()),
+        name="delete_user",
     ),
     # Agrifield
     path(

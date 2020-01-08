@@ -10,7 +10,7 @@
   <div class="row">
     <div class="col-md-12">
       <h3>
-        {% blocktrans with username=object.user.username first_name=object.first_name last_name=object.last_name %}
+        {% blocktrans with username=object.username first_name=object.profile.first_name last_name=object.profile.last_name %}
           Are you sure you want to delete user "{{ username }}"
           ({{first_name}} {{last_name}}) and all his data?
         {% endblocktrans %}

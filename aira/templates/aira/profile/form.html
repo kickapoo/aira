@@ -26,9 +26,7 @@
           {% if user.username != "demo" %}
             <button type="submit" class="btn  btn-sm btn-primary">{% trans "Update" %}</button>
             <a class="btn btn-sm btn-primary"href="{% url 'auth_password_reset' %}">{% trans "Reset password" %}</a>
-            {% if user.profile.id %}
-              <a class="btn btn-sm btn-danger" href="{% url 'delete_profile' user.profile.id %}"> {% trans "Delete account" %}</a>
-            {% endif %}
+            <a class="btn btn-sm btn-danger" href="{% url 'delete_user' user.id %}"> {% trans "Delete account" %}</a>
           {% endif %}
         </div>
       </div>

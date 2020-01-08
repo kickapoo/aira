@@ -106,7 +106,7 @@ class SetupTestDataMixin:
         cls.irrigation_type = mommy.make(
             IrrigationType, name="Surface irrigation", efficiency=0.60
         )
-        cls.user = mommy.make(User, username="batman", is_active=True)
+        cls.user = User.objects.create_user(id=55, username="bob", password="topsecret")
         cls.agrifield = mommy.make(
             Agrifield,
             owner=cls.user,

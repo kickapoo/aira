@@ -37,7 +37,7 @@ class TestDataMixin:
 
     def _create_user(self):
         self.alice = User.objects.create_user(
-            username="alice", password="topsecret", is_active=True
+            id=54, username="alice", password="topsecret", is_active=True
         )
 
     def _create_agrifield(self):
@@ -87,8 +87,9 @@ class TestFrontPageView(TestCase):
         self.settings_overrider = override_settings(AIRA_DATA_HISTORICAL=self.tempdir)
         self.settings_overrider.__enter__()
         open(os.path.join(self.tempdir, "daily_rain-2018-04-19.tif"), "w").close()
-        self.user = mommy.make(User, username="batman", is_active=True)
-        self.user.set_password("thegoatandthesheep")
+        self.user = User.objects.create_user(
+            id=55, username="bob", password="topsecret"
+        )
         self.user.save()
 
     def tearDown(self):
@@ -104,7 +105,7 @@ class TestFrontPageView(TestCase):
         self.assertContains(resp, "Register")
 
     def test_no_registration_link_when_logged_on_front_page_view(self):
-        resp = self.client.login(username="batman", password="thegoatandthesheep")
+        resp = self.client.login(username="bob", password="topsecret")
         self.assertTrue(resp)
         resp = self.client.get("/")
         self.assertTemplateUsed(resp, "aira/frontpage/main.html")
@@ -124,9 +125,9 @@ class TestFrontPageView(TestCase):
 
 class TestAgrifieldListView(TestCase):
     def setUp(self):
-        self.user = mommy.make(User, username="batman", is_active=True)
-        # mommy.make is not hashing the password
-        self.user.set_password("thegoatandthesheep")
+        self.user = User.objects.create_user(
+            id=55, username="bob", password="topsecret"
+        )
         self.user.save()
 
     def test_home_view_denies_anynomous(self):
@@ -134,7 +135,7 @@ class TestAgrifieldListView(TestCase):
         self.assertRedirects(resp, "/accounts/login/?next=/home/")
 
     def test_home_view_loads_user(self):
-        self.client.login(username="batman", password="thegoatandthesheep")
+        self.client.login(username="bob", password="topsecret")
         resp = self.client.get("/home/")
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, "aira/home/main.html")
@@ -203,7 +204,9 @@ class UpdateAgrifieldViewTestCase(TestDataMixin, TestCase):
 
 class CreateAgrifieldViewTestCase(TestCase):
     def setUp(self):
-        self.alice = User.objects.create_user(username="alice", password="topsecret")
+        self.alice = User.objects.create_user(
+            id=54, username="alice", password="topsecret"
+        )
         self.client.login(username="alice", password="topsecret")
         self.response = self.client.get("/create_agrifield/alice/")
 
@@ -242,7 +245,9 @@ class AgrifieldTimeseriesViewTestCase(TestCase):
             f.write("These are the dummy result file contents")
 
     def _create_user(self):
-        self.alice = User.objects.create_user(username="alice", password="topsecret")
+        self.alice = User.objects.create_user(
+            id=54, username="alice", password="topsecret"
+        )
 
     def _create_agrifield(self):
         self.agrifield = mommy.make(
@@ -292,7 +297,9 @@ class AgrifieldTimeseriesViewTestCase(TestCase):
 class DownloadSoilAnalysisViewTestCase(TestCase, RandomMediaRootMixin):
     def setUp(self):
         self.override_media_root()
-        self.alice = User.objects.create_user(username="alice", password="topsecret")
+        self.alice = User.objects.create_user(
+            id=54, username="alice", password="topsecret"
+        )
         self.agrifield = mommy.make(Agrifield, id=1, owner=self.alice)
         self.agrifield.soil_analysis.save("somefile", ContentFile("hello world"))
         self.client.login(username="alice", password="topsecret")
@@ -469,7 +476,7 @@ class RemoveSupervisedUserTestCase(TestDataMixin, TestCase):
         assert User.objects.get(username="bob").profile.supervisor is not None
         self.client.login(username="alice", password="topsecret")
         response = self.client.post(
-            "/supervised_user/remove/", data={"supervised_user_id": self.bob.id}
+            "/supervised_user/remove/", data={"supervised_user_id": "55"}
         )
         self.assertEqual(response.status_code, 302)
         self.assertIsNone(User.objects.get(username="bob").profile.supervisor)
@@ -511,22 +518,22 @@ class RemoveSupervisedUserTestCase(TestDataMixin, TestCase):
 
 class ProfileViewsTestCase(TestCase):
     def setUp(self):
-        self.bob = User.objects.create_user(username="bob", password="topsecret")
+        self.bob = User.objects.create_user(id=55, username="bob", password="topsecret")
         self.bob.profile.first_name = "Bob"
         self.bob.profile.last_name = "Brown"
         self.bob.profile.save()
         self.client.login(username="bob", password="topsecret")
 
     def test_get_update_view(self):
-        response = self.client.get("/update_profile/{}/".format(self.bob.id))
+        response = self.client.get("/update_profile/{}/".format(self.bob.profile.id))
         self.assertContains(response, "Bob")
 
     def test_get_delete_confirmation(self):
-        response = self.client.get("/delete_profile/{}/".format(self.bob.id))
+        response = self.client.get("/delete_user/55/")
         self.assertContains(response, "Bob")
 
     def test_confirm_delete(self):
-        response = self.client.post("/delete_profile/{}/".format(self.bob.id))
+        response = self.client.post("/delete_user/55/")
         self.assertEqual(response.status_code, 302)
         self.assertFalse(User.objects.filter(username="bob").exists())
 

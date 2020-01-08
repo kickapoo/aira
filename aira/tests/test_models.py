@@ -16,7 +16,9 @@ from aira.tests import RandomMediaRootMixin
 class UserTestCase(TestCase):
     def setUp(self):
         self.assertEqual(Profile.objects.count(), 0)
-        self.user = mommy.make(User, username="batman", is_active=True)
+        self.user = User.objects.create_user(
+            id=55, username="bob", password="topsecret"
+        )
 
     def test_create_user_profile_receiver(self):
         self.assertEqual(hasattr(self.user, "profile"), True)
@@ -50,7 +52,9 @@ class AgrifieldTestCase(TestCase):
         self.irrigation_type = mommy.make(
             IrrigationType, name="Surface irrigation", efficiency=0.60
         )
-        self.user = mommy.make(User, username="batman", is_active=True)
+        self.user = User.objects.create_user(
+            id=55, username="bob", password="topsecret"
+        )
         self.agrifield = mommy.make(
             Agrifield,
             owner=self.user,
@@ -86,9 +90,9 @@ class AgrifieldTestCase(TestCase):
         self.assertTrue(self.agrifield.can_edit(self.user))
 
     def test_invalid_user_cannot_edit(self):
-        joker = mommy.make(User, username="joker", is_active=True)
+        user = User.objects.create_user(id=56, username="charlie", password="topsecret")
         with self.assertRaises(Http404):
-            self.agrifield.can_edit(joker)
+            self.agrifield.can_edit(user)
 
     def test_agrifield_irrigation_optimizer_default_value(self):
         self.assertEqual(self.agrifield.irrigation_optimizer, 0.5)
