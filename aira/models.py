@@ -209,9 +209,13 @@ class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
 
     @property
     def default_wilting_point(self):
-        return extract_point_from_raster(
-            self.location, gdal.Open(os.path.join(settings.AIRA_DATA_SOIL, "pwp.tif"))
-        )
+        if not self.in_covered_area:
+            return None
+        else:
+            return extract_point_from_raster(
+                self.location,
+                gdal.Open(os.path.join(settings.AIRA_DATA_SOIL, "pwp.tif")),
+            )
 
     @property
     def theta_s(self):
@@ -222,10 +226,13 @@ class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
 
     @property
     def default_theta_s(self):
-        return extract_point_from_raster(
-            self.location,
-            gdal.Open(os.path.join(settings.AIRA_DATA_SOIL, "theta_s.tif")),
-        )
+        if not self.in_covered_area:
+            return None
+        else:
+            return extract_point_from_raster(
+                self.location,
+                gdal.Open(os.path.join(settings.AIRA_DATA_SOIL, "theta_s.tif")),
+            )
 
     @property
     def field_capacity(self):
@@ -236,9 +243,13 @@ class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
 
     @property
     def default_field_capacity(self):
-        return extract_point_from_raster(
-            self.location, gdal.Open(os.path.join(settings.AIRA_DATA_SOIL, "fc.tif"))
-        )
+        if not self.in_covered_area:
+            return None
+        else:
+            return extract_point_from_raster(
+                self.location,
+                gdal.Open(os.path.join(settings.AIRA_DATA_SOIL, "fc.tif")),
+            )
 
     @property
     def irrigation_efficiency(self):

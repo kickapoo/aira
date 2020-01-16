@@ -4,7 +4,9 @@
 {% include "aira/home/agrifields_list/agrifield_results_warnings.html" %}
 {% include "aira/home/agrifields_list/agrifield_results_recommendation_heading.html" %}
 
-{% if not f.needs_irrigation %}
+{% if f.needs_irrigation is None %}
+  {% trans "This field is either outside the covered area or not calculated yet." %}
+{% elif not f.needs_irrigation %}
   {% trans "No need to irrigate" %}
 {% else %}
   {% include "aira/home/agrifields_list/agrifield_results_recommendation.html" %}

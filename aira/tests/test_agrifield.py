@@ -2,9 +2,11 @@ import datetime as dt
 import os
 import shutil
 import tempfile
+from unittest.mock import PropertyMock, patch
 
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
+from django.core.cache import cache
 from django.test import TestCase, override_settings
 
 import numpy as np
@@ -124,8 +126,7 @@ class SetupTestDataMixin:
         )
 
 
-@freeze_time("2018-03-18 13:00:01")
-class ExecuteModelTestCase(TestCase, SetupTestDataMixin):
+class DataTestCase(TestCase, SetupTestDataMixin):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -147,6 +148,9 @@ class ExecuteModelTestCase(TestCase, SetupTestDataMixin):
         shutil.rmtree(cls.tempdir)
         super().tearDownClass()
 
+
+@freeze_time("2018-03-18 13:00:01")
+class ExecuteModelTestCase(DataTestCase):
     def test_start_date(self):
         self.assertEqual(self.timeseries.index[0], pd.Timestamp("2018-03-15 23:59"))
 
@@ -251,3 +255,76 @@ class StartOfSeasonTestCase(TestCase):
     @freeze_time("2018-12-31 13:00:01")
     def test_dec_31(self):
         self.assertEqual(self.agrifield.start_of_season, dt.datetime(2018, 3, 15, 0, 0))
+
+
+_locmemcache = "django.core.cache.backends.locmem.LocMemCache"
+_in_covered_area = "aira.models.Agrifield.in_covered_area"
+
+
+@override_settings(CACHES={"default": {"BACKEND": _locmemcache}})
+class NeedsIrrigationTestCase(TestCase):
+    def setUp(self):
+        self.agrifield = mommy.make(Agrifield, id=1)
+
+    def _set_needed_irrigation_amount(self, amount):
+        atimeseries = pd.Series(data=[amount], index=pd.DatetimeIndex(["2020-01-15"]))
+        mock_model_run = {
+            "forecast_start_date": "2020-01-15",
+            "timeseries": {"ifinal": atimeseries},
+        }
+        cache.set("model_run_1", mock_model_run)
+
+    @patch(_in_covered_area, new_callable=PropertyMock, return_value=True)
+    def test_true(self, m):
+        self._set_needed_irrigation_amount(42.0)
+        self.assertTrue(self.agrifield.needs_irrigation)
+
+    @patch(_in_covered_area, new_callable=PropertyMock, return_value=True)
+    def test_false(self, m):
+        self._set_needed_irrigation_amount(0)
+        self.assertFalse(self.agrifield.needs_irrigation)
+
+    @patch(_in_covered_area, new_callable=PropertyMock, return_value=False)
+    def test_not_in_covered_area(self, m):
+        self.assertIsNone(self.agrifield.needs_irrigation)
+
+    @patch(_in_covered_area, new_callable=PropertyMock, return_value=True)
+    def test_not_in_cache(self, m):
+        cache.delete("model_run_1")
+        self.assertIsNone(self.agrifield.needs_irrigation)
+
+
+@freeze_time("2018-03-18 13:00:01")
+class DefaultFieldCapacityTestCase(DataTestCase):
+    def test_value(self):
+        with override_settings(AIRA_DATA_SOIL=self.tempdir):
+            self.assertAlmostEqual(self.agrifield.default_field_capacity, 1)
+
+    @patch(_in_covered_area, new_callable=PropertyMock, return_value=False)
+    def test_not_in_covered_area(self, m):
+        with override_settings(AIRA_DATA_SOIL=self.tempdir):
+            self.assertIsNone(self.agrifield.default_field_capacity)
+
+
+@freeze_time("2018-03-18 13:00:01")
+class DefaultWiltingPointTestCase(DataTestCase):
+    def test_value(self):
+        with override_settings(AIRA_DATA_SOIL=self.tempdir):
+            self.assertAlmostEqual(self.agrifield.default_wilting_point, 0.1)
+
+    @patch(_in_covered_area, new_callable=PropertyMock, return_value=False)
+    def test_not_in_covered_area(self, m):
+        with override_settings(AIRA_DATA_SOIL=self.tempdir):
+            self.assertIsNone(self.agrifield.default_wilting_point)
+
+
+@freeze_time("2018-03-18 13:00:01")
+class DefaultThetaSTestCase(DataTestCase):
+    def test_value(self):
+        with override_settings(AIRA_DATA_SOIL=self.tempdir):
+            self.assertAlmostEqual(self.agrifield.default_theta_s, 0.5)
+
+    @patch(_in_covered_area, new_callable=PropertyMock, return_value=False)
+    def test_not_in_covered_area(self, m):
+        with override_settings(AIRA_DATA_SOIL=self.tempdir):
+            self.assertIsNone(self.agrifield.default_theta_s)

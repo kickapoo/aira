@@ -27,9 +27,13 @@
     <h2>{% trans "Irrigation Actions" %}</h2>
     {% for f in agrifields  %}
       <ul class="irrigations">
-        <li class="{% if  f.needs_irrigation %} in {% else %} out {% endif %}">
+        <li class="{% if f.needs_irrigation %} in {% elif not f.needs_irrigation is None %} out {% endif %}">
           <ul class="irrigate">
-            {% if f.needs_irrigation %}
+            {% if f.needs_irrigation is None %}
+              {% blocktrans with name=f.name %}
+                The field {{ name }} is either outside the covered area or not calculated yet.
+              {% endblocktrans %}
+            {% elif f.needs_irrigation %}
               <li class="empty">
                 {% include "aira/home/agrifields_list/agrifield_results_recommendation.html" %}
               </li>

@@ -3,7 +3,9 @@
 
 <img
   style="display:block;float:left;"
-  {% if f.needs_irrigation  %}
+  {% if f.needs_irrigation is None %}
+    src=""
+  {% elif f.needs_irrigation  %}
     src="{% static 'img/warning.png' %}"
   {% else %}
     src="{% static 'img/cool.png' %}"
