@@ -31,15 +31,22 @@
           <ul class="irrigate">
             {% if f.needs_irrigation is None %}
               {% blocktrans with name=f.name %}
-                The field {{ name }} is either outside the covered area or not calculated yet.
+                The field <strong>{{ name }}</strong> is either outside the covered area or not calculated yet.
               {% endblocktrans %}
             {% elif f.needs_irrigation %}
               <li class="empty">
+                <p>
+                  {% blocktrans with name=f.name %}
+                    The field <strong>{{ name }}</strong> needs irrigation.
+                  {% endblocktrans %}
+                </p>
                 {% include "aira/home/agrifields_list/agrifield_results_recommendation.html" %}
               </li>
             {% else %}
               <li class="full">
-                {% trans 'The field' %} <a href="http://{{ site.domain }}/home/{{ owner }}/"> {{ f.name }}</a> {% trans "does not need to be irrigated" %}
+                {% blocktrans with name=f.name %}
+                  The field <strong>{{ name }}</strong> does not need to be irrigated.
+                {% endblocktrans %}
               </li>
             {% endif %}
           </ul>
