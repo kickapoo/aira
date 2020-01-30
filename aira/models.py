@@ -2,6 +2,7 @@ import datetime as dt
 import math
 import os
 from collections import OrderedDict
+from glob import iglob
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -15,7 +16,7 @@ from django.http import Http404
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from hspatial import extract_point_from_raster
+from hspatial import PointTimeseries, extract_point_from_raster
 from osgeo import gdal
 
 from .agrifield import AgrifieldSWBMixin, AgrifieldSWBResultsMixin
@@ -320,6 +321,7 @@ class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
     def save(self, *args, **kwargs):
         super(Agrifield, self).save(*args, **kwargs)
         self._queue_for_calculation()
+        self._delete_cached_point_timeseries()
 
     def _queue_for_calculation(self):
         from aira import tasks
@@ -346,6 +348,24 @@ class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
         except (RuntimeError, ValueError):
             tmp_check = float("nan")
         return not math.isnan(tmp_check)
+
+    def get_point_timeseries(self, variable):
+        prefix = os.path.join(settings.AIRA_DATA_HISTORICAL, "daily_" + variable)
+        dest = os.path.join(
+            settings.AIRA_TIMESERIES_CACHE_DIR,
+            "agrifield{}-{}.hts".format(self.id, variable),
+        )
+        PointTimeseries(
+            point=self.location, prefix=prefix, default_time=dt.time(23, 59)
+        ).get_cached(dest, version=2)
+        return dest
+
+    def _delete_cached_point_timeseries(self):
+        filenamesglob = os.path.join(
+            settings.AIRA_TIMESERIES_CACHE_DIR, "agrifield{}-*".format(self.id)
+        )
+        for filename in iglob(filenamesglob):
+            os.remove(filename)
 
 
 class IrrigationLog(models.Model):

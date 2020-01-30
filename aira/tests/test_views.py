@@ -259,7 +259,7 @@ class AgrifieldTimeseriesViewTestCase(TestCase):
 
     def _get_response(self):
         patcher = patch(
-            "aira.views.PointTimeseries",
+            "aira.models.PointTimeseries",
             **{"return_value.get_cached.return_value": self.dummy_result_pathname},
         )
         with patcher as m:

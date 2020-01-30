@@ -15,7 +15,6 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 import pandas as pd
-from hspatial import PointTimeseries
 
 from .forms import AgrifieldForm, IrrigationlogForm, ProfileForm
 from .models import Agrifield, IrrigationLog, Profile
@@ -319,23 +318,12 @@ def remove_supervised_user_from_user_list(request):
 
 class AgrifieldTimeseriesView(View):
     def get(self, *args, **kwargs):
-        filename = self._get_point_timeseries(*args, **kwargs)
+        agrifield = get_object_or_404(Agrifield, pk=kwargs.get("agrifield_id"))
+        variable = kwargs.get("variable")
+        filename = agrifield.get_point_timeseries(variable)
         return FileResponse(
             open(filename, "rb"), as_attachment=True, content_type="text_csv"
         )
-
-    def _get_point_timeseries(self, *args, **kwargs):
-        agrifield = get_object_or_404(Agrifield, pk=kwargs.get("agrifield_id"))
-        variable = kwargs.get("variable")
-        prefix = os.path.join(settings.AIRA_DATA_HISTORICAL, "daily_" + variable)
-        dest = os.path.join(
-            settings.AIRA_TIMESERIES_CACHE_DIR,
-            "agrifield{}-{}.hts".format(agrifield.id, variable),
-        )
-        PointTimeseries(
-            point=agrifield.location, prefix=prefix, default_time=dt.time(23, 59)
-        ).get_cached(dest, version=2)
-        return dest
 
 
 class DownloadSoilAnalysisView(View):

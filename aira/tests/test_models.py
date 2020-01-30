@@ -1,11 +1,14 @@
 import datetime as dt
+import os
+import shutil
+import tempfile
 from unittest import mock
 
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
 from django.core.files.base import ContentFile
 from django.http.response import Http404
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from model_mommy import mommy
 
@@ -38,9 +41,8 @@ class UserTestCase(TestCase):
         self.assertEqual(profile.address, "Gotham City")
 
 
-class AgrifieldTestCase(TestCase):
+class AgrifieldTestCaseBase(TestCase):
     def setUp(self):
-
         self.crop_type = mommy.make(
             CropType,
             name="Grass",
@@ -57,6 +59,7 @@ class AgrifieldTestCase(TestCase):
         )
         self.agrifield = mommy.make(
             Agrifield,
+            id=42,
             owner=self.user,
             name="A field",
             crop_type=self.crop_type,
@@ -65,6 +68,8 @@ class AgrifieldTestCase(TestCase):
             area=2000,
         )
 
+
+class AgrifieldTestCase(AgrifieldTestCaseBase):
     def test_agrifield_creation(self):
         agrifield = Agrifield.objects.create(
             owner=self.user,
@@ -99,6 +104,40 @@ class AgrifieldTestCase(TestCase):
 
     def test_agrifield_use_custom_parameters_default_value(self):
         self.assertFalse(self.agrifield.use_custom_parameters)
+
+
+class AgrifieldDeletesCachedPointTimeseriesOnSave(AgrifieldTestCaseBase):
+    def setUp(self):
+        super().setUp()
+        self.tmpdir = tempfile.mkdtemp()
+        self._create_test_files()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+        super().tearDown()
+
+    def _create_test_files(self):
+        self.relevant_pathname = self._create_test_file("agrifield42-temperature.hts")
+        self.irrelevant_pathname = self._create_test_file(
+            "agrifield425-temperature.hts"
+        )
+
+    def _create_test_file(self, filename):
+        path = os.path.join(self.tmpdir, filename)
+        with open(path, "w") as f:
+            f.write("hello world")
+        return path
+
+    def test_cached_point_timeseries_is_deleted_on_save(self):
+        assert os.path.exists(self.relevant_pathname)
+        with override_settings(AIRA_TIMESERIES_CACHE_DIR=self.tmpdir):
+            self.agrifield.save()
+        self.assertFalse(os.path.exists(self.relevant_pathname))
+
+    def test_irrelevant_cached_point_timeseries_is_untouched(self):
+        with override_settings(AIRA_TIMESERIES_CACHE_DIR=self.tmpdir):
+            self.agrifield.save()
+        self.assertTrue(os.path.exists(self.irrelevant_pathname))
 
 
 class AgrifieldSoilAnalysisTestCase(TestCase, RandomMediaRootMixin):
