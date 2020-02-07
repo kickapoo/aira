@@ -8,7 +8,11 @@ import pandas as pd
 import pytz
 from hspatial import PointTimeseries, extract_point_from_raster
 from osgeo import gdal
-from swb import calculate_crop_evapotranspiration, calculate_soil_water
+from swb import (
+    calculate_crop_evapotranspiration,
+    calculate_soil_water,
+    get_effective_precipitation,
+)
 
 
 class AgrifieldSWBMixin:
@@ -58,10 +62,8 @@ class AgrifieldSWBMixin:
         return pd.concat((historical.data["value"], forecast.data["value"]))
 
     def _determine_effective_precipitation(self):
-        EFFECTIVE_PRECIPITATION_FACTOR = 0.8
-        self.timeseries["effective_precipitation"] = (
-            self._get_timeseries_from_rasters("rain") * EFFECTIVE_PRECIPITATION_FACTOR
-        )
+        self.timeseries["precipitation"] = self._get_timeseries_from_rasters("rain")
+        get_effective_precipitation(self.timeseries)
 
     def _determine_evaporation(self):
         self.timeseries["ref_evapotranspiration"] = self._get_timeseries_from_rasters(
@@ -90,7 +92,9 @@ class AgrifieldSWBMixin:
                 self.timeseries.at[date, "actual_net_irrigation"] = True
             else:
                 applied_water_mm = float(applied_water / self.area * 1000)
-                self.timeseries.at[date, "actual_net_irrigation"] = applied_water_mm
+                self.timeseries.at[date, "actual_net_irrigation"] = (
+                    applied_water_mm * self.irrigation_efficiency
+                )
 
     def _determine_crop_evapotranspiration(self):
         calculate_crop_evapotranspiration(
@@ -110,8 +114,8 @@ class AgrifieldSWBMixin:
         """Setup self.timeseries, a DataFrame with the data needed to run the model.
         """
         self.timeseries = pd.DataFrame()
-        self._determine_effective_precipitation()
         self._determine_evaporation()
+        self._determine_effective_precipitation()
         self.timeseries.dropna()
         self._determine_crop_evapotranspiration()
         self._determine_actual_net_irrigation()

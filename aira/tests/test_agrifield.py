@@ -49,7 +49,7 @@ class SetupTestDataMixin:
     @classmethod
     def _setup_field_capacity_raster(cls):
         filename = os.path.join(cls.tempdir, "fc.tif")
-        setup_input_file(filename, np.array([[1, 1], [1, 1]]), None)
+        setup_input_file(filename, np.array([[0.4, 0.4], [0.4, 0.4]]), None)
 
     @classmethod
     def _setup_draintime_rasters(cls):
@@ -71,13 +71,13 @@ class SetupTestDataMixin:
     @classmethod
     def _setup_meteo_rasters(cls):
         cls._setup_test_raster("rain", "2018-03-15", [[0.0, 0.1], [0.2, 0.3]])
-        cls._setup_test_raster("evaporation", "2018-03-15", [[2.1, 2.2], [2.3, 2.4]])
-        cls._setup_test_raster("rain", "2018-03-16", [[0.5, 0.6], [0.7, 0.8]])
-        cls._setup_test_raster("evaporation", "2018-03-16", [[9.1, 9.2], [9.3, 9.4]])
-        cls._setup_test_raster("rain", "2018-03-17", [[0.4, 0.5], [0.6, 0.7]])
-        cls._setup_test_raster("evaporation", "2018-03-17", [[9.5, 9.6], [9.7, 9.8]])
+        cls._setup_test_raster("evaporation", "2018-03-15", [[70, 2.2], [2.3, 2.4]])
+        cls._setup_test_raster("rain", "2018-03-16", [[5.0, 0.6], [0.7, 0.8]])
+        cls._setup_test_raster("evaporation", "2018-03-16", [[70, 9.2], [9.3, 9.4]])
+        cls._setup_test_raster("rain", "2018-03-17", [[5.0, 0.5], [0.6, 0.7]])
+        cls._setup_test_raster("evaporation", "2018-03-17", [[5, 9.6], [9.7, 9.8]])
         cls._setup_test_raster("rain", "2018-03-18", [[0.3, 0.2], [0.1, 0.0]])
-        cls._setup_test_raster("evaporation", "2018-03-18", [[9.6, 9.7], [9.8, 9.9]])
+        cls._setup_test_raster("evaporation", "2018-03-18", [[70, 9.7], [9.8, 9.9]])
 
     @classmethod
     def _setup_test_raster(cls, var, datestr, contents):
@@ -168,17 +168,13 @@ class ExecuteModelTestCase(DataTestCase):
         self.assertEqual(self.timeseries.index[-1], pd.Timestamp("2018-03-18 23:59"))
 
     def test_ks(self):
-        self.assertAlmostEqual(self.timeseries.at["2018-03-18 23:59", "ks"], 0.8611415)
+        self.assertAlmostEqual(self.timeseries.at["2018-03-18 23:59", "ks"], 1.0)
 
     def test_ifinal(self):
-        self.assertAlmostEqual(
-            self.timeseries.at["2018-03-18 23:59", "ifinal"], 410.3407445
-        )
+        self.assertAlmostEqual(self.timeseries.at["2018-03-18 23:59", "ifinal"], 0)
 
     def test_ifinal_m3(self):
-        self.assertAlmostEqual(
-            self.timeseries.at["2018-03-18 23:59", "ifinal_m3"], 820.6814889
-        )
+        self.assertAlmostEqual(self.timeseries.at["2018-03-18 23:59", "ifinal_m3"], 0)
 
     def test_effective_precipitation(self):
         var = "effective_precipitation"
@@ -186,29 +182,31 @@ class ExecuteModelTestCase(DataTestCase):
             self.timeseries.at[pd.Timestamp("2018-03-15 23:59"), var], 0.0
         )
         self.assertAlmostEqual(
-            self.timeseries.at[pd.Timestamp("2018-03-16 23:59"), var], 0.4
+            self.timeseries.at[pd.Timestamp("2018-03-16 23:59"), var], 0.0
         )
         self.assertAlmostEqual(
-            self.timeseries.at[pd.Timestamp("2018-03-17 23:59"), var], 0.32
+            self.timeseries.at[pd.Timestamp("2018-03-17 23:59"), var], 4.0
         )
         self.assertAlmostEqual(
-            self.timeseries.at[pd.Timestamp("2018-03-18 23:59"), var], 0.24
+            self.timeseries.at[pd.Timestamp("2018-03-18 23:59"), var], 0.0
         )
 
     def test_dr(self):
         self.assertAlmostEqual(
-            self.timeseries.at[pd.Timestamp("2018-03-18 23:59"), "dr"], 492.4088933
+            self.timeseries.at[pd.Timestamp("2018-03-18 23:59"), "dr"],
+            9.0148428,
+            places=4,
         )
 
     def test_theta(self):
         self.assertAlmostEqual(
-            self.timeseries.at[pd.Timestamp("2018-03-18 23:59"), "theta"], 0.4816748
+            self.timeseries.at[pd.Timestamp("2018-03-18 23:59"), "theta"], 0.3905107
         )
 
     def test_actual_net_irrigation(self):
         var = "actual_net_irrigation"
         self.assertAlmostEqual(
-            self.timeseries[var].at[dt.datetime(2018, 3, 15, 23, 59)], 250
+            self.timeseries[var].at[dt.datetime(2018, 3, 15, 23, 59)], 150
         )
         self.assertAlmostEqual(
             self.timeseries.at[dt.datetime(2018, 3, 16, 23, 59), var], 0
@@ -223,16 +221,16 @@ class ExecuteModelTestCase(DataTestCase):
     def test_ifinal_theoretical(self):
         var = "ifinal_theoretical"
         self.assertAlmostEqual(
-            self.timeseries.at[pd.Timestamp("2018-03-15 23:59"), var], 397.0583333
+            self.timeseries.at[pd.Timestamp("2018-03-15 23:59"), var], 0
         )
         self.assertAlmostEqual(
-            self.timeseries.at[pd.Timestamp("2018-03-16 23:59"), var], 401.1416669
+            self.timeseries.at[pd.Timestamp("2018-03-16 23:59"), var], 0
         )
         self.assertAlmostEqual(
-            self.timeseries.at[pd.Timestamp("2018-03-17 23:59"), var], 401.375
+            self.timeseries.at[pd.Timestamp("2018-03-17 23:59"), var], 0
         )
         self.assertAlmostEqual(
-            self.timeseries.at[pd.Timestamp("2018-03-18 23:59"), var], 401.4333336
+            self.timeseries.at[pd.Timestamp("2018-03-18 23:59"), var], 122.08333333
         )
 
 
@@ -298,7 +296,7 @@ class NeedsIrrigationTestCase(TestCase):
 class DefaultFieldCapacityTestCase(DataTestCase):
     def test_value(self):
         with override_settings(AIRA_DATA_SOIL=self.tempdir):
-            self.assertAlmostEqual(self.agrifield.default_field_capacity, 1)
+            self.assertAlmostEqual(self.agrifield.default_field_capacity, 0.4)
 
     @patch(_in_covered_area, new_callable=PropertyMock, return_value=False)
     def test_not_in_covered_area(self, m):
