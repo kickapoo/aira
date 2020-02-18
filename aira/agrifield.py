@@ -4,6 +4,7 @@ import os
 from django.conf import settings
 from django.core.cache import cache
 
+import numpy as np
 import pandas as pd
 import pytz
 from hspatial import PointTimeseries, extract_point_from_raster
@@ -232,4 +233,6 @@ class AgrifieldSWBResultsMixin:
     def forecast_data(self):
         forecast_start_date = self.results["forecast_start_date"]
         timeseries = self.results["timeseries"]
+        if "theta" in timeseries:
+            timeseries["theta_actual"] = np.minimum(timeseries["theta"], self.theta_s)
         return timeseries[forecast_start_date:]

@@ -31,7 +31,7 @@
               <td align="left">{{ date|date }}</td>
               <td align="left">{{ data.effective_precipitation |floatformat:"0"}}</td>
               <td align="left">{{ data.dr|floatformat:"0"}}</td>
-              <td align="left"> {{ data.theta|mul:100|floatformat:"1" }}</td>
+              <td align="left">{{ data.theta_actual|mul:100|floatformat:"1" }}</td>
               <td align="left">{% if data.recommendation %}{% trans "YES" %}{% else %}{% trans "NO" %}{% endif %}</td>
               <td align="left"> {{ data.ks|floatformat:"2" }}</td>
               <td align="left"> {{ data.ifinal|floatformat:"0" }}</td>
