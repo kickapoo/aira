@@ -1,7 +1,5 @@
 import os
 
-from django.utils.translation import ugettext_lazy as _
-
 SECRET_KEY = "topsecret"
 DEBUG = False
 SITE_ID = 1
@@ -45,7 +43,7 @@ WSGI_APPLICATION = "aira_project.wsgi.application"
 
 DATABASES = {}
 LANGUAGE_CODE = "en-us"
-LANGUAGES = (("en", _("English")), ("el", _("Greek")))
+LANGUAGES = (("en", "English"), ("el", "Greek"))
 TIME_ZONE = "Europe/Athens"
 USE_I18N = True
 USE_L10N = True

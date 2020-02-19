@@ -116,7 +116,7 @@ class TestFrontPageView(TestCase):
         self.assertContains(
             response,
             (
-                'Time Period: <span class="text-success">2018-04-19</span> : '
+                'Time period: <span class="text-success">2018-04-19</span> : '
                 '<span class="text-success">2018-04-19</span>'
             ),
             html=True,
@@ -330,16 +330,6 @@ class RecommendationViewTestCase(TestDataMixin, TestCase):
             setattr(self.agrifield, key, kwargs[key])
         self.agrifield.save()
 
-    def test_response_contains_custom_parameters_notice(self):
-        self._update_agrifield(use_custom_parameters=True)
-        self._make_request()
-        self.assertContains(self.response, "using custom parameters")
-
-    def test_response_not_contains_custom_parameters_notice(self):
-        self._update_agrifield(use_custom_parameters=False)
-        self._make_request()
-        self.assertNotContains(self.response, "using custom parameters")
-
     def test_response_contains_default_root_depth(self):
         self._update_agrifield(use_custom_parameters=False)
         self._make_request()
@@ -357,12 +347,12 @@ class RecommendationViewTestCase(TestDataMixin, TestCase):
     def test_response_contains_default_field_capacity(self):
         self._update_agrifield(use_custom_parameters=False)
         self._make_request()
-        self.assertContains(self.response, "<b>Field Capacity:</b> 32.0%")
+        self.assertContains(self.response, "<b>Field capacity:</b> 32.0%")
 
     def test_response_contains_custom_field_capacity(self):
         self._update_agrifield(use_custom_parameters=True, custom_field_capacity=0.321)
         self._make_request()
-        self.assertContains(self.response, "<b>Field Capacity:</b> 32.1%")
+        self.assertContains(self.response, "<b>Field capacity:</b> 32.1%")
 
     def test_response_contains_default_theta_s(self):
         self._update_agrifield(use_custom_parameters=False)
@@ -381,38 +371,40 @@ class RecommendationViewTestCase(TestDataMixin, TestCase):
     def test_response_contains_default_pwp(self):
         self._update_agrifield(use_custom_parameters=False)
         self._make_request()
-        self.assertContains(self.response, "<b>Permanent Wilting Point:</b> 10.0%")
+        self.assertContains(self.response, "<b>Permanent wilting point:</b> 10.0%")
 
     def test_response_contains_custom_pwp(self):
         self._update_agrifield(use_custom_parameters=True, custom_wilting_point=0.117)
         self._make_request()
-        self.assertContains(self.response, "<b>Permanent Wilting Point:</b> 11.7%")
+        self.assertContains(self.response, "<b>Permanent wilting point:</b> 11.7%")
 
     def test_response_contains_default_irrigation_efficiency(self):
         self._update_agrifield(use_custom_parameters=False)
         self._make_request()
-        self.assertContains(self.response, "<b>Irrigation efficiency factor:</b> 0.85")
+        self.assertContains(self.response, "<b>Irrigation efficiency:</b> 0.85")
 
     def test_response_contains_custom_irrigation_efficiency(self):
         self._update_agrifield(use_custom_parameters=True, custom_efficiency=0.88)
         self._make_request()
-        self.assertContains(self.response, "<b>Irrigation efficiency factor:</b> 0.88")
+        self.assertContains(self.response, "<b>Irrigation efficiency:</b> 0.88")
 
     def test_response_contains_default_irrigation_optimizer(self):
         self._update_agrifield(use_custom_parameters=False)
         self._make_request()
-        self.assertContains(self.response, "<b>Irrigation Optimizer:</b> 0.5")
+        self.assertContains(self.response, "<b>Irrigation optimizer:</b> 0.5")
 
     def test_response_contains_custom_irrigation_optimizer(self):
         self._update_agrifield(
             use_custom_parameters=True, custom_irrigation_optimizer=0.55
         )
         self._make_request()
-        self.assertContains(self.response, "<b>Irrigation Optimizer:</b> 0.55")
+        self.assertContains(self.response, "<b>Irrigation optimizer:</b> 0.55")
 
     def test_response_contains_no_last_irrigation(self):
         self._make_request()
-        self.assertContains(self.response, "<b>Last recorded irrigation:</b> None")
+        self.assertContains(
+            self.response, "<b>Last recorded irrigation:</b> Unspecified"
+        )
 
     def test_response_contains_last_irrigation_with_specified_applied_water(self):
         tz = pytz.timezone(settings.TIME_ZONE)
@@ -592,8 +584,8 @@ class DailyMonthlyToggleButtonTestCase(SeleniumTestCase):
     def test_daily_monthly_toggle(self):
         self.selenium.get(self.live_server_url)
         self.toggle_button.wait_until_exists()
-        self.assertEqual(self.toggle_button.text, "Switch to Monthly")
+        self.assertEqual(self.toggle_button.text, "Switch to monthly")
 
         self.toggle_button.click()
         sleep(0.1)
-        self.assertEqual(self.toggle_button.text, "Switch to Daily")
+        self.assertEqual(self.toggle_button.text, "Switch to daily")

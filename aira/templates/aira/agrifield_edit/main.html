@@ -14,13 +14,6 @@
 
 
 {% block content %}
-  {% if user.username == "demo" %}
-    <div class="alert alert-info">
-        <a href="#" class="close" data-dismiss="alert">&times;</a>
-        <i class="fa fa-info-circle fa-2x"></i>&nbsp; <span style="font-size:32px">{% trans "demo" %}</span>
-    </div>
-  {% endif %}
-
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4>{% include "aira/agrifield_edit/title.html" %}</h4>

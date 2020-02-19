@@ -7,18 +7,18 @@
 {% block title %} {{ object.name}} {% endblock %}
 
 {% block content  %}
-  <h4 style="text-align: center;">{% trans 'Irrigation Performance' %}</h4>
+  <h4 style="text-align: center;">{% trans 'Irrigation performance' %}</h4>
   {% if object.status != 'done' %}
     <p class="alert alert-warning">{% trans "This field is being (re)calculated. Reload the page some time later to view the updated results. The calculation usually takes from a few seconds to a few minutes." %}</p>
   {% endif %}
   <div id="irrchart" style="width:100%; height:400px;"></div>
   <div class="container">
     {% if object.results %}
-      <a style="float:right"  href="{% url 'performance_csv' object.id %}"> <i class="fa fa-cloud-download"></i> {% trans "Download Chart Data" %}</a><br>
-      <b>{% trans "Total Effective Precipitation" %}</b>: {{ object.results.timeseries.effective_precipitation.sum|floatformat:0 }} mm <br>
+      <a style="float:right"  href="{% url 'performance_csv' object.id %}"> <i class="fa fa-cloud-download"></i> {% trans "Download chart data" %}</a><br>
+      <b>{% trans "Total effective precipitation" %}</b>: {{ object.results.timeseries.effective_precipitation.sum|floatformat:0 }} mm <br>
       <hr>
-      <b>{% trans 'Total Estimated Irrigation Water Amount' %}</b>: {{ object.results.timeseries.ifinal_theoretical.sum|floatformat:0  }} mm <br>
-      <b>{% trans "Total Applied Irrigation Water Amount" %}</b>: {{ sum_actual_net_irrigation|floatformat:0 }} mm <br>
+      <b>{% trans 'Total estimated irrigation water amount' %}</b>: {{ object.results.timeseries.ifinal_theoretical.sum|floatformat:0  }} mm <br>
+      <b>{% trans "Total applied irrigation water amount" %}</b>: {{ sum_actual_net_irrigation|floatformat:0 }} mm <br>
       <b>{% trans "Percentage difference"%}</b>: {{ percentage_diff }} % <br>
     {% endif %}
   </div>
@@ -60,7 +60,7 @@
       },
       plotOptions: {column: {pointPadding: 0.2, borderWidth: 5}},
       series: [{
-          name: "{% trans 'Estimated Irrigation Water Amount' %}",
+          name: "{% trans 'Estimated irrigation water amount' %}",
           color: '#008000',
           data: [
             {% localize off %}
@@ -70,7 +70,7 @@
             {% endlocalize %}
           ]
       }, {
-          name: "{% trans 'Applied Irrigation Water Amount' %}",
+          name: "{% trans 'Applied irrigation water amount' %}",
           data: [
             {% localize off %}
               {% for date, row in object.results.timeseries.iterrows %}

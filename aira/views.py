@@ -36,13 +36,14 @@ class IrrigationPerformanceView(DetailView):
         actual_net_irrigation[actual_net_irrigation.isna()] = 0
         sum_actual_net_irrigation = actual_net_irrigation.sum()
         context["sum_actual_net_irrigation"] = sum_actual_net_irrigation
-        context["percentage_diff"] = _("Not Available")
         if sum_ifinal_theoretical >= 0.1:
             context["percentage_diff"] = round(
                 (sum_actual_net_irrigation - sum_ifinal_theoretical)
                 / sum_ifinal_theoretical
                 * 100
             )
+        else:
+            context["percentage_diff"] = _("N/A")
         return context
 
 

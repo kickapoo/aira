@@ -5,7 +5,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>{% trans "Irrigation notification" %}</title>
+  <title>{% trans "Irrigation status" %}</title>
   <link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
   <style media="screen">
       {% include "aira/email_notification/email_notification.css" %}
@@ -17,14 +17,14 @@
     {{ header|safe }}
     <br><br>
     {{ timestamp }}<br>
-    <h1>{% trans "Irrigation notification" %}</h1>
-    <p><a href="http://{{ site.domain }}/accounts/login/">{% trans "Home Page" %}</a></p>
+    <h1>{% trans "Irrigation status" %}</h1>
+    <p><a href="http://{{ site.domain }}/accounts/login/">{% trans "Home" %}</a></p>
   </section>
 
   <section>
-    <p>{% trans "Field Owner" %}: <a href="http://{{ site.domain }}/home/{{ owner }}/">{{ owner }}</a> <br></p>
+    <p>{% trans "Field owner" %}: <a href="http://{{ site.domain }}/home/{{ owner }}/">{{ owner }}</a> <br></p>
     <hr>
-    <h2>{% trans "Irrigation Actions" %}</h2>
+    <h2>{% trans "Irrigation requirements" %}</h2>
     {% for f in agrifields  %}
       <ul class="irrigations">
         <li class="{% if f.needs_irrigation %} in {% elif not f.needs_irrigation is None %} out {% endif %}">

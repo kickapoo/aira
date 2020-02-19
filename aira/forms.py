@@ -19,10 +19,10 @@ class ProfileForm(forms.ModelForm):
         exclude = ("user",)
 
         labels = {
-            "first_name": _("First Name"),
-            "last_name": _("Last Name"),
+            "first_name": _("Given name"),
+            "last_name": _("Family name"),
             "address": _("Address"),
-            "notification": _("Email notification per"),
+            "notification": _("Frequency of email notifications"),
             "email_language": _("Email notification language"),
             "supervisor": _("Supervisor"),
             "supervision_question": _("Consider me as supervisor for other accounts"),
@@ -58,21 +58,21 @@ class AgrifieldForm(forms.ModelForm):
         ]
 
         labels = {
-            "name": _("Field Name"),
-            "is_virtual": _("Is this virtual field?"),
+            "name": _("Field name"),
+            "is_virtual": _("Is this a virtual field?"),
             "location": _("Co-ordinates"),
-            "crop_type": _("Crop Type"),
-            "irrigation_type": _("Irrigation Type"),
-            "area": _("Irrigated Field Area (m²)"),
-            "use_custom_parameters": _("Use Custom Parameters"),
-            "custom_irrigation_optimizer": _("Irrigation Optimizer"),
+            "crop_type": _("Crop type"),
+            "irrigation_type": _("Irrigation type"),
+            "area": _("Irrigated area (m²)"),
+            "use_custom_parameters": _("Use custom parameters"),
+            "custom_irrigation_optimizer": _("Irrigation optimizer"),
             "custom_root_depth_max": _("Estimated root depth (max)"),
             "custom_root_depth_min": _("Estimated root depth (min)"),
-            "custom_max_allowed_depletion": _("Maximum Allowable Depletion"),
+            "custom_max_allowed_depletion": _("Maximum allowed depletion"),
             "custom_efficiency": _("Irrigation efficiency"),
-            "custom_field_capacity": _("Field Capacity"),
+            "custom_field_capacity": _("Field capacity"),
             "custom_thetaS": _("Soil moisture at saturation"),
-            "custom_wilting_point": _("Permanent Wilting Point"),
+            "custom_wilting_point": _("Permanent wilting point"),
             "soil_analysis": _("Soil analysis document"),
         }
 
@@ -90,8 +90,8 @@ class IrrigationlogForm(forms.ModelForm):
         model = IrrigationLog
         exclude = ("agrifield",)
         labels = {
-            "time": _("Datetime (Y-M-D h:m:s) "),
-            "applied_water": _("Applied Irrigation Water"),
+            "time": _("Date and time (YYYY-MM-DD HH:mm:ss) "),
+            "applied_water": _("Applied irrigation water"),
         }
 
 

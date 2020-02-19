@@ -9,7 +9,11 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12 col-xs-offset-1">
-      <h3>{% trans "Are you sure you want to delete" %} "<a href="{% url 'update_irrlog' object.id %}">{{ object.time}}</a>" {% trans "Irrigation Event" %} {% trans "?" %}</h3>
+      <h3>
+          {% blocktrans with irrlogdate=object.time %}
+            Are you sure you want to delete the irrigation of {{ irrlogdate }}?
+          {% endblocktrans %}
+      </h3>
       <br>
       <form method="post" role="form" class="form-horizontal">
         {% csrf_token %}

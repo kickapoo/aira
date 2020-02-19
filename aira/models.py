@@ -31,14 +31,14 @@ from .agrifield import AgrifieldSWBMixin, AgrifieldSWBResultsMixin
 
 notification_options = OrderedDict(
     (
-        ("D", (_("Day"), lambda x: True)),
-        ("2D", (_("2 Days"), lambda x: x.toordinal() % 2 == 0)),
-        ("3D", (_("3 Days"), lambda x: x.toordinal() % 3 == 0)),
-        ("4D", (_("4 Days"), lambda x: x.toordinal() % 4 == 0)),
-        ("5D", (_("5 Days"), lambda x: x.toordinal() % 5 == 0)),
-        ("7D", (_("Week"), lambda x: x.weekday() == 0)),
-        ("10D", (_("10 Day"), lambda x: x.day in (1, 11, 21))),
-        ("30D", (_("Month"), lambda x: x.day == 1)),
+        ("D", (_("Daily"), lambda x: True)),
+        ("2D", (_("Every two days"), lambda x: x.toordinal() % 2 == 0)),
+        ("3D", (_("Every three days"), lambda x: x.toordinal() % 3 == 0)),
+        ("4D", (_("Every four days"), lambda x: x.toordinal() % 4 == 0)),
+        ("5D", (_("Every five days"), lambda x: x.toordinal() % 5 == 0)),
+        ("7D", (_("Weekly"), lambda x: x.weekday() == 0)),
+        ("10D", (_("Every ten days"), lambda x: x.day in (1, 11, 21))),
+        ("30D", (_("Monthly"), lambda x: x.day == 1)),
     )
 )
 

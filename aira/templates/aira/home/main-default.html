@@ -4,19 +4,12 @@
 
 {% load bootstrap3 %}
 
-{% block title %} {% trans "Home" %} - {{user}} {% endblock %}
+{% block title %} {% blocktrans with username=user.username %}{{ username }} home{% endblocktrans %}{% endblock %}
 
 {% block content %}
-  {% if user.username == "demo" %}
-    <div class="alert alert-info">
-      <a href="#" class="close" data-dismiss="alert">&times;</a>
-      <i class="fa fa-info-circle fa-2x"></i>&nbsp; <span style="font-size:32px">{% trans "demo" %}</span>
-    </div>
-  {% endif %}
-
   {% if not profile %}
     <div class="alert alert-warning">
-      <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-hand-o-right"></i> &nbsp; {% trans "Please update your personal information" %}<a href="{% url 'create_profile' %}"> {% trans "here" %} </a>
+      <a href="#" class="close" data-dismiss="alert">&times;</a><i class="fa fa-hand-o-right"></i> &nbsp; <a href="{% url 'create_profile' %}">{% trans "Please update your personal information." %}</a>
     </div>
   {% endif %}
 
@@ -34,7 +27,7 @@
   {% if not agrifields %}
     <div class="alert alert-warning">
       <a href="#" class="close" data-dismiss="alert">&times;</a>
-      <i class="fa fa-exclamation-triangle"></i> &nbsp; {% trans "It seems you haven't any fields, Add at least one" %} <a href={% url 'create_agrifield' url_username %}> {% trans "here" %} </a>
+      <i class="fa fa-exclamation-triangle"></i> &nbsp; <a href={% url 'create_agrifield' url_username %}>{% trans "Add a field." %}</a>
     </div>
   {% else %}
     {% include "aira/home/agrifields_list/main.html" %}

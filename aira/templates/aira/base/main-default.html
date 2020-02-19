@@ -3,7 +3,7 @@
 
 <!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{% block title %}AIRA{% endblock %}</title>
+<title>{% block title %}{% endblock %}{% block extratitle %} — AIRA{% endblock %}</title>
 {% block favicon %}
   <link rel="shortcut icon" type="image/png" href="{% static 'img/aira-logo.png' %}" />
 {% endblock %}
@@ -24,6 +24,13 @@
       {% include "aira/base/language_switcher.html" %}
       <br>
     {% endblock %}
+
+    {% if user.username == "demo" %}
+      <div class="alert alert-info">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <i class="fa fa-info-circle fa-2x"></i>&nbsp; <span style="font-size:32px">{% trans "demo" %}</span>
+      </div>
+    {% endif %}
 
     {% block content %}
       {% block main_page %}

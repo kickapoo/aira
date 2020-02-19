@@ -4,7 +4,7 @@
   <div class="col-md-3">
     <p>
       <b>{% trans "View historical available data" %}</b><br>
-      <sub>{% trans "Time Period" %}: <span class="text-success">{{ start_date|date:"Y-m-d" }}</span> : <span class="text-success">{{ end_date|date:"Y-m-d" }}</span></sub>
+      <sub>{% trans "Time period" %}: <span class="text-success">{{ start_date|date:"Y-m-d" }}</span> : <span class="text-success">{{ end_date|date:"Y-m-d" }}</span></sub>
     <p>
   </div>
   <div class="col-md-3">
@@ -19,18 +19,18 @@
   <div class="col-md-3">
     <div id="meteo-daily" class="form-group">
       <select  id="dailyMeteoVar" class="form-control" onchange="aira.mapModule.selectRasterMap()">
-        <option value="Daily_rain_">{% trans "Daily Rainfall" %} (mm/d)</option>
-        <option value="Daily_evaporation_">{% trans "Daily Potential Evapotranspiration" %} (mm/d)</option>
-        <option value="Daily_humidity_">{% trans "Daily Humidity" %} (%)</option>
-        <option value="Daily_temperature_">{% trans "Daily Temperature" %} (°C)</option>
-        <option value="Daily_wind_speed_">{% trans "Daily Wind Speed" %} (m/s)</option>
-        <option value="Daily_solar_radiation_">{% trans "Daily Solar Radiation" %} (W/m²)</option>
+        <option value="Daily_rain_">{% trans "Daily rainfall" %} (mm/d)</option>
+        <option value="Daily_evaporation_">{% trans "Daily potential evapotranspiration" %} (mm/d)</option>
+        <option value="Daily_humidity_">{% trans "Daily humidity" %} (%)</option>
+        <option value="Daily_temperature_">{% trans "Daily temperature" %} (°C)</option>
+        <option value="Daily_wind_speed_">{% trans "Daily wind speed" %} (m/s)</option>
+        <option value="Daily_solar_radiation_">{% trans "Daily solar radiation" %} (W/m²)</option>
       </select>
     </div>
     <div id="meteo-monthly" >
       <div class="form-group">
         <select  id="monthlyMeteoVar" class="form-control" onchange="aira.mapModule.selectRasterMap()">
-          <option value="Monthly_evaporation_">{% trans "Monthly Potential Evapotranspiration" %} (mm/month)</option>
+          <option value="Monthly_evaporation_">{% trans "Monthly potential evapotranspiration" %} (mm/month)</option>
         </select>
       </div>
     </div>

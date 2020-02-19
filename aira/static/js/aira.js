@@ -58,16 +58,16 @@ aira.mapModule = (function namespace() {
     };
 
     var nextTimeStampConfig = function nextTimeStampConfig(timestamp) {
-        // Prepare toogle btn for the next toogle.
+        // Prepare toggle btn for the next toggle.
         // For instance, if current selection is daily
-        // then next toogle is monthly.
+        // then next toggle is monthly.
         // Need to fix translation issue.
         $('#timestampSelectorBtn').attr('toggle-timestamp', timestamp);
         if (timestamp === 'daily') {
-            $('#timestampSelectorBtn').html(aira.transToggleTimestampMap.toogleDaily);
+            $('#timestampSelectorBtn').html(aira.transToggleTimestampMap.toggleDaily);
         }
         if (timestamp === 'monthly') {
-            $('#timestampSelectorBtn').html(aira.transToggleTimestampMap.toogleMonthly);
+            $('#timestampSelectorBtn').html(aira.transToggleTimestampMap.toggleMonthly);
         }
         $('#meteo-' + timestamp).hide();
     };

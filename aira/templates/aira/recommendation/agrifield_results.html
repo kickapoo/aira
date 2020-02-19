@@ -6,23 +6,21 @@
     <p class="alert alert-warning">{% trans "This field is being (re)calculated. Reload the page some time later to view the updated results. The calculation usually takes from a few seconds to a few minutes." %}</p>
   {% endif %}
   {% if object.results %}
-    {% trans "Detailed Calculations for" %}
-    {% trans "Forecast Period" %}: <span class="text-warning">{{ object.results.forecast_start_date|date:"d/m/Y" }}</span> {% trans "to" %} <span class="text-warning">{{ object.results.timeseries.index|last|date:"d/m/Y" }}</span>
     <div id="results" class="table-responsive">
       <table class="table">
         <thead>
         <tr>
           <th align="left">{% trans "Date" %}<br> </th>
-          <th align="left">{% trans "Effective Precipitation" %} <br>(mm)</th>
+          <th align="left">{% trans "Effective precipitation" %} <br>(mm)</th>
           <th align="left">{% trans "Depletion" %} <br> (mm)</th>
           <th align="left">{% trans "Soil moisture" %} <br>(%)</th>
-          <th align="left">{% trans "Irrigate" %} ?</th>
+          <th align="left">{% trans "Must irrigate" %}</th>
           <th align="left">
               {% blocktrans %}
                 Water stress <br> factor
               {% endblocktrans %}
           </th>
-          <th align="left">{% trans "Irrigation Water Amount" %}<br> (mm)</th>
+          <th align="left">{% trans "Irrigation water amount" %}<br> (mm)</th>
         </tr>
         </thead>
         <tbody>
@@ -32,7 +30,7 @@
               <td align="left">{{ data.effective_precipitation |floatformat:"0"}}</td>
               <td align="left">{{ data.dr|floatformat:"0"}}</td>
               <td align="left">{{ data.theta_actual|mul:100|floatformat:"1" }}</td>
-              <td align="left">{% if data.recommendation %}{% trans "YES" %}{% else %}{% trans "NO" %}{% endif %}</td>
+              <td align="left">{% if data.recommendation %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
               <td align="left"> {{ data.ks|floatformat:"2" }}</td>
               <td align="left"> {{ data.ifinal|floatformat:"0" }}</td>
             </tr>

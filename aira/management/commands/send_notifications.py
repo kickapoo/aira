@@ -71,7 +71,7 @@ class Command(BaseCommand):
             "aira/email_notification/email_notification.html", context
         )
         send_mail(
-            _("Irrigation status for ") + str(owner),
+            _("Irrigation status for user {}".format(str(owner))),
             "",
             settings.DEFAULT_FROM_EMAIL,
             [user.email],

@@ -5,9 +5,7 @@
 
 {% block content %}
 <div class="container">
-  <h1>{% trans "Success!" %}</h1>
-  <p class="lead">{% trans "Account successfully activated" %}.</p>
-  <p>{% trans "You can now sign in to the website" %}.</p>
+  <h1>{% trans "Account successfully activated" %}.</h1>
   <p><a href="{% url 'auth_login' %}"
 		class="btn btn-success"
         role="button">{% trans "Login" %}</a>

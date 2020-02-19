@@ -4,7 +4,7 @@
 {% load static %}
 
 
-{% block title %} {% trans "Welcome " %}{% endblock %}
+{% block title %} {% trans "Irrigation recommendations system" %}{% endblock %}
 
 
 {% block main_page %}
@@ -27,8 +27,8 @@
   <script type="text/javascript">
       aira.yesterday = '{{ end_date|date:"Y-m-d" }}';
       aira.transToggleTimestampMap = {
-        toogleDaily: '{% trans "Switch to Daily" %}',
-        toogleMonthly: '{% trans "Switch to Monthly" %}',
+        toggleDaily: '{% trans "Switch to daily" %}',
+        toggleMonthly: '{% trans "Switch to monthly" %}',
         mapLegendDaily: '{% trans "Click on the map to get values" %}',
         mapLegendMonthly: '{% trans "Click on the map to get values" %}',
       }

@@ -2,7 +2,9 @@
 {% load i18n %}
 
 
-{% block title %}{{ object.name }} | {% trans "Report" %}{% endblock %}
+{% block title %}
+  {% blocktrans with field_name=object.name %}Irrigation report for field {{ field_name }}{% endblocktrans %}
+{% endblock %}
 
 
 {% block content %}
