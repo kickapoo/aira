@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.flatpages.views import flatpage
 from django.urls import include, path
@@ -21,3 +22,21 @@ urlpatterns = [
     path("terms-of-use/", flatpage, {"url": "/terms-of-use/"}, name="terms"),
     path("disclaimer/", flatpage, {"url": "/disclaimer/"}, name="disclaimer"),
 ]
+
+
+# If you want to use the Django debug toolbar, then:
+# 1) pip install django-debug-toolbar
+# 2) Add this to aira_project/settings/local.py:
+#     DEBUG = True
+#     INSTALLED_APPS.append("debug_toolbar")
+#     MIDDLEWARE.insert(3, "debug_toolbar.middleware.DebugToolbarMiddleware")
+#     INTERNAL_IPS = ["127.0.0.1"]
+
+use_django_debug_toolbar = (
+    settings.DEBUG
+    and "debug_toolbar.middleware.DebugToolbarMiddleware" in settings.MIDDLEWARE
+)
+if use_django_debug_toolbar:
+    import debug_toolbar
+
+    urlpatterns.insert(0, path("__debug__/", include(debug_toolbar.urls)))
