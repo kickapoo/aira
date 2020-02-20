@@ -326,3 +326,26 @@ class DefaultThetaSTestCase(DataTestCase):
     def test_not_in_covered_area(self, m):
         with override_settings(AIRA_DATA_SOIL=self.tempdir):
             self.assertIsNone(self.agrifield.default_theta_s)
+
+
+@freeze_time("2018-03-18 13:00:01")
+@override_settings(CACHES={"default": {"BACKEND": _locmemcache}})
+@patch(_in_covered_area, new_callable=PropertyMock, return_value=True)
+class LastIrrigationIsOutdatedTestCase(DataTestCase):
+    def setUp(self):
+        super().setUp()
+        cache.set("model_run_1", self.results)
+
+    def test_true_if_no_irrigation(self, m):
+        IrrigationLog.objects.all().delete()
+        self.assertTrue(self.agrifield.last_irrigation_is_outdated)
+
+    def test_true_if_irrigation_too_old(self, m):
+        self.irrigation_log.time = dt.datetime(
+            2018, 3, 10, 20, 0, tzinfo=dt.timezone.utc
+        )
+        self.irrigation_log.save()
+        self.assertTrue(self.agrifield.last_irrigation_is_outdated)
+
+    def test_false_if_irrigation_ok(self, m):
+        self.assertFalse(self.agrifield.last_irrigation_is_outdated)

@@ -539,7 +539,7 @@ class ProfileViewsTestCase(TestCase):
 
 
 class LastIrrigationOutsidePeriodWarningTestCase(TestDataMixin, TestCase):
-    message = "latest irrigation event is outside"
+    message = "You haven't registered any irrigation"
 
     def setUp(self):
         super().setUp()

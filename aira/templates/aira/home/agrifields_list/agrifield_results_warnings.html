@@ -1,19 +1,13 @@
 {% load i18n %}
 
-{% if not f.irrigationlog_set.exists  %}
+{% if f.last_irrigation_is_outdated %}
   <div class="alert alert-warning">
+    {% url 'create_irrlog' pk=f.id as irrlog_url %}
     <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i></span>  &nbsp;
-    {% trans "You haven't entered any irrigation event. Add  your irrigation log" %} <a href="{% url 'create_irrlog' pk=f.id %}">{% trans "here" %}</a>.<br>
-    {% trans "Irrigation recommendation is estimated using system's default datasets" %}.
+    {% blocktrans with irrlog_url=irrlog_url %}
+        You haven't registered any irrigation, or the latest one is too old.
+        <a href="{{ irrlog_url }}">Update irrigations</a>.
+    {% endblocktrans %}
+    <br>
   </div>
-{% else %}
-  {% with last_irrigation_date=f.irrigationlog_set.latest.time|date:"Y-m-d" start_date=f.results.timeseries.index.0|date:"Y-m-d" end_date=f.results.timeseries.index|last|date:"Y-m-d" %}
-    {% if last_irrigation_date < start_date or last_irrigation_date > end_date %}
-      <div class="alert alert-warning">
-        <a href="#" class="close" data-dismiss="alert">&times;</a><span class="label label-warning"><i class="fa fa-exclamation-triangle ">&nbsp;{% trans "Warning" %}</i></span>  &nbsp;
-        {% trans "Your latest irrigation event is outside our dataset period. Update your irrigation log" %} <a href="{% url 'create_irrlog' pk=f.id %}">{% trans "here" %}</a>.<br>
-        {% trans "Irrigation recommendation is estimated using system's default datasets" %}.
-      </div>
-    {% endif %}
-  {% endwith %}
 {% endif %}

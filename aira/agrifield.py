@@ -236,3 +236,13 @@ class AgrifieldSWBResultsMixin:
         if "theta" in timeseries:
             timeseries["theta_actual"] = np.minimum(timeseries["theta"], self.theta_s)
         return timeseries[forecast_start_date:]
+
+    @property
+    def last_irrigation_is_outdated(self):
+        try:
+            last_irrigation_date = self.last_irrigation.time.date()
+            start_date = self.results["timeseries"].index[0].date()
+            end_date = self.results["timeseries"].index[-1].date()
+            return last_irrigation_date < start_date or last_irrigation_date > end_date
+        except (TypeError, AttributeError, IndexError):
+            return True
