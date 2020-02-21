@@ -29,6 +29,7 @@
 {% block extrajs %}
   <script type="text/javascript">
     map = aira.mapModule.getMap('on_click_map');
+    map.setBaseLayer(map.getLayersByName('Google Satellite')[0]);
     aira.mapModule.addCoveredAreaLayer(map, "{% static 'kml/covered_area.kml' %}");
     {% if object %}
         aira.agrifields = [
