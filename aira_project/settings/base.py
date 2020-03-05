@@ -134,6 +134,7 @@ AIRA_MAP_DEFAULT_ZOOM = 10
 
 CELERY_TASK_SERIALIZER = "pickle"
 CELERY_ACCEPT_CONTENT = ["pickle"]
+AIRA_CELERY_SEND_TASK_ERROR_EMAILS = False
 
 if os.environ.get("SELENIUM_BROWSER", False):
     from selenium import webdriver
