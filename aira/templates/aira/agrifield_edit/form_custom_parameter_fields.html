@@ -11,7 +11,7 @@
   </fieldset>
   <fieldset class="well well-sm">
     <legend>{% trans "Crop" %}</legend>
-    {% bootstrap_field form.custom_max_allowed_depletion placeholder="0.0 – 1.0" %}
+    {% bootstrap_field form.custom_max_allowed_depletion placeholder="0.00 – 0.99" %}
     <sup>{% trans "Default value for selected crop type" %}: <span id="default-max_allowed_depletion">{{ object.crop_type.max_allowed_depletion|floatformat:2 }}</span></sup>
     {% bootstrap_field form.custom_root_depth_max placeholder="0.2 – 4.0 m" %}
     <sup>{% trans "Default value for selected crop type" %}: <span id="default-root_depth_max">{{ object.crop_type.root_depth_max }}</span></sup>

@@ -167,7 +167,7 @@ class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
     custom_max_allowed_depletion = models.FloatField(
         null=True,
         blank=True,
-        validators=[MaxValueValidator(1.00), MinValueValidator(0.00)],
+        validators=[MaxValueValidator(0.99), MinValueValidator(0.00)],
     )
     custom_efficiency = models.FloatField(
         null=True,
