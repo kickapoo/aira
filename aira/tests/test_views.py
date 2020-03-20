@@ -333,16 +333,16 @@ class RecommendationViewTestCase(TestDataMixin, TestCase):
     def test_response_contains_default_root_depth(self):
         self._update_agrifield(use_custom_parameters=False)
         self._make_request()
-        self.assertContains(self.response, "<b>Estimated root depth (max):</b> 0.4 m")
+        self.assertContains(self.response, "<b>Estimated root depth (max):</b> 0.40 m")
 
     def test_response_contains_custom_root_depth(self):
         self._update_agrifield(
             use_custom_parameters=True,
             custom_root_depth_min=0.1,
-            custom_root_depth_max=0.3,
+            custom_root_depth_max=0.30000001,
         )
         self._make_request()
-        self.assertContains(self.response, "<b>Estimated root depth (max):</b> 0.2 m")
+        self.assertContains(self.response, "<b>Estimated root depth (max):</b> 0.20 m")
 
     def test_response_contains_default_field_capacity(self):
         self._update_agrifield(use_custom_parameters=False)
