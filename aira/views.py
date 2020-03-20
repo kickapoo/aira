@@ -5,6 +5,7 @@ from glob import glob
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -83,7 +84,7 @@ class DemoView(TemplateView):
         return redirect("home", user)
 
 
-class ConversionToolsView(TemplateView):
+class ConversionToolsView(LoginRequiredMixin, TemplateView):
     template_name = "aira/tools/main.html"
 
 
@@ -109,7 +110,7 @@ class FrontPageView(TemplateView):
         return dt.date(y, m, d)
 
 
-class AgrifieldListView(TemplateView):
+class AgrifieldListView(LoginRequiredMixin, TemplateView):
     template_name = "aira/home/main.html"
 
     def get_context_data(self, **kwargs):
@@ -149,7 +150,7 @@ class AgrifieldListView(TemplateView):
         return context
 
 
-class RecommendationView(DetailView):
+class RecommendationView(LoginRequiredMixin, DetailView):
     model = Agrifield
     template_name = "aira/recommendation/main.html"
 
@@ -159,7 +160,7 @@ class RecommendationView(DetailView):
         return context
 
 
-class UpdateProfileView(UpdateView):
+class UpdateProfileView(LoginRequiredMixin, UpdateView):
     model = Profile
     form_class = ProfileForm
     success_url = "/home"
@@ -181,7 +182,7 @@ class UpdateProfileView(UpdateView):
         return context
 
 
-class DeleteUserView(DeleteView):
+class DeleteUserView(LoginRequiredMixin, DeleteView):
     model = User
     template_name_suffix = "/confirm_delete"
 
@@ -189,7 +190,7 @@ class DeleteUserView(DeleteView):
         return reverse("welcome")
 
 
-class CreateAgrifieldView(CreateView):
+class CreateAgrifieldView(LoginRequiredMixin, CreateView):
     model = Agrifield
     form_class = AgrifieldForm
     template_name = "aira/agrifield_edit/main.html"
@@ -216,7 +217,7 @@ class CreateAgrifieldView(CreateView):
         return context
 
 
-class UpdateAgrifieldView(UpdateView):
+class UpdateAgrifieldView(LoginRequiredMixin, UpdateView):
     model = Agrifield
     form_class = AgrifieldForm
     template_name = "aira/agrifield_edit/main.html"
@@ -232,7 +233,7 @@ class UpdateAgrifieldView(UpdateView):
         return context
 
 
-class DeleteAgrifieldView(DeleteView):
+class DeleteAgrifieldView(LoginRequiredMixin, DeleteView):
     model = Agrifield
     form_class = AgrifieldForm
     template_name = "aira/agrifield_delete/confirm.html"
@@ -248,7 +249,7 @@ class DeleteAgrifieldView(DeleteView):
         return context
 
 
-class CreateIrrigationLogView(CreateView):
+class CreateIrrigationLogView(LoginRequiredMixin, CreateView):
     model = IrrigationLog
     form_class = IrrigationlogForm
     success_url = "/home"
@@ -273,7 +274,7 @@ class CreateIrrigationLogView(CreateView):
         return context
 
 
-class UpdateIrrigationLogView(UpdateView):
+class UpdateIrrigationLogView(LoginRequiredMixin, UpdateView):
     model = IrrigationLog
     form_class = IrrigationlogForm
     template_name_suffix = "/update"
@@ -287,7 +288,7 @@ class UpdateIrrigationLogView(UpdateView):
         return irrigation_log
 
 
-class DeleteIrrigationLogView(DeleteView):
+class DeleteIrrigationLogView(LoginRequiredMixin, DeleteView):
     model = IrrigationLog
     form_class = IrrigationlogForm
     template_name_suffix = "/confirm_delete"
@@ -317,7 +318,7 @@ def remove_supervised_user_from_user_list(request):
         raise Http404
 
 
-class AgrifieldTimeseriesView(View):
+class AgrifieldTimeseriesView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         agrifield = get_object_or_404(Agrifield, pk=kwargs.get("agrifield_id"))
         variable = kwargs.get("variable")
@@ -327,7 +328,7 @@ class AgrifieldTimeseriesView(View):
         )
 
 
-class DownloadSoilAnalysisView(View):
+class DownloadSoilAnalysisView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         agrifield = get_object_or_404(Agrifield, pk=kwargs.get("agrifield_id"))
         agrifield.can_edit(self.request.user)

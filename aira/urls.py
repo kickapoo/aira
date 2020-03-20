@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.urls import path
 from django.views.generic import RedirectView
 
@@ -6,13 +5,8 @@ from aira import views
 
 urlpatterns = [
     path("", views.FrontPageView.as_view(), name="welcome"),
-    # Home
-    path(
-        "home/<str:username>/",
-        login_required(views.AgrifieldListView.as_view()),
-        name="home",
-    ),
-    path("home/", login_required(views.AgrifieldListView.as_view()), name="home"),
+    path("home/<str:username>/", views.AgrifieldListView.as_view(), name="home"),
+    path("home/", views.AgrifieldListView.as_view(), name="home"),
     # Recommendation
     path(
         "advice/<int:pk>/",
@@ -20,66 +14,58 @@ urlpatterns = [
     ),
     path(
         "recommendation/<int:pk>/",
-        login_required(views.RecommendationView.as_view()),
+        views.RecommendationView.as_view(),
         name="recommendation",
     ),
     # Profile
     path(
         "update_profile/<int:pk>/",
-        login_required(views.UpdateProfileView.as_view()),
+        views.UpdateProfileView.as_view(),
         name="update_profile",
     ),
-    path(
-        "delete_user/<int:pk>/",
-        login_required(views.DeleteUserView.as_view()),
-        name="delete_user",
-    ),
+    path("delete_user/<int:pk>/", views.DeleteUserView.as_view(), name="delete_user",),
     # Agrifield
     path(
         "create_agrifield/<str:username>/",
-        login_required(views.CreateAgrifieldView.as_view()),
+        views.CreateAgrifieldView.as_view(),
         name="create_agrifield",
     ),
     path(
         "update_agrifield/<int:pk>/",
-        login_required(views.UpdateAgrifieldView.as_view()),
+        views.UpdateAgrifieldView.as_view(),
         name="update_agrifield",
     ),
     path(
         "delete_agrifield/<int:pk>/",
-        login_required(views.DeleteAgrifieldView.as_view()),
+        views.DeleteAgrifieldView.as_view(),
         name="delete_agrifield",
     ),
     path(
         "agrifield/<int:agrifield_id>/timeseries/<str:variable>/",
-        login_required(views.AgrifieldTimeseriesView.as_view()),
+        views.AgrifieldTimeseriesView.as_view(),
         name="agrifield-timeseries",
     ),
     path(
         "agrifield/<int:agrifield_id>/soil_analysis/",
-        login_required(views.DownloadSoilAnalysisView.as_view()),
+        views.DownloadSoilAnalysisView.as_view(),
         name="agrifield-soil-analysis",
     ),
     path(
         "create_irrigationlog/<int:pk>/",
-        login_required(views.CreateIrrigationLogView.as_view()),
+        views.CreateIrrigationLogView.as_view(),
         name="create_irrlog",
     ),
     path(
         "update_irrigationlog/<int:pk>/",
-        login_required(views.UpdateIrrigationLogView.as_view()),
+        views.UpdateIrrigationLogView.as_view(),
         name="update_irrlog",
     ),
     path(
         "delete_irrigationlog/<int:pk>/",
-        login_required(views.DeleteIrrigationLogView.as_view()),
+        views.DeleteIrrigationLogView.as_view(),
         name="delete_irrlog",
     ),
-    path(
-        "conversion_tools/",
-        login_required(views.ConversionToolsView.as_view()),
-        name="tools",
-    ),
+    path("conversion_tools/", views.ConversionToolsView.as_view(), name="tools",),
     path("try/", views.DemoView.as_view(), name="try"),
     path(
         "irrigation-performance-chart/<int:pk>/",
