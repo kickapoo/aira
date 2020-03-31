@@ -152,5 +152,7 @@ class Migration(migrations.Migration):
             field=models.DateField(default=dt.date(1970, 1, 1)),
             preserve_default=False,
         ),
-        migrations.RunPython(set_parameter_values),
+        migrations.RunPython(
+            set_parameter_values, reverse_code=migrations.RunPython.noop
+        ),
     ]

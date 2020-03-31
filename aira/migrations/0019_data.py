@@ -156,7 +156,11 @@ class Migration(migrations.Migration):
     dependencies = [("aira", "0018_agrifield_profile_additions")]
 
     operations = [
-        migrations.RunPython(create_crop_types),
-        migrations.RunPython(create_irrigation_types),
-        migrations.RunPython(remove_obsolete_crop_types),
+        migrations.RunPython(create_crop_types, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(
+            create_irrigation_types, reverse_code=migrations.RunPython.noop
+        ),
+        migrations.RunPython(
+            remove_obsolete_crop_types, reverse_code=migrations.RunPython.noop
+        ),
     ]

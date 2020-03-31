@@ -72,7 +72,14 @@ class Migration(migrations.Migration):
                     "max_allow_depletion",
                     models.DecimalField(max_digits=6, decimal_places=2),
                 ),
-                ("kc", models.FloatField()),
+                # Note: kc doesn't actually have a default of 0.7. It's without default.
+                # The reason why we added this dummy default in the migration was to
+                # make it possible to reverse migration 0020, which abolishes it.
+                # Migration 0020 is not reversible on production (i.e. you can't migrate
+                # back from 0020 to 0019 and expect things to work properly), but making
+                # it reversible enables us to bisect the history in order to find which
+                # commit introduced an error. Antonis Christofides, 2020-03-31.
+                ("kc", models.FloatField(default=0.7)),
                 ("fek_category", models.IntegerField()),
             ],
             options={"ordering": ("name",), "verbose_name_plural": "Crop Types"},
