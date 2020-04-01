@@ -589,3 +589,14 @@ class DailyMonthlyToggleButtonTestCase(SeleniumTestCase):
         self.toggle_button.click()
         sleep(0.1)
         self.assertEqual(self.toggle_button.text, "Switch to daily")
+
+
+class ResetPasswordTestCase(TestCase):
+    def setUp(self):
+        User.objects.create_user("alice", "alice@wonderland.com", password="topsecret")
+
+    def test_asking_for_password_reset_works_ok(self):
+        r = self.client.post(
+            "/accounts/password/reset/", data={"email": "alice@wonderland.com"}
+        )
+        self.assertEqual(r.status_code, 302)
