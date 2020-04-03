@@ -71,7 +71,11 @@ class AgrifieldSWBMixin:
             "evaporation"
         )
 
-    def _determine_actual_net_irrigation(self):
+    def _determine_irrigation(self):
+        self.timeseries["applied_irrigation"] = 0  # Zero is the default
+        self.timeseries["applied_irrigation"] = self.timeseries[
+            "applied_irrigation"
+        ].astype("object")
         self.timeseries["actual_net_irrigation"] = 0  # Zero is the default
         self.timeseries["actual_net_irrigation"] = self.timeseries[
             "actual_net_irrigation"
@@ -91,11 +95,13 @@ class AgrifieldSWBMixin:
                 # swb.calculate_soil_water() to assume we irrigated with the recommended
                 # amount.
                 self.timeseries.at[date, "actual_net_irrigation"] = True
+                self.timeseries.at[date, "applied_irrigation"] = None
             else:
                 applied_water_mm = float(applied_water / self.area * 1000)
                 self.timeseries.at[date, "actual_net_irrigation"] = (
                     applied_water_mm * self.irrigation_efficiency
                 )
+                self.timeseries.at[date, "applied_irrigation"] = applied_water_mm
 
     def _determine_crop_evapotranspiration(self):
         calculate_crop_evapotranspiration(
@@ -119,7 +125,7 @@ class AgrifieldSWBMixin:
         self._determine_effective_precipitation()
         self.timeseries.dropna()
         self._determine_crop_evapotranspiration()
-        self._determine_actual_net_irrigation()
+        self._determine_irrigation()
 
     def run_swb_model(self):
         return calculate_soil_water(
@@ -184,6 +190,10 @@ class AgrifieldSWBMixin:
             ),
             axis=1,
         )
+        filter = self.timeseries["applied_irrigation"].isnull()
+        self.timeseries.loc[filter, "applied_irrigation"] = self.timeseries.loc[
+            filter, "ifinal_theoretical"
+        ]
 
     def execute_model(self):
         if not self.in_covered_area:

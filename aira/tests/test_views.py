@@ -1,5 +1,6 @@
 import datetime as dt
 import os
+import re
 import shutil
 import tempfile
 from time import sleep
@@ -17,12 +18,14 @@ import numpy as np
 import pandas as pd
 import pytz
 from django_selenium_clean import PageElement, SeleniumTestCase
+from freezegun import freeze_time
 from hspatial.test import setup_test_raster
 from model_mommy import mommy
 from selenium.webdriver.common.by import By
 
 from aira.models import Agrifield, IrrigationLog
 from aira.tests import RandomMediaRootMixin
+from aira.tests.test_agrifield import DataTestCase
 
 
 class TestDataMixin:
@@ -51,6 +54,7 @@ class TestDataMixin:
             crop_type__max_allowed_depletion=0.40,
             crop_type__root_depth_max=0.50,
             crop_type__root_depth_min=0.30,
+            area=2000,
         )
 
     def tearDown(self):
@@ -600,3 +604,41 @@ class ResetPasswordTestCase(TestCase):
             "/accounts/password/reset/", data={"email": "alice@wonderland.com"}
         )
         self.assertEqual(r.status_code, 302)
+
+
+@freeze_time("2018-03-18 13:00:01")
+class IrrigationPerformanceChartTestCase(DataTestCase):
+    def _get_chart_series(self):
+        self.client.login(username="bob", password="topsecret")
+        response = self.client.get(
+            f"/irrigation-performance-chart/{self.agrifield.id}/"
+        )
+        assert response.status_code == 200
+        result = self._extract_series_from_javascript(response.content.decode())
+        return result
+
+    _series_regexp = r"""
+        \sseries:\s* # "series:" preceded by space and followed by optional whitespace.
+        (?P<series>
+            \[\s*              # Bracket that starts the list.
+            ({[^}]*}\s*,?\s*)* # "{" plus non-"}" characters plus "}" plus optional
+                               # comma, all that repeated as many times as needed.
+            \s*\]              # Bracket that ends the list.
+        )
+    """
+
+    def _extract_series_from_javascript(self, page_content):
+        m = re.search(self._series_regexp, page_content, re.VERBOSE)
+        series = eval(m.group("series"))
+        result = {x["name"]: x["data"] for x in series}
+        return result
+
+    def test_applied_water_when_irrigation_specified(self):
+        series = self._get_chart_series()
+        self.assertAlmostEqual(series["Applied irrigation water amount"][0], 250)
+
+    def test_applied_water_when_irrigation_determined_automatically(self):
+        series = self._get_chart_series()
+        self.assertAlmostEqual(
+            series["Applied irrigation water amount"][4], 125.20833333
+        )

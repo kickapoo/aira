@@ -60,9 +60,9 @@
       },
       plotOptions: {column: {pointPadding: 0.2, borderWidth: 5}},
       series: [{
-          name: "{% trans 'Estimated irrigation water amount' %}",
-          color: '#008000',
-          data: [
+          "name": "{% trans 'Estimated irrigation water amount' %}",
+          "color": '#008000',
+          "data": [
             {% localize off %}
               {% for date, row in object.results.timeseries.iterrows %}
                 {{ row.ifinal_theoretical }} {% if not forloop.last %},{% endif %}
@@ -70,19 +70,19 @@
             {% endlocalize %}
           ]
       }, {
-          name: "{% trans 'Applied irrigation water amount' %}",
-          data: [
+          "name": "{% trans 'Applied irrigation water amount' %}",
+          "data": [
             {% localize off %}
               {% for date, row in object.results.timeseries.iterrows %}
-                {{ row.actual_net_irrigation|default:0 }} {% if not forloop.last %},{% endif %}
+                {{ row.applied_irrigation|default:0 }} {% if not forloop.last %},{% endif %}
               {% endfor %}
             {% endlocalize %}
           ]
       },
       {
-          name: "{% trans 'Effective precipitation' %}",
-          color: '#4c4ca6',
-          data: [
+          "name": "{% trans 'Effective precipitation' %}",
+          "color": '#4c4ca6',
+          "data": [
             {% localize off %}
               {% for date, row in object.results.timeseries.iterrows %}
                 {{ row.effective_precipitation }} {% if not forloop.last %},{% endif %}

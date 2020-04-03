@@ -78,6 +78,8 @@ class SetupTestDataMixin:
         cls._setup_test_raster("evaporation", "2018-03-17", [[5, 9.6], [9.7, 9.8]])
         cls._setup_test_raster("rain", "2018-03-18", [[0.3, 0.2], [0.1, 0.0]])
         cls._setup_test_raster("evaporation", "2018-03-18", [[70, 9.7], [9.8, 9.9]])
+        cls._setup_test_raster("rain", "2018-03-19", [[0.3, 0.2], [0.1, 0.0]])
+        cls._setup_test_raster("evaporation", "2018-03-19", [[110, 9.7], [9.8, 9.9]])
 
     @classmethod
     def _setup_test_raster(cls, var, datestr, contents):
@@ -118,11 +120,17 @@ class SetupTestDataMixin:
             location=Point(22.0, 38.0),
             area=2000,
         )
-        cls.irrigation_log = mommy.make(
+        cls.irrigation_log_1 = mommy.make(
             IrrigationLog,
             agrifield=cls.agrifield,
             time=dt.datetime(2018, 3, 15, 7, 0, tzinfo=dt.timezone.utc),
             applied_water=500,
+        )
+        cls.irrigation_log_2 = mommy.make(
+            IrrigationLog,
+            agrifield=cls.agrifield,
+            time=dt.datetime(2018, 3, 19, 7, 0, tzinfo=dt.timezone.utc),
+            applied_water=None,
         )
 
 
@@ -134,22 +142,27 @@ class DataTestCase(TestCase, SetupTestDataMixin):
         os.mkdir(os.path.join(cls.tempdir, "historical"))
         os.mkdir(os.path.join(cls.tempdir, "forecast"))
         cls._setup_test_data()
-        h = override_settings(
-            AIRA_DATA_HISTORICAL=os.path.join(cls.tempdir, "historical")
-        )
-        f = override_settings(AIRA_DATA_FORECAST=os.path.join(cls.tempdir, "forecast"))
-        s = override_settings(AIRA_DATA_SOIL=cls.tempdir)
-        with h, f, s:
-            cls.results = cls.agrifield.execute_model()
+        cls._context_managers = {
+            override_settings(
+                AIRA_DATA_HISTORICAL=os.path.join(cls.tempdir, "historical")
+            ),
+            override_settings(AIRA_DATA_FORECAST=os.path.join(cls.tempdir, "forecast")),
+            override_settings(AIRA_DATA_SOIL=cls.tempdir),
+        }
+        for x in cls._context_managers:
+            x.__enter__()
+        cls.results = cls.agrifield.execute_model()
         cls.timeseries = cls.results["timeseries"]
 
     @classmethod
     def tearDownClass(cls):
+        for x in cls._context_managers:
+            x.__exit__(None, None, None)
         shutil.rmtree(cls.tempdir)
         super().tearDownClass()
 
 
-@freeze_time("2018-03-18 13:00:01")
+@freeze_time("2018-03-19 13:00:01")
 class ExecuteModelTestCase(DataTestCase):
     def test_start_date(self):
         self.assertEqual(self.timeseries.index[0], pd.Timestamp("2018-03-15 23:59"))
@@ -165,7 +178,7 @@ class ExecuteModelTestCase(DataTestCase):
         )
 
     def test_end_date(self):
-        self.assertEqual(self.timeseries.index[-1], pd.Timestamp("2018-03-18 23:59"))
+        self.assertEqual(self.timeseries.index[-1], pd.Timestamp("2018-03-19 23:59"))
 
     def test_ks(self):
         self.assertAlmostEqual(self.timeseries.at["2018-03-18 23:59", "ks"], 1.0)
@@ -217,6 +230,7 @@ class ExecuteModelTestCase(DataTestCase):
         self.assertAlmostEqual(
             self.timeseries.at[dt.datetime(2018, 3, 18, 23, 59), var], 0
         )
+        self.assertTrue(self.timeseries.at[dt.datetime(2018, 3, 19, 23, 59), var])
 
     def test_ifinal_theoretical(self):
         var = "ifinal_theoretical"
@@ -231,6 +245,9 @@ class ExecuteModelTestCase(DataTestCase):
         )
         self.assertAlmostEqual(
             self.timeseries.at[pd.Timestamp("2018-03-18 23:59"), var], 122.08333333
+        )
+        self.assertAlmostEqual(
+            self.timeseries.at[pd.Timestamp("2018-03-19 23:59"), var], 125.20833333
         )
 
 
@@ -341,10 +358,11 @@ class LastIrrigationIsOutdatedTestCase(DataTestCase):
         self.assertTrue(self.agrifield.last_irrigation_is_outdated)
 
     def test_true_if_irrigation_too_old(self, m):
-        self.irrigation_log.time = dt.datetime(
+        self.irrigation_log_1.delete()
+        self.irrigation_log_2.time = dt.datetime(
             2018, 3, 10, 20, 0, tzinfo=dt.timezone.utc
         )
-        self.irrigation_log.save()
+        self.irrigation_log_2.save()
         self.assertTrue(self.agrifield.last_irrigation_is_outdated)
 
     def test_false_if_irrigation_ok(self, m):
