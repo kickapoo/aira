@@ -27,25 +27,33 @@ class IrrigationPerformanceView(DetailView):
 
     def get_context_data(self, **kwargs):
         self.object.can_edit(self.request.user)
-        context = super().get_context_data(**kwargs)
+        self.context = super().get_context_data(**kwargs)
+        if not self.object.results:
+            return self.context
+        self._get_sum_applied_irrigation()
+        self._get_percentage_diff()
+        return self.context
+
+    def _get_sum_applied_irrigation(self):
         results = self.object.results
-        if not results:
-            return context
+        sum_applied_irrigation = results["timeseries"].applied_irrigation
+        sum_applied_irrigation = pd.to_numeric(sum_applied_irrigation)
+        sum_applied_irrigation[sum_applied_irrigation.isna()] = 0
+        sum_applied_irrigation = sum_applied_irrigation.sum()
+        self.context["sum_applied_irrigation"] = sum_applied_irrigation
+
+    def _get_percentage_diff(self):
+        results = self.object.results
         sum_ifinal_theoretical = results["timeseries"].ifinal_theoretical.sum()
-        actual_net_irrigation = results["timeseries"].actual_net_irrigation
-        actual_net_irrigation = pd.to_numeric(actual_net_irrigation)
-        actual_net_irrigation[actual_net_irrigation.isna()] = 0
-        sum_actual_net_irrigation = actual_net_irrigation.sum()
-        context["sum_actual_net_irrigation"] = sum_actual_net_irrigation
+        sum_applied_irrigation = self.context["sum_applied_irrigation"]
         if sum_ifinal_theoretical >= 0.1:
-            context["percentage_diff"] = round(
-                (sum_actual_net_irrigation - sum_ifinal_theoretical)
+            self.context["percentage_diff"] = round(
+                (sum_applied_irrigation - sum_ifinal_theoretical)
                 / sum_ifinal_theoretical
                 * 100
             )
         else:
-            context["percentage_diff"] = _("N/A")
-        return context
+            self.context["percentage_diff"] = _("N/A")
 
 
 def performance_csv(request, pk):
@@ -70,7 +78,7 @@ def performance_csv(request, pk):
             [
                 date,
                 row.ifinal_theoretical,
-                row.actual_net_irrigation if row.actual_net_irrigation else 0,
+                row.applied_irrigation if row.applied_irrigation else 0,
                 row.effective_precipitation,
             ]
         )

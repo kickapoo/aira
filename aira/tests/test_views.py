@@ -608,14 +608,16 @@ class ResetPasswordTestCase(TestCase):
 
 @freeze_time("2018-03-18 13:00:01")
 class IrrigationPerformanceChartTestCase(DataTestCase):
-    def _get_chart_series(self):
+    def setUp(self):
+        super().setUp()
         self.client.login(username="bob", password="topsecret")
-        response = self.client.get(
+        self.response = self.client.get(
             f"/irrigation-performance-chart/{self.agrifield.id}/"
         )
-        assert response.status_code == 200
-        result = self._extract_series_from_javascript(response.content.decode())
-        return result
+        assert self.response.status_code == 200
+        self.series = self._extract_series_from_javascript(
+            self.response.content.decode()
+        )
 
     _series_regexp = r"""
         \sseries:\s* # "series:" preceded by space and followed by optional whitespace.
@@ -634,11 +636,47 @@ class IrrigationPerformanceChartTestCase(DataTestCase):
         return result
 
     def test_applied_water_when_irrigation_specified(self):
-        series = self._get_chart_series()
-        self.assertAlmostEqual(series["Applied irrigation water amount"][0], 250)
+        self.assertAlmostEqual(self.series["Applied irrigation water amount"][0], 250)
 
     def test_applied_water_when_irrigation_determined_automatically(self):
-        series = self._get_chart_series()
         self.assertAlmostEqual(
-            series["Applied irrigation water amount"][4], 125.20833333
+            self.series["Applied irrigation water amount"][4], 125.20833333
         )
+
+    def test_total_applied_water(self):
+        m = re.search(
+            r"Total applied irrigation water amount[^:]*:\s*(\d+)\s*mm",
+            self.response.content.decode(),
+            re.MULTILINE,
+        )
+        total_applied_water = int(m.group(1))
+        self.assertEqual(total_applied_water, 375)
+
+
+@freeze_time("2018-03-18 13:00:01")
+class IrrigationPerformanceCsvTestCase(DataTestCase):
+    def setUp(self):
+        super().setUp()
+        self.client.login(username="bob", password="topsecret")
+        self.response = self.client.get(
+            f"/download-irrigation-performance/{self.agrifield.id}/"
+        )
+        assert self.response.status_code == 200
+
+    def test_applied_water_when_irrigation_specified(self):
+        m = re.search(
+            r"2018-03-15 23:59:00,[.\d]*,([.\d]*),",
+            self.response.content.decode(),
+            re.MULTILINE,
+        )
+        value = float(m.group(1))
+        self.assertAlmostEqual(value, 250.0)
+
+    def test_applied_water_when_irrigation_determined_automatically(self):
+        m = re.search(
+            r"2018-03-19 23:59:00,[.\d]*,([.\d]*),",
+            self.response.content.decode(),
+            re.MULTILINE,
+        )
+        value = float(m.group(1))
+        self.assertAlmostEqual(value, 125.20833333)
