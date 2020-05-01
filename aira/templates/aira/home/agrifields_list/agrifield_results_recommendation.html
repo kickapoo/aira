@@ -20,7 +20,7 @@
               <td>{% if not forloop.first %}{% trans "or" %}{% endif %}</td>
               <td align="left">{{ date|date }}</td>
               <td align="left">{{ data.ks |floatformat:"2" }} </td>
-              <td align="left">{{ data.ifinal |floatformat:"2" }} mm ({{ data.3|floatformat:"2"}} m³)</td>
+              <td align="left">{{ data.ifinal |floatformat:"2" }} mm ({{ data.ifinal_m3|floatformat:"2"}} m³)</td>
             </tr>
           {% endfor %}
         </tbody>
