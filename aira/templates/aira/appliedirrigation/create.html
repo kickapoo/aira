@@ -25,16 +25,17 @@
       </div>
       <div class="col-md-1">
       </div>
-      {% if agrifield.irrigationlog_set.exists %}
+      {% if agrifield.appliedirrigation_set.exists %}
         <div class="col-md-7">
-          {% include "aira/irrigationlog/table_of_logs.html" %}
+          {% include "aira/appliedirrigation/table_of_logs.html" %}
         </div>
       {% endif %}
   </div>
 {% endblock %}
-    
+
 {% block extrajs %}
   <script type="text/javascript">
-    aira.setupDateTimePickerForIrrigationLog();
+    aira.setupDateTimePickerForAppliedIrrigation();
+    aira.showAndHideIrrigationFieldsAccordingToType();
   </script>
 {% endblock %}

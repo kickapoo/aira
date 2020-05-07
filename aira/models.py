@@ -291,20 +291,9 @@ class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
     @property
     def last_irrigation(self):
         try:
-            result = self.irrigationlog_set.latest()
-        except IrrigationLog.DoesNotExist:
+            return self.appliedirrigation_set.latest()
+        except AppliedIrrigation.DoesNotExist:
             return None
-        if result.applied_water is None:
-            result.applied_water = (
-                float(self.p)
-                * (self.field_capacity - self.wilting_point)
-                * self.root_depth
-                * self.area
-            )
-            result.message = _(
-                "Irrigation water is estimated using system's default parameters."
-            )
-        return result
 
     def can_edit(self, user):
         if (user == self.owner) or (user == self.owner.profile.supervisor):
@@ -367,26 +356,139 @@ class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
         for filename in iglob(filenamesglob):
             os.remove(filename)
 
+    def get_applied_irrigation_defaults(self):
+        """
+        Return a dict of all default values from the history of AppliedIrrigations.
 
-class IrrigationLog(models.Model):
+        Note that some dict keys won't exist if no previous entries are found.
+        """
+        return {
+            **self._get_applied_irrigation_default_type(),
+            **self._get_applied_irrigation_defaults_for_volume(),
+            **self._get_applied_irrigation_defaults_for_duration(),
+            **self._get_applied_irrigation_defaults_for_hydrometer(),
+        }
+
+    def _get_applied_irrigation_default_type(self):
+        try:
+            return {
+                "irrigation_type": self.appliedirrigation_set.latest().irrigation_type
+            }
+        except AppliedIrrigation.DoesNotExist:
+            return {"irrigation_type": "VOLUME_OF_WATER"}
+
+    def _get_applied_irrigation_defaults_for_volume(self):
+        try:
+            return {
+                "supplied_water_volume": self.appliedirrigation_set.filter(
+                    irrigation_type="VOLUME_OF_WATER"
+                )
+                .latest()
+                .supplied_water_volume
+            }
+        except AppliedIrrigation.DoesNotExist:
+            return {}
+
+    def _get_applied_irrigation_defaults_for_duration(self):
+        try:
+            duration_irr = self.appliedirrigation_set.filter(
+                irrigation_type="DURATION_OF_IRRIGATION"
+            ).latest()
+            return {
+                "supplied_duration": duration_irr.supplied_duration,
+                "supplied_flow_rate": duration_irr.supplied_flow_rate,
+            }
+        except AppliedIrrigation.DoesNotExist:
+            return {}
+
+    def _get_applied_irrigation_defaults_for_hydrometer(self):
+        try:
+            hydro_irr = self.appliedirrigation_set.filter(
+                irrigation_type="HYDROMETER_READINGS"
+            ).latest()
+            return {
+                "hydrometer_water_percentage": hydro_irr.hydrometer_water_percentage,
+                "hydrometer_reading_start": hydro_irr.hydrometer_reading_end,
+            }
+        except AppliedIrrigation.DoesNotExist:
+            return {}
+
+
+class AppliedIrrigation(models.Model):
+
+    IRRIGATION_TYPES = [
+        ("VOLUME_OF_WATER", _("Volume of water")),
+        ("DURATION_OF_IRRIGATION", _("Duration of irrigation")),
+        ("HYDROMETER_READINGS", _("Hydrometer readings")),
+    ]
+
+    irrigation_type = models.CharField(
+        max_length=50, choices=IRRIGATION_TYPES, default="VOLUME_OF_WATER"
+    )
     agrifield = models.ForeignKey(Agrifield, on_delete=models.CASCADE)
-    time = models.DateTimeField()
-    applied_water = models.FloatField(
+    timestamp = models.DateTimeField()
+
+    supplied_water_volume = models.FloatField(
         null=True, blank=True, validators=[MinValueValidator(0.0)]
     )
 
+    supplied_duration = models.PositiveIntegerField(
+        "Duration in minutes", null=True, blank=True
+    )
+    supplied_flow_rate = models.FloatField(
+        "Flow rate (m3/h)", null=True, blank=True, validators=[MinValueValidator(0.0)]
+    )
+
+    hydrometer_reading_start = models.FloatField(
+        null=True, blank=True, validators=[MinValueValidator(0.0)]
+    )
+    hydrometer_reading_end = models.FloatField(
+        null=True, blank=True, validators=[MinValueValidator(0.0)]
+    )
+    hydrometer_water_percentage = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(100)],
+        default=100,
+    )
+
+    @property
+    def volume(self):
+        if self.irrigation_type == "VOLUME_OF_WATER":
+            return self.supplied_water_volume
+
+        try:
+            # Wrapped in a try-except in case of null values exceptions
+            if self.irrigation_type == "DURATION_OF_IRRIGATION":
+                return (self.supplied_duration / 60) * self.supplied_flow_rate
+            elif self.irrigation_type == "HYDROMETER_READINGS":
+                return (self.hydrometer_reading_end - self.hydrometer_reading_start) * (
+                    self.hydrometer_water_percentage / 100
+                )
+        except TypeError:
+            return None
+
+    @property
+    def system_default_volume(self):
+        # Can be used as a fallback whenever no volume is associated with the instance.
+        return (
+            float(self.agrifield.p)
+            * (self.agrifield.field_capacity - self.agrifield.wilting_point)
+            * self.agrifield.root_depth
+            * self.agrifield.area
+        )
+
     class Meta:
-        get_latest_by = "time"
-        ordering = ("-time",)
-        verbose_name_plural = "Irrigation Logs"
+        get_latest_by = "timestamp"
+        ordering = ("-timestamp",)
 
     def __str__(self):
-        return str(self.time)
+        return str(self.timestamp)
 
     def save(self, *args, **kwargs):
-        super(IrrigationLog, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self.agrifield._queue_for_calculation()
 
     def delete(self, *args, **kwargs):
-        super(IrrigationLog, self).delete(*args, **kwargs)
+        super().delete(*args, **kwargs)
         self.agrifield._queue_for_calculation()

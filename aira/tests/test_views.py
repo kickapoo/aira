@@ -23,7 +23,7 @@ from hspatial.test import setup_test_raster
 from model_mommy import mommy
 from selenium.webdriver.common.by import By
 
-from aira.models import Agrifield, IrrigationLog
+from aira.models import Agrifield, AppliedIrrigation
 from aira.tests import RandomMediaRootMixin
 from aira.tests.test_agrifield import DataTestCase
 
@@ -413,10 +413,10 @@ class RecommendationViewTestCase(TestDataMixin, TestCase):
     def test_response_contains_last_irrigation_with_specified_applied_water(self):
         tz = pytz.timezone(settings.TIME_ZONE)
         mommy.make(
-            IrrigationLog,
+            AppliedIrrigation,
             agrifield=self.agrifield,
-            time=tz.localize(dt.datetime(2019, 9, 11, 17, 23)),
-            applied_water=100.5,
+            timestamp=tz.localize(dt.datetime(2019, 9, 11, 17, 23)),
+            supplied_water_volume=100.5,
         )
         self._make_request()
         self.assertContains(
@@ -427,10 +427,10 @@ class RecommendationViewTestCase(TestDataMixin, TestCase):
     def test_response_contains_last_irrigation_with_unspecified_applied_water(self):
         tz = pytz.timezone(settings.TIME_ZONE)
         mommy.make(
-            IrrigationLog,
+            AppliedIrrigation,
             agrifield=self.agrifield,
-            time=tz.localize(dt.datetime(2019, 9, 11, 17, 23)),
-            applied_water=None,
+            timestamp=tz.localize(dt.datetime(2019, 9, 11, 17, 23)),
+            supplied_water_volume=None,
         )
         self._update_agrifield(area=653.7)
         self._make_request()
@@ -440,8 +440,8 @@ class RecommendationViewTestCase(TestDataMixin, TestCase):
         self.assertContains(
             self.response,
             "<b>Applied water (m³):</b> 23.0 "
-            "(Irrigation water is estimated using system&#39;s "
-            "default parameters.)<br>",
+            "(Irrigation water is estimated using system's "
+            "default parameters.)",
         )
 
 
@@ -545,10 +545,10 @@ class LastIrrigationOutsidePeriodWarningTestCase(TestDataMixin, TestCase):
     def _create_irrigation_event(self):
         tz = pytz.timezone(settings.TIME_ZONE)
         mommy.make(
-            IrrigationLog,
+            AppliedIrrigation,
             agrifield=self.agrifield,
-            time=tz.localize(dt.datetime(2019, 10, 25, 6, 30)),
-            applied_water=58,
+            timestamp=tz.localize(dt.datetime(2019, 10, 25, 6, 30)),
+            supplied_water_volume=58,
         )
 
     def _login(self):
@@ -680,3 +680,20 @@ class IrrigationPerformanceCsvTestCase(DataTestCase):
         )
         value = float(m.group(1))
         self.assertAlmostEqual(value, 125.20833333)
+
+
+class CreateAppliedIrrigationViewTestCase(TestCase):
+    @patch("aira.models.Agrifield.get_applied_irrigation_defaults",)
+    def test_applied_irrigation_defaults(self, mock):
+        owner = User.objects.create_user(username="bob", password="topsecret")
+        self.client.login(username="bob", password="topsecret")
+        agrifield = mommy.make(Agrifield, owner=owner)
+
+        mock.return_value = {
+            "supplied_water_volume": 1337,
+            "irrigation_type": "HELLO_WORLD",
+        }
+        response = self.client.get(f"/create_irrigationlog/{agrifield.id}/")
+        initials = response.context["form"].initial
+        self.assertEqual(initials["supplied_water_volume"], 1337)
+        self.assertEqual(initials["irrigation_type"], "HELLO_WORLD")

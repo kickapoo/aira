@@ -6,7 +6,7 @@ from captcha.fields import CaptchaField
 from geowidgets import LatLonField
 from registration.forms import RegistrationForm
 
-from .models import Agrifield, IrrigationLog, Profile
+from .models import Agrifield, AppliedIrrigation, Profile
 
 
 class ProfileForm(forms.ModelForm):
@@ -85,14 +85,52 @@ class AgrifieldForm(forms.ModelForm):
             self.add_error("is_virtual", msg)
 
 
-class IrrigationlogForm(forms.ModelForm):
+class AppliedIrrigationForm(forms.ModelForm):
+    LABLED_IRRIGATION_TYPES = [
+        ("VOLUME_OF_WATER", _("I want to specify the volume of water")),
+        ("DURATION_OF_IRRIGATION", _("I want to specify the duration of irrigation")),
+        ("HYDROMETER_READINGS", _("I want to register the hydrometer readings")),
+    ]
+    irrigation_type = forms.ChoiceField(
+        widget=forms.RadioSelect(), choices=LABLED_IRRIGATION_TYPES, label=""
+    )
+
     class Meta:
-        model = IrrigationLog
+        model = AppliedIrrigation
         exclude = ("agrifield",)
         labels = {
-            "time": _("Date and time (YYYY-MM-DD HH:mm:ss) "),
-            "applied_water": _("Applied irrigation water"),
+            "timestamp": _("Date and time (YYYY-MM-DD HH:mm:ss) "),
+            "supplied_water_volume": _("Volume of applied irrigation water (m³)"),
+            "supplied_duration": _("Duration of irrigation"),
+            "supplied_flow_rate": _("Water flow during irrigation (m³/h)"),
+            "hydrometer_reading_start": _("Hydrometer reading at start of irrigation"),
+            "hydrometer_reading_end": _("Hydrometer reading at end of irrigation"),
+            "hydrometer_water_percentage": _(
+                "Percentage of water that corresponds to this field"
+            ),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        irrigation_type = cleaned_data.get("irrigation_type")
+        if irrigation_type == "VOLUME_OF_WATER":
+            self._validate_required(["supplied_water_volume"])
+        elif irrigation_type == "DURATION_OF_IRRIGATION":
+            self._validate_required(["supplied_duration", "supplied_flow_rate"])
+        elif irrigation_type == "HYDROMETER_READINGS":
+            fields = [
+                "hydrometer_reading_start",
+                "hydrometer_reading_end",
+                "hydrometer_water_percentage",
+            ]
+            self._validate_required(fields)
+        return super().clean()
+
+    def _validate_required(self, fields=[]):
+        # Used to require fields dynamically (depending on other submitted values)
+        for field in fields:
+            if self.cleaned_data.get(field, None) is None:
+                self.add_error(field, _("This field is required."))
 
 
 class MyRegistrationForm(RegistrationForm):

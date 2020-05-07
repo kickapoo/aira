@@ -12,7 +12,7 @@ from django.test import TestCase, override_settings
 
 from model_mommy import mommy
 
-from aira.models import Agrifield, CropType, IrrigationType, Profile
+from aira.models import Agrifield, AppliedIrrigation, CropType, IrrigationType, Profile
 from aira.tests import RandomMediaRootMixin
 
 
@@ -179,3 +179,134 @@ class CropTypeMostRecentPlantingDateTestCase(TestCase):
         self.assertEqual(
             self.crop_type.most_recent_planting_date, dt.datetime(2018, 3, 15)
         )
+
+
+class AgrifieldLatestAppliedIrrigationDefaultsTestCase(TestCase):
+    def setUp(self):
+        self.agrifield = mommy.make(Agrifield)
+
+    def test_no_applied_irrigations_present(self):
+        defaults = self.agrifield.get_applied_irrigation_defaults()
+        self.assertEqual(defaults, {"irrigation_type": "VOLUME_OF_WATER"})
+
+    def test_default_irrigation_type_and_all_values_present(self):
+        latest = dt.datetime(2020, 3, 1, 0, 0, tzinfo=dt.timezone.utc)
+
+        # To assert which instance is the value coming from, a simple 2 digits scheme
+        # is followed, first digit is the field id, the second is a bit (T/F)
+        mommy.make(
+            AppliedIrrigation,
+            agrifield=self.agrifield,
+            irrigation_type="VOLUME_OF_WATER",
+            timestamp=latest - dt.timedelta(days=1),
+            supplied_water_volume=11,
+            supplied_duration=20,
+            supplied_flow_rate=30,
+            hydrometer_reading_end=40,
+            hydrometer_water_percentage=50,
+            hydrometer_reading_start=60,
+        )
+        mommy.make(
+            AppliedIrrigation,
+            agrifield=self.agrifield,
+            irrigation_type="HYDROMETER_READINGS",
+            timestamp=latest,
+            supplied_water_volume=10,
+            supplied_duration=20,
+            supplied_flow_rate=30,
+            hydrometer_reading_end=41,
+            hydrometer_water_percentage=51,
+            hydrometer_reading_start=61,  # Won't be used anyway (end=start)
+        )
+        mommy.make(
+            AppliedIrrigation,
+            agrifield=self.agrifield,
+            irrigation_type="DURATION_OF_IRRIGATION",
+            timestamp=latest - dt.timedelta(days=5),
+            supplied_water_volume=10,
+            supplied_duration=21,
+            supplied_flow_rate=31,
+            hydrometer_reading_end=40,
+            hydrometer_water_percentage=50,
+            hydrometer_reading_start=60,
+        )
+        defaults = self.agrifield.get_applied_irrigation_defaults()
+        expected_defaults = {
+            "irrigation_type": "HYDROMETER_READINGS",
+            "supplied_water_volume": 11.0,
+            "supplied_duration": 21,
+            "supplied_flow_rate": 31.0,
+            "hydrometer_reading_start": 41.0,
+            "hydrometer_water_percentage": 51,
+        }
+        self.assertEqual(defaults, expected_defaults)
+
+    def test_only_water_volume_default_present(self):
+        mommy.make(
+            AppliedIrrigation,
+            agrifield=self.agrifield,
+            irrigation_type="VOLUME_OF_WATER",
+            timestamp=dt.datetime(2020, 3, 1, 0, 0, tzinfo=dt.timezone.utc),
+            supplied_water_volume=1337,
+        )
+        defaults = self.agrifield.get_applied_irrigation_defaults()
+        expected_defaults = {
+            "irrigation_type": "VOLUME_OF_WATER",
+            "supplied_water_volume": 1337,
+        }
+        self.assertEqual(defaults, expected_defaults)
+
+
+class AppliedIrrigationTestCase(TestCase):
+    def setUp(self):
+        # Populate the rest to assure that the correct value is the one
+        # being used for calculation according to 'irrigation_type'
+        self.defaults = {
+            "supplied_water_volume": 100,
+            "supplied_duration": 100,
+            "supplied_flow_rate": 100,
+            "hydrometer_reading_start": 100,
+            "hydrometer_reading_end": 100,
+            "hydrometer_water_percentage": 100,
+        }
+
+    def test_calculated_volume_supplied_water_volume(self):
+        kwargs = {
+            **self.defaults,
+            "supplied_water_volume": 1337,
+        }
+        irrigation = mommy.make(
+            AppliedIrrigation, irrigation_type="VOLUME_OF_WATER", **kwargs,
+        )
+        self.assertEqual(irrigation.volume, 1337)
+
+    def test_calculated_volume_supplied_duration(self):
+        kwargs = {
+            **self.defaults,
+            "supplied_duration": 1337 * 60 * 2,
+            "supplied_flow_rate": 0.5,
+        }
+        irrigation = mommy.make(
+            AppliedIrrigation, irrigation_type="DURATION_OF_IRRIGATION", **kwargs
+        )
+        self.assertEqual(irrigation.volume, 1337)
+
+    def test_calculated_volume_supplied_hydrometer_readings(self):
+        kwargs = {
+            **self.defaults,
+            "hydrometer_reading_start": 1000,
+            "hydrometer_reading_end": 1000 + 1337 * 2,
+            "hydrometer_water_percentage": 50,
+        }
+        irrigation = mommy.make(
+            AppliedIrrigation, irrigation_type="HYDROMETER_READINGS", **kwargs
+        )
+        self.assertEqual(irrigation.volume, 1337)
+
+    def test_calculated_volume_with_no_values_recorded(self):
+        types = ["VOLUME_OF_WATER", "DURATION_OF_IRRIGATION", "HYDROMETER_READINGS"]
+        for ir_type in types:
+            irrigation = mommy.make(
+                AppliedIrrigation, irrigation_type="DURATION_OF_IRRIGATION",
+            )
+            self.assertIsNone(irrigation.volume)
