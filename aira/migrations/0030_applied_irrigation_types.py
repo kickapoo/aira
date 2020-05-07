@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="appliedirrigation",
-            name="hydrometer_reading_end",
+            name="flowmeter_reading_end",
             field=models.FloatField(
                 blank=True,
                 null=True,
@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="appliedirrigation",
-            name="hydrometer_reading_start",
+            name="flowmeter_reading_start",
             field=models.FloatField(
                 blank=True,
                 null=True,
@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="appliedirrigation",
-            name="hydrometer_water_percentage",
+            name="flowmeter_water_percentage",
             field=models.PositiveSmallIntegerField(
                 blank=True,
                 default=100,
@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
                 choices=[
                     ("VOLUME_OF_WATER", "Volume of water"),
                     ("DURATION_OF_IRRIGATION", "Duration of irrigation"),
-                    ("HYDROMETER_READINGS", "Hydrometer readings"),
+                    ("FLOWMETER_READINGS", "Flowmeter readings"),
                 ],
                 default="VOLUME_OF_WATER",
                 max_length=50,

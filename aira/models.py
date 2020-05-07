@@ -366,7 +366,7 @@ class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
             **self._get_applied_irrigation_default_type(),
             **self._get_applied_irrigation_defaults_for_volume(),
             **self._get_applied_irrigation_defaults_for_duration(),
-            **self._get_applied_irrigation_defaults_for_hydrometer(),
+            **self._get_applied_irrigation_defaults_for_flowmeter(),
         }
 
     def _get_applied_irrigation_default_type(self):
@@ -401,14 +401,14 @@ class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
         except AppliedIrrigation.DoesNotExist:
             return {}
 
-    def _get_applied_irrigation_defaults_for_hydrometer(self):
+    def _get_applied_irrigation_defaults_for_flowmeter(self):
         try:
             hydro_irr = self.appliedirrigation_set.filter(
-                irrigation_type="HYDROMETER_READINGS"
+                irrigation_type="FLOWMETER_READINGS"
             ).latest()
             return {
-                "hydrometer_water_percentage": hydro_irr.hydrometer_water_percentage,
-                "hydrometer_reading_start": hydro_irr.hydrometer_reading_end,
+                "flowmeter_water_percentage": hydro_irr.flowmeter_water_percentage,
+                "flowmeter_reading_start": hydro_irr.flowmeter_reading_end,
             }
         except AppliedIrrigation.DoesNotExist:
             return {}
@@ -419,7 +419,7 @@ class AppliedIrrigation(models.Model):
     IRRIGATION_TYPES = [
         ("VOLUME_OF_WATER", _("Volume of water")),
         ("DURATION_OF_IRRIGATION", _("Duration of irrigation")),
-        ("HYDROMETER_READINGS", _("Hydrometer readings")),
+        ("FLOWMETER_READINGS", _("Flowmeter readings")),
     ]
 
     irrigation_type = models.CharField(
@@ -439,13 +439,13 @@ class AppliedIrrigation(models.Model):
         "Flow rate (m3/h)", null=True, blank=True, validators=[MinValueValidator(0.0)]
     )
 
-    hydrometer_reading_start = models.FloatField(
+    flowmeter_reading_start = models.FloatField(
         null=True, blank=True, validators=[MinValueValidator(0.0)]
     )
-    hydrometer_reading_end = models.FloatField(
+    flowmeter_reading_end = models.FloatField(
         null=True, blank=True, validators=[MinValueValidator(0.0)]
     )
-    hydrometer_water_percentage = models.PositiveSmallIntegerField(
+    flowmeter_water_percentage = models.PositiveSmallIntegerField(
         null=True,
         blank=True,
         validators=[MinValueValidator(1), MaxValueValidator(100)],
@@ -461,9 +461,9 @@ class AppliedIrrigation(models.Model):
             # Wrapped in a try-except in case of null values exceptions
             if self.irrigation_type == "DURATION_OF_IRRIGATION":
                 return (self.supplied_duration / 60) * self.supplied_flow_rate
-            elif self.irrigation_type == "HYDROMETER_READINGS":
-                return (self.hydrometer_reading_end - self.hydrometer_reading_start) * (
-                    self.hydrometer_water_percentage / 100
+            elif self.irrigation_type == "FLOWMETER_READINGS":
+                return (self.flowmeter_reading_end - self.flowmeter_reading_start) * (
+                    self.flowmeter_water_percentage / 100
                 )
         except TypeError:
             return None

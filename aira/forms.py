@@ -89,7 +89,7 @@ class AppliedIrrigationForm(forms.ModelForm):
     LABLED_IRRIGATION_TYPES = [
         ("VOLUME_OF_WATER", _("I want to specify the volume of water")),
         ("DURATION_OF_IRRIGATION", _("I want to specify the duration of irrigation")),
-        ("HYDROMETER_READINGS", _("I want to register the hydrometer readings")),
+        ("FLOWMETER_READINGS", _("I want to register the flowmeter readings")),
     ]
     irrigation_type = forms.ChoiceField(
         widget=forms.RadioSelect(), choices=LABLED_IRRIGATION_TYPES, label=""
@@ -103,9 +103,9 @@ class AppliedIrrigationForm(forms.ModelForm):
             "supplied_water_volume": _("Volume of applied irrigation water (m³)"),
             "supplied_duration": _("Duration of irrigation (min)"),
             "supplied_flow_rate": _("Flow rate (m³/h)"),
-            "hydrometer_reading_start": _("Hydrometer reading at start of irrigation"),
-            "hydrometer_reading_end": _("Hydrometer reading at end of irrigation"),
-            "hydrometer_water_percentage": _(
+            "flowmeter_reading_start": _("Flowmeter reading at start of irrigation"),
+            "flowmeter_reading_end": _("Flowmeter reading at end of irrigation"),
+            "flowmeter_water_percentage": _(
                 "Percentage of water that corresponds to this field (%)"
             ),
         }
@@ -117,11 +117,11 @@ class AppliedIrrigationForm(forms.ModelForm):
             self._validate_required(["supplied_water_volume"])
         elif irrigation_type == "DURATION_OF_IRRIGATION":
             self._validate_required(["supplied_duration", "supplied_flow_rate"])
-        elif irrigation_type == "HYDROMETER_READINGS":
+        elif irrigation_type == "FLOWMETER_READINGS":
             fields = [
-                "hydrometer_reading_start",
-                "hydrometer_reading_end",
-                "hydrometer_water_percentage",
+                "flowmeter_reading_start",
+                "flowmeter_reading_end",
+                "flowmeter_water_percentage",
             ]
             self._validate_required(fields)
         return super().clean()

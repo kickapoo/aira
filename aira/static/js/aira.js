@@ -502,10 +502,10 @@ aira.showAndHideIrrigationFieldsAccordingToType = function () {
         const fieldsPerType = {
             VOLUME_OF_WATER: ["supplied_water_volume"],
             DURATION_OF_IRRIGATION: ["supplied_duration", "supplied_flow_rate"],
-            HYDROMETER_READINGS: [
-                "hydrometer_reading_start",
-                "hydrometer_reading_end",
-                "hydrometer_water_percentage",
+            FLOWMETER_READINGS: [
+                "flowmeter_reading_start",
+                "flowmeter_reading_end",
+                "flowmeter_water_percentage",
             ],
         };
         for (const type in fieldsPerType) {

@@ -202,21 +202,21 @@ class AgrifieldLatestAppliedIrrigationDefaultsTestCase(TestCase):
             supplied_water_volume=11,
             supplied_duration=20,
             supplied_flow_rate=30,
-            hydrometer_reading_end=40,
-            hydrometer_water_percentage=50,
-            hydrometer_reading_start=60,
+            flowmeter_reading_end=40,
+            flowmeter_water_percentage=50,
+            flowmeter_reading_start=60,
         )
         mommy.make(
             AppliedIrrigation,
             agrifield=self.agrifield,
-            irrigation_type="HYDROMETER_READINGS",
+            irrigation_type="FLOWMETER_READINGS",
             timestamp=latest,
             supplied_water_volume=10,
             supplied_duration=20,
             supplied_flow_rate=30,
-            hydrometer_reading_end=41,
-            hydrometer_water_percentage=51,
-            hydrometer_reading_start=61,  # Won't be used anyway (end=start)
+            flowmeter_reading_end=41,
+            flowmeter_water_percentage=51,
+            flowmeter_reading_start=61,  # Won't be used anyway (end=start)
         )
         mommy.make(
             AppliedIrrigation,
@@ -226,18 +226,18 @@ class AgrifieldLatestAppliedIrrigationDefaultsTestCase(TestCase):
             supplied_water_volume=10,
             supplied_duration=21,
             supplied_flow_rate=31,
-            hydrometer_reading_end=40,
-            hydrometer_water_percentage=50,
-            hydrometer_reading_start=60,
+            flowmeter_reading_end=40,
+            flowmeter_water_percentage=50,
+            flowmeter_reading_start=60,
         )
         defaults = self.agrifield.get_applied_irrigation_defaults()
         expected_defaults = {
-            "irrigation_type": "HYDROMETER_READINGS",
+            "irrigation_type": "FLOWMETER_READINGS",
             "supplied_water_volume": 11.0,
             "supplied_duration": 21,
             "supplied_flow_rate": 31.0,
-            "hydrometer_reading_start": 41.0,
-            "hydrometer_water_percentage": 51,
+            "flowmeter_reading_start": 41.0,
+            "flowmeter_water_percentage": 51,
         }
         self.assertEqual(defaults, expected_defaults)
 
@@ -265,9 +265,9 @@ class AppliedIrrigationTestCase(TestCase):
             "supplied_water_volume": 100,
             "supplied_duration": 100,
             "supplied_flow_rate": 100,
-            "hydrometer_reading_start": 100,
-            "hydrometer_reading_end": 100,
-            "hydrometer_water_percentage": 100,
+            "flowmeter_reading_start": 100,
+            "flowmeter_reading_end": 100,
+            "flowmeter_water_percentage": 100,
         }
 
     def test_calculated_volume_supplied_water_volume(self):
@@ -291,20 +291,20 @@ class AppliedIrrigationTestCase(TestCase):
         )
         self.assertEqual(irrigation.volume, 1337)
 
-    def test_calculated_volume_supplied_hydrometer_readings(self):
+    def test_calculated_volume_supplied_flowmeter_readings(self):
         kwargs = {
             **self.defaults,
-            "hydrometer_reading_start": 1000,
-            "hydrometer_reading_end": 1000 + 1337 * 2,
-            "hydrometer_water_percentage": 50,
+            "flowmeter_reading_start": 1000,
+            "flowmeter_reading_end": 1000 + 1337 * 2,
+            "flowmeter_water_percentage": 50,
         }
         irrigation = mommy.make(
-            AppliedIrrigation, irrigation_type="HYDROMETER_READINGS", **kwargs
+            AppliedIrrigation, irrigation_type="FLOWMETER_READINGS", **kwargs
         )
         self.assertEqual(irrigation.volume, 1337)
 
     def test_calculated_volume_with_no_values_recorded(self):
-        types = ["VOLUME_OF_WATER", "DURATION_OF_IRRIGATION", "HYDROMETER_READINGS"]
+        types = ["VOLUME_OF_WATER", "DURATION_OF_IRRIGATION", "FLOWMETER_READINGS"]
         for ir_type in types:
             irrigation = mommy.make(
                 AppliedIrrigation, irrigation_type="DURATION_OF_IRRIGATION",

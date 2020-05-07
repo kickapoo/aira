@@ -140,7 +140,7 @@ msgid "I want to specify the duration of irrigation"
 msgstr "Θέλω να προσδιορίσω τη διάρκεια άρδευσης"
 
 #: aira/forms.py:92
-msgid "I want to register the hydrometer readings"
+msgid "I want to register the flowmeter readings"
 msgstr "Θέλω να καταχωρίσω ενδείξεις υδρομέτρου"
 
 #: aira/forms.py:102
@@ -160,11 +160,11 @@ msgid "Flow rate (m³/h)"
 msgstr "Παροχή (m³/h)"
 
 #: aira/forms.py:106
-msgid "Hydrometer reading at start of irrigation"
+msgid "Flowmeter reading at start of irrigation"
 msgstr "Ένδειξη υδρομέτρου στην αρχή της άρδευσης"
 
 #: aira/forms.py:107
-msgid "Hydrometer reading at end of irrigation"
+msgid "Flowmeter reading at end of irrigation"
 msgstr "Ένδειξη υδρομέτρου στο τέλος της άρδευσης"
 
 #: aira/forms.py:109
@@ -234,7 +234,7 @@ msgid "Duration of irrigation"
 msgstr "Διάρκεια άρδευσης"
 
 #: aira/models.py:422
-msgid "Hydrometer readings"
+msgid "Flowmeter readings"
 msgstr "Ενδείξεις υδρομέτρου"
 
 #: aira/templates/404.html:5 aira/templates/404.html:9
