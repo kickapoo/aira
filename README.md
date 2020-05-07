@@ -11,7 +11,7 @@ Aira: An Irrigation Advisor
 Aira is a web application that calculates soil water balance in order
 to provide the users with irrigation recommendation.
 
-Copyright (C) 2014-2019 TEI of Epirus
+Copyright (C) 2014-2020 TEI of Epirus
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

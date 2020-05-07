@@ -101,12 +101,12 @@ class AppliedIrrigationForm(forms.ModelForm):
         labels = {
             "timestamp": _("Date and time (YYYY-MM-DD HH:mm:ss) "),
             "supplied_water_volume": _("Volume of applied irrigation water (m³)"),
-            "supplied_duration": _("Duration of irrigation"),
-            "supplied_flow_rate": _("Water flow during irrigation (m³/h)"),
+            "supplied_duration": _("Duration of irrigation (min)"),
+            "supplied_flow_rate": _("Flow rate (m³/h)"),
             "hydrometer_reading_start": _("Hydrometer reading at start of irrigation"),
             "hydrometer_reading_end": _("Hydrometer reading at end of irrigation"),
             "hydrometer_water_percentage": _(
-                "Percentage of water that corresponds to this field"
+                "Percentage of water that corresponds to this field (%)"
             ),
         }
 

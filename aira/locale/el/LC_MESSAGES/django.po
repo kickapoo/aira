@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-02 10:48+0300\n"
+"POT-Creation-Date: 2020-05-07 11:30+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -133,51 +133,47 @@ msgstr "Πρέπει να καταχωρήσετε αν το αγροτεμάχ�
 
 #: aira/forms.py:90
 msgid "I want to specify the volume of water"
-msgstr ""
+msgstr "Θέλω να προσδιορίσω όγκο νερού άρδευσης"
 
 #: aira/forms.py:91
 msgid "I want to specify the duration of irrigation"
-msgstr ""
+msgstr "Θέλω να προσδιορίσω τη διάρκεια άρδευσης"
 
 #: aira/forms.py:92
 msgid "I want to register the hydrometer readings"
-msgstr ""
+msgstr "Θέλω να καταχωρίσω ενδείξεις υδρομέτρου"
 
 #: aira/forms.py:102
 msgid "Date and time (YYYY-MM-DD HH:mm:ss) "
 msgstr "Ημερομηνία και ώρα (ΕΕΕΕ-ΜΜ-ΗΗ ΩΩ:λλ:δδ)"
 
 #: aira/forms.py:103
-#, fuzzy
-#| msgid "Total applied irrigation water amount"
 msgid "Volume of applied irrigation water (m³)"
-msgstr "Σύνολο αρδεύσεων που πραγματοποιήθηκαν"
+msgstr "Όγκος νερού που χορηγήθηκε (m³)"
 
-#: aira/forms.py:104 aira/models.py:421
-#, fuzzy
-#| msgid "List of irrigations"
-msgid "Duration of irrigation"
-msgstr "Κατάλογος αρδεύσεων"
+#: aira/forms.py:104
+msgid "Duration of irrigation (min)"
+msgstr "Διάρκεια άρδευσης (λεπτά)"
 
 #: aira/forms.py:105
-msgid "Water flow during irrigation (m³/h)"
-msgstr ""
+msgid "Flow rate (m³/h)"
+msgstr "Παροχή (m³/h)"
 
 #: aira/forms.py:106
 msgid "Hydrometer reading at start of irrigation"
-msgstr ""
+msgstr "Ένδειξη υδρομέτρου στην αρχή της άρδευσης"
 
 #: aira/forms.py:107
 msgid "Hydrometer reading at end of irrigation"
-msgstr ""
+msgstr "Ένδειξη υδρομέτρου στο τέλος της άρδευσης"
 
 #: aira/forms.py:109
-msgid "Percentage of water that corresponds to this field"
-msgstr ""
+msgid "Percentage of water that corresponds to this field (%)"
+msgstr "Ποσοστό νερού που αντιστοιχεί σ' αυτό το αγροτεμάχιο (%)"
 
 #: aira/forms.py:133
 msgid "This field is required."
-msgstr ""
+msgstr "Αυτό το πεδίο πρέπει να έχει τιμή."
 
 #: aira/forms.py:142
 msgid "Are you human?"
@@ -230,14 +226,16 @@ msgid "No"
 msgstr "Όχι"
 
 #: aira/models.py:420
-#, fuzzy
-#| msgid "Number of emitters"
 msgid "Volume of water"
-msgstr "Αριθμός εξόδων"
+msgstr "Όγκος νερού"
+
+#: aira/models.py:421
+msgid "Duration of irrigation"
+msgstr "Διάρκεια άρδευσης"
 
 #: aira/models.py:422
 msgid "Hydrometer readings"
-msgstr ""
+msgstr "Ενδείξεις υδρομέτρου"
 
 #: aira/templates/404.html:5 aira/templates/404.html:9
 msgid "Page not found"
@@ -325,12 +323,6 @@ msgid "Add field"
 msgstr "Πρόσθεση αγροτεμαχίου"
 
 #: aira/templates/aira/appliedirrigation/confirm_delete.html:13
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "            Are you sure you want to delete the irrigation of "
-#| "%(irrlogdate)s?\n"
-#| "          "
 msgid ""
 "\n"
 "            Are you sure you want to delete the irrigation of "
@@ -338,7 +330,9 @@ msgid ""
 "          "
 msgstr ""
 "\n"
-"Θέλετε πράγματι να διαγράψετε την άρδευση που έγινε στις %(irrlogdate)s;"
+"Θέλετε πράγματι να διαγράψετε την άρδευση που έγινε στις "
+"%(applied_irrigation_time)s;\n"
+"          "
 
 #: aira/templates/aira/appliedirrigation/create.html:11
 msgid "Add irrigation"
@@ -851,11 +845,11 @@ msgstr "Το κλειδί ενεργοποίησης είναι λανθασμέ
 
 #: aira/templates/registration/activation_complete.html:4
 msgid "Account activation complete"
-msgstr "Η ενεργοποίηση του λογαρισμού ολοκληρώθηκε"
+msgstr "Η ενεργοποίηση του λογαριασμού ολοκληρώθηκε"
 
 #: aira/templates/registration/activation_complete.html:8
 msgid "Account successfully activated"
-msgstr "Ο λογαρισμός ενεργοποιήθηκε με επιτυχία"
+msgstr "Ο λογαριασμός ενεργοποιήθηκε με επιτυχία"
 
 #: aira/templates/registration/login.html:17
 msgid "Wrong username or password."
@@ -918,6 +912,3 @@ msgstr "Εγγραφή"
 #: aira/views.py:56
 msgid "N/A"
 msgstr ""
-
-#~ msgid "Applied irrigation water"
-#~ msgstr "Δόση άρδευσης"
