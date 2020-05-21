@@ -11,7 +11,7 @@ from celery.signals import task_failure
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "aira_project.settings.local")
 
 app = Celery("aira")
-app.config_from_object("django.conf:settings")
+app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
 
 
