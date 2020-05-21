@@ -169,7 +169,7 @@ aira.mapModule = (function namespace() {
 
     var addHellenicCadastreBaseLayer = function(map) {
         var ktimatologioMap = new OpenLayers.Layer.WMS("Hellenic Cadastre",
-                   "http://gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
+                   "//gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx",
                      {   layers: 'KTBASEMAP', transparent: false},
                      {   isBaseLayer: true,
                          projection: new OpenLayers.Projection("EPSG:900913"),
