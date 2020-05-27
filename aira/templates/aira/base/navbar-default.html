@@ -11,13 +11,11 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <div class="navbar-brand" style="min-height: 60px;width: 27em; font-size: 10pt; padding: 10px 10px">
-          {% block navbar_brand %}
-            <a style="max-width:100px; margin-top: -13px;" class="navbar-brand" href="{% url 'welcome' %}">
-              <img src="{% static 'img/aira-logo.png' %}" width="40" height="45">
-            </a>
-          {% endblock %}
-        </div>
+        {% block navbar_brand %}
+          <a style="max-width:100px; margin-top: -13px;" class="navbar-brand" href="{% url 'welcome' %}">
+            <img src="{% static 'img/aira-logo.png' %}" width="40" height="45">
+          </a>
+        {% endblock %}
       </div>
       {% if user.is_authenticated %}
         <div class="navbar-collapse collapse">
