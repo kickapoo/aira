@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-07 11:30+0300\n"
+"POT-Creation-Date: 2020-06-15 13:15+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -168,8 +168,8 @@ msgid "Flowmeter reading at end of irrigation"
 msgstr "Ένδειξη υδρομέτρου στο τέλος της άρδευσης"
 
 #: aira/forms.py:109
-msgid "Percentage of water that corresponds to this field (%)"
-msgstr "Ποσοστό νερού που αντιστοιχεί σ' αυτό το αγροτεμάχιο (%)"
+msgid "Percentage of water that corresponds to the flowmeter (%)"
+msgstr "Ποσοστό νερού που αντιστοιχεί στο υδρόμετρο (%)"
 
 #: aira/forms.py:133
 msgid "This field is required."
@@ -323,6 +323,7 @@ msgid "Add field"
 msgstr "Πρόσθεση αγροτεμαχίου"
 
 #: aira/templates/aira/appliedirrigation/confirm_delete.html:13
+#, python-format
 msgid ""
 "\n"
 "            Are you sure you want to delete the irrigation of "
@@ -367,36 +368,36 @@ msgstr "Μετάβαση"
 msgid "demo"
 msgstr "Δοκιμαστική χρήση"
 
-#: aira/templates/aira/base/navbar-default.html:25
+#: aira/templates/aira/base/navbar-default.html:23
 #: aira/templates/aira/home/main-default.html:7
 #, python-format
 msgid "%(username)s home"
 msgstr "Αρχική %(username)s"
 
-#: aira/templates/aira/base/navbar-default.html:28
+#: aira/templates/aira/base/navbar-default.html:26
 msgid "Management"
 msgstr "Διαχείριση"
 
-#: aira/templates/aira/base/navbar-default.html:31
+#: aira/templates/aira/base/navbar-default.html:29
 msgid "My fields"
 msgstr "Τα αγροτεμάχιά μου"
 
+#: aira/templates/aira/base/navbar-default.html:32
 #: aira/templates/aira/base/navbar-default.html:34
-#: aira/templates/aira/base/navbar-default.html:36
 msgid "Account"
 msgstr "Λογαριασμός"
 
-#: aira/templates/aira/base/navbar-default.html:38
+#: aira/templates/aira/base/navbar-default.html:36
 msgid "Tools"
 msgstr "Εργαλεία"
 
-#: aira/templates/aira/base/navbar-default.html:40
+#: aira/templates/aira/base/navbar-default.html:38
 #: aira/templates/registration/logout.html:5
 #: aira/templates/registration/logout.html:8
 msgid "Logout"
 msgstr "Έξοδος"
 
-#: aira/templates/aira/base/navbar-default.html:48
+#: aira/templates/aira/base/navbar-default.html:46
 #: aira/templates/registration/activation_complete.html:11
 #: aira/templates/registration/login.html:5
 #: aira/templates/registration/login.html:11
@@ -406,16 +407,16 @@ msgstr "Έξοδος"
 msgid "Login"
 msgstr "Είσοδος"
 
-#: aira/templates/aira/base/navbar-default.html:49
+#: aira/templates/aira/base/navbar-default.html:47
 #: aira/templates/registration/registration_form.html:23
 msgid "Register"
 msgstr "Εγγραφή"
 
-#: aira/templates/aira/base/navbar-default.html:50
+#: aira/templates/aira/base/navbar-default.html:48
 msgid "Lost password?"
 msgstr "Ξεχάσατε το συνθηματικό;"
 
-#: aira/templates/aira/base/navbar-default.html:53
+#: aira/templates/aira/base/navbar-default.html:51
 msgid "Try"
 msgstr "Δοκιμή"
 
