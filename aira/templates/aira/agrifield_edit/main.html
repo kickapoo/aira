@@ -28,9 +28,9 @@
 
 {% block extrajs %}
   <script type="text/javascript">
+    aira.defaultBaseLayer = "Google Satellite";
     aira.agrifieldEditMap.create();
-    aira.agrifieldEditMap.olmap.setBaseLayer(aira.agrifieldEditMap.olmap.getLayersByName('Google Satellite')[0]);
-    aira.agrifieldEditMap.addCoveredAreaLayer(map, "{% static 'kml/covered_area.kml' %}");
+    aira.agrifieldEditMap.addCoveredAreaLayer("{% static 'kml/covered_area.kml' %}");
     {% if object %}
       aira.agrifields = [
         {
@@ -39,15 +39,11 @@
           coords: [{{ object.location.coords|cut:"("|cut:")" }}],
         }
       ];
-      var agrifields_layer = aira.agrifieldEditMap.addAgrifields(
-        aira.agrifields, "{{ object.name }}"
-      );
+      aira.agrifieldEditMap.addAgrifields(aira.agrifields, "{{ object.name }}");
     {% else %}
-      var agrifields_layer = aira.agrifieldEditMap.addAgrifields(
-        map, [], "Add new field"
-      );
+      aira.agrifieldEditMap.addAgrifields(map, [], "Add new field");
     {% endif %}
-    aira.agrifieldEditMap.registerClickEvent(agrifields_layer);
+    aira.agrifieldEditMap.registerClickEvent();
     aira.agrifieldEditDocumentReady();
   </script>
 {% endblock %}

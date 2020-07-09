@@ -31,75 +31,59 @@ aira.setupDateTimePickerForAppliedIrrigation = () => {
 
 aira.map = {
   create() {
-    this.olmap = new OpenLayers.Map('map',
-      {
-        units: 'm',
-        displayProjection: 'EPSG:4326',
-        controls: [new OpenLayers.Control.LayerSwitcher(),
-          new OpenLayers.Control.Navigation(),
-          new OpenLayers.Control.Zoom(),
-          new OpenLayers.Control.MousePosition(),
-          new OpenLayers.Control.ScaleLine()],
-      });
-    this.addBaseLayers();
-    this.olmap.setCenter(
-      new OpenLayers.LonLat(...aira.mapDefaultCenter).transform('EPSG:4326', 'EPSG:3857'),
-      aira.mapDefaultZoom,
-    );
+    this.leafletMap = L.map('map');
+    this.getBaseLayers();
+    this.showDefaultBaseLayer();
+    this.addMapControls();
+    this.centerMap();
   },
 
-  addBaseLayers() {
-    this.addOpenCycleMapBaseLayer();
-    this.addHellenicCadastreBaseLayer();
-    this.addGoogleSatelliteBaseLayer();
+  getBaseLayers() {
+    this.baseLayers = {
+      'Open Cycle Map': this.getOpenCycleMapBaseLayer(),
+      'Hellenic Cadastre': this.getHellenicCadastreBaseLayer(),
+      'Google Satellite': this.getGoogleSatelliteBaseLayer(),
+    };
   },
 
-  addOpenCycleMapBaseLayer() {
-    const openCycleMap = new OpenLayers.Layer.OSM(
-      'Open Cycle Map',
-      [`https://a.tile.thunderforest.com/cycle/\${z}/\${x}/\${y}.png?${aira.thunderforestApiKeyQueryElement}`,
-        `https://b.tile.thunderforest.com/cycle/\${z}/\${x}/\${y}.png?${aira.thunderforestApiKeyQueryElement}`,
-        `https://c.tile.thunderforest.com/cycle/\${z}/\${x}/\${y}.png?${aira.thunderforestApiKeyQueryElement}`],
+  showDefaultBaseLayer() {
+    this.baseLayers[aira.defaultBaseLayer].addTo(this.leafletMap);
+  },
+
+  addMapControls() {
+    L.control.scale().addTo(this.leafletMap);
+    L.control.layers(this.baseLayers).addTo(this.leafletMap);
+  },
+
+  centerMap() {
+    const [lambda, phi] = aira.mapDefaultCenter;
+    this.leafletMap.setView([phi, lambda], aira.mapDefaultZoom);
+  },
+
+  getOpenCycleMapBaseLayer() {
+    return L.tileLayer(
+      `https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?${aira.thunderforestApiKeyQueryElement}`,
       {
-        isBaseLayer: true,
-        projection: 'EPSG:3857',
+        attribution: (
+          'Map data © <a href="https://www.openstreetmap.org/">'
+          + 'OpenStreetMap</a> contributors, '
+          + '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+        ),
+        maxZoom: 18,
       },
     );
-    this.olmap.addLayer(openCycleMap);
   },
 
-  addHellenicCadastreBaseLayer() {
-    const ktimatologioMap = new OpenLayers.Layer.WMS('Hellenic Cadastre',
-      '//gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx',
-      { layers: 'KTBASEMAP', transparent: false },
-      {
-        isBaseLayer: true,
-        projection: new OpenLayers.Projection('EPSG:900913'),
-        iformat: 'image/png',
-      });
-    this.olmap.addLayer(ktimatologioMap);
+  getHellenicCadastreBaseLayer() {
+    return L.tileLayer.wms('//gis.ktimanet.gr/wms/wmsopen/wmsserver.aspx');
   },
 
-  addGoogleSatelliteBaseLayer() {
-    const googleMaps = new OpenLayers.Layer.Google(
-      'Google Satellite', { type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22 },
-    );
-    this.olmap.addLayer(googleMaps);
+  getGoogleSatelliteBaseLayer() {
+    return L.gridLayer.googleMutant({ type: 'satellite' });
   },
 
-  addCoveredAreaLayer(map, kmlUrl) {
-    const kml = new OpenLayers.Layer.Vector('Covered area',
-      {
-        strategies: [new OpenLayers.Strategy.Fixed()],
-        visibility: true,
-        protocol: new OpenLayers.Protocol.HTTP(
-          {
-            url: kmlUrl,
-            format: new OpenLayers.Format.KML(),
-          },
-        ),
-      });
-    this.olmap.addLayer(kml);
+  addCoveredAreaLayer(kmlUrl) {
+    new L.KML(kmlUrl).addTo(this.leafletMap);
   },
 };
 
@@ -110,87 +94,49 @@ Object.assign(aira.agrifieldsMap, {
     this.layerName = layerName;
     this.addAgrifieldsLayer();
     this.centerMapIfOnlyOneField();
-    this.addPopup();
-    return this.agrifieldsLayer;
   },
 
   addAgrifieldsLayer() {
-    this.agrifieldsLayer = new OpenLayers.Layer.Vector(this.layerName);
+    this.markers = [];
     this.agrifields.forEach((item) => {
-      const geometry = new OpenLayers.Geometry.Point(...item.coords)
-        .transform('EPSG:4326', 'EPSG:3857');
-      const attributes = {
-        description: `<a href="${item.url}">${item.name}</a>`,
-      };
-      const style = {
-        externalGraphic: 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/img/marker.png',
-        graphicHeight: 25,
-        graphicWidth: 21,
-        graphicXOffset: -12,
-        graphicYOffset: -25,
-      };
-      const feature = new OpenLayers.Feature.Vector(geometry, attributes, style);
-      this.agrifieldsLayer.addFeatures(feature);
+      const [lng, lat] = item.coords;
+      const marker = this.addMarker([lat, lng]);
+      marker.bindPopup(`<a href="${item.url}">${item.name}</a>`);
     });
-    this.olmap.addLayer(this.agrifieldsLayer);
+  },
+
+  addMarker(latlng) {
+    const marker = L.marker(latlng);
+    marker.addTo(this.leafletMap);
+    this.markers.push(marker);
+    return marker;
   },
 
   centerMapIfOnlyOneField() {
     if (this.agrifields.length === 1) {
-      this.olmap.setCenter(
-        new OpenLayers.LonLat(...this.agrifields[0].coords)
-          .transform('EPSG:4326', 'EPSG:3857'),
-        18,
-      );
+      const [lng, lat] = this.agrifields[0].coords;
+      this.leafletMap.setView([lat, lng], 18);
     }
   },
 
-  addPopup() {
-    this.agrifieldSelector = new OpenLayers.Control.SelectFeature(
-      this.agrifieldsLayer, { onSelect: this.createPopup, onUnselect: this.destroyPopup },
-    );
-    this.olmap.addControl(this.agrifieldSelector);
-    this.agrifieldSelector.activate();
-  },
-
-  createPopup(feature) {
-    this.popup = new OpenLayers.Popup.FramedCloud('pop',
-      feature.geometry.getBounds().getCenterLonLat(),
-      null,
-      `<div class="markerContent">${feature.attributes.description}</div>`,
-      null,
-      true,
-      (() => { aira.agrifieldsMap.agrifieldSelector.unselectAll(); }));
-    aira.agrifieldsMap.olmap.addPopup(this.popup);
-  },
-
-  destroyPopup(feature) { // eslint-disable-line no-unused-vars
-    this.popup.destroy();
-    this.popup = null;
-  },
 });
 
 aira.agrifieldEditMap = Object.create(aira.agrifieldsMap);
 Object.assign(aira.agrifieldEditMap, {
-  registerClickEvent(layer) {
-    this.olmap.events.register('click', this.olmap, (e) => {
-      const coords = this.olmap.getLonLatFromPixel(e.xy);
-      const geometry = new OpenLayers.Geometry.Point(coords.lon, coords.lat);
-      const attributes = { description: '' };
-      const style = {
-        externalGraphic: 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/img/marker.png',
-        graphicHeight: 25,
-        graphicWidth: 21,
-        graphicXOffset: -12,
-        graphicYOffset: -25,
-      };
-      const feature = new OpenLayers.Feature.Vector(geometry, attributes, style);
-      layer.removeAllFeatures();
-      layer.addFeatures(feature);
-      const lonlat = coords.transform('EPSG:3857', 'EPSG:4326');
-      document.getElementById('id_location_1').value = lonlat.lat.toFixed(5);
-      document.getElementById('id_location_0').value = lonlat.lon.toFixed(5);
-    });
+  registerClickEvent() {
+    this.leafletMap.on('click', this.moveAgrifield, this.leafletMap);
+  },
+
+  moveAgrifield(e) {
+    aira.agrifieldEditMap.removeAllMarkers();
+    aira.agrifieldEditMap.addMarker(e.latlng);
+    document.getElementById('id_location_1').value = e.latlng.lat.toFixed(5);
+    document.getElementById('id_location_0').value = e.latlng.lng.toFixed(5);
+  },
+
+  removeAllMarkers() {
+    this.markers.forEach((marker) => marker.removeFrom(this.leafletMap));
+    this.markers = [];
   },
 });
 
@@ -249,78 +195,51 @@ aira.meteoMapPanel = {
     });
   },
 
-  removeAllOverlayLayers() {
-    aira.map.olmap.layers.filter((layer) => !layer.isBaseLayer)
-      .forEach((layer) => aira.map.olmap.removeLayer(layer));
+  removeCurrentMeteoLayer() {
+    if (this.currentMeteoLayer) {
+      aira.map.leafletMap.removeLayer(this.currentMeteoLayer);
+      this.currentMeteoLayer = null;
+    }
   },
 
   updateMeteoLayer() {
-    document.getElementById('map').innerHtml = '';
-    this.removeAllOverlayLayers();
-    const meteoLayer = new OpenLayers.Layer.WMS(
-      this.meteoVarElement.value + this.activeDate,
-      this.mapserverUrl,
-      { layers: this.layersToRequest, format: 'image/png' },
-      { isBaseLayer: false, projection: 'EPSG:3857', opacity: 0.65 },
-    );
-    aira.map.olmap.addLayer(meteoLayer);
-
-    this.setupPopup();
-
-    const click = new OpenLayers.Control.Click();
-    aira.map.olmap.addControl(click);
-    click.activate();
-
-    aira.map.olmap.setCenter(
-      new OpenLayers.LonLat(...aira.mapDefaultCenter).transform('EPSG:4326', 'EPSG:3857'),
-      aira.mapDefaultZoom,
-    );
-  },
-
-  setupPopup() {
-    OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
-      defaultHandlerOptions: {
-        single: true,
-        double: false,
-        pixelTolerance: 0,
-        stopSingle: false,
-        stopDouble: false,
-      },
-      initialize: function initialize(options) {
-        this.handlerOptions = OpenLayers.Util.extend(
-          {}, this.defaultHandlerOptions,
-        );
-        OpenLayers.Control.prototype.initialize.apply(this, options);
-        this.handler = new OpenLayers.Handler.Click(
-          this, { click: this.trigger }, this.handlerOptions,
-        );
-      },
-      trigger: this.showPopup,
+    this.removeCurrentMeteoLayer();
+    this.currentMeteoLayer = L.tileLayer.wms(this.mapserverUrl, {
+      layers: this.layersToRequest,
+      format: 'image/png',
+      transparent: true,
+      opacity: 0.65,
     });
+    this.currentMeteoLayer.addTo(aira.map.leafletMap);
   },
 
   showPopup(e) {
-    const lonlat = aira.map.olmap.getLonLatFromPixel(e.xy);
+    const url = aira.meteoMapPanel.getFeatureInfoUrl(e.latlng);
     const xhr = new XMLHttpRequest();
     xhr.onload = () => {
       /* The test "length < 250" below is an ugly hack for not showing
-          * popups at a masked area. The masked area has the value nodata,
-          * which displays as a large negative number with very many digits.
-          */
+       * popups at a masked area. The masked area has the value nodata,
+       * which displays as a large negative number with very many digits.
+       */
       if (xhr.readyState === 4 && xhr.responseText.length < 250) {
-        aira.map.olmap.addPopup(new OpenLayers.Popup.FramedCloud(
-          null, lonlat, null,
-          xhr.responseText,
-          null, true,
-        ));
+        L.popup({ maxWidth: 800 })
+          .setLatLng(e.latlng)
+          .setContent(xhr.responseText)
+          .openOn(aira.map.leafletMap);
       }
     };
 
+    // Make request
+    xhr.open('GET', url, false);
+    xhr.send();
+  },
+
+  getFeatureInfoUrl(latlng) {
     // Create a small bbox such that the point is at the bottom left of the box
-    const xlow = lonlat.lon;
-    const xhigh = lonlat.lon + 50;
-    const ylow = lonlat.lat;
-    const yhigh = lonlat.lat + 50;
+    const xlow = latlng.lng;
+    const xhigh = latlng.lng + 0.00001;
+    const ylow = latlng.lat;
+    const yhigh = latlng.lat + 0.00001;
     const bbox = `${xlow},${ylow},${xhigh},${yhigh}`;
 
     // Determine layers
@@ -330,12 +249,11 @@ aira.meteoMapPanel = {
     const prefix = aira.meteoMapPanel.activeTimestep === 'daily' ? 'Daily_' : 'Monthly_';
     const layers = vars.map((x) => `${prefix}${x}_${aira.meteoMapPanel.activeDate}`).join();
 
-    // Assemble URL
     const params = new URLSearchParams({
       SERVICE: 'WMS',
       VERSION: '1.1.1',
       REQUEST: 'GetFeatureInfo',
-      SRS: 'EPSG:3857',
+      SRS: 'EPSG:4326',
       info_format: 'text/html',
       BBOX: bbox,
       WIDTH: 2,
@@ -345,16 +263,14 @@ aira.meteoMapPanel = {
       LAYERS: layers,
       QUERY_LAYERS: layers,
     });
-
-    // Make request
-    xhr.open('GET', `${aira.meteoMapPanel.mapserverUrl}?${params.toString()}`, false);
-    xhr.send();
+    return `${aira.meteoMapPanel.mapserverUrl}?${params.toString()}`;
   },
 
   initialize() {
     aira.map.create();
     this.dateSelector.value = aira.end_date;
     this.setTimestep();
+    aira.map.leafletMap.on('click', this.showPopup, aira.map.leafletMap);
   },
 
   setupDateChangingButtons(date) {

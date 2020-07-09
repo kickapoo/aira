@@ -21,6 +21,7 @@ from model_mommy import mommy
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 
+from aira import views
 from aira.models import Agrifield, AppliedIrrigation
 from aira.tests import RandomMediaRootMixin
 from aira.tests.test_agrifield import DataTestCase, SetupTestDataMixin
@@ -707,24 +708,36 @@ class CreateAppliedIrrigationViewTestCase(TestCase):
         self.assertEqual(initials["irrigation_type"], "HELLO_WORLD")
 
 
-@skipUnless(False, "This test isn't working yet")
 @skipUnless(getattr(settings, "SELENIUM_WEBDRIVERS", False), "Selenium is unconfigured")
 @override_settings(AIRA_MAP_DEFAULT_CENTER=(22.01, 37.99))
 class MapPopupTestCase(SeleniumTestCase, DataTestCase):
-    """Deactivated test awaiting transition to Leaflet.
-
-    I wrote this test while we're still using OpenLayers to test that the meteo map
-    popup works. However this is going to make a GetFeatureInfo request to some
-    mapserver and it's not possible to test without mocking XMLHttpRequest.  Finding out
-    how to do such mocking, would be quite some work and I thought it would be better to
-    wait until we use Leaflet, because the code is likely to change much.
-
-    The test doesn't run because it has @skipUnless(False) on top.
-    """
-
     map_element = PageElement(By.ID, "map")
-    google_maps_dismiss_button = PageElement(By.CLASS_NAME, "dismissButton")
-    popup_element = PageElement(By.CLASS_NAME, "olPopup")
+    popup_element = PageElement(By.CSS_SELECTOR, "div.leaflet-popup")
+
+    def setUp(self):
+        self.saved_template_name = views.FrontPageView.template_name
+        self.mock_template_name = "aira/frontpage/tmpmain.html"
+        views.FrontPageView.template_name = self.mock_template_name
+        with open("aira/templates/" + self.mock_template_name, "w") as f:
+            f.write(
+                r"""\
+                {% extends "aira/frontpage/main-default.html" %}
+                {% block extrajs %}
+                  {{block.super}}
+                  <script src="https://unpkg.com/xhr-mock/dist/xhr-mock.js"></script>
+                  <script>
+                    XHRMock.setup()
+                    XHRMock.get(/\.*/, {
+                        body: 'Hello, world!'
+                    });
+                  </script>
+                {% endblock %}
+                """
+            )
+
+    def tearDown(self):
+        os.remove("aira/templates/" + self.mock_template_name)
+        views.FrontPageView.template_name = self.saved_template_name
 
     def test_popup(self):
         # Visit front page and ensure there's no popup
@@ -732,21 +745,13 @@ class MapPopupTestCase(SeleniumTestCase, DataTestCase):
         self.map_element.wait_until_exists()
         self.assertFalse(self.popup_element.exists())
 
-        # This is a development environment, so we might get the "can't load Google
-        # Maps correctly" warning; dismiss it
-        if self.google_maps_dismiss_button.exists():
-            self.google_maps_dismiss_button.click()
-        self.google_maps_dismiss_button.wait_until_not_exists()
-
-        # Click in the middle of the map
-        x_offset = self.map_element.size["width"] / 2
-        y_offset = self.map_element.size["height"] / 2
+        # Click in the map
         ActionChains(self.selenium).move_to_element(
             self.selenium.find_element(By.ID, "map")
-        ).move_by_offset(x_offset, y_offset).click().perform()
+        ).move_by_offset(20, 20).click().perform()
+        sleep(0.1)
 
         # The popup should now appear
-        self.popup_element.wait_until_exists()
         self.assertTrue(self.popup_element.exists())
 
 
@@ -759,7 +764,7 @@ class SeleniumDataTestCase(SetupTestDataMixin, SeleniumTestCase):
 @skipUnless(getattr(settings, "SELENIUM_WEBDRIVERS", False), "Selenium is unconfigured")
 class AgrifieldsMapTestCase(SeleniumDataTestCase):
     map_element = PageElement(By.ID, "map")
-    map_marker = PageElement(By.CSS_SELECTOR, "div.olLayerDiv image")
+    map_marker = PageElement(By.CSS_SELECTOR, "img.leaflet-marker-icon")
 
     def test_agrifields_map(self):
         # Visit user's agrifields list page
@@ -775,7 +780,7 @@ class AgrifieldsMapTestCase(SeleniumDataTestCase):
 @skipUnless(getattr(settings, "SELENIUM_WEBDRIVERS", False), "Selenium is unconfigured")
 class AgrifieldEditMapTestCase(SeleniumDataTestCase):
     map_element = PageElement(By.ID, "map")
-    map_marker = PageElement(By.CSS_SELECTOR, "div.olLayerDiv image")
+    map_marker = PageElement(By.CSS_SELECTOR, "img.leaflet-marker-icon")
     longitude_element = PageElement(By.ID, "id_location_0")
     latitude_element = PageElement(By.ID, "id_location_1")
 
@@ -860,8 +865,8 @@ class AddIrrigationTestCase(SeleniumDataTestCase):
 
 @skipUnless(getattr(settings, "SELENIUM_WEBDRIVERS", False), "Selenium is unconfigured")
 class AgrifieldsMapPopupTestCase(SeleniumDataTestCase):
-    map_marker = PageElement(By.CSS_SELECTOR, "div.olLayerDiv image")
-    popup_element = PageElement(By.ID, "pop")
+    map_marker = PageElement(By.CSS_SELECTOR, "img.leaflet-marker-icon")
+    popup_element = PageElement(By.CSS_SELECTOR, "div.leaflet-popup")
 
     def test_popup(self):
         # Visit agrifields list page

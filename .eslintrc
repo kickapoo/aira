@@ -9,5 +9,6 @@
         "OpenLayers": "readonly",
         "google": "readonly",
         "moment": "readonly",
+        "L": "readonly",
     }
 }

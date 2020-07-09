@@ -11,7 +11,5 @@
       coords: [{{ object.location.coords|cut:"("|cut:")" }}],
     }
   ];
-  var agrifields_layer = aira.agrifieldsMap.addAgrifields(
-    aira.agrifields, "{{ object.name }}"
-  );
+  aira.agrifieldsMap.addAgrifields(aira.agrifields, "{{ object.name }}");
 </script>
