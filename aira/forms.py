@@ -86,13 +86,13 @@ class AgrifieldForm(forms.ModelForm):
 
 
 class AppliedIrrigationForm(forms.ModelForm):
-    LABLED_IRRIGATION_TYPES = [
-        ("VOLUME_OF_WATER", _("I want to specify the volume of water")),
-        ("DURATION_OF_IRRIGATION", _("I want to specify the duration of irrigation")),
-        ("FLOWMETER_READINGS", _("I want to register the flowmeter readings")),
+    IRRIGATION_TYPE_CHOICES = [
+        ("VOLUME_OF_WATER", _("Specify volume of irrigation water")),
+        ("DURATION_OF_IRRIGATION", _("Specify duration of irrigation")),
+        ("FLOWMETER_READINGS", _("Specify flowmeter readings")),
     ]
     irrigation_type = forms.ChoiceField(
-        widget=forms.RadioSelect(), choices=LABLED_IRRIGATION_TYPES, label=""
+        widget=forms.RadioSelect(), choices=IRRIGATION_TYPE_CHOICES, label=""
     )
 
     class Meta:
