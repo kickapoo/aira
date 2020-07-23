@@ -69,6 +69,15 @@ about the soil. These files are placed in the directory specified by
 - **pwp.tif**. The permanent wilting point.
 - **a_1d.tif** and **b.tif**. Parameters used when calculating
   draintime.
+- **theta-YYYY-MM-DD.tif** (optional). The initial conditions for
+  running the soil water model are normally that on the previous 15
+  March the soil was at field capacity. However, if a
+  `theta-YYYY-MM-DD.tif` file exists and the date specified in the file
+  name is more recent than the previous 15 March, it is assumed instead
+  that the water content at the date specified is what is specified by
+  the file. The purpose of this feature is to enable the system to work
+  in the first year it is installed at an area, when meteorological data
+  might become available mid-season.
 
 ## License
 

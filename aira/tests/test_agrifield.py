@@ -2,6 +2,7 @@ import datetime as dt
 import os
 import shutil
 import tempfile
+from glob import glob
 from unittest.mock import PropertyMock, patch
 
 from django.contrib.auth.models import User
@@ -15,6 +16,7 @@ from freezegun import freeze_time
 from model_mommy import mommy
 from osgeo import gdal, osr
 
+from aira.agrifield import InitialConditions
 from aira.models import Agrifield, AppliedIrrigation, CropType, IrrigationType
 
 
@@ -275,27 +277,6 @@ class ExecuteModelTestCase(DataTestCase):
         )
 
 
-class StartOfSeasonTestCase(TestCase):
-    def setUp(self):
-        self.agrifield = mommy.make(Agrifield)
-
-    @freeze_time("2018-01-01 13:00:01")
-    def test_jan_1(self):
-        self.assertEqual(self.agrifield.start_of_season, dt.datetime(2017, 3, 15, 0, 0))
-
-    @freeze_time("2018-03-14 13:00:01")
-    def test_mar_14(self):
-        self.assertEqual(self.agrifield.start_of_season, dt.datetime(2017, 3, 15, 0, 0))
-
-    @freeze_time("2018-03-15 13:00:01")
-    def test_mar_15(self):
-        self.assertEqual(self.agrifield.start_of_season, dt.datetime(2018, 3, 15, 0, 0))
-
-    @freeze_time("2018-12-31 13:00:01")
-    def test_dec_31(self):
-        self.assertEqual(self.agrifield.start_of_season, dt.datetime(2018, 3, 15, 0, 0))
-
-
 _locmemcache = "django.core.cache.backends.locmem.LocMemCache"
 _in_covered_area = "aira.models.Agrifield.in_covered_area"
 
@@ -388,3 +369,106 @@ class LastIrrigationIsOutdatedTestCase(DataTestCase):
 
     def test_false_if_irrigation_ok(self, m):
         self.assertFalse(self.agrifield.last_irrigation_is_outdated)
+
+
+def mock_calculate_soil_water(**kwargs):
+    timeseries = kwargs["timeseries"]
+    timeseries["dr"] = 0
+    timeseries["theta"] = 0
+    timeseries["ks"] = 0
+    timeseries["recommended_net_irrigation"] = 0
+    return {"raw": 0, "taw": 0, "timeseries": timeseries}
+
+
+@patch("aira.agrifield.calculate_soil_water", side_effect=mock_calculate_soil_water)
+class InitialConditionsTestCase(DataTestCase):
+    def tearDown(self):
+        self._remove_initial_theta_rasters()
+
+    def _check_theta_init(self, m, theta_init):
+        calls = m.call_args_list
+        self.assertEqual(len(calls), 2)
+        for call in calls:
+            call_kwargs = list(call)[1]
+            self.assertAlmostEqual(call_kwargs["theta_init"], theta_init)
+
+    def _check_starting_date(self, m, starting_date):
+        calls = m.call_args_list
+        self.assertEqual(len(calls), 2)
+        for call in calls:
+            call_kwargs = list(call)[1]
+            self.assertEqual(call_kwargs["timeseries"].index[0], starting_date)
+
+    def test_when_initial_theta_is_absent_we_start_from_field_capacity(self, m):
+        self.agrifield.execute_model()
+        self._check_theta_init(m, theta_init=0.4)
+
+    def test_when_initial_theta_is_absent_we_start_from_15_march(self, m):
+        self.agrifield.execute_model()
+        self._check_starting_date(m, starting_date=dt.date(2018, 3, 15))
+
+    def test_when_initial_theta_is_present_we_start_from_initial_theta(self, m):
+        self._setup_initial_theta_raster("2018-03-17")
+        self.agrifield.execute_model()
+        self._check_theta_init(m, theta_init=0.49)
+
+    def test_when_initial_theta_is_present_we_start_from_specified_date(self, m):
+        self._setup_initial_theta_raster("2018-03-17")
+        self.agrifield.execute_model()
+        self._check_starting_date(m, starting_date=dt.date(2018, 3, 17))
+
+    def test_when_initial_theta_file_has_garbage_date_we_ignore_it(self, m):
+        self._setup_initial_theta_raster("garb-ag-ee")
+        self.agrifield.execute_model()
+        self._check_starting_date(m, starting_date=dt.date(2018, 3, 15))
+
+    def test_when_there_are_two_initial_theta_files_we_take_the_most_recent(self, m):
+        self._setup_initial_theta_raster("2018-03-16")
+        self._setup_initial_theta_raster("2018-03-17")
+        self.agrifield.execute_model()
+        self._check_starting_date(m, starting_date=dt.date(2018, 3, 17))
+
+    def test_when_there_are_two_initial_theta_files_we_take_the_non_garbage(self, m):
+        self._setup_initial_theta_raster("2018-03-17")
+        self._setup_initial_theta_raster("garb-ag-ee")
+        self.agrifield.execute_model()
+        self._check_starting_date(m, starting_date=dt.date(2018, 3, 17))
+
+    def _setup_initial_theta_raster(self, date):
+        self.initial_theta_filename = os.path.join(self.tempdir, f"theta-{date}.tif")
+        setup_input_file(
+            self.initial_theta_filename, np.array([[0.49, 0.48], [0.47, 0.46]]), None
+        )
+
+    def _remove_initial_theta_rasters(self):
+        for filename in glob(os.path.join(self.tempdir, "theta-????-??-??.tif")):
+            os.remove(filename)
+
+
+class StartOfSeasonTestCase(TestCase):
+    def setUp(self):
+        self.agrifield = mommy.make(Agrifield)
+
+    @freeze_time("2018-01-01 13:00:01")
+    def test_jan_1(self):
+        self.assertEqual(
+            InitialConditions(self.agrifield).date, dt.datetime(2017, 3, 15, 0, 0)
+        )
+
+    @freeze_time("2018-03-14 13:00:01")
+    def test_mar_14(self):
+        self.assertEqual(
+            InitialConditions(self.agrifield).date, dt.datetime(2017, 3, 15, 0, 0)
+        )
+
+    @freeze_time("2018-03-15 13:00:01")
+    def test_mar_15(self):
+        self.assertEqual(
+            InitialConditions(self.agrifield).date, dt.datetime(2018, 3, 15, 0, 0)
+        )
+
+    @freeze_time("2018-12-31 13:00:01")
+    def test_dec_31(self):
+        self.assertEqual(
+            InitialConditions(self.agrifield).date, dt.datetime(2018, 3, 15, 0, 0)
+        )
