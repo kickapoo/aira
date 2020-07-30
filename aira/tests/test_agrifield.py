@@ -16,8 +16,8 @@ from freezegun import freeze_time
 from model_mommy import mommy
 from osgeo import gdal, osr
 
+from aira import models
 from aira.agrifield import InitialConditions
-from aira.models import Agrifield, AppliedIrrigation, CropType, IrrigationType
 
 
 def setup_input_file(filename, value, timestamp_str):
@@ -95,6 +95,7 @@ class SetupTestDataMixin:
         self._create_user()
         self._create_irrigation_type()
         self._create_agrifield()
+        self._create_kc_stages()
         self._create_applied_irrigations()
 
     def _create_user(self):
@@ -104,30 +105,25 @@ class SetupTestDataMixin:
 
     def _create_crop_type(self):
         self.crop_type = mommy.make(
-            CropType,
+            models.CropType,
             name="Grass",
             root_depth_max=0.7,
             root_depth_min=1.2,
             max_allowed_depletion=0.5,
             fek_category=4,
-            kc_init=0.7,
-            kc_mid=0.7,
-            kc_end=0.7,
-            days_kc_init=10,
-            days_kc_dev=20,
-            days_kc_mid=20,
-            days_kc_late=30,
+            kc_offseason=0.7,
+            kc_initial=0.7,
             planting_date=dt.date(2018, 3, 16),
         )
 
     def _create_irrigation_type(self):
         self.irrigation_type = mommy.make(
-            IrrigationType, name="Surface irrigation", efficiency=0.60
+            models.IrrigationType, name="Surface irrigation", efficiency=0.60
         )
 
     def _create_agrifield(self):
         self.agrifield = mommy.make(
-            Agrifield,
+            models.Agrifield,
             id=1,
             owner=self.user,
             name="A field",
@@ -135,17 +131,25 @@ class SetupTestDataMixin:
             irrigation_type=self.irrigation_type,
             location=Point(22.0, 38.0),
             area=2000,
+            custom_kc_offseason=0.3,
+            custom_kc_initial=0.35,
+            custom_planting_date=dt.date(1970, 3, 20),
         )
+
+    def _create_kc_stages(self):
+        c = models.AgrifieldCustomKcStage.objects.create
+        c(agrifield=self.agrifield, order=1, ndays=35, kc_end=0.7)
+        c(agrifield=self.agrifield, order=2, ndays=45, kc_end=1.05)
 
     def _create_applied_irrigations(self):
         self.applied_irrigation_1 = mommy.make(
-            AppliedIrrigation,
+            models.AppliedIrrigation,
             agrifield=self.agrifield,
             timestamp=dt.datetime(2018, 3, 15, 7, 0, tzinfo=dt.timezone.utc),
             supplied_water_volume=500,
         )
         self.applied_irrigation_2 = mommy.make(
-            AppliedIrrigation,
+            models.AppliedIrrigation,
             agrifield=self.agrifield,
             timestamp=dt.datetime(2018, 3, 19, 7, 0, tzinfo=dt.timezone.utc),
             supplied_water_volume=None,
@@ -284,7 +288,7 @@ _in_covered_area = "aira.models.Agrifield.in_covered_area"
 @override_settings(CACHES={"default": {"BACKEND": _locmemcache}})
 class NeedsIrrigationTestCase(TestCase):
     def setUp(self):
-        self.agrifield = mommy.make(Agrifield, id=1)
+        self.agrifield = mommy.make(models.Agrifield, id=1)
 
     def _set_needed_irrigation_amount(self, amount):
         atimeseries = pd.Series(data=[amount], index=pd.DatetimeIndex(["2020-01-15"]))
@@ -356,7 +360,7 @@ class LastIrrigationIsOutdatedTestCase(DataTestCase):
         cache.set("model_run_1", self.results)
 
     def test_true_if_no_irrigation(self, m):
-        AppliedIrrigation.objects.all().delete()
+        models.AppliedIrrigation.objects.all().delete()
         self.assertTrue(self.agrifield.last_irrigation_is_outdated)
 
     def test_true_if_irrigation_too_old(self, m):
@@ -447,7 +451,7 @@ class InitialConditionsTestCase(DataTestCase):
 
 class StartOfSeasonTestCase(TestCase):
     def setUp(self):
-        self.agrifield = mommy.make(Agrifield)
+        self.agrifield = mommy.make(models.Agrifield)
 
     @freeze_time("2018-01-01 13:00:01")
     def test_jan_1(self):

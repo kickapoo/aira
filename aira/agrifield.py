@@ -106,14 +106,9 @@ class AgrifieldSWBMixin:
         calculate_crop_evapotranspiration(
             timeseries=self.timeseries,
             planting_date=self.crop_type.most_recent_planting_date,
-            kc_unplanted=self.crop_type.kc_init,
-            kc_ini=self.crop_type.kc_init,
-            kc_mid=self.crop_type.kc_mid,
-            kc_end=self.crop_type.kc_end,
-            init=self.crop_type.days_kc_init,
-            dev=self.crop_type.days_kc_dev,
-            mid=self.crop_type.days_kc_mid,
-            late=self.crop_type.days_kc_late,
+            kc_offseason=self.crop_type.kc_offseason,
+            kc_initial=self.crop_type.kc_initial,
+            kc_stages=self.crop_type.kc_stages,
         )
 
     def prepare_timeseries(self):

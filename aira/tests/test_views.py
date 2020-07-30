@@ -16,6 +16,7 @@ from django.test import TestCase, override_settings
 
 import pandas as pd
 import pytz
+from bs4 import BeautifulSoup
 from django_selenium_clean import PageElement, SeleniumTestCase
 from model_mommy import mommy
 from selenium.webdriver.common.action_chains import ActionChains
@@ -145,6 +146,54 @@ class UpdateAgrifieldViewTestCase(DataTestCase):
     def test_default_theta_s(self):
         self.assertContains(
             self.response, '<span id="default-theta_s">0.50</span>', html=True
+        )
+
+    def test_kc_stages(self):
+        self.assertContains(self.response, "35\t0.7\n45\t1.05")
+
+    def test_kc_initial(self):
+        soup = BeautifulSoup(self.response.content, "html.parser")
+        kc_initial_element = soup.find("input", id="id_custom_kc_initial")
+        self.assertEqual(kc_initial_element.get("value"), "0.35")
+
+    def test_kc_initial_placeholder(self):
+        soup = BeautifulSoup(self.response.content, "html.parser")
+        kc_initial_element = soup.find("input", id="id_custom_kc_initial")
+        self.assertEqual(kc_initial_element.get("placeholder"), "0.3 - 1.25")
+
+    def test_default_kc_initial(self):
+        self.assertContains(
+            self.response, '<span id="default-kc_initial">0.7</span>', html=True
+        )
+
+    def test_kc_offseason(self):
+        soup = BeautifulSoup(self.response.content, "html.parser")
+        kc_offseason_element = soup.find("input", id="id_custom_kc_offseason")
+        self.assertEqual(kc_offseason_element.get("value"), "0.3")
+
+    def test_kc_offseason_placeholder(self):
+        soup = BeautifulSoup(self.response.content, "html.parser")
+        kc_offseason_element = soup.find("input", id="id_custom_kc_offseason")
+        self.assertEqual(kc_offseason_element.get("placeholder"), "0.3 - 1.25")
+
+    def test_default_kc_offseason(self):
+        self.assertContains(
+            self.response, '<span id="default-kc_offseason">0.7</span>', html=True
+        )
+
+    def test_kc_planting_date(self):
+        soup = BeautifulSoup(self.response.content, "html.parser")
+        planting_date_element = soup.find("input", id="id_custom_planting_date")
+        self.assertEqual(planting_date_element.get("value"), "20/03")
+
+    def test_planting_date_placeholder(self):
+        soup = BeautifulSoup(self.response.content, "html.parser")
+        planting_date_element = soup.find("input", id="id_custom_planting_date")
+        self.assertEqual(planting_date_element.get("placeholder"), "day/month")
+
+    def test_default_planting_date(self):
+        self.assertContains(
+            self.response, '<span id="default-planting_date">16 Mar</span>', html=True
         )
 
 
