@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
 from django.core.cache import cache
 from django.core.files.base import ContentFile
-from django.test import TestCase, override_settings
+from django.test import Client, TestCase, override_settings
 
 import pandas as pd
 import pytz
@@ -89,15 +89,16 @@ class TestAgrifieldListView(TestCase):
 
 
 class UpdateAgrifieldViewTestCase(DataTestCase):
-    def setUp(self):
-        super().setUp()
-        self._make_request()
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls._make_request()
 
-    def _make_request(self):
-        self.client.login(username="bob", password="topsecret")
-        self.response = self.client.get(
-            "/update_agrifield/{}/".format(self.agrifield.id)
-        )
+    @classmethod
+    def _make_request(cls):
+        cls.client = Client()
+        cls.client.login(username="bob", password="topsecret")
+        cls.response = cls.client.get("/update_agrifield/{}/".format(cls.agrifield.id))
 
     def test_response_contains_agrifield_name(self):
         self.assertContains(self.response, "A field")
@@ -665,17 +666,17 @@ class ResetPasswordTestCase(TestCase):
 
 
 class IrrigationPerformanceChartTestCase(DataTestCase):
-    def setUp(self):
-        super().setUp()
-        self.results = self.agrifield.execute_model()
-        self.client.login(username="bob", password="topsecret")
-        self.response = self.client.get(
-            f"/irrigation-performance-chart/{self.agrifield.id}/"
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.results = cls.agrifield.execute_model()
+        cls.client = Client()
+        cls.client.login(username="bob", password="topsecret")
+        cls.response = cls.client.get(
+            f"/irrigation-performance-chart/{cls.agrifield.id}/"
         )
-        assert self.response.status_code == 200
-        self.series = self._extract_series_from_javascript(
-            self.response.content.decode()
-        )
+        assert cls.response.status_code == 200
+        cls.series = cls._extract_series_from_javascript(cls.response.content.decode())
 
     _series_regexp = r"""
         \sseries:\s* # "series:" preceded by space and followed by optional whitespace.
@@ -687,8 +688,9 @@ class IrrigationPerformanceChartTestCase(DataTestCase):
         )
     """
 
-    def _extract_series_from_javascript(self, page_content):
-        m = re.search(self._series_regexp, page_content, re.VERBOSE)
+    @classmethod
+    def _extract_series_from_javascript(cls, page_content):
+        m = re.search(cls._series_regexp, page_content, re.VERBOSE)
         series = eval(m.group("series"))
         result = {x["name"]: x["data"] for x in series}
         return result
@@ -712,14 +714,16 @@ class IrrigationPerformanceChartTestCase(DataTestCase):
 
 
 class IrrigationPerformanceCsvTestCase(DataTestCase):
-    def setUp(self):
-        super().setUp()
-        self.results = self.agrifield.execute_model()
-        self.client.login(username="bob", password="topsecret")
-        self.response = self.client.get(
-            f"/download-irrigation-performance/{self.agrifield.id}/"
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.results = cls.agrifield.execute_model()
+        cls.client = Client()
+        cls.client.login(username="bob", password="topsecret")
+        cls.response = cls.client.get(
+            f"/download-irrigation-performance/{cls.agrifield.id}/"
         )
-        assert self.response.status_code == 200
+        assert cls.response.status_code == 200
 
     def test_applied_water_when_irrigation_specified(self):
         m = re.search(

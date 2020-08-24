@@ -90,21 +90,22 @@ class SetupTestDataMixin:
         )
         setup_input_file(filename, np.array(contents), datestr)
 
-    def _setup_database(self):
-        self._create_crop_type()
-        self._create_user()
-        self._create_irrigation_type()
-        self._create_agrifield()
-        self._create_kc_stages()
-        self._create_applied_irrigations()
+    @classmethod
+    def _setup_database(cls):
+        cls._create_crop_type()
+        cls._create_user()
+        cls._create_irrigation_type()
+        cls._create_agrifield()
+        cls._create_kc_stages()
+        cls._create_applied_irrigations()
 
-    def _create_user(self):
-        self.user = User.objects.create_user(
-            id=55, username="bob", password="topsecret"
-        )
+    @classmethod
+    def _create_user(cls):
+        cls.user = User.objects.create_user(id=55, username="bob", password="topsecret")
 
-    def _create_crop_type(self):
-        self.crop_type = mommy.make(
+    @classmethod
+    def _create_crop_type(cls):
+        cls.crop_type = mommy.make(
             models.CropType,
             name="Grass",
             root_depth_max=0.7,
@@ -116,19 +117,21 @@ class SetupTestDataMixin:
             planting_date=dt.date(2018, 3, 16),
         )
 
-    def _create_irrigation_type(self):
-        self.irrigation_type = mommy.make(
+    @classmethod
+    def _create_irrigation_type(cls):
+        cls.irrigation_type = mommy.make(
             models.IrrigationType, name="Surface irrigation", efficiency=0.60
         )
 
-    def _create_agrifield(self):
-        self.agrifield = mommy.make(
+    @classmethod
+    def _create_agrifield(cls):
+        cls.agrifield = mommy.make(
             models.Agrifield,
             id=1,
-            owner=self.user,
+            owner=cls.user,
             name="A field",
-            crop_type=self.crop_type,
-            irrigation_type=self.irrigation_type,
+            crop_type=cls.crop_type,
+            irrigation_type=cls.irrigation_type,
             location=Point(22.0, 38.0),
             area=2000,
             custom_kc_offseason=0.3,
@@ -136,28 +139,29 @@ class SetupTestDataMixin:
             custom_planting_date=dt.date(1970, 3, 20),
         )
 
-    def _create_kc_stages(self):
+    @classmethod
+    def _create_kc_stages(cls):
         c = models.AgrifieldCustomKcStage.objects.create
-        c(agrifield=self.agrifield, order=1, ndays=35, kc_end=0.7)
-        c(agrifield=self.agrifield, order=2, ndays=45, kc_end=1.05)
+        c(agrifield=cls.agrifield, order=1, ndays=35, kc_end=0.7)
+        c(agrifield=cls.agrifield, order=2, ndays=45, kc_end=1.05)
 
-    def _create_applied_irrigations(self):
-        self.applied_irrigation_1 = mommy.make(
+    @classmethod
+    def _create_applied_irrigations(cls):
+        cls.applied_irrigation_1 = mommy.make(
             models.AppliedIrrigation,
-            agrifield=self.agrifield,
+            agrifield=cls.agrifield,
             timestamp=dt.datetime(2018, 3, 15, 7, 0, tzinfo=dt.timezone.utc),
             supplied_water_volume=500,
         )
-        self.applied_irrigation_2 = mommy.make(
+        cls.applied_irrigation_2 = mommy.make(
             models.AppliedIrrigation,
-            agrifield=self.agrifield,
+            agrifield=cls.agrifield,
             timestamp=dt.datetime(2018, 3, 19, 7, 0, tzinfo=dt.timezone.utc),
             supplied_water_volume=None,
         )
 
     @classmethod
     def setUpClass(cls):
-        super().setUpClass()
         cls.tempdir = tempfile.mkdtemp()
         os.mkdir(os.path.join(cls.tempdir, "historical"))
         os.mkdir(os.path.join(cls.tempdir, "forecast"))
@@ -172,6 +176,7 @@ class SetupTestDataMixin:
         }
         for x in cls._context_managers:
             x.__enter__()
+        super().setUpClass()
 
     @classmethod
     def tearDownClass(cls):
@@ -182,9 +187,10 @@ class SetupTestDataMixin:
 
 
 class DataTestCase(SetupTestDataMixin, TestCase):
-    def setUp(self):
-        super().setUp()
-        self._setup_database()
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls._setup_database()
 
 
 class ExecuteModelTestCase(DataTestCase):
