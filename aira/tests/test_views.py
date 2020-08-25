@@ -23,7 +23,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 
 from aira import views
-from aira.models import Agrifield, AppliedIrrigation
+from aira.models import Agrifield, AppliedIrrigation, CropTypeKcStage
 from aira.tests import RandomMediaRootMixin
 from aira.tests.test_agrifield import DataTestCase, SetupTestDataMixin
 
@@ -92,7 +92,14 @@ class UpdateAgrifieldViewTestCase(DataTestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
+        cls._create_crop_type_kc_stages()
         cls._make_request()
+
+    @classmethod
+    def _create_crop_type_kc_stages(cls):
+        c = CropTypeKcStage.objects.create
+        c(crop_type=cls.crop_type, order=1, ndays=32, kc_end=0.6)
+        c(crop_type=cls.crop_type, order=2, ndays=42, kc_end=0.95)
 
     @classmethod
     def _make_request(cls):
@@ -152,6 +159,18 @@ class UpdateAgrifieldViewTestCase(DataTestCase):
     def test_kc_stages(self):
         self.assertContains(self.response, "35\t0.7\n45\t1.05")
 
+    def test_kc_stages_placeholder(self):
+        soup = BeautifulSoup(self.response.content, "html.parser")
+        kc_stages_element = soup.find("textarea", id="id_kc_stages")
+        self.assertIsNone(kc_stages_element.get("placeholder"))
+
+    def test_default_kc_stages(self):
+        self.assertContains(
+            self.response,
+            '<div id="default-kc_stages"><p>32\t0.6<br>42\t0.95</p></div>',
+            html=True,
+        )
+
     def test_kc_initial(self):
         soup = BeautifulSoup(self.response.content, "html.parser")
         kc_initial_element = soup.find("input", id="id_custom_kc_initial")
@@ -195,6 +214,24 @@ class UpdateAgrifieldViewTestCase(DataTestCase):
     def test_default_planting_date(self):
         self.assertContains(
             self.response, '<span id="default-planting_date">16 Mar</span>', html=True
+        )
+
+
+class UpdateAgrifieldViewWithEmptyDefaultKcStagesTestCase(DataTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls._make_request()
+
+    @classmethod
+    def _make_request(cls):
+        cls.client = Client()
+        cls.client.login(username="bob", password="topsecret")
+        cls.response = cls.client.get("/update_agrifield/{}/".format(cls.agrifield.id))
+
+    def test_default_kc_stages(self):
+        self.assertContains(
+            self.response, '<span id="default-kc_stages">Unspecified</span>', html=True
         )
 
 

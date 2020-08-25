@@ -113,9 +113,7 @@ class AgrifieldForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance.pk:
-            kc_stages = self.instance.agrifieldcustomkcstage_set.order_by("order")
-            lines = [f"{s.ndays}\t{s.kc_end}" for s in kc_stages]
-            self.initial["kc_stages"] = "\n".join(lines)
+            self.initial["kc_stages"] = self.instance.kc_stages_str
 
     def clean_kc_stages(self):
         data = self.cleaned_data["kc_stages"]

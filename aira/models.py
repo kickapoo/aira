@@ -124,6 +124,12 @@ class CropType(models.Model):
             result.append(swb.KcStage(kc_stage.ndays, kc_stage.kc_end))
         return result
 
+    @property
+    def kc_stages_str(self):
+        kc_stages = self.croptypekcstage_set.order_by("order")
+        lines = [f"{s.ndays}\t{s.kc_end}" for s in kc_stages]
+        return "\n".join(lines)
+
 
 class KcStage(models.Model):
     order = models.PositiveSmallIntegerField()
@@ -453,6 +459,12 @@ class Agrifield(models.Model, AgrifieldSWBMixin, AgrifieldSWBResultsMixin):
             AgrifieldCustomKcStage.objects.create(
                 agrifield=self, order=i, ndays=ndays, kc_end=kc_end
             )
+
+    @property
+    def kc_stages_str(self):
+        kc_stages = self.agrifieldcustomkcstage_set.order_by("order")
+        lines = [f"{s.ndays}\t{s.kc_end}" for s in kc_stages]
+        return "\n".join(lines)
 
 
 class AgrifieldCustomKcStage(KcStage):

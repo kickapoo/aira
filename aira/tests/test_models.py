@@ -208,6 +208,11 @@ class CropTypeKcStagesTestCase(TestCase):
             ],
         )
 
+    def test_kc_stages_str(self):
+        self.assertEqual(
+            self.crop_type.kc_stages_str, "35\t0.7\n45\t1.05\n40\t1.05\n15\t0.95"
+        )
+
 
 class AgrifieldLatestAppliedIrrigationDefaultsTestCase(TestCase):
     def setUp(self):
@@ -285,7 +290,7 @@ class AgrifieldLatestAppliedIrrigationDefaultsTestCase(TestCase):
         self.assertEqual(defaults, expected_defaults)
 
 
-class AgrifieldSetCustomKcStagesTestCase(TestCase):
+class AgrifieldCustomKcStagesTestCase(TestCase):
     def setUp(self):
         self.agrifield = mommy.make(models.Agrifield)
         csv = "15,0.9\n25\t0.8"
@@ -299,6 +304,9 @@ class AgrifieldSetCustomKcStagesTestCase(TestCase):
         self.assertEqual(kc_stages[1].order, 2)
         self.assertEqual(kc_stages[1].ndays, 25)
         self.assertAlmostEqual(kc_stages[1].kc_end, 0.8)
+
+    def test_kc_stages_str(self):
+        self.assertEqual(self.agrifield.kc_stages_str, "15\t0.9\n25\t0.8")
 
 
 class AppliedIrrigationTestCase(TestCase):

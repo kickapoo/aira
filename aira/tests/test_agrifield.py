@@ -96,7 +96,7 @@ class SetupTestDataMixin:
         cls._create_user()
         cls._create_irrigation_type()
         cls._create_agrifield()
-        cls._create_kc_stages()
+        cls._create_custom_kc_stages()
         cls._create_applied_irrigations()
 
     @classmethod
@@ -140,7 +140,7 @@ class SetupTestDataMixin:
         )
 
     @classmethod
-    def _create_kc_stages(cls):
+    def _create_custom_kc_stages(cls):
         c = models.AgrifieldCustomKcStage.objects.create
         c(agrifield=cls.agrifield, order=1, ndays=35, kc_end=0.7)
         c(agrifield=cls.agrifield, order=2, ndays=45, kc_end=1.05)
