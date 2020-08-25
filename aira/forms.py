@@ -52,6 +52,7 @@ class AgrifieldForm(forms.ModelForm):
     kc_stages = forms.CharField(
         widget=forms.Textarea,
         required=False,
+        label=_("Kc stages"),
         help_text=_(
             "The development stages. You can copy/paste them from a spreadsheet, "
             "two columns: stage length in days and Kc at end of stage. Copy and paste "
@@ -96,6 +97,7 @@ class AgrifieldForm(forms.ModelForm):
             "custom_planting_date": _("Planting date"),
             "custom_kc_offseason": _("Kc off-season"),
             "custom_kc_initial": _("Kc initial"),
+            "kc_stages": _("Kc stages"),
             "custom_irrigation_optimizer": _("Irrigation optimizer"),
             "custom_root_depth_max": _("Estimated root depth (max)"),
             "custom_root_depth_min": _("Estimated root depth (min)"),
