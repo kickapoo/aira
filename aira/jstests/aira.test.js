@@ -153,6 +153,16 @@ describe('getKcStagesFromText', () => {
   });
 });
 
+describe('getKcStages', () => {
+  test('returns empty when unparsable', () => {
+    document.body.innerHTML = `
+      <input id="id_kc_stages" value="unparsable">
+      <div id="default-kc_stages">Unspecified</div>
+    `;
+    expect(aira.kcCharter.getKcStages()).toEqual([]);
+  });
+});
+
 describe('getPlantingDate', () => {
   afterEach(() => {
     unmockCurrentDate();

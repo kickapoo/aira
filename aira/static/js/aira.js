@@ -402,9 +402,7 @@ aira.kcCharter = {
     this.kcOffSeason = this.getParameterValue(
       'id_custom_kc_offseason', 'default-kc_offseason', this.strToNum,
     );
-    this.kcStages = this.getParameterValue(
-      'id_kc_stages', 'default-kc_stages', this.getKcStagesFromText,
-    );
+    this.kcStages = this.getKcStages();
     this.data = [
       { x: moment(this.plantingDate).subtract(5, 'days').toDate(), y: this.kcOffSeason },
       { x: this.plantingDate, y: this.kcOffSeason },
@@ -416,6 +414,19 @@ aira.kcCharter = {
       this.data.push({ x: date.toDate(), y: stage.kcEnd });
     });
     return [{ name: 'Kc', data: this.data }];
+  },
+
+  getKcStages() {
+    try {
+      return this.getKcStagesFromText(document.querySelector('#id_kc_stages').value);
+    } catch (e) {
+      // If no error we have returned; otherwise we just continue
+    }
+    try {
+      return this.getKcStagesFromText(document.querySelector('#default-kc_stages').value);
+    } catch (e) {
+      return [];
+    }
   },
 
   getKcStagesFromText(kcStagesText) {
