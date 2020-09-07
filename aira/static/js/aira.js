@@ -525,8 +525,8 @@ aira.kcCharter = {
   },
 
   updateYAxisOptions() {
-    const ymin = 0.1;
-    const ymax = this.roundToNextLargestTenth(Math.max(...this.data.map((point) => point.y)));
+    const ymin = this.roundToPrevSmallerTenth(Math.min(...this.data.map((point) => point.y))) - 0.1;
+    const ymax = this.roundToNextLargerTenth(Math.max(...this.data.map((point) => point.y))) + 0.1;
     const tickAmount = Math.round((ymax - ymin) * 10);
     this.chart.updateOptions({
       yaxis: {
@@ -538,7 +538,11 @@ aira.kcCharter = {
     });
   },
 
-  roundToNextLargestTenth(x) {
+  roundToNextLargerTenth(x) {
     return Math.ceil(x * 10) / 10;
+  },
+
+  roundToPrevSmallerTenth(x) {
+    return Math.floor(x * 10) / 10;
   },
 };

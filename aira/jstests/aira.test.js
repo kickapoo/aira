@@ -65,16 +65,16 @@ describe('updateChart', () => {
     expect(aira.kcCharter.chart.updateOptions).toHaveBeenCalled();
   });
 
-  test('sets min yaxis to 0.1', () => {
-    expect(aira.kcCharter.chart.updateOptions.mock.calls[0][0].yaxis.min).toBe(0.1);
+  test('sets min yaxis to 0.3', () => {
+    expect(aira.kcCharter.chart.updateOptions.mock.calls[0][0].yaxis.min).toBeCloseTo(0.3);
   });
 
-  test('sets max yaxis to 0.6', () => {
-    expect(aira.kcCharter.chart.updateOptions.mock.calls[0][0].yaxis.max).toBe(0.6);
+  test('sets max yaxis to 0.7', () => {
+    expect(aira.kcCharter.chart.updateOptions.mock.calls[0][0].yaxis.max).toBeCloseTo(0.7);
   });
 
-  test('sets tickAmount to 5', () => {
-    expect(aira.kcCharter.chart.updateOptions.mock.calls[0][0].yaxis.tickAmount).toBe(5);
+  test('sets tickAmount to 4', () => {
+    expect(aira.kcCharter.chart.updateOptions.mock.calls[0][0].yaxis.tickAmount).toBe(4);
   });
 });
 
