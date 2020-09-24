@@ -24,7 +24,7 @@ describe('initializeChart', () => {
     document.body.innerHTML = `
       <div id="kc-chart"></div>
       <input id="id_custom_planting_date" value="15/03">
-      <input id="id_custom_kc_initial" value="0.5">
+      <input id="id_custom_kc_plantingdate" value="0.5">
       <input id="id_custom_kc_offseason" value="0.4">
       <textarea id="id_kc_stages">20,0.5\n10,0.6</textarea>
     `;
@@ -49,7 +49,7 @@ describe('updateChart', () => {
   beforeAll(() => {
     document.body.innerHTML = `
       <input id="id_custom_planting_date" value="15/03">
-      <input id="id_custom_kc_initial" value="0.5">
+      <input id="id_custom_kc_plantingdate" value="0.5">
       <input id="id_custom_kc_offseason" value="0.4">
       <textarea id="id_kc_stages">20,0.5\n10,0.52</textarea>
     `;
@@ -82,7 +82,7 @@ describe('getChartSeries', () => {
   beforeAll(() => {
     document.body.innerHTML = `
       <input id="id_custom_planting_date" value="15/03">
-      <input id="id_custom_kc_initial" value="0.5">
+      <input id="id_custom_kc_plantingdate" value="0.5">
       <input id="id_custom_kc_offseason" value="0.4">
       <textarea id="id_kc_stages">20,0.5\n10,0.6</textarea>
     `;

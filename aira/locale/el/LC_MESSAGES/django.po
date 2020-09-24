@@ -110,8 +110,8 @@ msgid "Kc off-season"
 msgstr "Kc εκτός περιόδου"
 
 #: aira/forms.py:99
-msgid "Kc initial"
-msgstr "Kc αρχικό"
+msgid "Kc on planting date"
+msgstr "Kc στην ημερομηνία φύτευσης"
 
 #: aira/forms.py:101
 #: aira/templates/aira/recommendation/fieldinfo_irrigationinfo.html:9

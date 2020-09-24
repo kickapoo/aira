@@ -383,7 +383,7 @@ aira.kcCharter = {
 
   setupEvents() {
     document.querySelector('#id_custom_planting_date').onblur = this.updateChart;
-    document.querySelector('#id_custom_kc_initial').onblur = this.updateChart;
+    document.querySelector('#id_custom_kc_plantingdate').onblur = this.updateChart;
     document.querySelector('#id_custom_kc_offseason').onblur = this.updateChart;
     document.querySelector('#id_kc_stages').onblur = this.updateChart;
   },
@@ -397,7 +397,7 @@ aira.kcCharter = {
   getChartSeries() {
     this.plantingDate = this.getPlantingDate();
     this.kcInitial = this.getParameterValue(
-      'id_custom_kc_initial', 'default-kc_initial', this.strToNum,
+      'id_custom_kc_plantingdate', 'default-kc_plantingdate', this.strToNum,
     );
     this.kcOffSeason = this.getParameterValue(
       'id_custom_kc_offseason', 'default-kc_offseason', this.strToNum,
