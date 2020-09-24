@@ -425,7 +425,7 @@ aira.kcCharter = {
       // If no error we have returned; otherwise we just continue
     }
     try {
-      return this.getKcStagesFromText(document.querySelector('#default-kc_stages').value);
+      return this.getKcStagesFromText(document.querySelector('#default-kc_stages').innerHTML);
     } catch (e) {
       return [];
     }
