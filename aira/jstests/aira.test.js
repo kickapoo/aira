@@ -10,7 +10,7 @@ aira = {};
 require('../static/js/aira');
 
 const savedDateNow = Date.now.bind(global.Date);
-const getDate = (year, month, day) => new Date(year, month - 1, day);
+const getDate = (year, month, day) => new Date(Date.UTC(year, month - 1, day));
 const mockCurrentDate = (year, month, day) => {
   const mockDateNow = jest.fn(() => getDate(year, month, day).valueOf());
   global.Date.now = mockDateNow;
@@ -112,7 +112,7 @@ describe('getChartSeries', () => {
         data: [
           { x: getDate(2018, 3, 10), y: 0.4 },
           { x: getDate(2018, 3, 15), y: 0.4 },
-          { x: new Date(2018, 3 - 1, 15, 0, 0, 1), y: 0.5 },
+          { x: new Date(Date.UTC(2018, 3 - 1, 15, 0, 0, 1)), y: 0.5 },
           { x: getDate(2018, 4, 4), y: 0.5 },
           { x: getDate(2018, 4, 14), y: 0.6 },
           { x: getDate(2018, 4, 19), y: 0.6 },

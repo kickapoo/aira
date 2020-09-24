@@ -404,17 +404,17 @@ aira.kcCharter = {
     );
     this.kcStages = this.getKcStages();
     this.data = [
-      { x: moment(this.plantingDate).subtract(5, 'days').toDate(), y: this.kcOffSeason },
+      { x: moment(this.plantingDate).subtract(5 * 24, 'hours').toDate(), y: this.kcOffSeason },
       { x: this.plantingDate, y: this.kcOffSeason },
       { x: moment(this.plantingDate).add(1, 'second').toDate(), y: this.kcInitial },
     ];
     let date = moment(this.plantingDate);
     this.kcStages.forEach((stage) => {
-      date = moment(date).add(stage.ndays, 'days');
+      date = moment(date).add(stage.ndays * 24, 'hours');
       this.data.push({ x: date.toDate(), y: stage.kcEnd });
     });
     const lastValue = this.data[this.data.length - 1].y;
-    this.data.push({ x: moment(date).add(5, 'days').toDate(), y: lastValue });
+    this.data.push({ x: moment(date).add(5 * 24, 'hours').toDate(), y: lastValue });
     return [{ name: 'Kc', data: this.data }];
   },
 
@@ -494,13 +494,13 @@ aira.kcCharter = {
   getClosestDateFromDayMonth(day, month) {
     const now = new Date(Date.now());
     const currentYear = now.getFullYear();
-    let result = new Date(currentYear, month - 1, day);
+    let result = new Date(Date.UTC(currentYear, month - 1, day));
     const sixMonths = 15768e6;
     if (Math.abs(result - now) > sixMonths) {
-      result = new Date(currentYear - 1, month - 1, day);
+      result = new Date(Date.UTC(currentYear - 1, month - 1, day));
     }
     if (Math.abs(result - now) > sixMonths) {
-      result = new Date(currentYear + 1, month - 1, day);
+      result = new Date(Date.UTC(currentYear + 1, month - 1, day));
     }
     return result;
   },
