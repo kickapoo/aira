@@ -103,6 +103,7 @@ describe('getChartSeries', () => {
           { x: new Date(2018, 3 - 1, 15, 0, 0, 1), y: 0.5 },
           { x: getDate(2018, 4, 4), y: 0.5 },
           { x: getDate(2018, 4, 14), y: 0.6 },
+          { x: getDate(2018, 4, 19), y: 0.6 },
         ],
       }],
     );

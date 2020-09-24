@@ -413,6 +413,8 @@ aira.kcCharter = {
       date = moment(date).add(stage.ndays, 'days');
       this.data.push({ x: date.toDate(), y: stage.kcEnd });
     });
+    const lastValue = this.data[this.data.length - 1].y;
+    this.data.push({ x: moment(date).add(5, 'days').toDate(), y: lastValue });
     return [{ name: 'Kc', data: this.data }];
   },
 
