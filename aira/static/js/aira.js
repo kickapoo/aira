@@ -433,7 +433,7 @@ aira.kcCharter = {
 
   getKcStagesFromText(kcStagesText) {
     const lines = this.getCleanedKcStagesText(kcStagesText);
-    let pairs = lines.map((line) => line.split(','));
+    let pairs = lines.map((line) => line.split('\t'));
     pairs = pairs.map((x) => ({
       ndays: this.strToNum(x[0].trim()),
       kcEnd: this.strToNum(x[1].trim()),
@@ -468,7 +468,7 @@ aira.kcCharter = {
   },
 
   getCleanedKcStagesLine(kcStagesLine) {
-    return kcStagesLine.trim().replace(/[ \t]/, ',');
+    return kcStagesLine.trim().replace(/[ \t]+/, '\t');
   },
 
   getPlantingDate() {
@@ -519,7 +519,8 @@ aira.kcCharter = {
 
   strToNum(s) {
     const trimmed = s.trim();
-    const result = Number(trimmed);
+    const transformed = trimmed.replace(',', '.');
+    const result = Number(transformed);
     if (trimmed === '' || Number.isNaN(result)) {
       throw new Error(`'${trimmed}' is not a valid number`);
     }

@@ -51,7 +51,7 @@ describe('updateChart', () => {
       <input id="id_custom_planting_date" value="15/03">
       <input id="id_custom_kc_plantingdate" value="0.5">
       <input id="id_custom_kc_offseason" value="0.4">
-      <textarea id="id_kc_stages">20,0.5\n10,0.52</textarea>
+      <textarea id="id_kc_stages">20 0.5\n10 0.52</textarea>
     `;
     mockCurrentDate(2018, 5, 5);
     aira.kcCharter.initialize();
@@ -80,12 +80,6 @@ describe('updateChart', () => {
 
 describe('getChartSeries', () => {
   beforeAll(() => {
-    document.body.innerHTML = `
-      <input id="id_custom_planting_date" value="15/03">
-      <input id="id_custom_kc_plantingdate" value="0.5">
-      <input id="id_custom_kc_offseason" value="0.4">
-      <textarea id="id_kc_stages">20,0.5\n10,0.6</textarea>
-    `;
     mockCurrentDate(2018, 5, 5);
   });
 
@@ -93,7 +87,25 @@ describe('getChartSeries', () => {
     unmockCurrentDate();
   });
 
-  test('creates series properly', () => {
+  const setUpDocumentBodyWithDotAsDecimalDelimiter = () => {
+    document.body.innerHTML = `
+      <input id="id_custom_planting_date" value="15/03">
+      <input id="id_custom_kc_plantingdate" value="0.5">
+      <input id="id_custom_kc_offseason" value="0.4">
+      <textarea id="id_kc_stages">20 0.5\n10 0.6</textarea>
+    `;
+  };
+
+  const setUpDocumentBodyWithCommaAsDecimalDelimiter = () => {
+    document.body.innerHTML = `
+      <input id="id_custom_planting_date" value="15/03">
+      <input id="id_custom_kc_plantingdate" value="0,5">
+      <input id="id_custom_kc_offseason" value="0,4">
+      <textarea id="id_kc_stages">20 0,5\n10 0,6</textarea>
+    `;
+  };
+
+  const checkResults = () => {
     expect(aira.kcCharter.getChartSeries()).toEqual(
       [{
         name: 'Kc',
@@ -107,6 +119,16 @@ describe('getChartSeries', () => {
         ],
       }],
     );
+  };
+
+  test('creates series properly when dot is decimal delimiter', () => {
+    setUpDocumentBodyWithDotAsDecimalDelimiter();
+    checkResults();
+  });
+
+  test('creates series properly when comma is decimal delimiter', () => {
+    setUpDocumentBodyWithCommaAsDecimalDelimiter();
+    checkResults();
   });
 });
 
@@ -129,12 +151,12 @@ describe('getKcStagesFromText', () => {
     check('25 0.7\n15 0.3\n5 0.25');
   });
 
-  test('reads comma-delimited text', () => {
-    check('25,0.7\n15,0.3\n5,0.25');
+  test('ignores leading and trailing spaces', () => {
+    check('  25 0.7  \n  15 0.3  \n  5\t0.25 ');
   });
 
-  test('ignores leading and trailing spaces', () => {
-    check('  25 0.7  \n  15,0.3  \n  5\t0.25 ');
+  test('ignores multiple spaces', () => {
+    check('25     0.7\n15 \t0.3\n5\t\t\t0.25');
   });
 
   test('ignores trailing newline', () => {
@@ -243,5 +265,9 @@ describe('strToNum', () => {
 
   test('throws error on empty', () => {
     expect(() => aira.kcCharter.strToNum('')).toThrowError();
+  });
+
+  test('treats comma as possible delimiter', () => {
+    expect(aira.kcCharter.strToNum('15,2')).toBe(15.2);
   });
 });

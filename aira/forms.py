@@ -57,7 +57,7 @@ class AgrifieldForm(forms.ModelForm):
             "The development stages. You can copy/paste them from a spreadsheet, "
             "two columns: stage length in days and Kc at end of stage. Copy and paste "
             "the points only, without headings. If you key them in instead, they must "
-            "be one stage per line, first days then Kc, separated by tab or comma."
+            "be one stage per line, first days then Kc, separated by space or tab."
         ),
     )
 
@@ -120,11 +120,11 @@ class AgrifieldForm(forms.ModelForm):
     def clean_kc_stages(self):
         data = self.cleaned_data["kc_stages"]
         for i, row in enumerate(StringIO(data)):
-            row = row.replace("\t", ",")
+            row = row.replace("\t", " ")
             try:
-                items = row.split(",")
+                items = row.split()
                 int(items[0])
-                float(items[1])
+                float(items[1].replace(",", "."))
             except (ValueError, IndexError):
                 raise forms.ValidationError(
                     _(
